@@ -1,0 +1,23 @@
+@import 'tailwindcss' source(none);
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+@import '../../../../vendor/awcodes/filament-curator/resources/css/plugin.css';
+
+@source '../../../../app/Filament/**/*.php';
+@source '../../../../resources/views/filament/**/*.blade.php';
+@source '../../../../vendor/awcodes/filament-curator/resources/**/*.blade.php';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+.fi-fo-rich-editor {
+    overflow: hidden;
+}
+
+.fi-fo-rich-editor-main {
+    @apply h-96 overflow-y-auto overscroll-contain md:h-[36rem];
+}
+
+.fi-fo-rich-editor-content {
+    @apply min-h-full;
+}
