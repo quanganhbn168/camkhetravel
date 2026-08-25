@@ -24,6 +24,7 @@ class Comment extends Model
     {
         return [
             'approved_at' => 'datetime',
+            'rating' => 'integer',
         ];
     }
 
@@ -43,6 +44,11 @@ class Comment extends Model
     public function commentable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function parent(): BelongsTo
@@ -84,6 +90,7 @@ class Comment extends Model
             'post' => 'Bài viết',
             'project' => 'Dự án',
             'service' => 'Dịch vụ',
+            BniArticle::class => 'Tin BNI',
         ];
     }
 }

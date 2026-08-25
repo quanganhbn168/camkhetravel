@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Comments\Schemas;
 
+use App\Models\BniArticle;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Project;
@@ -26,6 +27,7 @@ class CommentForm
                     MorphToSelect::make('commentable')
                         ->label('Nội dung được bình luận')
                         ->types([
+                            MorphToSelect\Type::make(BniArticle::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Project::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Landing::class)->titleAttribute('title'),
@@ -34,6 +36,7 @@ class CommentForm
                         ->columnSpanFull(),
                     TextInput::make('author_name')->label('Họ tên')->required()->maxLength(120),
                     TextInput::make('author_email')->label('Email')->email()->maxLength(255),
+                    TextInput::make('rating')->label('Đánh giá')->numeric()->minValue(1)->maxValue(5)->suffix('/ 5'),
                     Select::make('status')->label('Trạng thái')->options(Comment::statusOptions())->required(),
                     DateTimePicker::make('approved_at')->label('Duyệt lúc'),
                     Textarea::make('body')->label('Bình luận')->required()->rows(6)->columnSpanFull(),

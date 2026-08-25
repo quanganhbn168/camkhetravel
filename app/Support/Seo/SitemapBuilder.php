@@ -39,6 +39,8 @@ class SitemapBuilder
             ['pricing.index', Url::CHANGE_FREQUENCY_MONTHLY, 0.7],
             ['posts.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.8],
             ['about', Url::CHANGE_FREQUENCY_MONTHLY, 0.6],
+            ['bni.handover', Url::CHANGE_FREQUENCY_MONTHLY, 0.5],
+            ['bni.pickleball', Url::CHANGE_FREQUENCY_WEEKLY, 0.5],
             ['contact', Url::CHANGE_FREQUENCY_MONTHLY, 0.5],
         ] as [$route, $frequency, $priority]) {
             $this->addUrl($sitemap, LocalizedUrl::route($route, locale: $defaultLocale), null, $frequency, $priority);

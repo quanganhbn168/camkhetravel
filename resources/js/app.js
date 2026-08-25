@@ -1,9 +1,11 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
+import GLightbox from 'glightbox';
 import Swiper from 'swiper';
 import { A11y, Autoplay, EffectFade, Keyboard, Navigation } from 'swiper/modules';
 import 'aos/dist/aos.css';
+import 'glightbox/dist/css/glightbox.css';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
@@ -55,6 +57,37 @@ const initialisePostSwipers = () => {
             breakpoints: {
                 640: { slidesPerView: 2, spaceBetween: 20 },
                 1024: { slidesPerView: 3, spaceBetween: 20 },
+            },
+        });
+    });
+};
+
+const initialiseTestimonialSwipers = () => {
+    document.querySelectorAll('[data-testimonial-swiper]').forEach((element) => {
+        if (element.swiper) {
+            return;
+        }
+
+        const section = element.parentElement;
+
+        new Swiper(element, {
+            modules: [A11y, Autoplay, Keyboard, Navigation],
+            slidesPerView: 1,
+            spaceBetween: 16,
+            loop: element.querySelectorAll('.swiper-slide').length > 2,
+            autoplay: {
+                delay: 6500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+            },
+            keyboard: { enabled: true },
+            watchOverflow: true,
+            navigation: {
+                prevEl: section?.querySelector('[data-testimonial-swiper-prev]'),
+                nextEl: section?.querySelector('[data-testimonial-swiper-next]'),
+            },
+            breakpoints: {
+                768: { slidesPerView: 2, spaceBetween: 20 },
             },
         });
     });
@@ -142,18 +175,81 @@ const initialiseCountUps = () => {
     });
 };
 
+const initialiseBniCountdowns = () => {
+    document.querySelectorAll('[data-bni-countdown]').forEach((element) => {
+        if (element.dataset.bniCountdownReady === 'true') {
+            return;
+        }
+
+        const target = new Date(element.dataset.bniCountdown || '').getTime();
+
+        if (Number.isNaN(target)) {
+            return;
+        }
+
+        element.dataset.bniCountdownReady = 'true';
+        const output = {
+            days: element.querySelector('[data-bni-countdown-days]'),
+            hours: element.querySelector('[data-bni-countdown-hours]'),
+            minutes: element.querySelector('[data-bni-countdown-minutes]'),
+            seconds: element.querySelector('[data-bni-countdown-seconds]'),
+        };
+        const render = () => {
+            const seconds = Math.max(0, Math.floor((target - Date.now()) / 1000));
+            const values = {
+                days: Math.floor(seconds / 86400),
+                hours: Math.floor((seconds % 86400) / 3600),
+                minutes: Math.floor((seconds % 3600) / 60),
+                seconds: seconds % 60,
+            };
+
+            Object.entries(values).forEach(([key, value]) => {
+                if (output[key]) {
+                    output[key].firstChild.nodeValue = String(value).padStart(2, '0');
+                }
+            });
+        };
+
+        render();
+        window.setInterval(render, 1000);
+    });
+};
+
+let lightbox;
+
+const initialiseLightboxes = () => {
+    if (lightbox || !document.querySelector('.glightbox')) {
+        return;
+    }
+
+    lightbox = GLightbox({
+        selector: '.glightbox',
+        touchNavigation: true,
+        keyboardNavigation: true,
+        closeOnOutsideClick: true,
+        autoplayVideos: true,
+        loop: true,
+    });
+};
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initialiseHeroSwipers();
         initialisePostSwipers();
+        initialiseTestimonialSwipers();
         initialiseScrollTop();
         initialiseAos();
         initialiseCountUps();
+        initialiseBniCountdowns();
+        initialiseLightboxes();
     }, { once: true });
 } else {
     initialiseHeroSwipers();
     initialisePostSwipers();
+    initialiseTestimonialSwipers();
     initialiseScrollTop();
     initialiseAos();
     initialiseCountUps();
+    initialiseBniCountdowns();
+    initialiseLightboxes();
 }

@@ -19,6 +19,18 @@ class LocalizedUrl
                 : $parameters['post']->getRouteKey();
         }
 
+        if (($parameters['landing'] ?? null) instanceof UrlRoutable) {
+            $parameters['landing'] = $name === 'landings.comments.store'
+                ? $parameters['landing']->getKey()
+                : $parameters['landing']->getRouteKey();
+        }
+
+        if (($parameters['project'] ?? null) instanceof UrlRoutable) {
+            $parameters['project'] = $name === 'projects.comments.store'
+                ? $parameters['project']->getKey()
+                : $parameters['project']->getRouteKey();
+        }
+
         $languages = app(LanguageCatalog::class);
         $locale ??= app()->getLocale();
         $defaultLocale = $languages->defaultCode();
@@ -42,7 +54,7 @@ class LocalizedUrl
 
     public static function post(Post $post, ?string $locale = null): string
     {
-        return self::route('posts.show', ['slug' => self::contentSlug($post)], $locale);
+        return self::slug(self::contentSlug($post), $locale);
     }
 
     public static function postCategory(PostCategory $category, ?string $locale = null): string
@@ -74,7 +86,7 @@ class LocalizedUrl
 
         $name = str_starts_with($name, 'localized.') ? substr($name, 10) : $name;
         $available = [
-            'home', 'services.index', 'projects.index', 'projects.category', 'projects.show', 'pricing.index', 'about', 'contact', 'posts.index', 'posts.category', 'posts.show', 'slug.show',
+            'home', 'services.index', 'services.category', 'search', 'projects.index', 'projects.category', 'projects.show', 'pricing.index', 'about', 'bni.handover', 'bni.pickleball', 'bni.invitations.show', 'bni.articles.show', 'bni.member.login', 'contact', 'posts.index', 'posts.category', 'posts.show', 'slug.show',
         ];
 
         if (! in_array($name, $available, true)) {
@@ -92,14 +104,23 @@ class LocalizedUrl
         $paths = [
             'home' => '',
             'services.index' => 'dich-vu',
+            'services.category' => 'dich-vu/danh-muc/'.($parameters['category'] ?? ''),
+            'search' => 'tim-kiem',
             'projects.index' => 'du-an',
             'projects.category' => 'du-an/danh-muc/'.($parameters['slug'] ?? ''),
             'projects.show' => 'du-an/'.($parameters['slug'] ?? ''),
             'pricing.index' => 'bang-gia',
             'about' => 'gioi-thieu',
+            'bni.handover' => 'le-chuyen-giao',
+            'bni.pickleball' => 'le-chuyen-giao/pickleball',
+            'bni.invitations.show' => 'le-chuyen-giao/thu-moi/'.($parameters['invitation'] ?? ''),
+            'bni.articles.show' => 'le-chuyen-giao/tin-tuc/'.($parameters['article'] ?? ''),
+            'bni.member.login' => 'le-chuyen-giao/dang-nhap',
             'contact' => 'lien-he',
             'contact.store' => 'lien-he',
             'comments.store' => 'binh-luan/'.($parameters['post'] ?? ''),
+            'landings.comments.store' => 'binh-luan/dich-vu/'.($parameters['landing'] ?? ''),
+            'projects.comments.store' => 'binh-luan/du-an/'.($parameters['project'] ?? ''),
             'posts.index' => 'tin-tuc',
             'posts.category' => 'tin-tuc/danh-muc/'.($parameters['slug'] ?? ''),
             'posts.show' => 'tin-tuc/'.($parameters['slug'] ?? ''),

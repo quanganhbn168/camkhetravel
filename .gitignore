@@ -5,6 +5,7 @@
 /public/sitemap.xml
 /public/hot
 /public/storage
+/storage/app/public/media/
 /storage/*.key
 /storage/pail
 /storage/framework/PsySH/
