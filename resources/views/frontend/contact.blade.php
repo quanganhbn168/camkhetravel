@@ -26,6 +26,9 @@
                     @if ($website->address)
                         <p class="mt-5 border-t border-slate-200 pt-5 text-sm leading-7 text-slate-600">{{ $website->address }}</p>
                     @endif
+                    @if ($googleMapsUrl)
+                        <a class="button-primary mt-7" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Mở Google Maps <span aria-hidden="true">↗</span></a>
+                    @endif
                 </div>
             </aside>
             <form class="rounded-[2rem] border border-slate-200 p-6 shadow-[0_16px_40px_rgba(16,35,62,0.06)] md:p-10" method="POST" action="{{ LocalizedUrl::route('contact.store') }}">

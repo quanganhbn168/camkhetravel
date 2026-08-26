@@ -35,10 +35,14 @@ $localizedLocalePattern = app(LanguageCatalog::class)
     ->implode('|');
 
 Route::get('/favicon.ico', function (WebsiteSettings $website) {
-    $mediaId = $website->favicon_media_id ?: $website->logo_media_id;
+    $mediaId = $website->favicon_media_id;
     $faviconUrl = MediaUrl::versioned(Media::query()->find($mediaId));
 
-    abort_unless($faviconUrl, 404);
+    if (! $faviconUrl) {
+        return response()->file(public_path('favicon.ico'), [
+            'Cache-Control' => 'public, max-age=604800',
+        ]);
+    }
 
     return redirect()->away($faviconUrl, 302, [
         'Cache-Control' => 'no-store, max-age=0',

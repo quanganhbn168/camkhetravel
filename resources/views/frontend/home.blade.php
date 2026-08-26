@@ -339,6 +339,9 @@
                             <div><dt class="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">Địa chỉ</dt><dd class="mt-1.5 leading-6 text-slate-600">{{ $website->address }}</dd></div>
                         @endif
                     </dl>
+                    @if ($googleMapsUrl)
+                        <a class="button-primary mt-8 self-start" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Xem vị trí trên Google Maps <span aria-hidden="true">↗</span></a>
+                    @endif
                 </aside>
 
                 <form method="POST" action="{{ LocalizedUrl::route('contact.store') }}" class="home-consultation__form" data-aos="fade-up">
@@ -354,7 +357,12 @@
                     @if ($googleMapsEmbedUrl)
                         <iframe src="{{ $googleMapsEmbedUrl }}" title="Bản đồ vị trí {{ $website->company_name ?: $website->site_name }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
                     @else
-                        <div class="home-consultation__map-empty"><span class="text-sm leading-7 text-slate-500">Thêm địa chỉ hoặc Google Maps embed URL trong Cài đặt chung để hiển thị bản đồ.</span></div>
+                        <div class="home-consultation__map-empty">
+                            <span class="text-sm leading-7 text-slate-500">Bản đồ nhúng chưa được cấu hình trong Cài đặt chung.</span>
+                            @if ($googleMapsUrl)
+                                <a class="button-primary" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Mở Google Maps <span aria-hidden="true">↗</span></a>
+                            @endif
+                        </div>
                     @endif
                 </div>
             </div>

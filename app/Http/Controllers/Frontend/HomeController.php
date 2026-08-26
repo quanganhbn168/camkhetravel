@@ -111,9 +111,12 @@ class HomeController extends Controller
             : (filled($this->website->address)
                 ? 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed'
                 : null);
+        $googleMapsUrl = filled($this->website->google_maps_url)
+            ? trim($this->website->google_maps_url)
+            : null;
         $stats = $this->stats($projectCategories);
 
-        return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'googleMapsEmbedUrl') + [
+        return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'googleMapsEmbedUrl', 'googleMapsUrl') + [
             'marqueePartners' => Partner::query()
                 ->active()
                 ->with('curatorMedia')

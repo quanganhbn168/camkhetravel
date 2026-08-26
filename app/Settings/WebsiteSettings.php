@@ -48,6 +48,8 @@ class WebsiteSettings extends Settings
 
     public ?string $google_maps_embed_url = null;
 
+    public ?string $google_maps_url = null;
+
     public static function group(): string
     {
         return 'website';

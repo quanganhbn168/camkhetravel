@@ -62,6 +62,7 @@ class ManageSettings extends Page
             'hotline' => $website->hotline,
             'address' => $website->address,
             'google_maps_embed_url' => $website->google_maps_embed_url,
+            'google_maps_url' => $website->google_maps_url,
             'facebook_url' => $website->facebook_url,
             'zalo_url' => $website->zalo_url,
             'youtube_url' => $website->youtube_url,
@@ -182,6 +183,12 @@ class ManageSettings extends Page
                     TextInput::make('google_maps_embed_url')
                         ->label('Google Maps embed URL')
                         ->helperText('Dán URL từ Google Maps > Chia sẻ > Nhúng bản đồ. Nếu để trống, frontend tạo bản đồ từ địa chỉ.')
+                        ->url()
+                        ->maxLength(2048)
+                        ->columnSpanFull(),
+                    TextInput::make('google_maps_url')
+                        ->label('Google Maps link')
+                        ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ maps.app.goo.gl.')
                         ->url()
                         ->maxLength(2048)
                         ->columnSpanFull(),
@@ -458,6 +465,9 @@ class ManageSettings extends Page
 
         $website->google_maps_embed_url = filled($data['google_maps_embed_url'] ?? null)
             ? (string) $data['google_maps_embed_url']
+            : null;
+        $website->google_maps_url = filled($data['google_maps_url'] ?? null)
+            ? (string) $data['google_maps_url']
             : null;
 
         foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id'] as $key) {

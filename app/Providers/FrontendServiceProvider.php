@@ -23,6 +23,7 @@ use App\Observers\AssignNextOrderObserver;
 use App\Observers\ContentSeoFallbackObserver;
 use App\Observers\SlugObserver;
 use App\Settings\WebsiteSettings;
+use App\Support\Branding\FaviconService;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -96,6 +97,9 @@ class FrontendServiceProvider extends ServiceProvider
             ]))
             ->get()
             ->keyBy('id');
+        $faviconMedia = $website->favicon_media_id
+            ? $media->get($website->favicon_media_id)
+            : null;
 
         View::share([
             'website' => $website,
@@ -110,6 +114,7 @@ class FrontendServiceProvider extends ServiceProvider
                     'sizes' => MediaUrl::iconSizes($media),
                 ],
             ]),
+            'faviconLinks' => app(FaviconService::class)->links($faviconMedia),
             'seo' => app(FrontendSeoBuilder::class)->default(),
             'languages' => app(LanguageCatalog::class)->active(),
             'indexableLanguages' => app(LanguageCatalog::class)->indexable(),

@@ -1,6 +1,4 @@
 @php
-    $faviconId = $website->favicon_media_id ?: $website->logo_media_id;
-    $favicon = $websiteMediaIcons->get($faviconId);
     $defaultLocale = app(\App\Support\Localization\LanguageCatalog::class)->defaultCode();
 @endphp
 <meta charset="utf-8">
@@ -16,13 +14,7 @@
 <meta name="author" content="@yield('author', $website->company_name ?: $website->site_name)">
 <meta name="robots" content="@yield('robots', $seo['robots'])">
 <link rel="canonical" href="@yield('canonical', $seo['canonical'])">
-@if ($favicon)
-    <link rel="icon" type="{{ $favicon['type'] }}" sizes="{{ $favicon['sizes'] }}" href="{{ $favicon['url'] }}">
-    <link rel="shortcut icon" type="{{ $favicon['type'] }}" href="{{ $favicon['url'] }}">
-    <link rel="apple-touch-icon" sizes="{{ $favicon['sizes'] }}" href="{{ $favicon['url'] }}">
-@else
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
-@endif
+@include('partials.head.favicon')
 <meta property="og:type" content="@yield('og_type', $seo['type'])">
 <meta property="og:site_name" content="{{ $website->site_name }}">
 <meta property="og:title" content="@yield('og_title', $seo['title'])">

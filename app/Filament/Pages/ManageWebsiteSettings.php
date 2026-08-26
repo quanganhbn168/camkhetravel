@@ -57,6 +57,7 @@ class ManageWebsiteSettings extends Page
             'favicon_media_id' => $settings->favicon_media_id,
             'seo_image_media_id' => $settings->seo_image_media_id,
             'google_maps_embed_url' => $settings->google_maps_embed_url,
+            'google_maps_url' => $settings->google_maps_url,
         ]);
     }
 
@@ -93,6 +94,11 @@ class ManageWebsiteSettings extends Page
                                         TextInput::make('google_maps_embed_url')
                                             ->label('Google Maps embed URL')
                                             ->helperText('Dán URL từ Google Maps > Chia sẻ > Nhúng bản đồ. Nếu để trống, website dùng địa chỉ ở trên để tạo bản đồ.')
+                                            ->url()
+                                            ->columnSpanFull(),
+                                        TextInput::make('google_maps_url')
+                                            ->label('Google Maps link')
+                                            ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ maps.app.goo.gl.')
                                             ->url()
                                             ->columnSpanFull(),
                                     ])

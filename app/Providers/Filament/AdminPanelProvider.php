@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Settings\WebsiteSettings;
+use App\Support\Branding\FaviconService;
 use App\Support\Media\MediaUrl;
 use Awcodes\Curator\CuratorPlugin;
 use Awcodes\Curator\Models\Media;
@@ -43,19 +44,17 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('2.5rem')
             ->favicon(function (): ?string {
                 $website = app(WebsiteSettings::class);
-                $mediaId = $website->favicon_media_id ?: $website->logo_media_id;
+                $mediaId = $website->favicon_media_id;
 
-                return MediaUrl::versioned(Media::query()->find($mediaId));
+                return app(FaviconService::class)->primaryUrl(Media::query()->find($mediaId));
             })
             ->renderHook(PanelsRenderHook::HEAD_END, function (): string {
                 $website = app(WebsiteSettings::class);
-                $mediaId = $website->favicon_media_id ?: $website->logo_media_id;
+                $mediaId = $website->favicon_media_id;
                 $favicon = Media::query()->find($mediaId);
 
                 return view('filament.partials.favicon', [
-                    'faviconUrl' => MediaUrl::versioned($favicon),
-                    'faviconType' => MediaUrl::mimeType($favicon),
-                    'faviconSizes' => MediaUrl::iconSizes($favicon),
+                    'faviconLinks' => app(FaviconService::class)->links($favicon),
                 ])->render();
             })
             ->colors([

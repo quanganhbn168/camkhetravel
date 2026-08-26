@@ -28,6 +28,9 @@ class ContactController extends Controller
             'contactHeroImageUrl' => MediaUrl::versioned(
                 Media::query()->find($this->website->contact_image_media_id),
             ),
+            'googleMapsUrl' => filled($this->website->google_maps_url)
+                ? trim($this->website->google_maps_url)
+                : null,
             'seo' => $this->seo->listing(
                 'Liên hệ | '.$this->seo->siteName(),
                 'Liên hệ để trao đổi nhu cầu truyền thông, sản xuất nội dung và sự kiện.',
