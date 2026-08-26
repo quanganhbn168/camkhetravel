@@ -33,6 +33,11 @@ class ManageWebsiteSettings extends Page
 
     public ?array $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function mount(WebsiteSettings $settings): void
     {
         $this->form->fill([
@@ -51,7 +56,7 @@ class ManageWebsiteSettings extends Page
             'logo_media_id' => $settings->logo_media_id,
             'favicon_media_id' => $settings->favicon_media_id,
             'seo_image_media_id' => $settings->seo_image_media_id,
-            'contact_image_media_id' => $settings->contact_image_media_id,
+            'google_maps_embed_url' => $settings->google_maps_embed_url,
         ]);
     }
 
@@ -69,8 +74,8 @@ class ManageWebsiteSettings extends Page
                                         TextInput::make('site_name')->label('Tên website')->required()->maxLength(255)->columnSpanFull(),
                                         TextInput::make('tagline')->label('Tagline')->maxLength(255)->columnSpanFull(),
                                         TextInput::make('company_name')->label('Tên doanh nghiệp')->required()->maxLength(255),
-                                        CuratorPicker::make('logo_media_id')->label('Logo')->disk('public')->constrained(),
-                                        CuratorPicker::make('favicon_media_id')->label('Favicon')->disk('public')->constrained(),
+                                        CuratorPicker::make('logo_media_id')->label('Logo')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
+                                        CuratorPicker::make('favicon_media_id')->label('Favicon')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
                                     ])
                                     ->columns(2),
                             ]),
@@ -85,11 +90,10 @@ class ManageWebsiteSettings extends Page
                                         TextInput::make('facebook_url')->label('Facebook')->url(),
                                         TextInput::make('zalo_url')->label('Zalo')->url(),
                                         TextInput::make('youtube_url')->label('YouTube')->url(),
-                                        CuratorPicker::make('contact_image_media_id')
-                                            ->label('Ảnh phần form liên hệ')
-                                            ->helperText('Hiển thị ở cột cuối của form tư vấn trang chủ.')
-                                            ->disk('public')
-                                            ->constrained()
+                                        TextInput::make('google_maps_embed_url')
+                                            ->label('Google Maps embed URL')
+                                            ->helperText('Dán URL từ Google Maps > Chia sẻ > Nhúng bản đồ. Nếu để trống, website dùng địa chỉ ở trên để tạo bản đồ.')
+                                            ->url()
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(2),
@@ -102,7 +106,7 @@ class ManageWebsiteSettings extends Page
                                         TextInput::make('seo_title')->label('SEO title')->required()->maxLength(255)->columnSpanFull(),
                                         Textarea::make('seo_description')->label('Meta description')->rows(3)->required()->columnSpanFull(),
                                         TextInput::make('seo_keywords')->label('Từ khóa'),
-                                        CuratorPicker::make('seo_image_media_id')->label('Ảnh Open Graph mặc định')->disk('public')->constrained(),
+                                        CuratorPicker::make('seo_image_media_id')->label('Ảnh Open Graph mặc định')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
                                     ])
                                     ->columns(2),
                             ]),

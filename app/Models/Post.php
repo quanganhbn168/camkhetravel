@@ -29,6 +29,11 @@ class Post extends Model
         return $this->belongsToMany(PostCategory::class)->withPivot('sort_order');
     }
 
+    public function relatedProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class)->withTimestamps();
+    }
+
     public function legacyContent(): BelongsTo
     {
         return $this->belongsTo(ContentItem::class, 'legacy_content_item_id');

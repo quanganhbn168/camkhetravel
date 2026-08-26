@@ -21,4 +21,9 @@ class Menu extends Model
     {
         return $this->hasMany(MenuItem::class)->orderBy('position');
     }
+
+    public function topLevelItems(): HasMany
+    {
+        return $this->items()->whereNull('parent_id');
+    }
 }

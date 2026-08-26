@@ -56,14 +56,14 @@ class ContactRequestResource extends Resource
             Section::make('Thông tin khách hàng')
                 ->icon(Heroicon::OutlinedUser)
                 ->schema([
-                    TextInput::make('name')->label('Họ tên')->required(),
+                    TextInput::make('name')->label('Họ tên'),
                     TextInput::make('phone')->label('Điện thoại'),
                     TextInput::make('email')->label('Email')->email(),
                     TextInput::make('company')->label('Công ty'),
                     Select::make('landing_id')->label('Landing page quan tâm')->relationship('landing', 'title')->searchable()->preload(),
                     TextInput::make('budget')->label('Ngân sách'),
                     TextInput::make('timeline')->label('Thời gian dự kiến'),
-                    Textarea::make('message')->label('Nội dung')->rows(5)->required()->columnSpanFull(),
+                    Textarea::make('message')->label('Nội dung')->rows(5)->columnSpanFull(),
                     Select::make('status')->label('Trạng thái')->options(['new' => 'Mới', 'contacted' => 'Đã liên hệ', 'qualified' => 'Tiềm năng', 'closed' => 'Đã xử lý'])->required(),
                     DateTimePicker::make('contacted_at')->label('Đã liên hệ lúc'),
                 ])

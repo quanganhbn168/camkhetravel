@@ -15,6 +15,7 @@ use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -89,10 +90,10 @@ class ServiceResource extends Resource
                                 ->maxLength(255)
                                 ->formatStateUsing(fn (?string $state, ?Landing $record): ?string => $state ?: $record?->slug)
                                 ->columnSpanFull(),
-                            CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->columnSpanFull(),
+                            CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                             CuratorPicker::make('pricing_media_id')->label('Bảng giá dịch vụ')->relationship('pricingMedia', 'id')->disk('public')->constrained()->helperText('Ảnh hoặc PDF bảng giá. Nếu có gói giá cấu trúc, vẫn quản lý thêm tại mục Bảng giá.')->columnSpanFull(),
-                            CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->helperText('Ảnh hậu trường gắn trực tiếp với dịch vụ; hiển thị thành một phần riêng trên trang công khai.')->columnSpanFull(),
-                            CuratorPicker::make('gallery')->label('Thư viện hình ảnh')->multiple()->disk('public')->constrained()->helperText('Chọn thêm ảnh để hiển thị tại trang chi tiết.')->columnSpanFull(),
+                            CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hậu trường gắn trực tiếp với dịch vụ; hiển thị thành một phần riêng trên trang công khai.')->columnSpanFull(),
+                            CuratorPicker::make('gallery')->label('Thư viện hình ảnh')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Chọn thêm ảnh để hiển thị tại trang chi tiết.')->columnSpanFull(),
                             Select::make('backstageProjects')
                                 ->label('Dự án hậu trường')
                                 ->relationship('backstageProjects', 'title')
@@ -141,6 +142,38 @@ class ServiceResource extends Resource
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),
+                    Section::make('Câu hỏi thường gặp')
+                        ->icon(Heroicon::OutlinedQuestionMarkCircle)
+                        ->description('Chỉ hiển thị khi dịch vụ có ít nhất một câu hỏi và câu trả lời.')
+                        ->schema([
+                            TextInput::make('faq_title')
+                                ->label('Tiêu đề')
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            Textarea::make('faq_description')
+                                ->label('Mô tả ngắn')
+                                ->rows(2)
+                                ->columnSpanFull(),
+                            Repeater::make('faq_items')
+                                ->label('Danh sách câu hỏi')
+                                ->schema([
+                                    TextInput::make('question')
+                                        ->label('Câu hỏi')
+                                        ->maxLength(500)
+                                        ->columnSpanFull(),
+                                    Textarea::make('answer')
+                                        ->label('Trả lời')
+                                        ->rows(4)
+                                        ->columnSpanFull(),
+                                ])
+                                ->addActionLabel('Thêm câu hỏi')
+                                ->reorderable()
+                                ->cloneable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['question'] ?? 'Câu hỏi mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(1),
                 ])
                     ->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')

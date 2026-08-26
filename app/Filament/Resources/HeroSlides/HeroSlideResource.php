@@ -17,6 +17,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -63,14 +64,61 @@ class HeroSlideResource extends Resource
                         ->relationship('curatorMedia', 'id')
                         ->disk('public')
                         ->constrained()
+                        ->acceptedFileTypes(['image/*'])
                         ->columnSpanFull(),
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(255),
-                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')
+                        ->label('Tiêu đề')
+                        ->helperText('Để trống toàn bộ phần nội dung và nút nếu slide chỉ hiển thị ảnh.')
+                        ->maxLength(255)
+                        ->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                     TextInput::make('primary_label')->label('Nhãn nút chính')->maxLength(255),
                     TextInput::make('primary_url')->label('URL nút chính')->url()->maxLength(255),
                     TextInput::make('secondary_label')->label('Nhãn nút phụ')->maxLength(255),
                     TextInput::make('secondary_url')->label('URL nút phụ')->url()->maxLength(255),
+                ])
+                ->columns(2),
+            Section::make('Video cho slide')
+                ->icon(Heroicon::OutlinedVideoCamera)
+                ->description('Khi có video, trang chủ sẽ hiện nút Play ở giữa slide và mở video bằng GLightbox.')
+                ->schema([
+                    ToggleButtons::make('video_source')
+                        ->label('Nguồn video')
+                        ->options([
+                            'youtube' => 'Link YouTube',
+                            'upload' => 'Tải video lên',
+                        ])
+                        ->icons([
+                            'youtube' => Heroicon::OutlinedPlayCircle,
+                            'upload' => Heroicon::OutlinedArrowUpTray,
+                        ])
+                        ->colors([
+                            'youtube' => 'danger',
+                            'upload' => 'primary',
+                        ])
+                        ->live()
+                        ->inline()
+                        ->grouped()
+                        ->columnSpanFull(),
+                    TextInput::make('video_url')
+                        ->label('Link YouTube')
+                        ->helperText('Dán link video YouTube công khai; video chỉ tải khi khách bấm Play.')
+                        ->url()
+                        ->maxLength(1024)
+                        ->required(fn ($get): bool => $get('video_source') === 'youtube')
+                        ->visible(fn ($get): bool => $get('video_source') === 'youtube')
+                        ->columnSpanFull(),
+                    CuratorPicker::make('video_media_id')
+                        ->label('Video tải lên')
+                        ->relationship('videoMedia', 'id')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['video/*'])
+                        ->helperText('Ưu tiên MP4 hoặc WebM để phát tốt trên trình duyệt.')
+                        ->required(fn ($get): bool => $get('video_source') === 'upload')
+                        ->visible(fn ($get): bool => $get('video_source') === 'upload')
+                        ->columnSpanFull(),
                 ])
                 ->columns(2),
             Section::make('Bản dịch')

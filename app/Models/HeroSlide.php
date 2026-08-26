@@ -25,6 +25,11 @@ class HeroSlide extends Model
         return $this->belongsTo(Media::class, 'curator_media_id');
     }
 
+    public function videoMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'video_media_id');
+    }
+
     public function translations(): HasMany
     {
         return $this->hasMany(HeroSlideTranslation::class);

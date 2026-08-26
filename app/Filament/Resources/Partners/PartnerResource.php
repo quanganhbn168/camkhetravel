@@ -57,7 +57,8 @@ class PartnerResource extends Resource
                         ->label('Logo')
                         ->relationship('curatorMedia', 'id')
                         ->disk('public')
-                        ->constrained(),
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*']),
                     TextInput::make('name')->label('Tên đối tác')->required()->maxLength(255),
                     TextInput::make('website_url')->label('Website')->url()->maxLength(255),
                     Toggle::make('is_active')->label('Hiển thị ở marquee trang chủ')->default(true),

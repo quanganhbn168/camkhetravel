@@ -15,6 +15,7 @@ use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -94,10 +95,10 @@ class ProjectResource extends Resource
                             TextInput::make('industry')->label('Lĩnh vực'),
                             DatePicker::make('completed_at')->label('Hoàn thành'),
                             TextInput::make('video_url')->label('Video URL')->url(),
-                            CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->columnSpanFull(),
-                            CuratorPicker::make('gallery')->label('Thư viện hình ảnh')->multiple()->disk('public')->constrained()->helperText('Chọn thêm ảnh để hiển thị tại trang chi tiết.')->columnSpanFull(),
+                            CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                            CuratorPicker::make('gallery')->label('Thư viện hình ảnh')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Chọn thêm ảnh để hiển thị tại trang chi tiết.')->columnSpanFull(),
                             Textarea::make('excerpt')
-                                ->label('Mô tả ngắn')
+                                ->label('Mô tả dự án')
                                 ->rows(3)
                                 ->live(onBlur: true)
                                 ->afterStateUpdated(function (?string $state, $get, $set): void {
@@ -128,6 +129,60 @@ class ProjectResource extends Resource
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),
+                    Section::make('Câu hỏi thường gặp')
+                        ->icon(Heroicon::OutlinedQuestionMarkCircle)
+                        ->description('Chỉ hiển thị tại chi tiết dự án khi có ít nhất một câu hỏi và câu trả lời.')
+                        ->schema([
+                            TextInput::make('faq_title')
+                                ->label('Tiêu đề')
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            Textarea::make('faq_description')
+                                ->label('Mô tả ngắn')
+                                ->rows(2)
+                                ->columnSpanFull(),
+                            Repeater::make('faq_items')
+                                ->label('Danh sách câu hỏi')
+                                ->schema([
+                                    TextInput::make('question')
+                                        ->label('Câu hỏi')
+                                        ->maxLength(500)
+                                        ->columnSpanFull(),
+                                    Textarea::make('answer')
+                                        ->label('Trả lời')
+                                        ->rows(4)
+                                        ->columnSpanFull(),
+                                ])
+                                ->addActionLabel('Thêm câu hỏi')
+                                ->reorderable()
+                                ->cloneable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['question'] ?? 'Câu hỏi mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(1),
+                    Section::make('Nội dung liên quan')
+                        ->icon(Heroicon::OutlinedLink)
+                        ->description('Chọn dịch vụ và bài viết cần hiển thị tại chi tiết dự án.')
+                        ->schema([
+                            Select::make('backstageLandings')
+                                ->label('Dịch vụ liên quan')
+                                ->relationship('backstageLandings', 'title')
+                                ->multiple()
+                                ->searchable()
+                                ->preload()
+                                ->helperText('Chỉ dịch vụ đã xuất bản mới hiển thị ở trang ngoài.')
+                                ->columnSpanFull(),
+                            Select::make('relatedPosts')
+                                ->label('Bài viết liên quan')
+                                ->relationship('relatedPosts', 'title')
+                                ->multiple()
+                                ->searchable()
+                                ->preload()
+                                ->helperText('Chỉ bài viết đã xuất bản mới hiển thị ở trang ngoài.')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(1),
                 ])
                     ->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')

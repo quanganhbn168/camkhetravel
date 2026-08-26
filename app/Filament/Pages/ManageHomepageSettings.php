@@ -7,6 +7,7 @@ use App\Settings\HomepageSettings;
 use App\Support\Localization\LanguageCatalog;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -34,11 +35,19 @@ class ManageHomepageSettings extends Page
 
     public ?array $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function mount(HomepageSettings $settings): void
     {
         $this->form->fill([
             'consultation_title' => $settings->consultation_title,
             'consultation_content' => $settings->consultation_content,
+            'faq_title' => $settings->faq_title,
+            'faq_description' => $settings->faq_description,
+            'faq_items' => $settings->faq_items,
         ]);
     }
 
@@ -65,6 +74,35 @@ class ManageHomepageSettings extends Page
                     ->schema([
                         TextInput::make("consultation_title.{$locale}")->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
                         Textarea::make("consultation_content.{$locale}")->label('Nội dung')->rows(3)->columnSpanFull(),
+                    ]),
+                Section::make('Câu hỏi thường gặp')
+                    ->schema([
+                        TextInput::make("faq_title.{$locale}")
+                            ->label('Tiêu đề')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Textarea::make("faq_description.{$locale}")
+                            ->label('Mô tả ngắn')
+                            ->rows(2)
+                            ->columnSpanFull(),
+                        Repeater::make('faq_items')
+                            ->label('Danh sách câu hỏi')
+                            ->schema([
+                                TextInput::make("question.{$locale}")
+                                    ->label('Câu hỏi')
+                                    ->maxLength(500)
+                                    ->columnSpanFull(),
+                                Textarea::make("answer.{$locale}")
+                                    ->label('Trả lời')
+                                    ->rows(4)
+                                    ->columnSpanFull(),
+                            ])
+                            ->addActionLabel('Thêm câu hỏi')
+                            ->reorderable()
+                            ->cloneable()
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): ?string => $state['question'][$locale] ?? 'Câu hỏi mới')
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

@@ -35,12 +35,18 @@ class HomeController extends Controller
             ->active()
             ->with([
                 'curatorMedia',
+                'videoMedia',
                 'translations' => fn ($query) => $query->where('locale', app()->getLocale()),
             ])
             ->orderBy('sort_order')
             ->get()
             ->map(function (HeroSlide $slide, int $index): array {
                 $content = $slide->contentFor(app()->getLocale());
+                $videoUrl = match ($slide->video_source) {
+                    'youtube' => $this->youtubeUrl($slide->video_url),
+                    'upload' => $slide->videoMedia?->url,
+                    default => null,
+                };
                 $secondaryFallback = match ($index) {
                     0 => LocalizedUrl::route('projects.index'),
                     1 => LocalizedUrl::route('about'),
@@ -49,9 +55,17 @@ class HomeController extends Controller
 
                 return [
                     ...$content,
+                    'has_primary_cta' => filled($content['primary_label']),
+                    'has_secondary_cta' => filled($content['secondary_label']),
+                    'has_content' => filled($content['title'])
+                        || filled($content['description'])
+                        || filled($content['primary_label'])
+                        || filled($content['secondary_label']),
                     'primary_url' => $content['primary_url'] ?: LocalizedUrl::route('contact'),
                     'secondary_url' => $content['secondary_url'] ?: $secondaryFallback,
                     'image_url' => $slide->curatorMedia?->url,
+                    'video_url' => $videoUrl,
+                    'video_source' => $videoUrl ? $slide->video_source : null,
                 ];
             });
 
@@ -92,22 +106,20 @@ class HomeController extends Controller
         $aboutImageUrl = $this->website->about_image_media_id
             ? Media::query()->find($this->website->about_image_media_id)?->url
             : null;
-        $contactImageUrl = $this->website->contact_image_media_id
-            ? Media::query()->find($this->website->contact_image_media_id)?->url
-            : null;
+        $googleMapsEmbedUrl = filled($this->website->google_maps_embed_url)
+            ? trim($this->website->google_maps_embed_url)
+            : (filled($this->website->address)
+                ? 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed'
+                : null);
+        $stats = $this->stats($projectCategories);
 
-        return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'contactImageUrl') + [
+        return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'googleMapsEmbedUrl') + [
             'marqueePartners' => Partner::query()
                 ->active()
                 ->with('curatorMedia')
                 ->orderBy('sort_order')
                 ->get(),
-            'stats' => [
-                ['value' => Project::query()->published()->count(), 'label' => 'dự án đã xuất bản'],
-                ['value' => Landing::query()->published()->count(), 'label' => 'hạng mục dịch vụ'],
-                ['value' => Post::query()->published()->count(), 'label' => 'bài viết và góc nhìn'],
-                ['value' => $projectCategories->count(), 'label' => 'nhóm dự án'],
-            ],
+            'stats' => $stats,
             'about' => [
                 'eyebrow' => $this->translated($this->homepage->about_eyebrow),
                 'title' => $this->translated($this->homepage->about_title),
@@ -115,10 +127,6 @@ class HomeController extends Controller
             ],
             'commitments' => $this->lines($this->homepage->commitments),
             'capabilities' => $this->lines($this->homepage->capabilities),
-            'consultation' => [
-                'title' => $this->translated($this->homepage->consultation_title),
-                'content' => $this->translated($this->homepage->consultation_content),
-            ],
             'testimonials' => Testimonial::query()
                 ->active()
                 ->with('curatorMedia')
@@ -155,6 +163,45 @@ class HomeController extends Controller
         )))->filter(fn (array $tab): bool => $tab['primary'] !== null)->values();
     }
 
+    private function stats(Collection $projectCategories): Collection
+    {
+        $configuredStats = collect($this->homepage->stats ?? [])
+            ->filter(fn (mixed $stat): bool => is_array($stat)
+                && filled($stat['value'] ?? null)
+                && filled($stat['label'] ?? null))
+            ->take(4)
+            ->map(fn (array $stat): array => $this->stat($stat));
+
+        if ($configuredStats->isNotEmpty()) {
+            return $configuredStats->values();
+        }
+
+        return collect([
+            ['value' => (string) Project::query()->published()->count(), 'label' => 'dự án đã xuất bản'],
+            ['value' => (string) Landing::query()->published()->count(), 'label' => 'hạng mục dịch vụ'],
+            ['value' => (string) Post::query()->published()->count(), 'label' => 'bài viết và góc nhìn'],
+            ['value' => (string) $projectCategories->count(), 'label' => 'nhóm dự án'],
+        ])->map(fn (array $stat): array => $this->stat($stat));
+    }
+
+    /** @param array<string, mixed> $stat */
+    private function stat(array $stat): array
+    {
+        $value = trim((string) ($stat['value'] ?? ''));
+
+        return [
+            'prefix' => (string) ($stat['prefix'] ?? ''),
+            'suffix' => (string) ($stat['suffix'] ?? ''),
+            'label' => (string) ($stat['label'] ?? ''),
+            'segments' => collect(preg_split('/(\d+)/u', $value, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY) ?: [])
+                ->map(fn (string $segment): array => [
+                    'value' => $segment,
+                    'is_number' => ctype_digit($segment),
+                ])
+                ->all(),
+        ];
+    }
+
     private function translated(array $content): string
     {
         $locale = app()->getLocale();
@@ -169,6 +216,24 @@ class HomeController extends Controller
             ->map(fn (string $line): string => trim($line))
             ->filter()
             ->values();
+    }
+
+    private function youtubeUrl(?string $url): ?string
+    {
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+
+        return in_array($host, [
+            'youtu.be',
+            'youtube.com',
+            'www.youtube.com',
+            'm.youtube.com',
+            'youtube-nocookie.com',
+            'www.youtube-nocookie.com',
+        ], true) ? $url : null;
     }
 
     private function attachImages(iterable $items): void

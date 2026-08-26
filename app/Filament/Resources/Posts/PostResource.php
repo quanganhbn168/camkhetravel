@@ -91,7 +91,7 @@ class PostResource extends Resource
                                 ->helperText('Tự tạo từ tiêu đề khi để trống; anh vẫn có thể sửa khi cần.')
                                 ->formatStateUsing(fn (?string $state, ?Post $record): ?string => $state ?: $record?->slug)
                                 ->columnSpanFull(),
-                            CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->columnSpanFull(),
+                            CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                             Textarea::make('excerpt')
                                 ->label('Mô tả ngắn')
                                 ->rows(3)

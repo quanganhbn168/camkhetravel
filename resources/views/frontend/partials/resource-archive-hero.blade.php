@@ -19,8 +19,7 @@
                 @endif
             </ol>
         </nav>
-        <p class="eyebrow mt-7 text-primary-soft">{{ $activeCategory ? $resourceName : 'Năng lực triển khai' }}</p>
-        <h1 class="mt-3 max-w-4xl font-display text-4xl leading-[1.1] tracking-[-0.045em] text-white md:text-6xl">{{ $pageTitle }}</h1>
+        <h1 class="mt-7 max-w-4xl font-display text-4xl leading-[1.1] tracking-[-0.045em] text-white md:text-6xl">{{ $pageTitle }}</h1>
         <p class="mt-5 max-w-2xl text-sm leading-7 text-white/75 md:text-base md:leading-8">{{ $pageDescription }}</p>
     </div>
 </section>

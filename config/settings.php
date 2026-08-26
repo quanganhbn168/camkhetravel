@@ -8,6 +8,10 @@ return [
      */
     'settings' => [
         App\Settings\WebsiteSettings::class,
+        App\Settings\HomepageSettings::class,
+        App\Settings\CompanySettings::class,
+        App\Settings\AboutSettings::class,
+        App\Settings\DesignSettings::class,
     ],
 
     /*

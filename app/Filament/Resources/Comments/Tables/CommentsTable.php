@@ -26,6 +26,7 @@ class CommentsTable
                 TextColumn::make('commentable.title')->label('Nội dung')->searchable()->wrap()->limit(45),
                 TextColumn::make('author_name')->label('Người gửi')->searchable()->sortable(),
                 TextColumn::make('author_email')->label('Email')->searchable()->toggleable(),
+                TextColumn::make('rating')->label('Đánh giá')->formatStateUsing(fn (?int $state): string => $state ? $state.'/5' : '—')->sortable(),
                 TextColumn::make('body')->label('Bình luận')->wrap()->lineClamp(2)->limit(80),
                 TextColumn::make('status')
                     ->label('Trạng thái')

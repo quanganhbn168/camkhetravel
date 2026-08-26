@@ -11,7 +11,7 @@ importers:
       '@fontsource/be-vietnam-pro':
         specifier: ^5.3.0
         version: 5.3.0
-      '@fontsource/lora':
+      '@fontsource/inter':
         specifier: ^5.3.0
         version: 5.3.0
       '@fortawesome/fontawesome-free':
@@ -23,6 +23,9 @@ importers:
       aos:
         specifier: ^2.3.4
         version: 2.3.4
+      glightbox:
+        specifier: ^3.3.1
+        version: 3.3.1
       swiper:
         specifier: ^14.1.0
         version: 14.1.0
@@ -207,8 +210,8 @@ packages:
   '@fontsource/be-vietnam-pro@5.3.0':
     resolution: {integrity: sha512-xhAQBGHDxP5BF8IJxedy5MoWUmc1DlPCcZbMLhvnPkf8TaYCbbUVs3LjpuJ4BYdTrdiCLaewNaY8z+owq/FqFw==}
 
-  '@fontsource/lora@5.3.0':
-    resolution: {integrity: sha512-OK1g1z01rHVPqO5aw/FOIoDqc46KKYZdgL3NOLkxLWDk6QhDHhdr/h2BV1cke6gTvR1tzpDfdKyUkGsC+sQLeQ==}
+  '@fontsource/inter@5.3.0':
+    resolution: {integrity: sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==}
 
   '@fortawesome/fontawesome-free@7.3.1':
     resolution: {integrity: sha512-wmglKKPDIkgV3aWlZzWECCPoGIkYCulzBwxG9+w7rc5BGapZ6cPMpoPOT8k36J0Ni7PPX6c/rsoMWfS4d1MUMg==}
@@ -628,6 +631,9 @@ packages:
     resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
     engines: {node: '>= 0.4'}
 
+  glightbox@3.3.1:
+    resolution: {integrity: sha512-nXoKfJRnQTDaAFAw5799hjpfAAHx5aLvOLG0SIGudeMCwtHgO3P2/avNYapJ+SL4UEZxO2YNBPtq6pzMhSx42g==}
+
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
@@ -991,7 +997,7 @@ snapshots:
 
   '@fontsource/be-vietnam-pro@5.3.0': {}
 
-  '@fontsource/lora@5.3.0': {}
+  '@fontsource/inter@5.3.0': {}
 
   '@fortawesome/fontawesome-free@7.3.1': {}
 
@@ -1344,6 +1350,8 @@ snapshots:
     dependencies:
       dunder-proto: 1.0.1
       es-object-atoms: 1.1.2
+
+  glightbox@3.3.1: {}
 
   gopd@1.2.0: {}
 

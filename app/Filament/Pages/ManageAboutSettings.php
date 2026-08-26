@@ -36,6 +36,11 @@ class ManageAboutSettings extends Page
 
     public ?array $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function mount(HomepageSettings $homepage, WebsiteSettings $website): void
     {
         $this->form->fill([
@@ -71,7 +76,8 @@ class ManageAboutSettings extends Page
                                         CuratorPicker::make('about_image_media_id')
                                             ->label('Ảnh giới thiệu')
                                             ->disk('public')
-                                            ->constrained(),
+                                            ->constrained()
+                                            ->acceptedFileTypes(['image/*']),
                                         CuratorPicker::make('company_profile_media_id')
                                             ->label('Tệp hồ sơ năng lực')
                                             ->disk('public')

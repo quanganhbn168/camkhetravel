@@ -15,7 +15,7 @@
         </a>
         <div class="flex flex-1 flex-col p-6">
             @if ($post->published_at)<time class="text-xs font-medium text-slate-500" datetime="{{ $post->published_at->toDateString() }}">{{ $post->published_at->translatedFormat('d/m/Y') }}</time>@endif
-            <h3 class="display-title mt-3 text-2xl leading-tight"><a class="hover:text-primary" href="{{ LocalizedUrl::post($post) }}">{{ $post->title }}</a></h3>
+            <h3 class="display-title mt-3 text-xl leading-tight"><a class="hover:text-primary" href="{{ LocalizedUrl::post($post) }}">{{ $post->title }}</a></h3>
             @if ($post->excerpt)<p class="mt-4 line-clamp-3 text-sm leading-7 text-slate-500">{{ $post->excerpt }}</p>@endif
             <a class="section-link mt-auto pt-7" href="{{ LocalizedUrl::post($post) }}">{{ __('site.read_more') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </div>

@@ -19,8 +19,7 @@
         <section class="section-space">
             <div class="site-shell grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_17.75rem] lg:gap-9">
                 <div class="min-w-0">
-                    @if ($activeCategory)<p class="eyebrow">{{ $activeCategory->name }}</p>@endif
-                    <h1 class="display-title mt-3 max-w-4xl text-3xl leading-[1.18] md:text-4xl">{{ $post->title }}</h1>
+                    <h1 class="display-title max-w-4xl text-3xl leading-[1.18] md:text-4xl">{{ $post->title }}</h1>
                     <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-slate-500">
                         @if ($post->published_at)<time class="inline-flex items-center gap-2" datetime="{{ $post->published_at->toDateString() }}"><i class="fa-regular fa-calendar-days text-primary" aria-hidden="true"></i>{{ $post->published_at->translatedFormat('d/m/Y') }}</time>@endif
                         <span class="inline-flex items-center gap-2"><i class="fa-regular fa-user text-primary" aria-hidden="true"></i>{{ $website->company_name ?: $website->site_name }}</span>

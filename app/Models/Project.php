@@ -20,6 +20,7 @@ class Project extends Model
     {
         return [
             'gallery' => 'array',
+            'faq_items' => 'array',
             'is_featured' => 'boolean',
             'completed_at' => 'date',
             'published_at' => 'datetime',
@@ -49,6 +50,11 @@ class Project extends Model
     public function backstageLandings(): BelongsToMany
     {
         return $this->belongsToMany(Landing::class)->withTimestamps();
+    }
+
+    public function relatedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class)->withTimestamps();
     }
 
     public function scopePublished(Builder $query): Builder

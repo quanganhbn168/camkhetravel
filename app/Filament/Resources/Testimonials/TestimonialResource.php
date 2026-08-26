@@ -58,7 +58,8 @@ class TestimonialResource extends Resource
                         ->label('Ảnh đại diện / logo')
                         ->relationship('curatorMedia', 'id')
                         ->disk('public')
-                        ->constrained(),
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*']),
                     TextInput::make('client_name')->label('Họ tên khách hàng')->required()->maxLength(255),
                     TextInput::make('client_role')->label('Chức danh')->maxLength(255),
                     TextInput::make('company_name')->label('Doanh nghiệp')->maxLength(255),

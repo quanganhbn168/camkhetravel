@@ -56,6 +56,7 @@ class ServiceController extends Controller
             'curatorMedia',
             'legacyMedia',
             'pricingMedia',
+            'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
             'backstageProjects' => fn ($query) => $query
                 ->published()
                 ->with(['category', 'curatorMedia', 'legacyMedia'])
@@ -72,6 +73,28 @@ class ServiceController extends Controller
             ->orderBy('sort_order')
             ->limit(3)
             ->get());
+        if ($relatedServices->isEmpty()) {
+            $relatedServices = $this->withImages(Landing::query()
+                ->published()
+                ->whereKeyNot($service->id)
+                ->with(['category', 'curatorMedia', 'legacyMedia'])
+                ->orderByDesc('is_featured')
+                ->orderBy('sort_order')
+                ->limit(3)
+                ->get());
+        }
+        $backstageGalleryImages = $this->galleryImages($service->backstage_gallery);
+        $galleryImages = $this->galleryImages($service->gallery);
+        $faqItems = collect($service->faq_items ?? [])
+            ->map(fn (mixed $item): array => [
+                'question' => trim((string) (is_array($item) ? ($item['question'] ?? '') : '')),
+                'answer' => trim((string) (is_array($item) ? ($item['answer'] ?? '') : '')),
+            ])
+            ->filter(fn (array $item): bool => $item['question'] !== '' && $item['answer'] !== '')
+            ->values();
+        $ratedComments = $service->approvedComments
+            ->filter(fn ($comment): bool => $comment->rating !== null)
+            ->values();
 
         return view('frontend.services.show', compact('service') + [
             'relatedServices' => $relatedServices,
@@ -83,8 +106,12 @@ class ServiceController extends Controller
             'introMediaUrl' => $service->pricingMedia?->url ?: $service->image_url,
             'introMediaIsPrice' => $service->pricingMedia !== null,
             'referenceVideos' => $this->referenceVideos($service->legacyContent),
-            'backstageGalleryImages' => $this->galleryImages($service->backstage_gallery),
-            'galleryImages' => $this->galleryImages($service->gallery),
+            'referenceImages' => array_values(array_unique([...$galleryImages, ...$backstageGalleryImages])),
+            'faqItems' => $faqItems,
+            'ratingSummary' => [
+                'count' => $ratedComments->count(),
+                'average' => $ratedComments->isNotEmpty() ? round((float) $ratedComments->avg('rating'), 1) : null,
+            ],
             'serviceVideoUrl' => null,
             'seo' => $this->seo->landing($service),
         ]);
@@ -131,13 +158,30 @@ class ServiceController extends Controller
             ->orderBy('sort_order')
             ->first();
 
-        return [
-            'activeCategory' => $activeCategory,
-            'categories' => LandingCategory::query()
+        $categories = $activeCategory
+            ? collect()
+            : LandingCategory::query()
                 ->where('is_active', true)
                 ->withCount(['landings' => fn (Builder $query) => $query->published()])
+                ->with(['landings' => fn ($query) => $query
+                    ->published()
+                    ->with(['curatorMedia', 'legacyMedia'])
+                    ->orderByDesc('is_featured')
+                    ->orderBy('sort_order')])
                 ->orderBy('sort_order')
-                ->get(),
+                ->get();
+
+        $categories->each(function (LandingCategory $category): void {
+            $featuredService = $category->landings->first();
+
+            $category->setAttribute('image_url', $featuredService
+                ? MediaUrl::resolve($featuredService->curatorMedia, $featuredService->legacyMedia)
+                : null);
+        });
+
+        return [
+            'activeCategory' => $activeCategory,
+            'categories' => $categories,
             'services' => $services,
             'heroImageUrl' => $heroService ? MediaUrl::resolve($heroService->curatorMedia, $heroService->legacyMedia) : null,
             'pageTitle' => $activeCategory?->name ?? 'Dịch vụ',

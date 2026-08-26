@@ -50,7 +50,20 @@ class ProjectController extends Controller
     {
         abort_unless($project->status === 'published' && (! $project->published_at || $project->published_at->isPast()), 404);
 
-        $project->load(['category', 'curatorMedia', 'legacyMedia']);
+        $project->load([
+            'category',
+            'curatorMedia',
+            'legacyMedia',
+            'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
+            'backstageLandings' => fn ($query) => $query
+                ->published()
+                ->with(['category', 'curatorMedia', 'legacyMedia'])
+                ->orderByDesc('published_at'),
+            'relatedPosts' => fn ($query) => $query
+                ->published()
+                ->with(['categories', 'curatorMedia', 'legacyMedia'])
+                ->orderByDesc('published_at'),
+        ]);
         $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia, $project->legacyMedia));
         $project->setAttribute('body_html', $this->mediaUrlMapper->absoluteLocalMediaUrls((string) $project->body));
         $relatedProjects = $this->withImages(Project::query()
@@ -62,11 +75,28 @@ class ProjectController extends Controller
             ->orderByDesc('published_at')
             ->limit(3)
             ->get());
+        $faqItems = collect($project->faq_items ?? [])
+            ->map(fn (mixed $item): array => [
+                'question' => trim((string) (is_array($item) ? ($item['question'] ?? '') : '')),
+                'answer' => trim((string) (is_array($item) ? ($item['answer'] ?? '') : '')),
+            ])
+            ->filter(fn (array $item): bool => $item['question'] !== '' && $item['answer'] !== '')
+            ->values();
+        $ratedComments = $project->approvedComments
+            ->filter(fn ($comment): bool => $comment->rating !== null)
+            ->values();
 
         return view('frontend.projects.show', compact('project') + [
             'relatedProjects' => $relatedProjects,
+            'relatedServices' => $this->withImages($project->backstageLandings),
+            'relatedPosts' => $this->withImages($project->relatedPosts),
             'galleryImages' => $this->galleryImages($project->gallery),
             'projectVideoUrl' => filter_var($project->video_url, FILTER_VALIDATE_URL) ? $project->video_url : null,
+            'faqItems' => $faqItems,
+            'ratingSummary' => [
+                'count' => $ratedComments->count(),
+                'average' => $ratedComments->isNotEmpty() ? round((float) $ratedComments->avg('rating'), 1) : null,
+            ],
             'seo' => $this->seo->project($project),
         ]);
     }

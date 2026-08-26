@@ -22,6 +22,7 @@ class Landing extends Model
         return [
             'gallery' => 'array',
             'backstage_gallery' => 'array',
+            'faq_items' => 'array',
             'is_featured' => 'boolean',
             'published_at' => 'datetime',
         ];

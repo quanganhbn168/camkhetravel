@@ -31,6 +31,11 @@ class ManageDesignSettings extends Page
 
     public ?array $data = [];
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public function mount(DesignSettings $settings): void
     {
         $this->form->fill([

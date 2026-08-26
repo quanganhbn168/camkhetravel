@@ -42,6 +42,12 @@ class WebsiteSettings extends Settings
 
     public ?int $contact_image_media_id = null;
 
+    public ?int $header_menu_id = null;
+
+    public ?int $footer_menu_id = null;
+
+    public ?string $google_maps_embed_url = null;
+
     public static function group(): string
     {
         return 'website';

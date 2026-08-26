@@ -6,8 +6,7 @@
     <section class="relative isolate overflow-hidden bg-ink py-18 text-white md:py-26">
         <div class="absolute top-[-10rem] right-[8%] -z-10 size-96 rounded-full bg-primary/15 blur-3xl"></div>
         <div class="site-shell text-center">
-            <p class="eyebrow text-primary-soft">{{ __('site.pricing') }}</p>
-            <h1 class="font-display mx-auto mt-5 max-w-3xl text-4xl leading-tight tracking-[-0.045em] md:text-5xl">{{ $selectedService ? 'Bảng giá '.$selectedService->title : 'Mức đầu tư rõ ràng cho từng mục tiêu truyền thông.' }}</h1>
+            <h1 class="font-display mx-auto max-w-3xl text-4xl leading-tight tracking-[-0.045em] md:text-5xl">{{ $selectedService ? 'Bảng giá '.$selectedService->title : 'Mức đầu tư rõ ràng cho từng mục tiêu truyền thông.' }}</h1>
             <p class="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">{{ $selectedService ? 'Các gói và mức đầu tư tham khảo cho dịch vụ này.' : 'Các gói dưới đây là mức tham khảo. THT Media sẽ điều chỉnh phạm vi và báo giá khi đã hiểu đúng nhu cầu thực tế của anh/chị.' }}</p>
             @if ($selectedService)
                 <a class="mt-6 inline-flex text-sm font-semibold text-primary-soft hover:text-white" href="{{ LocalizedUrl::route('pricing.index') }}">Xem toàn bộ bảng giá <span class="ml-2" aria-hidden="true">→</span></a>
@@ -21,7 +20,7 @@
                 @if ($loop->first)<div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">@endif
                 <article class="relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border p-7 {{ $plan->is_featured ? 'border-ink bg-ink text-white shadow-[0_24px_60px_rgba(31,43,37,0.18)]' : 'border-slate-200 bg-white text-ink' }}" id="bang-gia-{{ $plan->id }}">
                     @if ($plan->badge)<span class="mb-6 w-fit rounded-full px-3 py-1 text-[0.68rem] font-bold tracking-[0.12em] uppercase {{ $plan->is_featured ? 'bg-primary text-white' : 'bg-sand text-accent' }}">{{ $plan->badge }}</span>@endif
-                    @if ($plan->landing)<a class="eyebrow {{ $plan->is_featured ? 'text-primary-soft hover:text-white' : 'hover:text-ink' }}" href="{{ LocalizedUrl::slug($plan->landing->slug) }}">{{ $plan->landing->title }}</a>@endif
+                    @if ($plan->landing)<a class="text-sm font-semibold {{ $plan->is_featured ? 'text-primary-soft hover:text-white' : 'text-accent hover:text-ink' }}" href="{{ LocalizedUrl::slug($plan->landing->slug) }}">{{ $plan->landing->title }}</a>@endif
                     <h2 class="font-display mt-3 text-3xl leading-tight">{{ $plan->name }}</h2>
                     @if ($plan->description)<p class="mt-4 text-sm leading-7 {{ $plan->is_featured ? 'text-slate-300' : 'text-slate-500' }}">{{ $plan->description }}</p>@endif
                     <div class="mt-8 border-y py-6 {{ $plan->is_featured ? 'border-white/15' : 'border-slate-200' }}">

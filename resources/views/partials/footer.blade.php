@@ -42,12 +42,27 @@
         <div>
             <h2 class="text-sm font-bold text-white uppercase">Liên kết nhanh</h2>
             <div class="mt-5 grid gap-3 text-sm">
-                <a class="hover:text-white" href="{{ LocalizedUrl::route('home') }}">{{ __('site.home') }}</a>
-                <a class="hover:text-white" href="{{ LocalizedUrl::route('about') }}">{{ __('site.about') }}</a>
-                <a class="hover:text-white" href="{{ LocalizedUrl::route('projects.index') }}">{{ __('site.projects') }}</a>
-                <a class="hover:text-white" href="{{ LocalizedUrl::route('pricing.index') }}">{{ __('site.pricing') }}</a>
-                <a class="hover:text-white" href="{{ LocalizedUrl::route('posts.index') }}">{{ __('site.news') }}</a>
-                <a class="hover:text-white" href="{{ LocalizedUrl::route('contact') }}">{{ __('site.contact') }}</a>
+                @if ($footerNavigation->isNotEmpty())
+                    @foreach ($footerNavigation as $item)
+                        <div class="grid gap-2">
+                            <a class="hover:text-white" href="{{ $item['url'] }}" @if ($item['target'] === '_blank') target="_blank" rel="noopener noreferrer" @endif>{{ $item['label'] }}</a>
+                            @if ($item['has_children'])
+                                <div class="grid gap-2 border-l border-white/10 pl-3 text-xs text-slate-400">
+                                    @foreach ($item['children'] as $child)
+                                        <a class="hover:text-white" href="{{ $child['url'] }}" @if ($child['target'] === '_blank') target="_blank" rel="noopener noreferrer" @endif>{{ $child['label'] }}</a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                @else
+                    <a class="hover:text-white" href="{{ LocalizedUrl::route('home') }}">{{ __('site.home') }}</a>
+                    <a class="hover:text-white" href="{{ LocalizedUrl::route('about') }}">{{ __('site.about') }}</a>
+                    <a class="hover:text-white" href="{{ LocalizedUrl::route('projects.index') }}">{{ __('site.projects') }}</a>
+                    <a class="hover:text-white" href="{{ LocalizedUrl::route('pricing.index') }}">{{ __('site.pricing') }}</a>
+                    <a class="hover:text-white" href="{{ LocalizedUrl::route('posts.index') }}">{{ __('site.news') }}</a>
+                    <a class="hover:text-white" href="{{ LocalizedUrl::route('contact') }}">{{ __('site.contact') }}</a>
+                @endif
             </div>
         </div>
 

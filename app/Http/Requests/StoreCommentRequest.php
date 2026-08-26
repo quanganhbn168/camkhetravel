@@ -16,6 +16,7 @@ class StoreCommentRequest extends FormRequest
         return [
             'author_name' => ['required', 'string', 'max:120'],
             'author_email' => ['nullable', 'email', 'max:255'],
+            'rating' => ['nullable', 'integer', 'between:1,5'],
             'body' => ['required', 'string', 'min:5', 'max:3000'],
         ];
     }
@@ -25,6 +26,7 @@ class StoreCommentRequest extends FormRequest
         return [
             'author_name' => 'họ tên',
             'author_email' => 'email',
+            'rating' => 'đánh giá',
             'body' => 'bình luận',
         ];
     }

@@ -12,6 +12,7 @@ use App\Support\Seo\FrontendSeoBuilder;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -133,9 +134,9 @@ class PostController extends Controller
         ]);
     }
 
-    public function showBySlug(string $slug): View
+    public function showBySlug(string $slug): RedirectResponse
     {
-        return $this->show($this->postForSlug($slug));
+        return redirect()->to(LocalizedUrl::post($this->postForSlug($slug)), 301);
     }
 
     public function categoryBySlug(string $slug): View

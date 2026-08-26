@@ -3,12 +3,31 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
-    <section class="bg-midnight py-18 text-white md:py-26">
-        <div class="narrow-shell"><p class="eyebrow text-primary-soft mb-5">{{ __('site.contact') }}</p><h1 class="font-display text-4xl leading-tight tracking-[-0.045em] md:text-6xl">Hãy bắt đầu bằng một cuộc trò chuyện.</h1><p class="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">Chia sẻ nhu cầu của bạn, THT Media sẽ liên hệ để tư vấn hướng triển khai phù hợp.</p></div>
+    <section class="contact-page-hero">
+        @if ($contactHeroImageUrl)
+            <img class="contact-page-hero__image" src="{{ $contactHeroImageUrl }}" alt="" aria-hidden="true">
+        @endif
+        <div class="contact-page-hero__overlay"></div>
+        <div class="site-shell contact-page-hero__content">
+            <h1>LIÊN HỆ</h1>
+        </div>
     </section>
     <section class="section-space">
         <div class="site-shell grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12">
-            <aside class="rounded-[2rem] bg-ink p-8 text-white md:p-10"><p class="eyebrow text-primary-soft mb-6">THT Media</p><h2 class="font-display text-3xl leading-tight">Thông tin kết nối</h2><div class="mt-10 grid gap-4">@if ($website->hotline)<a class="text-primary-soft text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>@endif @if ($website->contact_email)<a class="text-sm text-slate-300 hover:text-white" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a>@endif @if ($website->address)<p class="mt-5 border-t border-white/15 pt-5 text-sm leading-7 text-slate-400">{{ $website->address }}</p>@endif</div></aside>
+            <aside class="p-8 md:p-10">
+                <h2 class="font-display text-3xl leading-tight text-ink">Thông tin kết nối</h2>
+                <div class="mt-10 grid gap-4">
+                    @if ($website->hotline)
+                        <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>
+                    @endif
+                    @if ($website->contact_email)
+                        <a class="text-sm text-slate-500 hover:text-ink" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a>
+                    @endif
+                    @if ($website->address)
+                        <p class="mt-5 border-t border-slate-200 pt-5 text-sm leading-7 text-slate-600">{{ $website->address }}</p>
+                    @endif
+                </div>
+            </aside>
             <form class="rounded-[2rem] border border-slate-200 p-6 shadow-[0_16px_40px_rgba(16,35,62,0.06)] md:p-10" method="POST" action="{{ LocalizedUrl::route('contact.store') }}">
                 @csrf
                 <div class="grid gap-5 md:grid-cols-2">

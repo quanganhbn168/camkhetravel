@@ -7,6 +7,8 @@ use App\Models\HeroSlide;
 use App\Models\Language;
 use App\Models\Landing;
 use App\Models\LandingCategory;
+use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Models\Partner;
 use App\Models\Post;
 use App\Models\PostCategory;
@@ -27,10 +29,10 @@ use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as BladeView;
 
@@ -113,36 +115,102 @@ class FrontendServiceProvider extends ServiceProvider
             'indexableLanguages' => app(LanguageCatalog::class)->indexable(),
         ]);
 
-        View::composer('partials.footer', function (BladeView $view): void {
+        View::composer('partials.footer', function (BladeView $view) use ($website): void {
+            $footerMenu = Menu::query()
+                ->where('is_active', true)
+                ->with('items')
+                ->when(
+                    filled($website->footer_menu_id),
+                    fn (Builder $query) => $query->whereKey($website->footer_menu_id),
+                    fn (Builder $query) => $query->where('source', 'native')->where('location', 'footer'),
+                )
+                ->first();
+
             $view->with('footerServices', Landing::query()
                 ->published()
                 ->with('slugs')
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
                 ->limit(4)
-                ->get(['id', 'title']));
+                ->get(['id', 'title']))
+                ->with('footerNavigation', $footerMenu?->items
+                    ->whereNull('parent_id')
+                    ->map(fn (MenuItem $item): array => $this->menuItemData($item, $footerMenu->items))
+                    ->values()
+                    ?? collect());
         });
 
-        View::composer('partials.header', function (BladeView $view): void {
-            $megaServiceCategories = LandingCategory::query()
+        View::composer('partials.header', function (BladeView $view) use ($media, $website): void {
+            $headerMenu = Menu::query()
                 ->where('is_active', true)
-                ->whereHas('landings', fn (Builder $query) => $query->published())
-                ->with([
-                    'landings' => fn (HasMany $query) => $query
-                        ->published()
-                        ->with('slugs')
-                        ->orderByDesc('is_featured')
-                        ->orderBy('sort_order')
-                        ->orderBy('title'),
-                ])
-                ->orderBy('sort_order')
-                ->get()
-                ->each(fn (LandingCategory $category) => $category->setRelation(
-                    'landings',
-                    $category->landings->take(12)->values(),
-                ));
+                ->with('items')
+                ->when(
+                    filled($website->header_menu_id),
+                    fn (Builder $query) => $query->whereKey($website->header_menu_id),
+                    fn (Builder $query) => $query->where('source', 'native')->where('location', 'header'),
+                )
+                ->first();
+            $requestPath = trim(request()->path(), '/');
 
-            $view->with('megaServiceCategories', $megaServiceCategories);
+            if (app()->getLocale() !== app(LanguageCatalog::class)->defaultCode()) {
+                $requestPath = preg_replace('#^'.preg_quote(app()->getLocale(), '#').'(?:/|$)#', '', $requestPath) ?? $requestPath;
+            }
+
+            $applicationHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+
+            $headerNavigation = $headerMenu?->items
+                ->whereNull('parent_id')
+                ->map(fn (MenuItem $item): array => $this->menuItemData(
+                    item: $item,
+                    allItems: $headerMenu->items,
+                    requestPath: $requestPath,
+                    applicationHost: $applicationHost,
+                ))
+                ->values()
+                ?? collect();
+
+            $view->with([
+                'headerLogoUrl' => MediaUrl::versioned($media->get($website->logo_media_id)),
+                'headerNavigation' => $headerNavigation,
+            ]);
         });
+    }
+
+    /** @return array{label: string, url: string, target: string, is_active: bool, home: bool, has_children: bool, children: Collection<int, array<string, mixed>>} */
+    private function menuItemData(
+        MenuItem $item,
+        Collection $allItems,
+        string $requestPath = '',
+        ?string $applicationHost = null,
+    ): array {
+        $link = $item->link;
+        $linkHost = parse_url($link, PHP_URL_HOST);
+        $isInternalLink = $applicationHost !== null
+            && $link !== '#'
+            && ($linkHost === null || $linkHost === $applicationHost);
+        $path = trim((string) parse_url($link, PHP_URL_PATH), '/');
+        $isHome = false;
+        $isActive = $isInternalLink
+            && $path !== ''
+            && ($requestPath === $path || str_starts_with($requestPath, $path.'/'));
+        $children = $allItems
+            ->where('parent_id', $item->getKey())
+            ->map(fn (MenuItem $child): array => $this->menuItemData(
+                item: $child,
+                allItems: $allItems,
+                requestPath: $requestPath,
+                applicationHost: $applicationHost,
+            ))
+            ->values();
+
+        return [
+            'label' => $item->label,
+            'url' => $link,
+            'target' => $item->target ?: '_self',
+            'is_active' => $isActive || $children->contains('is_active', true),
+            'home' => $isHome,
+            'has_children' => $children->isNotEmpty(),
+            'children' => $children,
+        ];
     }
 }

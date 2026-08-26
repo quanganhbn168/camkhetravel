@@ -71,7 +71,7 @@ class SyncLegacyContentCommand extends Command
                     'completed_at' => null,
                     'is_featured' => false,
                     'sort_order' => $item->menu_order ?? 0,
-                ]),
+                ], useFullBodyAsExcerpt: true),
             );
 
             $this->syncSlug($project, $item->slug);
@@ -156,15 +156,17 @@ class SyncLegacyContentCommand extends Command
         return $term ? $categories->get($term->id) : null;
     }
 
-    private function contentAttributes(ContentItem $item, array $additional = []): array
+    private function contentAttributes(ContentItem $item, array $additional = [], bool $useFullBodyAsExcerpt = false): array
     {
+        $plainBody = trim(strip_tags((string) $item->body));
+
         return [
             'legacy_media_asset_id' => MediaAsset::query()
                 ->where('source', 'wordpress')
                 ->where('source_id', $item->featured_media_source_id)
                 ->value('id'),
             'title' => $item->title,
-            'excerpt' => $item->excerpt ?: Str::limit(trim(strip_tags((string) $item->body)), 260),
+            'excerpt' => $item->excerpt ?: ($useFullBodyAsExcerpt ? $plainBody : Str::limit($plainBody, 260)),
             'body' => $item->body,
             'status' => $item->status,
             'seo_title' => $item->seo_title,

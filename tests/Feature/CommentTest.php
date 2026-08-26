@@ -4,9 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Project;
+use App\Models\ProjectCategory;
 use App\Models\User;
 use App\Support\Localization\LocalizedUrl;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -17,6 +20,8 @@ class CommentTest extends TestCase
 
     public function test_a_visitor_can_submit_a_pending_comment_for_a_published_post(): void
     {
+        $this->withoutMiddleware(PreventRequestForgery::class);
+
         $post = Post::query()->published()->firstOrFail();
         $body = 'Bình luận kiểm thử '.Str::uuid();
         $origin = LocalizedUrl::post($post);
@@ -59,6 +64,72 @@ class CommentTest extends TestCase
         $this->get(LocalizedUrl::post($post))
             ->assertOk()
             ->assertSee('Bình luận (')
+            ->assertSee($approvedBody)
+            ->assertDontSee($pendingBody);
+    }
+
+    public function test_a_project_category_has_a_public_slug_url(): void
+    {
+        $category = ProjectCategory::query()
+            ->where('is_active', true)
+            ->whereHas('projects', fn ($query) => $query->published())
+            ->firstOrFail();
+
+        $this->get(LocalizedUrl::projectCategory($category))
+            ->assertOk()
+            ->assertSee($category->name);
+    }
+
+    public function test_a_visitor_can_submit_a_pending_rated_comment_for_a_published_project(): void
+    {
+        $this->withoutMiddleware(PreventRequestForgery::class);
+
+        $project = Project::query()->published()->firstOrFail();
+        $body = 'Đánh giá dự án kiểm thử '.Str::uuid();
+        $origin = LocalizedUrl::project($project);
+
+        $this->from($origin)
+            ->post(route('projects.comments.store', ['project' => $project]), [
+                'author_name' => 'Khách hàng kiểm thử',
+                'author_email' => 'client@example.test',
+                'rating' => 5,
+                'body' => $body,
+            ])
+            ->assertRedirect($origin)
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('comments', [
+            'commentable_type' => $project->getMorphClass(),
+            'commentable_id' => $project->id,
+            'author_name' => 'Khách hàng kiểm thử',
+            'rating' => 5,
+            'body' => $body,
+            'status' => Comment::STATUS_PENDING,
+        ]);
+    }
+
+    public function test_only_approved_project_ratings_are_shown_publicly(): void
+    {
+        $project = Project::query()->published()->firstOrFail();
+        $approvedBody = 'Đánh giá dự án đã duyệt '.Str::uuid();
+        $pendingBody = 'Đánh giá dự án chờ duyệt '.Str::uuid();
+
+        $project->comments()->create([
+            'author_name' => 'Khách hàng đã duyệt',
+            'rating' => 4,
+            'body' => $approvedBody,
+            'status' => Comment::STATUS_APPROVED,
+        ]);
+        $project->comments()->create([
+            'author_name' => 'Khách hàng chờ duyệt',
+            'rating' => 5,
+            'body' => $pendingBody,
+            'status' => Comment::STATUS_PENDING,
+        ]);
+
+        $this->get(LocalizedUrl::project($project))
+            ->assertOk()
+            ->assertSee('Đánh giá từ khách hàng')
             ->assertSee($approvedBody)
             ->assertDontSee($pendingBody);
     }

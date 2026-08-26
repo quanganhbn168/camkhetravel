@@ -47,7 +47,7 @@ class PublicSlugController extends Controller
             $sluggable instanceof LandingCategory => app(LandingController::class)->category($sluggable),
             $sluggable instanceof Project => redirect()->to(LocalizedUrl::project($sluggable), 301),
             $sluggable instanceof ProjectCategory => redirect()->to(LocalizedUrl::projectCategory($sluggable), 301),
-            $sluggable instanceof Post => redirect()->to(LocalizedUrl::post($sluggable), 301),
+            $sluggable instanceof Post => app(PostController::class)->show($sluggable),
             $sluggable instanceof PostCategory => redirect()->to(LocalizedUrl::postCategory($sluggable), 301),
             default => app(LegacyContentController::class)->show($request, $slug, app(SeoMetadataBuilder::class)),
         };

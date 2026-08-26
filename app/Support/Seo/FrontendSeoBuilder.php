@@ -36,25 +36,55 @@ class FrontendSeoBuilder
         return $this->website->site_name;
     }
 
-    public function home(): array
+    /** @param iterable<array{question: string, answer: string}> $faqItems */
+    public function home(iterable $faqItems = []): array
     {
         $canonical = $this->homeCanonical();
+        $faqSchemaItems = [];
+
+        foreach ($faqItems as $item) {
+            $question = trim((string) ($item['question'] ?? ''));
+            $answer = trim((string) ($item['answer'] ?? ''));
+
+            if ($question === '' || $answer === '') {
+                continue;
+            }
+
+            $faqSchemaItems[] = [
+                '@type' => 'Question',
+                'name' => $question,
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => $answer,
+                ],
+            ];
+        }
+
+        $schema = [
+            $this->organizationSchema(),
+            [
+                '@type' => 'WebSite',
+                '@id' => $this->baseUrl().'#website',
+                'name' => $this->website->site_name,
+                'url' => $this->baseUrl(),
+                'inLanguage' => $this->languageTag(),
+            ],
+            $this->webPageSchema($canonical, $this->website->seo_title ?: $this->website->site_name, $this->website->seo_description),
+        ];
+
+        if ($faqSchemaItems !== []) {
+            $schema[] = [
+                '@type' => 'FAQPage',
+                '@id' => $canonical.'#cau-hoi-thuong-gap',
+                'mainEntity' => $faqSchemaItems,
+            ];
+        }
 
         return $this->page(
             title: $this->website->seo_title ?: $this->website->site_name,
             description: $this->website->seo_description,
             canonical: $canonical,
-            schema: [
-                $this->organizationSchema(),
-                [
-                    '@type' => 'WebSite',
-                    '@id' => $this->baseUrl().'#website',
-                    'name' => $this->website->site_name,
-                    'url' => $this->baseUrl(),
-                    'inLanguage' => $this->languageTag(),
-                ],
-                $this->webPageSchema($canonical, $this->website->seo_title ?: $this->website->site_name, $this->website->seo_description),
-            ],
+            schema: $schema,
         );
     }
 

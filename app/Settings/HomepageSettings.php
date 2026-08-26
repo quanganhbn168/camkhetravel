@@ -12,6 +12,8 @@ class HomepageSettings extends Settings
 
     public array $about_content;
 
+    public array $stats;
+
     public array $commitments;
 
     public array $capabilities;
@@ -19,6 +21,12 @@ class HomepageSettings extends Settings
     public array $consultation_title;
 
     public array $consultation_content;
+
+    public array $faq_title;
+
+    public array $faq_description;
+
+    public array $faq_items;
 
     public static function group(): string
     {
