@@ -39,7 +39,7 @@ Route::get('/favicon.ico', function (WebsiteSettings $website, FaviconService $f
     $favicon = Media::query()->find($mediaId);
 
     return response()->file($favicons->primaryPath($favicon), [
-        'Content-Type' => 'image/x-icon',
+        'Content-Type' => $favicons->primaryMimeType($favicon),
         'Cache-Control' => 'public, max-age=604800',
     ]);
 });

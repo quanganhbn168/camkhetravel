@@ -5,6 +5,7 @@ namespace App\Support\Branding;
 use Awcodes\Curator\Facades\Curator;
 use Awcodes\Curator\Facades\Glide;
 use Awcodes\Curator\Models\Media;
+use App\Support\Media\MediaUrl;
 use Illuminate\Support\Facades\Storage;
 use Imagick;
 use ImagickPixel;
@@ -28,6 +29,17 @@ final class FaviconService
     /** @return array<int, array{rel: string, type: string, href: string, sizes?: string, color?: string}> */
     public function links(?Media $customMedia = null): array
     {
+        if (! $customMedia || ! $this->hasGeneratedPack($customMedia)) {
+            $href = MediaUrl::versioned($customMedia) ?: asset('favicon.ico');
+            $type = $customMedia ? MediaUrl::mimeType($customMedia) : 'image/x-icon';
+
+            return [
+                ['rel' => 'icon', 'type' => $type, 'href' => $href],
+                ['rel' => 'shortcut icon', 'type' => $type, 'href' => $href],
+                ['rel' => 'apple-touch-icon', 'type' => $type, 'href' => $href],
+            ];
+        }
+
         $directory = $this->activeDirectory($customMedia);
         $asset = fn (string $filename): string => asset($directory.'/'.$filename);
 
@@ -105,12 +117,33 @@ final class FaviconService
 
     public function primaryUrl(?Media $customMedia = null): string
     {
+        if ($customMedia && ! $this->hasGeneratedPack($customMedia)) {
+            return MediaUrl::versioned($customMedia) ?: asset('favicon.ico');
+        }
+
         return asset($this->activeDirectory($customMedia).'/favicon.ico');
     }
 
     public function primaryPath(?Media $customMedia = null): string
     {
+        if ($customMedia && ! $this->hasGeneratedPack($customMedia)) {
+            $storage = Storage::disk($customMedia->disk);
+
+            if ($storage->exists($customMedia->path)) {
+                return $storage->path($customMedia->path);
+            }
+        }
+
         return public_path($this->activeDirectory($customMedia).'/favicon.ico');
+    }
+
+    public function primaryMimeType(?Media $customMedia = null): string
+    {
+        if ($customMedia && ! $this->hasGeneratedPack($customMedia)) {
+            return MediaUrl::mimeType($customMedia);
+        }
+
+        return 'image/x-icon';
     }
 
     /**
