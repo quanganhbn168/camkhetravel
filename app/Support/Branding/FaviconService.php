@@ -2,103 +2,321 @@
 
 namespace App\Support\Branding;
 
-use App\Support\Media\MediaUrl;
+use Awcodes\Curator\Facades\Curator;
+use Awcodes\Curator\Facades\Glide;
 use Awcodes\Curator\Models\Media;
+use Illuminate\Support\Facades\Storage;
+use Imagick;
+use ImagickPixel;
+use RuntimeException;
 
 final class FaviconService
 {
-    /**
-     * @return array<int, array{rel: string, type: string, href: string, sizes?: string, color?: string}>
-     */
+    private const GENERATED_DIRECTORY = 'favicon-assets';
+
+    /** @var array<string, int> */
+    private const PNG_FILES = [
+        'favicon-16x16.png' => 16,
+        'favicon-32x32.png' => 32,
+        'favicon-48x48.png' => 48,
+        'favicon-96x96.png' => 96,
+        'apple-touch-icon.png' => 180,
+        'android-chrome-192x192.png' => 192,
+        'android-chrome-512x512.png' => 512,
+    ];
+
+    /** @return array<int, array{rel: string, type: string, href: string, sizes?: string, color?: string}> */
     public function links(?Media $customMedia = null): array
     {
-        $links = [
+        $directory = $this->activeDirectory($customMedia);
+        $asset = fn (string $filename): string => asset($directory.'/'.$filename);
+
+        return [
             [
                 'rel' => 'icon',
                 'type' => 'image/svg+xml',
-                'href' => asset('favicon.svg'),
+                'href' => $asset('favicon.svg'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/png',
                 'sizes' => '16x16',
-                'href' => asset('favicon-16x16.png'),
+                'href' => $asset('favicon-16x16.png'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/png',
                 'sizes' => '32x32',
-                'href' => asset('favicon-32x32.png'),
+                'href' => $asset('favicon-32x32.png'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/png',
                 'sizes' => '48x48',
-                'href' => asset('favicon-48x48.png'),
+                'href' => $asset('favicon-48x48.png'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/png',
                 'sizes' => '96x96',
-                'href' => asset('favicon-96x96.png'),
+                'href' => $asset('favicon-96x96.png'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/x-icon',
-                'href' => asset('favicon.ico'),
+                'href' => $asset('favicon.ico'),
             ],
             [
                 'rel' => 'shortcut icon',
                 'type' => 'image/x-icon',
-                'href' => asset('favicon.ico'),
+                'href' => $asset('favicon.ico'),
             ],
             [
                 'rel' => 'apple-touch-icon',
                 'type' => 'image/png',
                 'sizes' => '180x180',
-                'href' => asset('apple-touch-icon.png'),
+                'href' => $asset('apple-touch-icon.png'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/png',
                 'sizes' => '192x192',
-                'href' => asset('android-chrome-192x192.png'),
+                'href' => $asset('android-chrome-192x192.png'),
             ],
             [
                 'rel' => 'icon',
                 'type' => 'image/png',
                 'sizes' => '512x512',
-                'href' => asset('android-chrome-512x512.png'),
+                'href' => $asset('android-chrome-512x512.png'),
             ],
             [
                 'rel' => 'mask-icon',
                 'type' => 'image/svg+xml',
                 'color' => '#ee6b2d',
-                'href' => asset('favicon.svg'),
+                'href' => $asset('favicon.svg'),
             ],
             [
                 'rel' => 'manifest',
                 'type' => 'application/manifest+json',
-                'href' => asset('site.webmanifest'),
+                'href' => $asset('site.webmanifest'),
             ],
         ];
-
-        $customUrl = MediaUrl::versioned($customMedia);
-
-        if ($customUrl) {
-            array_unshift($links, [
-                'rel' => 'icon',
-                'type' => MediaUrl::mimeType($customMedia),
-                'sizes' => MediaUrl::iconSizes($customMedia),
-                'href' => $customUrl,
-            ]);
-        }
-
-        return $links;
     }
 
     public function primaryUrl(?Media $customMedia = null): string
     {
-        return MediaUrl::versioned($customMedia) ?: asset('favicon.ico');
+        return asset($this->activeDirectory($customMedia).'/favicon.ico');
+    }
+
+    public function primaryPath(?Media $customMedia = null): string
+    {
+        return public_path($this->activeDirectory($customMedia).'/favicon.ico');
+    }
+
+    /**
+     * Turn the selected Curator upload into a complete static favicon pack.
+     * Curator remains the source file; no Curator URL is emitted to a page.
+     */
+    public function sync(?Media $customMedia): void
+    {
+        if (! $customMedia) {
+            return;
+        }
+
+        $storage = Storage::disk($customMedia->disk);
+
+        if (! $storage->exists($customMedia->path)) {
+            throw new RuntimeException('Không tìm thấy file favicon đã chọn trong kho media.');
+        }
+
+        $source = (string) $storage->get($customMedia->path);
+        $directory = public_path(self::GENERATED_DIRECTORY);
+
+        $this->ensureDirectory($directory);
+
+        $pngs = [];
+
+        foreach (self::PNG_FILES as $filename => $size) {
+            $pngs[$size] = $this->renderPng($source, strtolower($customMedia->ext), $size);
+            $this->writeFile($directory.DIRECTORY_SEPARATOR.$filename, $pngs[$size]);
+        }
+
+        $this->writeFile(
+            $directory.DIRECTORY_SEPARATOR.'favicon.svg',
+            $this->svgFromPng($pngs[512]),
+        );
+        $this->writeFile(
+            $directory.DIRECTORY_SEPARATOR.'favicon.ico',
+            $this->icoFromPngs([
+                16 => $pngs[16],
+                32 => $pngs[32],
+                48 => $pngs[48],
+            ]),
+        );
+        $this->writeFile(
+            $directory.DIRECTORY_SEPARATOR.'site.webmanifest',
+            $this->manifest(),
+        );
+        $this->writeFile(
+            $directory.DIRECTORY_SEPARATOR.'.source',
+            $this->sourceSignature($customMedia),
+        );
+    }
+
+    private function activeDirectory(?Media $customMedia): string
+    {
+        if ($customMedia && $this->hasGeneratedPack($customMedia)) {
+            return self::GENERATED_DIRECTORY;
+        }
+
+        return '';
+    }
+
+    private function hasGeneratedPack(Media $customMedia): bool
+    {
+        $directory = public_path(self::GENERATED_DIRECTORY);
+        $marker = $directory.DIRECTORY_SEPARATOR.'.source';
+
+        if (! is_file($marker) || trim((string) file_get_contents($marker)) !== $this->sourceSignature($customMedia)) {
+            return false;
+        }
+
+        foreach (array_keys(self::PNG_FILES) as $filename) {
+            if (! is_file($directory.DIRECTORY_SEPARATOR.$filename)) {
+                return false;
+            }
+        }
+
+        return is_file($directory.DIRECTORY_SEPARATOR.'favicon.svg')
+            && is_file($directory.DIRECTORY_SEPARATOR.'favicon.ico')
+            && is_file($directory.DIRECTORY_SEPARATOR.'site.webmanifest');
+    }
+
+    private function sourceSignature(Media $customMedia): string
+    {
+        return implode('|', [
+            (string) $customMedia->getKey(),
+            (string) ($customMedia->updated_at?->getTimestamp() ?? 0),
+            $customMedia->disk,
+            $customMedia->path,
+        ]);
+    }
+
+    private function renderPng(string $source, string $extension, int $size): string
+    {
+        if ($extension === 'svg') {
+            return $this->renderSvgPng($source, $size);
+        }
+
+        $image = Glide::getServer()->getApi()->getImageManager()->read($source);
+
+        return $image
+            ->orient()
+            ->contain($size, $size, 'transparent', 'center')
+            ->toPng()
+            ->toString();
+    }
+
+    private function renderSvgPng(string $source, int $size): string
+    {
+        if (! class_exists(Imagick::class)) {
+            throw new RuntimeException('Để xử lý favicon SVG cần bật PHP Imagick, hoặc anh upload bản PNG vuông.');
+        }
+
+        $image = new Imagick();
+        $canvas = new Imagick();
+
+        try {
+            $image->setBackgroundColor(new ImagickPixel('transparent'));
+            $image->readImageBlob(Curator::sanitizeSvg($source));
+            $image->setIteratorIndex(0);
+            $image->setImageFormat('png');
+            $image->thumbnailImage($size, $size, true);
+            $image->setImagePage(0, 0, 0, 0);
+
+            $canvas->newImage($size, $size, new ImagickPixel('transparent'), 'png');
+            $x = (int) floor(($size - $image->getImageWidth()) / 2);
+            $y = (int) floor(($size - $image->getImageHeight()) / 2);
+            $canvas->compositeImage($image, Imagick::COMPOSITE_OVER, $x, $y);
+
+            return $canvas->getImageBlob();
+        } finally {
+            $image->clear();
+            $image->destroy();
+            $canvas->clear();
+            $canvas->destroy();
+        }
+    }
+
+    private function svgFromPng(string $png): string
+    {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">'
+            .'<image href="data:image/png;base64,'.base64_encode($png).'" width="512" height="512" preserveAspectRatio="none"/>'
+            .'</svg>';
+    }
+
+    /** @param array<int, string> $pngs */
+    private function icoFromPngs(array $pngs): string
+    {
+        $header = pack('vvv', 0, 1, count($pngs));
+        $entries = '';
+        $images = '';
+        $offset = 6 + (16 * count($pngs));
+
+        foreach ($pngs as $size => $png) {
+            $entries .= pack(
+                'CCCCvvVV',
+                $size >= 256 ? 0 : $size,
+                $size >= 256 ? 0 : $size,
+                0,
+                0,
+                1,
+                32,
+                strlen($png),
+                $offset,
+            );
+            $images .= $png;
+            $offset += strlen($png);
+        }
+
+        return $header.$entries.$images;
+    }
+
+    private function manifest(): string
+    {
+        return (string) json_encode([
+            'name' => 'THT Media',
+            'short_name' => 'THT Media',
+            'start_url' => '/',
+            'display' => 'standalone',
+            'background_color' => '#10233e',
+            'theme_color' => '#ee6b2d',
+            'icons' => [
+                [
+                    'src' => 'android-chrome-192x192.png',
+                    'sizes' => '192x192',
+                    'type' => 'image/png',
+                ],
+                [
+                    'src' => 'android-chrome-512x512.png',
+                    'sizes' => '512x512',
+                    'type' => 'image/png',
+                ],
+            ],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES).PHP_EOL;
+    }
+
+    private function ensureDirectory(string $directory): void
+    {
+        if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+            throw new RuntimeException('Không thể tạo thư mục favicon tĩnh trong public.');
+        }
+    }
+
+    private function writeFile(string $path, string $contents): void
+    {
+        if (file_put_contents($path, $contents, LOCK_EX) === false) {
+            throw new RuntimeException("Không thể ghi file favicon tĩnh: {$path}");
+        }
     }
 }

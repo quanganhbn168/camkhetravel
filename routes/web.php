@@ -23,7 +23,7 @@ use App\Http\Middleware\SetFrontendLocale;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
 use App\Settings\WebsiteSettings;
-use App\Support\Media\MediaUrl;
+use App\Support\Branding\FaviconService;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Facades\Route;
 
@@ -34,18 +34,13 @@ $localizedLocalePattern = app(LanguageCatalog::class)
     ->map(fn (string $code): string => preg_quote($code, '/'))
     ->implode('|');
 
-Route::get('/favicon.ico', function (WebsiteSettings $website) {
+Route::get('/favicon.ico', function (WebsiteSettings $website, FaviconService $favicons) {
     $mediaId = $website->favicon_media_id;
-    $faviconUrl = MediaUrl::versioned(Media::query()->find($mediaId));
+    $favicon = Media::query()->find($mediaId);
 
-    if (! $faviconUrl) {
-        return response()->file(public_path('favicon.ico'), [
-            'Cache-Control' => 'public, max-age=604800',
-        ]);
-    }
-
-    return redirect()->away($faviconUrl, 302, [
-        'Cache-Control' => 'no-store, max-age=0',
+    return response()->file($favicons->primaryPath($favicon), [
+        'Content-Type' => 'image/x-icon',
+        'Cache-Control' => 'public, max-age=604800',
     ]);
 });
 

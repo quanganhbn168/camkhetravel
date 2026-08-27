@@ -5,14 +5,14 @@
 @section('body_class', 'min-h-screen bg-white')
 
 @section('content')
-    <section class="brand-gradient-dark relative isolate min-h-[39rem] overflow-hidden text-white" data-hero-section>
+    <section class="brand-gradient-dark relative isolate w-full overflow-hidden text-white" data-hero-section>
         @forelse ($heroSlides as $slide)
             @if ($loop->first)
-                <div class="swiper hero-swiper min-h-[39rem]" data-hero-swiper>
+                <div class="swiper hero-swiper w-full" data-hero-swiper>
                     <div class="swiper-wrapper">
             @endif
 
-            <article class="swiper-slide relative min-h-[39rem] overflow-hidden">
+            <article class="swiper-slide relative h-auto overflow-hidden">
                 @if ($slide['has_content'])
                     <div class="hero-brand-glow absolute inset-0"></div>
                 @endif
@@ -27,7 +27,7 @@
                 @endif
 
                 @if ($slide['has_content'])
-                    <div class="site-shell relative z-10 grid min-h-[39rem] items-end py-16 md:py-24 lg:py-28">
+                    <div class="site-shell relative z-10 grid items-end py-16 md:py-24 lg:py-28">
                         <div class="max-w-4xl pb-24 lg:pb-16">
                             @if ($slide['title'])
                                 <h2 class="font-display max-w-4xl text-3xl leading-[1.12] tracking-[-0.045em] text-white sm:text-4xl lg:text-6xl">{{ $slide['title'] }}</h2>
@@ -49,6 +49,8 @@
                     @if ($slide['image_url'])
                         <div class="hero-image-overlay" aria-hidden="true"></div>
                     @endif
+                @else
+                    <div class="hero-slide__spacer" aria-hidden="true"></div>
                 @endif
             </article>
 
@@ -58,7 +60,7 @@
             @endif
         @empty
             <div class="hero-brand-glow absolute inset-0"></div>
-            <div class="site-shell relative grid min-h-[39rem] items-end py-16 md:py-24 lg:py-28">
+            <div class="site-shell relative grid items-end py-24 md:py-32 lg:py-40">
                 <div class="max-w-4xl pb-16">
                     <h2 class="font-display max-w-4xl text-4xl leading-[1.12] tracking-[-0.045em] text-white lg:text-6xl">Biến câu chuyện thương hiệu thành trải nghiệm đáng nhớ.</h2>
                 </div>
@@ -123,15 +125,15 @@
 
         <div class="site-shell mt-12 grid gap-7 md:grid-cols-4 md:gap-10" data-aos="fade-up">
             @foreach ($stats as $stat)
-                <div class="px-1 py-2 md:px-2" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
-                    <p class="font-display text-4xl tracking-[-0.05em] text-ink md:text-5xl" aria-label="{{ $stat['prefix'] }}{{ collect($stat['segments'])->pluck('value')->join('') }}{{ $stat['suffix'] }}">
-                        @if (filled($stat['prefix']))<span>{{ $stat['prefix'] }}</span>@endif
+                <div class="home-stat" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
+                    <p class="home-stat__value" aria-label="{{ $stat['prefix'] }}{{ collect($stat['segments'])->pluck('value')->join('') }}{{ $stat['suffix'] }}">
+                        @if (filled($stat['prefix']))<span class="home-stat__affix">{{ $stat['prefix'] }}</span>@endif
                         @foreach ($stat['segments'] as $segment)
-                            @if ($segment['is_number'])<span data-count-up="{{ $segment['value'] }}">{{ $segment['value'] }}</span>@else<span>{{ $segment['value'] }}</span>@endif
+                            @if ($segment['is_number'])<span class="home-stat__number" data-count-up="{{ $segment['value'] }}">{{ $segment['value'] }}</span>@else<span class="home-stat__affix">{{ $segment['value'] }}</span>@endif
                         @endforeach
-                        @if (filled($stat['suffix']))<span>{{ $stat['suffix'] }}</span>@endif
+                        @if (filled($stat['suffix']))<span class="home-stat__affix">{{ $stat['suffix'] }}</span>@endif
                     </p>
-                    <p class="mt-2 text-sm leading-6 text-slate-500">{{ $stat['label'] }}</p>
+                    <p class="home-stat__label">{{ $stat['label'] }}</p>
                 </div>
             @endforeach
         </div>
@@ -261,11 +263,13 @@
                         @forelse ($testimonials as $testimonial)
                             <div class="swiper-slide h-auto">
                                 <article class="home-testimonial">
-                                    <div class="home-testimonial__rating" aria-label="{{ $testimonial->rating }} trên 5 sao">
-                                        @for ($star = 1; $star <= $testimonial->rating; $star++)
-                                            <span aria-hidden="true">★</span>
-                                        @endfor
-                                    </div>
+                                    @if ($testimonial->rating)
+                                        <div class="home-testimonial__rating" aria-label="{{ $testimonial->rating }} trên 5 sao">
+                                            @for ($star = 1; $star <= $testimonial->rating; $star++)
+                                                <span aria-hidden="true">★</span>
+                                            @endfor
+                                        </div>
+                                    @endif
                                     <blockquote class="home-testimonial__quote">“{{ $testimonial->quote }}”</blockquote>
                                     <div class="home-testimonial__person">
                                         @if ($testimonial->curatorMedia?->url)
@@ -322,27 +326,46 @@
     <section class="home-consultation section-space" id="tu-van">
         <div class="site-shell">
             <header class="mx-auto mb-8 max-w-2xl text-center md:mb-10" data-aos="fade-up">
-                <p class="mb-3 text-sm font-bold text-accent uppercase">Miễn phí tư vấn</p>
                 <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Liên hệ với chúng tôi</h2>
             </header>
 
             <div class="home-consultation__shell">
-                <aside class="home-consultation__intro" data-aos="fade-right">
-                    <dl class="home-consultation__contacts">
-                        @if ($website->hotline)
-                            <div><dt class="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">Hotline</dt><dd class="mt-1.5"><a class="font-semibold text-ink hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a></dd></div>
+                <div class="home-consultation__info" data-aos="fade-right">
+                    <aside class="home-consultation__intro">
+                        <p class="text-sm font-bold text-accent uppercase">Miễn phí tư vấn</p>
+                        <dl class="home-consultation__contacts mt-8">
+                            @if ($website->hotline || $website->contact_phone)
+                                <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                                    @if ($website->hotline)
+                                        <a class="font-semibold text-ink hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>
+                                    @endif
+                                    @if ($website->hotline && $website->contact_phone)
+                                        <span class="text-slate-400" aria-hidden="true">-</span>
+                                    @endif
+                                    @if ($website->contact_phone)
+                                        <a class="font-semibold text-ink hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->contact_phone) }}">{{ $website->contact_phone }}</a>
+                                    @endif
+                                </div>
+                            @endif
+                            @if ($website->contact_email)
+                                <div><dt class="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">Email</dt><dd class="mt-1.5"><a class="font-semibold text-ink hover:text-primary" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a></dd></div>
+                            @endif
+                            @if ($website->address)
+                                <div><dt class="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">Địa chỉ</dt><dd class="mt-1.5 leading-6 text-slate-600">{{ $website->address }}</dd></div>
+                            @endif
+                        </dl>
+                    </aside>
+
+                    <div class="home-consultation__map">
+                        @if ($googleMapsEmbedUrl)
+                            <iframe src="{{ $googleMapsEmbedUrl }}" title="Bản đồ vị trí {{ $website->company_name ?: $website->site_name }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        @else
+                            <div class="home-consultation__map-empty">
+                                <span class="text-sm leading-7 text-slate-500">Bản đồ nhúng chưa được cấu hình trong Cài đặt chung.</span>
+                            </div>
                         @endif
-                        @if ($website->contact_email)
-                            <div><dt class="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">Email</dt><dd class="mt-1.5"><a class="font-semibold text-ink hover:text-primary" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a></dd></div>
-                        @endif
-                        @if ($website->address)
-                            <div><dt class="text-xs font-bold tracking-[0.14em] text-slate-500 uppercase">Địa chỉ</dt><dd class="mt-1.5 leading-6 text-slate-600">{{ $website->address }}</dd></div>
-                        @endif
-                    </dl>
-                    @if ($googleMapsUrl)
-                        <a class="button-primary mt-8 self-start" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Xem vị trí trên Google Maps <span aria-hidden="true">↗</span></a>
-                    @endif
-                </aside>
+                    </div>
+                </div>
 
                 <form method="POST" action="{{ LocalizedUrl::route('contact.store') }}" class="home-consultation__form" data-aos="fade-up">
                     @csrf
@@ -352,19 +375,6 @@
                     <label class="text-sm font-semibold text-ink">Nhu cầu của bạn<textarea class="form-field" name="message" rows="5" required>{{ old('message') }}</textarea></label>
                     <button class="button-primary justify-self-start" type="submit">Gửi yêu cầu <span aria-hidden="true">↗</span></button>
                 </form>
-
-                <div class="home-consultation__map" data-aos="fade-left">
-                    @if ($googleMapsEmbedUrl)
-                        <iframe src="{{ $googleMapsEmbedUrl }}" title="Bản đồ vị trí {{ $website->company_name ?: $website->site_name }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
-                    @else
-                        <div class="home-consultation__map-empty">
-                            <span class="text-sm leading-7 text-slate-500">Bản đồ nhúng chưa được cấu hình trong Cài đặt chung.</span>
-                            @if ($googleMapsUrl)
-                                <a class="button-primary" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Mở Google Maps <span aria-hidden="true">↗</span></a>
-                            @endif
-                        </div>
-                    @endif
-                </div>
             </div>
         </div>
     </section>

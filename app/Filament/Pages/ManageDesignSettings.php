@@ -6,6 +6,7 @@ use App\Settings\DesignSettings;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -51,6 +52,13 @@ class ManageDesignSettings extends Page
             'gradient_green_dark_end' => $settings->gradient_green_dark_end,
             'gradient_green_light_start' => $settings->gradient_green_light_start,
             'gradient_green_light_end' => $settings->gradient_green_light_end,
+            'font_size_base' => $settings->font_size_base,
+            'font_size_body' => $settings->font_size_body,
+            'font_size_small' => $settings->font_size_small,
+            'font_size_h1' => $settings->font_size_h1,
+            'font_size_h2' => $settings->font_size_h2,
+            'font_size_h3' => $settings->font_size_h3,
+            'font_size_stat' => $settings->font_size_stat,
         ]);
     }
 
@@ -92,6 +100,22 @@ class ManageDesignSettings extends Page
                                         ColorPicker::make('gradient_green_dark_end')->label('gradient-green-dark-end')->required(),
                                         ColorPicker::make('gradient_green_light_start')->label('gradient-green-light-start')->required(),
                                         ColorPicker::make('gradient_green_light_end')->label('gradient-green-light-end')->required(),
+                                    ])
+                                    ->columns(2),
+                            ]),
+                        Tab::make('Typography')
+                            ->schema([
+                                Section::make('Cỡ chữ semantic của website')
+                                    ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
+                                    ->description('Nhập đơn vị rem hoặc biểu thức clamp().')
+                                    ->schema([
+                                        TextInput::make('font_size_base')->label('Cỡ chữ gốc')->required()->maxLength(100),
+                                        TextInput::make('font_size_body')->label('Nội dung')->required()->maxLength(100),
+                                        TextInput::make('font_size_small')->label('Nội dung nhỏ')->required()->maxLength(100),
+                                        TextInput::make('font_size_h1')->label('Tiêu đề H1')->required()->maxLength(100),
+                                        TextInput::make('font_size_h2')->label('Tiêu đề H2')->required()->maxLength(100),
+                                        TextInput::make('font_size_h3')->label('Tiêu đề H3')->required()->maxLength(100),
+                                        TextInput::make('font_size_stat')->label('Số liệu nổi bật')->required()->maxLength(100),
                                     ])
                                     ->columns(2),
                             ]),

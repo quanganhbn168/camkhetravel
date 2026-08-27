@@ -3,7 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Settings\WebsiteSettings;
+use App\Support\Branding\FaviconService;
+use App\Support\Maps\GoogleMapsUrl;
+use App\Support\Maps\GoogleMapsShareResolver;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -46,6 +50,7 @@ class ManageWebsiteSettings extends Page
             'company_name' => $settings->company_name,
             'contact_email' => $settings->contact_email,
             'hotline' => $settings->hotline,
+            'contact_phone' => $settings->contact_phone,
             'address' => $settings->address,
             'facebook_url' => $settings->facebook_url,
             'zalo_url' => $settings->zalo_url,
@@ -76,7 +81,12 @@ class ManageWebsiteSettings extends Page
                                         TextInput::make('tagline')->label('Tagline')->maxLength(255)->columnSpanFull(),
                                         TextInput::make('company_name')->label('Tên doanh nghiệp')->required()->maxLength(255),
                                         CuratorPicker::make('logo_media_id')->label('Logo')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
-                                        CuratorPicker::make('favicon_media_id')->label('Favicon')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
+                                        CuratorPicker::make('favicon_media_id')
+                                            ->label('Favicon nguồn')
+                                            ->disk('public')
+                                            ->constrained()
+                                            ->acceptedFileTypes(['image/*'])
+                                            ->helperText('Khi lưu, hệ thống lấy file này làm nguồn và tạo bộ favicon tĩnh trong public.'),
                                     ])
                                     ->columns(2),
                             ]),
@@ -86,19 +96,22 @@ class ManageWebsiteSettings extends Page
                                     ->icon(Heroicon::OutlinedPhone)
                                     ->schema([
                                         TextInput::make('contact_email')->label('Email')->email(),
-                                        TextInput::make('hotline')->label('Hotline'),
+                                        TextInput::make('hotline')->label('SĐT 1')->tel()->maxLength(50),
+                                        TextInput::make('contact_phone')->label('SĐT 2')->tel()->maxLength(50),
                                         Textarea::make('address')->label('Địa chỉ')->rows(3)->columnSpanFull(),
                                         TextInput::make('facebook_url')->label('Facebook')->url(),
                                         TextInput::make('zalo_url')->label('Zalo')->url(),
                                         TextInput::make('youtube_url')->label('YouTube')->url(),
-                                        TextInput::make('google_maps_embed_url')
+                                        Textarea::make('google_maps_embed_url')
                                             ->label('Google Maps embed URL')
-                                            ->helperText('Dán URL từ Google Maps > Chia sẻ > Nhúng bản đồ. Nếu để trống, website dùng địa chỉ ở trên để tạo bản đồ.')
-                                            ->url()
+                                            ->helperText('Dán URL embed hoặc nguyên thẻ <iframe>. Nếu chỉ có link share bên dưới, hệ thống sẽ lấy tọa độ từ link khi lưu và tạo embed cố định.')
+                                            ->rules([GoogleMapsUrl::embedValidationRule()])
+                                            ->maxLength(10000)
+                                            ->rows(5)
                                             ->columnSpanFull(),
                                         TextInput::make('google_maps_url')
                                             ->label('Google Maps link')
-                                            ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ maps.app.goo.gl.')
+                                            ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ https://maps.app.goo.gl/M1iQjB52X9NqzBYd7.')
                                             ->url()
                                             ->columnSpanFull(),
                                     ])
@@ -128,12 +141,19 @@ class ManageWebsiteSettings extends Page
         ];
     }
 
-    public function save(WebsiteSettings $settings): void
+    public function save(WebsiteSettings $settings, FaviconService $favicons, GoogleMapsShareResolver $maps): void
     {
         foreach ($this->form->getState() as $key => $value) {
             $settings->{$key} = $value;
         }
 
+        $settings->google_maps_url = filled($settings->google_maps_url)
+            ? trim((string) $settings->google_maps_url)
+            : null;
+        $settings->google_maps_embed_url = GoogleMapsUrl::normalizeEmbed($settings->google_maps_embed_url)
+            ?? $maps->resolveEmbed($settings->google_maps_url);
+
+        $favicons->sync(Media::query()->find($settings->favicon_media_id));
         $settings->save();
 
         Notification::make()->title('Đã lưu cài đặt website')->success()->send();

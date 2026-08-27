@@ -1,6 +1,7 @@
 /.phpunit.cache
 /node_modules
 /public/build
+/public/favicon-assets/
 /public/sitemap.xml
 /public/sitemap.xml
 /public/hot

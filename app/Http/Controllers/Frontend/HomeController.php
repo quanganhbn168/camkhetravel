@@ -12,6 +12,7 @@ use App\Models\ProjectCategory;
 use App\Models\Testimonial;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
+use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
@@ -106,11 +107,11 @@ class HomeController extends Controller
         $aboutImageUrl = $this->website->about_image_media_id
             ? Media::query()->find($this->website->about_image_media_id)?->url
             : null;
-        $googleMapsEmbedUrl = filled($this->website->google_maps_embed_url)
-            ? trim($this->website->google_maps_embed_url)
-            : (filled($this->website->address)
-                ? 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed'
-                : null);
+        $googleMapsEmbedUrl = GoogleMapsUrl::normalizeEmbed($this->website->google_maps_embed_url);
+
+        if ($googleMapsEmbedUrl === null && filled($this->website->address)) {
+            $googleMapsEmbedUrl = 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed';
+        }
         $googleMapsUrl = filled($this->website->google_maps_url)
             ? trim($this->website->google_maps_url)
             : null;

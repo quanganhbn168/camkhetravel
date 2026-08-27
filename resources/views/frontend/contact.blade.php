@@ -14,23 +14,43 @@
     </section>
     <section class="section-space">
         <div class="site-shell grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12">
-            <aside class="p-8 md:p-10">
-                <h2 class="font-display text-3xl leading-tight text-ink">Thông tin kết nối</h2>
-                <div class="mt-10 grid gap-4">
-                    @if ($website->hotline)
-                        <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>
-                    @endif
-                    @if ($website->contact_email)
-                        <a class="text-sm text-slate-500 hover:text-ink" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a>
-                    @endif
-                    @if ($website->address)
-                        <p class="mt-5 border-t border-slate-200 pt-5 text-sm leading-7 text-slate-600">{{ $website->address }}</p>
-                    @endif
-                    @if ($googleMapsUrl)
-                        <a class="button-primary mt-7" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Mở Google Maps <span aria-hidden="true">↗</span></a>
+            <div class="contact-page__details">
+                <aside class="p-8 md:p-10">
+                    <h2 class="font-display text-3xl leading-tight text-ink">Thông tin kết nối</h2>
+                    <div class="mt-10 grid gap-4">
+                        @if ($website->hotline || $website->contact_phone)
+                            <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                                @if ($website->hotline)
+                                    <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>
+                                @endif
+                                @if ($website->hotline && $website->contact_phone)
+                                    <span class="text-slate-400" aria-hidden="true">-</span>
+                                @endif
+                                @if ($website->contact_phone)
+                                    <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->contact_phone) }}">{{ $website->contact_phone }}</a>
+                                @endif
+                            </div>
+                        @endif
+                        @if ($website->contact_email)
+                            <a class="text-sm text-slate-500 hover:text-ink" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a>
+                        @endif
+                        @if ($website->address)
+                            <p class="mt-5 border-t border-slate-200 pt-5 text-sm leading-7 text-slate-600">{{ $website->address }}</p>
+                        @endif
+                        @if ($googleMapsUrl)
+                            <a class="button-primary mt-7" href="{{ $googleMapsUrl }}" target="_blank" rel="noopener noreferrer">Mở Google Maps <span aria-hidden="true">↗</span></a>
+                        @endif
+                    </div>
+                </aside>
+
+                <div class="contact-page__map" aria-label="Bản đồ vị trí {{ $website->company_name ?: $website->site_name }}">
+                    @if ($googleMapsEmbedUrl)
+                        <iframe src="{{ $googleMapsEmbedUrl }}" title="Bản đồ vị trí {{ $website->company_name ?: $website->site_name }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                    @else
+                        <div class="contact-page__map-empty">Bản đồ chưa được cấu hình trong Cài đặt chung.</div>
                     @endif
                 </div>
-            </aside>
+            </div>
             <form class="rounded-[2rem] border border-slate-200 p-6 shadow-[0_16px_40px_rgba(16,35,62,0.06)] md:p-10" method="POST" action="{{ LocalizedUrl::route('contact.store') }}">
                 @csrf
                 <div class="grid gap-5 md:grid-cols-2">

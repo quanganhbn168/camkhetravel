@@ -7,6 +7,7 @@ use App\Models\ContactRequest;
 use App\Models\Landing;
 use App\Settings\WebsiteSettings;
 use App\Support\Media\MediaUrl;
+use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Models\Media;
@@ -23,6 +24,12 @@ class ContactController extends Controller
 
     public function index(Request $request): View
     {
+        $googleMapsEmbedUrl = GoogleMapsUrl::normalizeEmbed($this->website->google_maps_embed_url);
+
+        if ($googleMapsEmbedUrl === null && filled($this->website->address)) {
+            $googleMapsEmbedUrl = 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed';
+        }
+
         return view('frontend.contact', [
             'services' => Landing::query()->published()->orderBy('sort_order')->get(['id', 'title']),
             'contactHeroImageUrl' => MediaUrl::versioned(
@@ -31,6 +38,7 @@ class ContactController extends Controller
             'googleMapsUrl' => filled($this->website->google_maps_url)
                 ? trim($this->website->google_maps_url)
                 : null,
+            'googleMapsEmbedUrl' => $googleMapsEmbedUrl,
             'seo' => $this->seo->listing(
                 'Liên hệ | '.$this->seo->siteName(),
                 'Liên hệ để trao đổi nhu cầu truyền thông, sản xuất nội dung và sự kiện.',

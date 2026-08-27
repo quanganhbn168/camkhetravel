@@ -12,15 +12,35 @@ class AboutSettings extends Settings
 
     public array $page_intro;
 
+    public array $story_title = [];
+
     public array $story;
 
     public array $history;
+
+    public array $history_title = [];
+
+    public array $history_description = [];
+
+    public array $history_timeline = [];
 
     public array $mission;
 
     public array $vision;
 
     public array $core_values;
+
+    public array $principles_title = [];
+
+    public array $services_title = [];
+
+    public array $services_link_label = [];
+
+    public array $stats_title = [];
+
+    public array $cta_title = [];
+
+    public array $cta_button_label = [];
 
     public static function group(): string
     {

@@ -9,8 +9,12 @@ use App\Settings\CompanySettings;
 use App\Settings\DesignSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
+use App\Support\Branding\FaviconService;
 use App\Support\Localization\LanguageCatalog;
+use App\Support\Maps\GoogleMapsUrl;
+use App\Support\Maps\GoogleMapsShareResolver;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
+use Awcodes\Curator\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
@@ -21,6 +25,11 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -30,6 +39,8 @@ use UnitEnum;
 
 class ManageSettings extends Page
 {
+    use InteractsWithFormActions;
+
     protected static ?string $slug = 'settings';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
@@ -60,6 +71,7 @@ class ManageSettings extends Page
             'favicon_media_id' => $website->favicon_media_id,
             'contact_email' => $website->contact_email,
             'hotline' => $website->hotline,
+            'contact_phone' => $website->contact_phone,
             'address' => $website->address,
             'google_maps_embed_url' => $website->google_maps_embed_url,
             'google_maps_url' => $website->google_maps_url,
@@ -88,14 +100,23 @@ class ManageSettings extends Page
             'founded_year' => $company->founded_year,
             'business_license' => $company->business_license,
             'about_image_media_id' => $website->about_image_media_id,
-            'page_label' => $about->page_label,
             'page_title' => $about->page_title,
             'page_intro' => $about->page_intro,
+            'story_title' => $about->story_title,
             'story' => $about->story,
             'history' => $about->history,
+            'history_title' => $about->history_title,
+            'history_description' => $about->history_description,
+            'history_timeline' => $about->history_timeline,
             'mission' => $about->mission,
             'vision' => $about->vision,
             'core_values' => $about->core_values,
+            'principles_title' => $about->principles_title,
+            'services_title' => $about->services_title,
+            'services_link_label' => $about->services_link_label,
+            'stats_title' => $about->stats_title,
+            'cta_title' => $about->cta_title,
+            'cta_button_label' => $about->cta_button_label,
             'color_primary' => $design->color_primary,
             'color_primary_hover' => $design->color_primary_hover,
             'color_ink' => $design->color_ink,
@@ -108,6 +129,13 @@ class ManageSettings extends Page
             'gradient_green_dark_end' => $design->gradient_green_dark_end,
             'gradient_green_light_start' => $design->gradient_green_light_start,
             'gradient_green_light_end' => $design->gradient_green_light_end,
+            'font_size_base' => $design->font_size_base,
+            'font_size_body' => $design->font_size_body,
+            'font_size_small' => $design->font_size_small,
+            'font_size_h1' => $design->font_size_h1,
+            'font_size_h2' => $design->font_size_h2,
+            'font_size_h3' => $design->font_size_h3,
+            'font_size_stat' => $design->font_size_stat,
         ]);
     }
 
@@ -139,16 +167,40 @@ class ManageSettings extends Page
             ->statePath('data');
     }
 
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('save')
+            ->footer([
+                Actions::make($this->getFormActions())
+                    ->alignment($this->getFormActionsAlignment())
+                    ->fullWidth($this->hasFullWidthFormActions())
+                    ->sticky($this->areFormActionsSticky())
+                    ->key('form-actions'),
+            ]);
+    }
+
     public function save(
         WebsiteSettings $website,
         HomepageSettings $homepage,
         CompanySettings $company,
         AboutSettings $about,
         DesignSettings $design,
+        FaviconService $favicons,
+        GoogleMapsShareResolver $maps,
     ): void {
         $data = $this->form->getState();
 
-        $this->saveWebsite($website, $data);
+        $this->saveWebsite($website, $data, $favicons, $maps);
         $this->saveHomepage($homepage, $data);
         $this->saveCompany($company, $data);
         $this->saveAbout($about, $data);
@@ -171,24 +223,31 @@ class ManageSettings extends Page
                     TextInput::make('site_name')->label('Tên website')->required()->maxLength(255),
                     TextInput::make('tagline')->label('Tagline')->maxLength(255),
                     CuratorPicker::make('logo_media_id')->label('Logo')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
-                    CuratorPicker::make('favicon_media_id')->label('Favicon')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
+                    CuratorPicker::make('favicon_media_id')
+                        ->label('Favicon nguồn')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*'])
+                        ->helperText('Khi lưu, hệ thống lấy file này làm nguồn và tạo bộ favicon tĩnh trong public.'),
                 ])
                 ->columns(2),
             Section::make('Liên hệ và mạng xã hội')
                 ->icon(Heroicon::OutlinedPhone)
                 ->schema([
                     TextInput::make('contact_email')->label('Email')->email()->maxLength(255),
-                    TextInput::make('hotline')->label('Hotline')->tel()->maxLength(50),
+                    TextInput::make('hotline')->label('SĐT 1')->tel()->maxLength(50),
+                    TextInput::make('contact_phone')->label('SĐT 2')->tel()->maxLength(50),
                     Textarea::make('address')->label('Địa chỉ')->rows(3)->columnSpanFull(),
-                    TextInput::make('google_maps_embed_url')
+                    Textarea::make('google_maps_embed_url')
                         ->label('Google Maps embed URL')
-                        ->helperText('Dán URL từ Google Maps > Chia sẻ > Nhúng bản đồ. Nếu để trống, frontend tạo bản đồ từ địa chỉ.')
-                        ->url()
-                        ->maxLength(2048)
+                        ->helperText('Dán URL embed hoặc nguyên thẻ <iframe>. Nếu chỉ có link share bên dưới, hệ thống sẽ lấy tọa độ từ link khi lưu và tạo embed cố định.')
+                        ->rules([GoogleMapsUrl::embedValidationRule()])
+                        ->maxLength(10000)
+                        ->rows(5)
                         ->columnSpanFull(),
                     TextInput::make('google_maps_url')
                         ->label('Google Maps link')
-                        ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ maps.app.goo.gl.')
+                        ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ https://maps.app.goo.gl/M1iQjB52X9NqzBYd7.')
                         ->url()
                         ->maxLength(2048)
                         ->columnSpanFull(),
@@ -336,15 +395,15 @@ class ManageSettings extends Page
         return Tab::make($language->name)
             ->schema([
                 TextInput::make("about_eyebrow.{$locale}")
-                    ->label('Tiêu đề')
+                    ->label('Tiêu đề phần giới thiệu')
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Textarea::make("about_title.{$locale}")
-                    ->label('Mô tả')
+                    ->label('Mô tả ngắn')
                     ->rows(3)
                     ->columnSpanFull(),
                 Textarea::make("about_content.{$locale}")
-                    ->label('Nội dung')
+                    ->label('Nội dung chi tiết')
                     ->rows(4)
                     ->columnSpanFull(),
             ]);
@@ -398,19 +457,108 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedDocumentText)
                     ->description('Để trống một trường nếu muốn giữ nội dung WordPress đã nhập trước đây ở đúng vị trí đó.')
                     ->schema([
-                        TextInput::make("page_label.{$locale}")->label('Nhãn trang')->maxLength(255),
                         TextInput::make("page_title.{$locale}")->label('Tiêu đề trang')->maxLength(255)->columnSpanFull(),
                         Textarea::make("page_intro.{$locale}")->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
                     ])
-                    ->columns(2),
-                Section::make('Nội dung giới thiệu')
+                    ->columns(1),
+                Section::make('Câu chuyện doanh nghiệp')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->schema([
-                        RichEditor::make("story.{$locale}")->label('Câu chuyện doanh nghiệp')->columnSpanFull(),
-                        Textarea::make("history.{$locale}")->label('Lịch sử / cột mốc')->rows(5)->columnSpanFull(),
+                        TextInput::make("story_title.{$locale}")
+                            ->label('Tiêu đề khối câu chuyện')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        RichEditor::make("story.{$locale}")
+                            ->label('Nội dung câu chuyện')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
+                Section::make('Sứ mệnh, tầm nhìn và giá trị')
+                    ->icon(Heroicon::OutlinedSparkles)
+                    ->schema([
+                        TextInput::make("principles_title.{$locale}")
+                            ->label('Tiêu đề khối')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
                         Textarea::make("mission.{$locale}")->label('Sứ mệnh')->rows(4),
                         Textarea::make("vision.{$locale}")->label('Tầm nhìn')->rows(4),
                         RichEditor::make("core_values.{$locale}")->label('Giá trị cốt lõi')->columnSpanFull(),
+                    ])
+                    ->columns(2),
+                Section::make('Lịch sử hình thành')
+                    ->icon(Heroicon::OutlinedClock)
+                    ->description('Có thể dùng nội dung lịch sử đơn hoặc danh sách mốc. Mỗi mốc gồm năm, ảnh nguồn từ Curator, tiêu đề và mô tả.')
+                    ->schema([
+                        TextInput::make("history_title.{$locale}")
+                            ->label('Tiêu đề khối')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Textarea::make("history_description.{$locale}")
+                            ->label('Mô tả khối')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                        Textarea::make("history.{$locale}")
+                            ->label('Nội dung lịch sử đơn')
+                            ->helperText('Chỉ dùng khi không có danh sách mốc bên dưới.')
+                            ->rows(5)
+                            ->columnSpanFull(),
+                        Repeater::make('history_timeline')
+                            ->label('Các mốc lịch sử')
+                            ->schema([
+                                TextInput::make('year')
+                                    ->label('Năm')
+                                    ->required()
+                                    ->maxLength(30),
+                                CuratorPicker::make('media_id')
+                                    ->label('Hình ảnh')
+                                    ->disk('public')
+                                    ->constrained()
+                                    ->acceptedFileTypes(['image/*']),
+                                TextInput::make("title.{$locale}")
+                                    ->label('Tiêu đề')
+                                    ->required($language->is_default)
+                                    ->maxLength(255)
+                                    ->columnSpanFull(),
+                                Textarea::make("description.{$locale}")
+                                    ->label('Mô tả')
+                                    ->required($language->is_default)
+                                    ->rows(4)
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2)
+                            ->defaultItems(0)
+                            ->addActionLabel('Thêm mốc lịch sử')
+                            ->reorderable()
+                            ->collapsible()
+                            ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title'][$locale] ?? '')))
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Dịch vụ và số liệu')
+                    ->icon(Heroicon::OutlinedChartBar)
+                    ->description('Các dịch vụ lấy từ danh sách dịch vụ đã xuất bản; tại đây chỉ nhập tiêu đề của khối và tiêu đề liên kết.')
+                    ->schema([
+                        TextInput::make("services_title.{$locale}")
+                            ->label('Tiêu đề khối dịch vụ')
+                            ->maxLength(255),
+                        TextInput::make("services_link_label.{$locale}")
+                            ->label('Nhãn liên kết xem dịch vụ')
+                            ->maxLength(255),
+                        TextInput::make("stats_title.{$locale}")
+                            ->label('Tiêu đề khối số liệu')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+                Section::make('Kêu gọi liên hệ')
+                    ->icon(Heroicon::OutlinedPhone)
+                    ->description('Nếu để trống, khối kêu gọi liên hệ sẽ không hiển thị trên trang giới thiệu.')
+                    ->schema([
+                        TextInput::make("cta_title.{$locale}")
+                            ->label('Tiêu đề kêu gọi liên hệ')
+                            ->maxLength(255),
+                        TextInput::make("cta_button_label.{$locale}")
+                            ->label('Nhãn nút liên hệ')
+                            ->maxLength(255),
                     ])
                     ->columns(2),
             ]);
@@ -442,6 +590,19 @@ class ManageSettings extends Page
                     ColorPicker::make('gradient_green_light_end')->label('gradient-green-light-end')->required(),
                 ])
                 ->columns(2),
+            Section::make('Typography website')
+                ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
+                ->description('Các cỡ chữ semantic dùng xuyên suốt frontend. Có thể nhập đơn vị rem hoặc biểu thức clamp().')
+                ->schema([
+                    TextInput::make('font_size_base')->label('Cỡ chữ gốc')->required()->maxLength(100),
+                    TextInput::make('font_size_body')->label('Nội dung')->required()->maxLength(100),
+                    TextInput::make('font_size_small')->label('Nội dung nhỏ')->required()->maxLength(100),
+                    TextInput::make('font_size_h1')->label('Tiêu đề H1')->required()->maxLength(100),
+                    TextInput::make('font_size_h2')->label('Tiêu đề H2')->required()->maxLength(100),
+                    TextInput::make('font_size_h3')->label('Tiêu đề H3')->required()->maxLength(100),
+                    TextInput::make('font_size_stat')->label('Số liệu nổi bật')->required()->maxLength(100),
+                ])
+                ->columns(2),
         ];
     }
 
@@ -457,23 +618,23 @@ class ManageSettings extends Page
     }
 
     /** @param array<string, mixed> $data */
-    private function saveWebsite(WebsiteSettings $website, array $data): void
+    private function saveWebsite(WebsiteSettings $website, array $data, FaviconService $favicons, GoogleMapsShareResolver $maps): void
     {
-        foreach (['site_name', 'tagline', 'contact_email', 'hotline', 'address', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
+        foreach (['site_name', 'tagline', 'contact_email', 'hotline', 'contact_phone', 'address', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
 
-        $website->google_maps_embed_url = filled($data['google_maps_embed_url'] ?? null)
-            ? (string) $data['google_maps_embed_url']
-            : null;
         $website->google_maps_url = filled($data['google_maps_url'] ?? null)
-            ? (string) $data['google_maps_url']
+            ? trim((string) $data['google_maps_url'])
             : null;
+        $website->google_maps_embed_url = GoogleMapsUrl::normalizeEmbed($data['google_maps_embed_url'] ?? null)
+            ?? $maps->resolveEmbed($website->google_maps_url);
 
         foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id'] as $key) {
             $website->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 
+        $favicons->sync(Media::query()->find($website->favicon_media_id));
         $website->save();
     }
 
@@ -527,7 +688,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveAbout(AboutSettings $about, array $data): void
     {
-        foreach (['page_label', 'page_title', 'page_intro', 'story', 'history', 'mission', 'vision', 'core_values'] as $key) {
+        foreach (['page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'cta_title', 'cta_button_label'] as $key) {
             $about->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
         }
 
@@ -537,7 +698,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveDesign(DesignSettings $design, array $data): void
     {
-        foreach (['color_primary', 'color_primary_hover', 'color_ink', 'color_midnight', 'color_surface', 'color_muted', 'color_green_light', 'color_green_dark', 'gradient_green_dark_start', 'gradient_green_dark_end', 'gradient_green_light_start', 'gradient_green_light_end'] as $key) {
+        foreach (['color_primary', 'color_primary_hover', 'color_ink', 'color_midnight', 'color_surface', 'color_muted', 'color_green_light', 'color_green_dark', 'gradient_green_dark_start', 'gradient_green_dark_end', 'gradient_green_light_start', 'gradient_green_light_end', 'font_size_base', 'font_size_body', 'font_size_small', 'font_size_h1', 'font_size_h2', 'font_size_h3', 'font_size_stat'] as $key) {
             $design->{$key} = (string) ($data[$key] ?? '');
         }
 

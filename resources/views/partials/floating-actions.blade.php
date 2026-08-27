@@ -5,7 +5,9 @@
         </a>
     @endif
     @if ($website->zalo_url)
-        <a class="floating-action bg-primary text-[0.62rem] font-extrabold tracking-[-0.08em]" href="{{ $website->zalo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Nhắn Zalo">Zalo</a>
+        <a class="floating-action bg-primary" href="{{ $website->zalo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Nhắn Zalo">
+            <img class="size-6" src="{{ asset('images/zalo.svg') }}" alt="">
+        </a>
     @endif
 </div>
 

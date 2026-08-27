@@ -81,7 +81,10 @@ class TestimonialResource extends Resource
                 CuratorColumn::make('curatorMedia')->label('Ảnh')->square(),
                 TextColumn::make('client_name')->label('Khách hàng')->searchable()->sortable(),
                 TextColumn::make('company_name')->label('Doanh nghiệp')->toggleable(),
-                TextColumn::make('rating')->label('Sao')->suffix('/5')->sortable(),
+                TextColumn::make('rating')
+                    ->label('Sao')
+                    ->formatStateUsing(fn (?int $state): string => $state ? "{$state}/5" : 'Chưa có')
+                    ->sortable(),
                 IconColumn::make('is_active')->label('Hiển thị')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable(),
             ])

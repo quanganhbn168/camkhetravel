@@ -16,6 +16,8 @@ class WebsiteSettings extends Settings
 
     public string $hotline;
 
+    public string $contact_phone = '';
+
     public string $address;
 
     public string $facebook_url;

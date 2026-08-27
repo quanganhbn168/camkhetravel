@@ -52,13 +52,17 @@
                         @endforeach
                     </div>
                 </div>
-                @if ($website->hotline)
-                    <a class="group flex items-center gap-2 border-l border-slate-200 pl-5 text-right" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">
+                @if ($website->hotline || $website->contact_phone)
+                    <div class="group flex items-center gap-2 border-l border-slate-200 pl-5 text-right">
                         <span class="grid size-9 place-items-center rounded-full bg-mist text-accent transition group-hover:bg-primary group-hover:text-white">
-                            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8 9.72a16 16 0 0 0 6 6l1.28-1.28a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92Z"/></svg>
+                            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8 9.72a16 16 0 0 0 6 6l1.28-1.28a16 16 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92Z"/></svg>
                         </span>
-                        <span><span class="block text-[0.61rem] font-bold tracking-[0.14em] text-slate-400 uppercase">Hotline</span><span class="mt-0.5 block text-sm font-semibold text-ink">{{ $website->hotline }}</span></span>
-                    </a>
+                        <span class="flex flex-wrap items-center justify-end gap-x-2 text-sm font-semibold text-ink">
+                            @if ($website->hotline)<a class="hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>@endif
+                            @if ($website->hotline && $website->contact_phone)<span class="text-slate-300" aria-hidden="true">-</span>@endif
+                            @if ($website->contact_phone)<a class="hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->contact_phone) }}">{{ $website->contact_phone }}</a>@endif
+                        </span>
+                    </div>
                 @endif
             </div>
 
