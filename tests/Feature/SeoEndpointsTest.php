@@ -19,10 +19,20 @@ class SeoEndpointsTest extends TestCase
             ->assertContent(implode(PHP_EOL, [
                 'User-agent: *',
                 'Allow: /',
-                'Disallow: /admin',
                 '',
                 'Sitemap: https://demo.example/sitemap.xml',
                 '',
             ]));
+    }
+
+    public function test_frontend_master_always_allows_indexing(): void
+    {
+        $head = file_get_contents(resource_path('views/partials/head/seo.blade.php'));
+
+        $this->assertIsString($head);
+        $this->assertStringContainsString(
+            '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">',
+            $head,
+        );
     }
 }

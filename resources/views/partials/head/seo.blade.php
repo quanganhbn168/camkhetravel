@@ -12,7 +12,7 @@
     <meta name="keywords" content="{{ $seo['keywords'] }}">
 @endif
 <meta name="author" content="@yield('author', $website->company_name ?: $website->site_name)">
-<meta name="robots" content="@yield('robots', $seo['robots'])">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="@yield('canonical', $seo['canonical'])">
 @include('partials.head.favicon')
 <meta property="og:type" content="@yield('og_type', $seo['type'])">

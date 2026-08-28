@@ -2,10 +2,10 @@
 
 namespace App\Support\Seo;
 
+use App\Models\Landing;
 use App\Models\Post;
 use App\Models\PricingPlan;
 use App\Models\Project;
-use App\Models\Landing;
 use App\Settings\WebsiteSettings;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
@@ -254,9 +254,7 @@ class FrontendSeoBuilder
             'title' => $title,
             'description' => $description,
             'keywords' => $this->website->seo_keywords,
-            'robots' => app()->environment('production') && $this->languages->isIndexable(app()->getLocale())
-                ? 'index, follow'
-                : 'noindex, nofollow',
+            'robots' => 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
             'canonical' => $canonical,
             'type' => $type,
             'locale' => $this->languages->ogLocale(app()->getLocale()),
