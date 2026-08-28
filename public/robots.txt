@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /
-
-Sitemap: https://thtmedia-laravel.test/sitemap.xml

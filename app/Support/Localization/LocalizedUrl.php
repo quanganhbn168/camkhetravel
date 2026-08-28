@@ -41,10 +41,10 @@ class LocalizedUrl
         }
 
         if ($locale === $defaultLocale) {
-            return route($name, $parameters);
+            return self::absoluteRoute($name, $parameters);
         }
 
-        return route('localized.'.$name, ['locale' => $locale, ...$parameters]);
+        return self::absoluteRoute('localized.'.$name, ['locale' => $locale, ...$parameters]);
     }
 
     public static function slug(string $slug, ?string $locale = null): string
@@ -131,6 +131,19 @@ class LocalizedUrl
         $segments = array_filter([$prefix, $path]);
 
         return rtrim((string) config('app.url'), '/').'/'.implode('/', $segments);
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    private static function absoluteRoute(string $name, array $parameters): string
+    {
+        $baseUrl = rtrim((string) config('app.url'), '/');
+        $path = route($name, $parameters, false);
+
+        return $path === '/'
+            ? $baseUrl.'/'
+            : $baseUrl.'/'.ltrim($path, '/');
     }
 
     private static function contentSlug(Post|Project $content): string

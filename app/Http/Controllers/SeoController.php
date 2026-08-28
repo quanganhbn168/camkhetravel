@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Seo\RobotsTxt;
 use App\Support\Seo\SitemapBuilder;
 use Illuminate\Http\Response;
 
@@ -13,13 +14,9 @@ class SeoController extends Controller
             ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
 
-    public function robots(): Response
+    public function robots(RobotsTxt $robots): Response
     {
-        $lines = app()->environment('production')
-            ? ['User-agent: *', 'Allow: /', 'Sitemap: '.url('/sitemap.xml')]
-            : ['User-agent: *', 'Disallow: /'];
-
-        return response(implode("\n", $lines)."\n", 200)
+        return response($robots->render(), 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
 }

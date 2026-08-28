@@ -3,9 +3,9 @@
 namespace App\Support\Seo;
 
 use App\Models\ContentItem;
+use App\Models\Landing;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\Landing;
 use App\Models\SiteSetting;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
@@ -15,10 +15,14 @@ use Spatie\Sitemap\Tags\Url;
 
 class SitemapBuilder
 {
+    /** @var array<string, true> */
+    private array $seenUrls = [];
+
     public function __construct(private readonly LanguageCatalog $languages) {}
 
     public function build(): Sitemap
     {
+        $this->seenUrls = [];
         $sitemap = Sitemap::create();
 
         $this->addNativePages($sitemap);
@@ -111,6 +115,14 @@ class SitemapBuilder
 
     private function addUrl(Sitemap $sitemap, string $url, ?DateTimeInterface $lastModified, string $frequency, float $priority): void
     {
+        $key = $this->normalizedUrlKey($url);
+
+        if (isset($this->seenUrls[$key])) {
+            return;
+        }
+
+        $this->seenUrls[$key] = true;
+
         $tag = Url::create($url)
             ->setChangeFrequency($frequency)
             ->setPriority($priority);
@@ -120,6 +132,24 @@ class SitemapBuilder
         }
 
         $sitemap->add($tag);
+    }
+
+    private function normalizedUrlKey(string $url): string
+    {
+        $parts = parse_url($url);
+
+        if ($parts === false || ! isset($parts['host'])) {
+            return rtrim($url, '/');
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? 'https'));
+        $host = strtolower($parts['host']);
+        $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+        $path = (string) ($parts['path'] ?? '/');
+        $path = $path === '/' ? '' : rtrim($path, '/');
+        $query = isset($parts['query']) ? '?'.$parts['query'] : '';
+
+        return $scheme.'://'.$host.$port.$path.$query;
     }
 
     private function absolutePath(string $path): string

@@ -236,15 +236,23 @@ class LegacySeoTest extends TestCase
         $this->assertSame('FAQPage', $metadata->structuredData[0]['@type']);
     }
 
-    public function test_sitemap_contains_each_canonical_path_once(): void
+    public function test_sitemap_contains_each_normalized_canonical_path_once(): void
     {
         $response = $this->get('/sitemap.xml')->assertOk();
         $baseUrl = rtrim(config('app.url'), '/');
         $serviceUrl = $baseUrl.'/chay-quang-cao-facebook';
-        $postUrl = $baseUrl.'/tin-tuc/chay-quang-cao-facebook';
+        preg_match_all('/<loc>([^<]+)<\/loc>/', $response->getContent(), $matches);
+        $urls = array_map(
+            static fn (string $url): string => html_entity_decode($url, ENT_QUOTES | ENT_XML1, 'UTF-8'),
+            $matches[1],
+        );
+        $normalizedUrls = array_map(
+            static fn (string $url): string => rtrim($url, '/'),
+            $urls,
+        );
 
         $this->assertSame(1, substr_count($response->getContent(), '<loc>'.$serviceUrl.'</loc>'));
-        $this->assertSame(1, substr_count($response->getContent(), '<loc>'.$postUrl.'</loc>'));
+        $this->assertCount(count(array_unique($normalizedUrls)), $normalizedUrls);
         $this->assertSame(1, substr_count($response->getContent(), '<loc>'.$baseUrl.'/</loc>'));
         $this->assertStringNotContainsString('<loc>'.$baseUrl.'/tht-media/</loc>', $response->getContent());
         $this->assertStringContainsString('<loc>'.$baseUrl.'/tin-tuc</loc>', $response->getContent());
@@ -257,6 +265,19 @@ class LegacySeoTest extends TestCase
             '<loc>'.$baseUrl.'/danh-muc-du-an/video-highlight/</loc>',
             $response->getContent(),
         );
+    }
+
+    public function test_sitemap_uses_app_url_instead_of_the_request_host(): void
+    {
+        config(['app.url' => 'https://demo.example']);
+
+        $content = $this->withServerVariables([
+            'HTTP_HOST' => 'request-host.example',
+            'HTTPS' => 'off',
+        ])->get('/sitemap.xml')->assertOk()->getContent();
+
+        $this->assertStringContainsString('<loc>https://demo.example/</loc>', $content);
+        $this->assertStringNotContainsString('request-host.example', $content);
     }
 
     public function test_wordpress_blog_archive_redirects_to_the_native_news_listing(): void
