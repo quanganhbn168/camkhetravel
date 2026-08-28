@@ -137,14 +137,7 @@ class SeoMetadataBuilder
 
     private function robots(ContentItem $item, array $settings): array
     {
-        if (! app()->environment('production')) {
-            return ['noindex', 'nofollow'];
-        }
-
-        $robots = $item->seo_robots ?: ($settings['pt_'.$item->type.'_robots'] ?? []);
-        $robots = array_values(array_filter((array) $robots));
-
-        return $robots !== [] ? $robots : ['index', 'follow'];
+        return ['index', 'follow'];
     }
 
     private function featuredImage(ContentItem $item): ?string

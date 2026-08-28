@@ -27,7 +27,6 @@ class SearchController extends Controller
             'Tìm kiếm dịch vụ và bài viết tại '.$this->seo->siteName().'.',
             LocalizedUrl::route('search'),
         );
-        $seo['robots'] = 'noindex, follow';
 
         return view('frontend.search.index', compact('keyword', 'services', 'posts', 'seo'));
     }

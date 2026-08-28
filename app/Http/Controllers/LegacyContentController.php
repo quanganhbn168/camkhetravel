@@ -107,7 +107,7 @@ class LegacyContentController extends Controller
             return response()->view('legacy.content', [
                 'item' => $item,
                 'seo' => $metadata
-                    ->withRobots(['noindex', 'follow'])
+                    ->withRobots(['index', 'follow'])
                     ->withoutStructuredData(),
                 'bodyHtml' => $this->mediaUrlMapper->absoluteLocalMediaUrls($item->body),
                 'emitCanonical' => false,
@@ -120,7 +120,7 @@ class LegacyContentController extends Controller
             return view('legacy.content', [
                 'item' => $item,
                 'seo' => $metadata
-                    ->withRobots(['noindex', 'follow'])
+                    ->withRobots(['index', 'follow'])
                     ->withoutStructuredData(),
                 'bodyHtml' => $this->mediaUrlMapper->absoluteLocalMediaUrls($item->body),
                 'emitCanonical' => false,

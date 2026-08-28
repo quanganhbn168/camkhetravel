@@ -15,13 +15,13 @@ class LegacySeoTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_imported_homepage_is_available_and_staging_is_noindex(): void
+    public function test_imported_homepage_is_available_and_indexable(): void
     {
         $baseUrl = rtrim(config('app.url'), '/');
 
         $response = $this->get('/')
             ->assertOk()
-            ->assertSee('<meta name="robots" content="noindex, nofollow">', false)
+            ->assertSee('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">', false)
             ->assertSee('<link rel="canonical" href="'.$baseUrl.'/">', false);
 
         $this->assertStringNotContainsString(
@@ -172,22 +172,22 @@ class LegacySeoTest extends TestCase
         $this->get('/duong-dan-chac-chan-khong-ton-tai/')->assertNotFound();
     }
 
-    public function test_imported_404_page_returns_real_404_and_is_not_indexable(): void
+    public function test_imported_404_page_returns_real_404_and_allows_indexing(): void
     {
         $response = $this->get('/404-not-found/')
             ->assertNotFound()
-            ->assertSee('<meta name="robots" content="noindex, follow">', false);
+            ->assertSee('<meta name="robots" content="index, follow">', false);
 
         $this->assertStringNotContainsString('<link rel="canonical"', $response->getContent());
         $this->assertStringNotContainsString('application/ld+json', $response->getContent());
     }
 
-    public function test_internal_utility_pages_are_noindex_and_not_in_sitemap(): void
+    public function test_internal_utility_pages_allow_indexing_but_are_not_in_sitemap(): void
     {
         foreach (['/search/', '/under-construction/', '/test/'] as $path) {
             $response = $this->get($path)
                 ->assertOk()
-                ->assertSee('<meta name="robots" content="noindex, follow">', false);
+                ->assertSee('<meta name="robots" content="index, follow">', false);
 
             $this->assertStringNotContainsString('<link rel="canonical"', $response->getContent());
             $this->assertStringNotContainsString('application/ld+json', $response->getContent());
@@ -313,7 +313,7 @@ class LegacySeoTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.$baseUrl.'/tin-tuc?page=2">', false);
     }
 
-    public function test_native_news_sorting_is_noindex_and_canonicalizes_to_the_default_listing(): void
+    public function test_native_news_sorting_allows_indexing_and_canonicalizes_to_the_default_listing(): void
     {
         $baseUrl = rtrim(config('app.url'), '/');
 
@@ -321,7 +321,7 @@ class LegacySeoTest extends TestCase
             ->assertOk()
             ->assertSee('Sắp xếp')
             ->assertSee('value="oldest" selected', false)
-            ->assertSee('<meta name="robots" content="noindex, follow">', false)
+            ->assertSee('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">', false)
             ->assertSee('<link rel="canonical" href="'.$baseUrl.'/tin-tuc">', false);
 
         $this->get('/tin-tuc?sort=oldest&page=2')
@@ -330,11 +330,11 @@ class LegacySeoTest extends TestCase
             ->assertSee('<link rel="canonical" href="'.$baseUrl.'/tin-tuc?page=2">', false);
     }
 
-    public function test_empty_archive_is_noindex_without_canonical(): void
+    public function test_empty_archive_allows_indexing_without_canonical(): void
     {
         $response = $this->get('/danh-muc-du-an/video-highlight/')
             ->assertOk()
-            ->assertSee('<meta name="robots" content="noindex, nofollow">', false);
+            ->assertSee('<meta name="robots" content="index, follow">', false);
 
         $this->assertStringNotContainsString('<link rel="canonical"', $response->getContent());
         $this->assertStringNotContainsString('application/ld+json', $response->getContent());

@@ -127,9 +127,7 @@ class ArchiveController extends Controller
                 $this->mediaUrlMapper->localizeUrl($rankMath['open_graph_image'] ?? null),
             ),
             'structuredData' => $structuredData,
-            'robots' => ! app()->environment('production')
-                ? ['noindex', 'nofollow']
-                : ($isEmpty ? ['noindex', 'follow'] : ['index', 'follow']),
+            'robots' => ['index', 'follow'],
             'previousUrl' => $definition['page'] > 1
                 ? $this->pageUrl($definition['path'], $definition['page'] - 1)
                 : null,

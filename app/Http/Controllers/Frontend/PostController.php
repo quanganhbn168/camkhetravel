@@ -347,12 +347,6 @@ class PostController extends Controller
 
     private function listingSeo(string $title, string $description, string $canonicalUrl): array
     {
-        $seo = $this->seo->listing($title, $description, $canonicalUrl);
-
-        if (request()->has('sort')) {
-            $seo['robots'] = 'noindex, follow';
-        }
-
-        return $seo;
+        return $this->seo->listing($title, $description, $canonicalUrl);
     }
 }
