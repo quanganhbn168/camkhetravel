@@ -20,11 +20,6 @@ class ProjectCategory extends Model
         ];
     }
 
-    public function legacyTerm(): BelongsTo
-    {
-        return $this->belongsTo(Term::class, 'legacy_term_id');
-    }
-
     public function projects(): HasMany
     {
         return $this->hasMany(Project::class);

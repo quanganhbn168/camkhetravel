@@ -455,7 +455,7 @@ class ManageSettings extends Page
             ->schema([
                 Section::make('Mở đầu trang giới thiệu')
                     ->icon(Heroicon::OutlinedDocumentText)
-                    ->description('Để trống một trường nếu muốn giữ nội dung WordPress đã nhập trước đây ở đúng vị trí đó.')
+                    ->description('Nhập nội dung quản trị trực tiếp cho trang giới thiệu.')
                     ->schema([
                         TextInput::make("page_title.{$locale}")->label('Tiêu đề trang')->maxLength(255)->columnSpanFull(),
                         Textarea::make("page_intro.{$locale}")->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),

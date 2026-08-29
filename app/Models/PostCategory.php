@@ -20,11 +20,6 @@ class PostCategory extends Model
         ];
     }
 
-    public function legacyTerm(): BelongsTo
-    {
-        return $this->belongsTo(Term::class, 'legacy_term_id');
-    }
-
     public function posts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class)->withPivot('sort_order');

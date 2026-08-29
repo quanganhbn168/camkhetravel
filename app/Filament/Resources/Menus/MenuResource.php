@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Menus;
 use App\Filament\Resources\Menus\Pages\CreateMenu;
 use App\Filament\Resources\Menus\Pages\EditMenu;
 use App\Filament\Resources\Menus\Pages\ListMenus;
-use App\Models\ContentItem;
 use App\Models\Landing;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -129,7 +128,6 @@ class MenuResource extends Resource
                     'service' => 'Dịch vụ',
                     'project' => 'Dự án',
                     'post' => 'Bài viết',
-                    'page' => 'Trang nội dung',
                     'custom' => 'Liên kết tuỳ chỉnh',
                 ])
                 ->default('route')
@@ -219,12 +217,10 @@ class MenuResource extends Resource
             'native_service' => 'service',
             'native_project' => 'project',
             'native_post' => 'post',
-            'native_page' => 'page',
             'custom' => 'custom',
             Landing::class => 'service',
             Project::class => 'project',
             Post::class => 'post',
-            ContentItem::class => 'page',
             default => self::routeNameFromValue($record->url) ? 'route' : 'custom',
         };
     }
@@ -236,7 +232,6 @@ class MenuResource extends Resource
             'service' => 'native_service',
             'project' => 'native_project',
             'post' => 'native_post',
-            'page' => 'native_page',
             default => 'custom',
         };
     }
@@ -299,7 +294,7 @@ class MenuResource extends Resource
 
     private static function usesContentReference(string $type): bool
     {
-        return in_array($type, ['service', 'project', 'post', 'page'], true);
+        return in_array($type, ['service', 'project', 'post'], true);
     }
 
     /** @return array<int, string> */
@@ -319,12 +314,6 @@ class MenuResource extends Resource
             'post' => Post::query()
                 ->published()
                 ->orderByDesc('published_at')
-                ->pluck('title', 'id')
-                ->all(),
-            'page' => ContentItem::query()
-                ->where('type', 'page')
-                ->where('status', 'published')
-                ->orderBy('title')
                 ->pluck('title', 'id')
                 ->all(),
             default => [],

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\LegacyContentController;
 use App\Models\Landing;
 use App\Models\LandingCategory;
 use App\Models\Post;
@@ -13,7 +12,6 @@ use App\Models\ProjectCategory;
 use App\Models\Slug;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
-use App\Support\Seo\SeoMetadataBuilder;
 use Illuminate\Http\Request;
 
 class PublicSlugController extends Controller
@@ -49,7 +47,7 @@ class PublicSlugController extends Controller
             $sluggable instanceof ProjectCategory => redirect()->to(LocalizedUrl::projectCategory($sluggable), 301),
             $sluggable instanceof Post => app(PostController::class)->show($sluggable),
             $sluggable instanceof PostCategory => redirect()->to(LocalizedUrl::postCategory($sluggable), 301),
-            default => app(LegacyContentController::class)->show($request, $slug, app(SeoMetadataBuilder::class)),
+            default => abort(404),
         };
     }
 }

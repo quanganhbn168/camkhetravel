@@ -25,11 +25,6 @@ class Testimonial extends Model
         return $this->belongsTo(Media::class, 'curator_media_id');
     }
 
-    public function legacyContent(): BelongsTo
-    {
-        return $this->belongsTo(ContentItem::class, 'legacy_content_item_id');
-    }
-
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);

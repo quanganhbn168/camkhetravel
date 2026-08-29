@@ -35,7 +35,7 @@ class SearchController extends Controller
     {
         $services = Landing::query()
             ->published()
-            ->with(['category', 'curatorMedia', 'legacyMedia'])
+            ->with(['category', 'curatorMedia'])
             ->when($keyword === '', fn (Builder $query) => $query->whereRaw('1 = 0'), fn (Builder $query) => $this->applyKeyword($query, $keyword))
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -44,7 +44,7 @@ class SearchController extends Controller
 
         $services->getCollection()->each(fn (Landing $service) => $service->setAttribute(
             'image_url',
-            MediaUrl::resolve($service->curatorMedia, $service->legacyMedia),
+            MediaUrl::resolve($service->curatorMedia),
         ));
 
         return $services;
@@ -54,7 +54,7 @@ class SearchController extends Controller
     {
         $posts = Post::query()
             ->published()
-            ->with(['categories', 'curatorMedia', 'legacyMedia'])
+            ->with(['categories', 'curatorMedia'])
             ->when($keyword === '', fn (Builder $query) => $query->whereRaw('1 = 0'), fn (Builder $query) => $this->applyKeyword($query, $keyword))
             ->orderByDesc('published_at')
             ->paginate(9, ['*'], 'posts_page')
@@ -62,7 +62,7 @@ class SearchController extends Controller
 
         $posts->getCollection()->each(fn (Post $post) => $post->setAttribute(
             'image_url',
-            MediaUrl::resolve($post->curatorMedia, $post->legacyMedia),
+            MediaUrl::resolve($post->curatorMedia),
         ));
 
         return $posts;

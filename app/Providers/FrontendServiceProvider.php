@@ -2,11 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\ContentItem;
 use App\Models\HeroSlide;
-use App\Models\Language;
 use App\Models\Landing;
 use App\Models\LandingCategory;
+use App\Models\Language;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Partner;
@@ -15,8 +14,6 @@ use App\Models\PostCategory;
 use App\Models\PricingPlan;
 use App\Models\Project;
 use App\Models\ProjectCategory;
-use App\Models\Service;
-use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\AssignNextOrderObserver;
@@ -31,9 +28,9 @@ use Awcodes\Curator\Models\Media;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View as BladeView;
 
@@ -53,8 +50,6 @@ class FrontendServiceProvider extends ServiceProvider
             'project-category' => ProjectCategory::class,
             'landing' => Landing::class,
             'landing-category' => LandingCategory::class,
-            'legacy-service' => Service::class,
-            'legacy-service-category' => ServiceCategory::class,
             'user' => User::class,
         ]);
 
@@ -65,7 +60,6 @@ class FrontendServiceProvider extends ServiceProvider
         Landing::observe(SlugObserver::class);
         LandingCategory::observe(SlugObserver::class);
 
-        ContentItem::observe(AssignNextOrderObserver::class);
         HeroSlide::observe(AssignNextOrderObserver::class);
         Language::observe(AssignNextOrderObserver::class);
         Partner::observe(AssignNextOrderObserver::class);
@@ -77,7 +71,6 @@ class FrontendServiceProvider extends ServiceProvider
         LandingCategory::observe(AssignNextOrderObserver::class);
         Testimonial::observe(AssignNextOrderObserver::class);
 
-        ContentItem::observe(ContentSeoFallbackObserver::class);
         Post::observe(ContentSeoFallbackObserver::class);
         Project::observe(ContentSeoFallbackObserver::class);
         Landing::observe(ContentSeoFallbackObserver::class);
@@ -130,7 +123,7 @@ class FrontendServiceProvider extends ServiceProvider
                 ->when(
                     filled($website->footer_menu_id),
                     fn (Builder $query) => $query->whereKey($website->footer_menu_id),
-                    fn (Builder $query) => $query->where('source', 'native')->where('location', 'footer'),
+                    fn (Builder $query) => $query->where('location', 'footer'),
                 )
                 ->first();
 
@@ -155,7 +148,7 @@ class FrontendServiceProvider extends ServiceProvider
                 ->when(
                     filled($website->header_menu_id),
                     fn (Builder $query) => $query->whereKey($website->header_menu_id),
-                    fn (Builder $query) => $query->where('source', 'native')->where('location', 'header'),
+                    fn (Builder $query) => $query->where('location', 'header'),
                 )
                 ->first();
             $requestPath = trim(request()->path(), '/');

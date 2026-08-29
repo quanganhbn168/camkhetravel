@@ -2,13 +2,12 @@
 
 namespace App\Support\Frontend;
 
-use App\Models\MediaAsset;
 use Awcodes\Curator\Models\Media;
 
 class MediaUrl
 {
-    public static function resolve(?Media $curatorMedia, ?MediaAsset $legacyMedia): ?string
+    public static function resolve(?Media $media): ?string
     {
-        return $curatorMedia?->url ?: $legacyMedia?->public_url;
+        return $media?->url;
     }
 }

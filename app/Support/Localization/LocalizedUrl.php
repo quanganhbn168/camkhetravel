@@ -148,15 +148,11 @@ class LocalizedUrl
 
     private static function contentSlug(Post|Project $content): string
     {
-        return $content->legacyContent?->slug
-            ?: $content->slug
-            ?: Str::slug($content->title);
+        return $content->slug ?: Str::slug($content->title);
     }
 
     private static function termSlug(PostCategory|ProjectCategory $category): string
     {
-        return $category->legacyTerm?->slug
-            ?: $category->slug
-            ?: Str::slug($category->name);
+        return $category->slug ?: Str::slug($category->name);
     }
 }

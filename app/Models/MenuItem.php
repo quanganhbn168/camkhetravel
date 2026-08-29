@@ -18,7 +18,6 @@ class MenuItem extends Model
     protected function casts(): array
     {
         return [
-            'legacy_meta' => 'array',
             'linked_source_id' => 'integer',
             'position' => 'integer',
         ];
@@ -63,13 +62,12 @@ class MenuItem extends Model
             'native_service' => 'service',
             'native_project' => 'project',
             'native_post' => 'post',
-            'native_page' => 'page',
+            'native_page' => 'custom',
             'custom' => 'custom',
             Landing::class => 'service',
             Project::class => 'project',
             Post::class => 'post',
-            ContentItem::class => 'page',
-            default => 'legacy',
+            default => 'custom',
         };
     }
 
@@ -127,7 +125,7 @@ class MenuItem extends Model
     {
         $project = Project::query()
             ->published()
-            ->with(['slugs', 'legacyContent'])
+            ->with('slugs')
             ->find($this->linked_source_id);
 
         return $project ? LocalizedUrl::project($project) : '#';
@@ -137,7 +135,7 @@ class MenuItem extends Model
     {
         $post = Post::query()
             ->published()
-            ->with(['slugs', 'legacyContent'])
+            ->with('slugs')
             ->find($this->linked_source_id);
 
         return $post ? LocalizedUrl::post($post) : '#';
@@ -145,11 +143,6 @@ class MenuItem extends Model
 
     private function pageLink(): string
     {
-        $page = ContentItem::query()
-            ->where('type', 'page')
-            ->where('status', 'published')
-            ->find($this->linked_source_id);
-
-        return filled($page?->slug) ? LocalizedUrl::slug($page->slug) : '#';
+        return $this->url ?: '#';
     }
 }

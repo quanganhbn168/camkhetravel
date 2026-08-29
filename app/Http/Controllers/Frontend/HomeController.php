@@ -72,21 +72,21 @@ class HomeController extends Controller
 
         $services = Landing::query()
             ->published()
-            ->with(['category', 'curatorMedia', 'legacyMedia'])
+            ->with(['category', 'curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->limit(6)
             ->get();
         $showcaseProjects = Project::query()
             ->published()
-            ->with(['category', 'curatorMedia', 'legacyMedia'])
+            ->with(['category', 'curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->limit(30)
             ->get();
         $posts = Post::query()
             ->published()
-            ->with(['categories', 'curatorMedia', 'legacyMedia'])
+            ->with(['categories', 'curatorMedia'])
             ->latest('published_at')
             ->limit(8)
             ->get();
@@ -116,8 +116,12 @@ class HomeController extends Controller
             ? trim($this->website->google_maps_url)
             : null;
         $stats = $this->stats($projectCategories);
+        $companyName = trim($this->website->company_name)
+            ?: trim($this->website->site_name)
+            ?: (string) config('app.name');
 
         return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'googleMapsEmbedUrl', 'googleMapsUrl') + [
+            'companyName' => $companyName,
             'marqueePartners' => Partner::query()
                 ->active()
                 ->with('curatorMedia')
@@ -243,7 +247,7 @@ class HomeController extends Controller
     private function attachImages(iterable $items): void
     {
         foreach ($items as $item) {
-            $item->setAttribute('image_url', MediaUrl::resolve($item->curatorMedia, $item->legacyMedia));
+            $item->setAttribute('image_url', MediaUrl::resolve($item->curatorMedia));
         }
     }
 }

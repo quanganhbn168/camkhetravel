@@ -6,26 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Landing;
-use App\Services\WordPress\WordPressMediaUrlMapper;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProjectController extends Controller
 {
     public function __construct(
-        private readonly WordPressMediaUrlMapper $mediaUrlMapper,
         private readonly FrontendSeoBuilder $seo,
     ) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $backstageLanding = $this->backstageLanding();
+        $backstageLanding = $this->backstageLanding($request);
 
-        return view('frontend.projects.index', $this->listingData(backstageLanding: $backstageLanding) + [
+        return view('frontend.projects.index', $this->listingData(backstageLanding: $backstageLanding, request: $request) + [
             'seo' => $this->seo->listing(
                 'Dự án | '.$this->seo->siteName(),
                 'Các case study và dự án truyền thông nổi bật.',
@@ -34,14 +33,16 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function category(ProjectCategory $category): View
+    public function category(ProjectCategory $category, ?Request $request = null): View
     {
         abort_unless($category->is_active, 404);
 
         $title = $category->name.' | Dự án';
         $description = $category->description ?: 'Các dự án thuộc nhóm '.$category->name.'.';
 
-        return view('frontend.projects.index', $this->listingData($category, $this->backstageLanding()) + [
+        $request ??= request();
+
+        return view('frontend.projects.index', $this->listingData($category, $this->backstageLanding($request), $request) + [
             'seo' => $this->seo->listing($title, $description, LocalizedUrl::projectCategory($category)),
         ]);
     }
@@ -53,24 +54,23 @@ class ProjectController extends Controller
         $project->load([
             'category',
             'curatorMedia',
-            'legacyMedia',
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
             'backstageLandings' => fn ($query) => $query
                 ->published()
-                ->with(['category', 'curatorMedia', 'legacyMedia'])
+                ->with(['category', 'curatorMedia'])
                 ->orderByDesc('published_at'),
             'relatedPosts' => fn ($query) => $query
                 ->published()
-                ->with(['categories', 'curatorMedia', 'legacyMedia'])
+                ->with(['categories', 'curatorMedia'])
                 ->orderByDesc('published_at'),
         ]);
-        $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia, $project->legacyMedia));
-        $project->setAttribute('body_html', $this->mediaUrlMapper->absoluteLocalMediaUrls((string) $project->body));
+        $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia));
+        $project->setAttribute('body_html', (string) $project->body);
         $relatedProjects = $this->withImages(Project::query()
             ->published()
             ->whereKeyNot($project->id)
             ->when($project->project_category_id, fn ($query) => $query->where('project_category_id', $project->project_category_id))
-            ->with(['category', 'curatorMedia', 'legacyMedia'])
+            ->with(['category', 'curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->limit(3)
@@ -112,14 +112,19 @@ class ProjectController extends Controller
     }
 
     /** @return array<string, mixed> */
-    private function listingData(?ProjectCategory $activeCategory = null, ?Landing $backstageLanding = null): array
+    private function listingData(
+        ?ProjectCategory $activeCategory = null,
+        ?Landing $backstageLanding = null,
+        ?Request $request = null,
+    ): array
     {
-        $sort = request()->string('sort')->value();
+        $request ??= request();
+        $sort = $request->string('sort')->value();
         $sort = in_array($sort, ['latest', 'featured', 'title'], true) ? $sort : 'latest';
 
         $projectsQuery = Project::query()
             ->published()
-            ->with(['category', 'curatorMedia', 'legacyMedia']);
+            ->with(['category', 'curatorMedia']);
 
         if ($activeCategory) {
             $projectsQuery->where('project_category_id', $activeCategory->id);
@@ -139,7 +144,7 @@ class ProjectController extends Controller
             ->published()
             ->when($activeCategory, fn (Builder $query) => $query->where('project_category_id', $activeCategory->id))
             ->when($backstageLanding, fn (Builder $query) => $query->whereHas('backstageLandings', fn ($landingQuery) => $landingQuery->whereKey($backstageLanding->id)))
-            ->with(['curatorMedia', 'legacyMedia'])
+            ->with(['curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->first();
@@ -149,7 +154,7 @@ class ProjectController extends Controller
             'backstageLanding' => $backstageLanding,
             'categories' => $this->categories(),
             'projects' => $projects,
-            'heroImageUrl' => $heroProject ? MediaUrl::resolve($heroProject->curatorMedia, $heroProject->legacyMedia) : null,
+            'heroImageUrl' => $heroProject ? MediaUrl::resolve($heroProject->curatorMedia) : null,
             'pageTitle' => $activeCategory?->name ?? ($backstageLanding ? 'Hậu trường: '.$backstageLanding->title : 'Dự án'),
             'pageDescription' => $activeCategory?->description ?: ($backstageLanding
                 ? 'Các dự án và tư liệu hậu trường được gắn với landing '.$backstageLanding->title.'.'
@@ -198,15 +203,15 @@ class ProjectController extends Controller
     private function withImages(iterable $projects): iterable
     {
         foreach ($projects as $project) {
-            $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia, $project->legacyMedia));
+            $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia));
         }
 
         return $projects;
     }
 
-    private function backstageLanding(): ?Landing
+    private function backstageLanding(Request $request): ?Landing
     {
-        $landingId = request()->integer('landing') ?: request()->integer('service');
+        $landingId = $request->integer('landing') ?: $request->integer('service');
 
         return $landingId
             ? Landing::query()->published()->find($landingId)
@@ -216,20 +221,14 @@ class ProjectController extends Controller
     private function projectForSlug(string $slug): Project
     {
         return Project::query()
-            ->where(function (Builder $query) use ($slug): void {
-                $query->whereHas('legacyContent', fn (Builder $legacy) => $legacy->where('slug', $slug))
-                    ->orWhereHas('slugs', fn (Builder $slugs) => $slugs->where('slug', $slug));
-            })
+            ->whereHas('slugs', fn (Builder $slugs) => $slugs->where('slug', $slug))
             ->firstOrFail();
     }
 
     private function categoryForSlug(string $slug): ProjectCategory
     {
         return ProjectCategory::query()
-            ->where(function (Builder $query) use ($slug): void {
-                $query->whereHas('legacyTerm', fn (Builder $term) => $term->where('slug', $slug))
-                    ->orWhereHas('slugs', fn (Builder $slugs) => $slugs->where('slug', $slug));
-            })
+            ->whereHas('slugs', fn (Builder $slugs) => $slugs->where('slug', $slug))
             ->firstOrFail();
     }
 

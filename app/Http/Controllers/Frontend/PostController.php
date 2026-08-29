@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostCategory;
-use App\Services\WordPress\WordPressMediaUrlMapper;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -26,7 +25,6 @@ class PostController extends Controller
     ];
 
     public function __construct(
-        private readonly WordPressMediaUrlMapper $mediaUrlMapper,
         private readonly FrontendSeoBuilder $seo,
     ) {}
 
@@ -35,7 +33,7 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts(Post::query()
             ->published()
-            ->with(['categories', 'curatorMedia', 'legacyMedia']), $sort)
+            ->with(['categories', 'curatorMedia']), $sort)
             ->paginate(12)
             ->withQueryString());
         $canonicalUrl = LocalizedUrl::route('posts.index');
@@ -69,7 +67,7 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts($category->posts()
             ->published()
-            ->with(['categories', 'curatorMedia', 'legacyMedia']), $sort)
+            ->with(['categories', 'curatorMedia']), $sort)
             ->paginate(12)
             ->withQueryString());
         $canonicalUrl = LocalizedUrl::postCategory($category);
@@ -97,18 +95,17 @@ class PostController extends Controller
         $post->load([
             'categories',
             'curatorMedia',
-            'legacyMedia',
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
-        $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia, $post->legacyMedia));
+        $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia));
         $article = $this->prepareArticleBody(
-            $this->mediaUrlMapper->absoluteLocalMediaUrls((string) $post->body),
+            (string) $post->body,
         );
         $post->setAttribute('body_html', $article['html']);
         $featuredPosts = $this->withImages(Post::query()
             ->published()
             ->whereKeyNot($post->id)
-            ->with(['categories', 'curatorMedia', 'legacyMedia'])
+            ->with(['categories', 'curatorMedia'])
             ->orderByDesc('is_featured')
             ->latest('published_at')
             ->limit(4)
@@ -247,7 +244,7 @@ class PostController extends Controller
     private function withImages(iterable $posts): iterable
     {
         foreach ($posts as $post) {
-            $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia, $post->legacyMedia));
+            $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia));
         }
 
         return $posts;
@@ -256,20 +253,14 @@ class PostController extends Controller
     private function postForSlug(string $slug): Post
     {
         return Post::query()
-            ->where(function ($query) use ($slug): void {
-                $query->whereHas('legacyContent', fn ($legacy) => $legacy->where('slug', $slug))
-                    ->orWhereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug));
-            })
+            ->whereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug))
             ->firstOrFail();
     }
 
     private function categoryForSlug(string $slug): PostCategory
     {
         return PostCategory::query()
-            ->where(function ($query) use ($slug): void {
-                $query->whereHas('legacyTerm', fn ($term) => $term->where('slug', $slug))
-                    ->orWhereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug));
-            })
+            ->whereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug))
             ->firstOrFail();
     }
 
@@ -289,7 +280,7 @@ class PostController extends Controller
             return [null, null];
         }
 
-        $withMedia = ['curatorMedia', 'legacyMedia'];
+        $withMedia = ['curatorMedia'];
         $previousPost = Post::query()
             ->published()
             ->where(function ($query) use ($post): void {
@@ -319,7 +310,7 @@ class PostController extends Controller
 
         foreach ([$previousPost, $nextPost] as $adjacentPost) {
             if ($adjacentPost) {
-                $adjacentPost->setAttribute('image_url', MediaUrl::resolve($adjacentPost->curatorMedia, $adjacentPost->legacyMedia));
+                $adjacentPost->setAttribute('image_url', MediaUrl::resolve($adjacentPost->curatorMedia));
             }
         }
 

@@ -54,11 +54,7 @@
     </section>
     @endif
 
-    @if ($isLegacyLanding && filled(strip_tags((string) $service->body_html)))
-        <section id="noi-dung-dich-vu" class="border-y border-slate-100 bg-mist/55 py-12 md:py-16">
-            <div class="site-shell"><article class="article-prose mx-auto max-w-4xl">{!! $service->body_html !!}</article></div>
-        </section>
-    @elseif (! $usesLandingLayout || filled(strip_tags((string) $service->body_html)) || $service->excerpt)
+    @if (! $usesLandingLayout || filled(strip_tags((string) $service->body_html)) || $service->excerpt)
     <section id="noi-dung-dich-vu" class="resource-detail-content">
         <div class="site-shell grid gap-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
             <article class="article-prose max-w-3xl">
@@ -124,7 +120,7 @@
         <section class="resource-related-section border-y border-slate-100 bg-mist/55" x-data="{ activeTab: @js($referenceVideos !== [] ? 'video' : 'images'), videoLimit: 3, imageLimit: 6 }">
             <div class="site-shell">
                 <header class="mx-auto max-w-2xl text-center">
-                    <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Tài liệu tham khảo</h2>
+                    <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">{{ $referenceVideos === [] && $referenceImages !== [] ? 'HÌNH ẢNH HẬU TRƯỜNG' : 'Tài liệu tham khảo' }}</h2>
                     <p class="mt-4 text-sm leading-7 text-slate-600">Video và hình ảnh được chọn lọc từ quá trình triển khai {{ mb_strtolower($service->title) }}.</p>
                 </header>
 

@@ -74,14 +74,6 @@ class SlugObserver
             'tin-tuc',
             'sitemap.xml',
             'robots.txt',
-            '404-not-found',
-            'search',
-            'under-construction',
-            'test',
-            'blog',
-            'danh-muc-dich-vu',
-            'danh-muc-du-an',
-            'landing-cate',
         ], true);
     }
 }

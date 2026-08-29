@@ -62,30 +62,6 @@ return [
             ]) : [],
         ],
 
-        /*
-        | WordPress is a migration source only. Use a database account with
-        | SELECT privileges so application code cannot modify the legacy site.
-        */
-        'wordpress' => [
-            'driver' => 'mysql',
-            'host' => env('WP_SOURCE_DB_HOST', '127.0.0.1'),
-            'port' => env('WP_SOURCE_DB_PORT', '3306'),
-            'database' => env('WP_SOURCE_DB_DATABASE', 'thtmedia_com_vn'),
-            'username' => env('WP_SOURCE_DB_USERNAME', 'thtmedia_reader'),
-            'password' => env('WP_SOURCE_DB_PASSWORD', ''),
-            'unix_socket' => env('WP_SOURCE_DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => env('WP_SOURCE_DB_PREFIX', 'lotus_'),
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('WP_SOURCE_MYSQL_ATTR_SSL_CA'),
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]) : [],
-        ],
-
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),

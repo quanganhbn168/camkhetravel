@@ -20,11 +20,6 @@ class LandingCategory extends Model
         ];
     }
 
-    public function legacyTerm(): BelongsTo
-    {
-        return $this->belongsTo(Term::class, 'legacy_term_id');
-    }
-
     public function landings(): HasMany
     {
         return $this->hasMany(Landing::class);

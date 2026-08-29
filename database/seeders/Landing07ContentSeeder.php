@@ -19,7 +19,7 @@ class Landing07ContentSeeder extends Seeder
         $this->seedCorporateFilm();
         $this->seedEventMedia();
         $this->seedCatalogPages();
-        $this->detachLegacyLandingDependencies();
+        $this->normalizeLandingTemplateContent();
     }
 
     private function seedCorporateFilm(): void
@@ -307,7 +307,7 @@ class Landing07ContentSeeder extends Seeder
         ]));
     }
 
-    private function detachLegacyLandingDependencies(): void
+    private function normalizeLandingTemplateContent(): void
     {
         $templateKeys = [
             LandingTemplateRegistry::CORPORATE_FILM,
@@ -325,8 +325,6 @@ class Landing07ContentSeeder extends Seeder
 
                 $landing->forceFill([
                     'body' => null,
-                    'legacy_content_item_id' => null,
-                    'legacy_media_asset_id' => null,
                     'template_settings' => $settings,
                 ])->saveQuietly();
             });

@@ -46,16 +46,6 @@ class Landing extends Model
         return $this->belongsTo(LandingTemplate::class);
     }
 
-    public function legacyContent(): BelongsTo
-    {
-        return $this->belongsTo(ContentItem::class, 'legacy_content_item_id');
-    }
-
-    public function legacyMedia(): BelongsTo
-    {
-        return $this->belongsTo(MediaAsset::class, 'legacy_media_asset_id');
-    }
-
     public function curatorMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'curator_media_id');

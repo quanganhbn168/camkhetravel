@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\Frontend\AboutController;
-use App\Http\Controllers\Frontend\BniHandoverController;
 use App\Http\Controllers\Frontend\BniArticleController;
+use App\Http\Controllers\Frontend\BniHandoverController;
 use App\Http\Controllers\Frontend\BniInteractionController;
 use App\Http\Controllers\Frontend\BniInvitationController;
 use App\Http\Controllers\Frontend\BniMemberAuthController;
@@ -18,13 +17,12 @@ use App\Http\Controllers\Frontend\PricingController;
 use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\PublicSlugController;
 use App\Http\Controllers\Frontend\SearchController;
-use App\Http\Controllers\LegacyContentController;
 use App\Http\Controllers\SeoController;
 use App\Http\Middleware\SetFrontendLocale;
-use App\Support\Localization\LanguageCatalog;
-use App\Support\Localization\LocalizedUrl;
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
+use App\Support\Localization\LanguageCatalog;
+use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Facades\Route;
 
@@ -124,44 +122,7 @@ Route::prefix('{locale}')
         Route::get('/{slug}', [PublicSlugController::class, 'localized'])->where('slug', '[^/]+')->name('slug.show');
     });
 
-Route::get('/404-not-found', [LegacyContentController::class, 'show'])
-    ->defaults('path', '404-not-found');
-Route::get('/search', [LegacyContentController::class, 'show'])
-    ->defaults('path', 'search');
-Route::get('/under-construction', [LegacyContentController::class, 'show'])
-    ->defaults('path', 'under-construction');
-Route::get('/test', [LegacyContentController::class, 'show'])
-    ->defaults('path', 'test');
-Route::get('/blog/{pagination?}', function (?string $pagination = null) {
-    $target = LocalizedUrl::route('posts.index');
-
-    if ($pagination && preg_match('#^page/([1-9][0-9]*)$#', $pagination, $matches)) {
-        $target .= '?page='.$matches[1];
-    }
-
-    return redirect()->to($target, 301);
-})
-    ->where('pagination', 'page/[1-9][0-9]*')
-    ->name('legacy.archive.blog');
-Route::get('/danh-muc-dich-vu/{term}', [ArchiveController::class, 'service'])
-    ->where('term', 'dich-vu-va-bang-gia')
-    ->name('legacy.archive.service');
-Route::get('/danh-muc-du-an/{term}', [ArchiveController::class, 'portfolio'])
-    ->where('term', 'anh|phong-su-cuoi|tvc-cua-hang|tvc-doanh-nghiep|video-highlight|video')
-    ->name('legacy.archive.portfolio');
-Route::get('/landing-cate/{term}', [ArchiveController::class, 'landing'])
-    ->where('term', 'dao-tao|dich-vu-media|truyen-thong-quang-cao')
-    ->name('legacy.archive.landing');
-Route::get('/service/{slug}', [LandingController::class, 'legacyService'])
-    ->middleware(SetFrontendLocale::class)
-    ->where('slug', '[^/]+')
-    ->name('legacy.service.show');
-
 Route::get('/{slug}', PublicSlugController::class)
     ->middleware(SetFrontendLocale::class)
     ->where('slug', '[^/]+')
     ->name('slug.show');
-
-Route::get('/{path}', [LegacyContentController::class, 'show'])
-    ->where('path', '^(?!admin(?:/|$)|livewire(?:/|$)|(?:dich-vu|du-an|tin-tuc|service)(?:/|$)).+')
-    ->name('legacy.content');

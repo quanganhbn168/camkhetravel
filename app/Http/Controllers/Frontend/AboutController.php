@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\ContentItem;
 use App\Models\Landing;
-use App\Models\MediaAsset;
 use App\Models\Post;
 use App\Models\Project;
-use App\Services\WordPress\WordPressMediaUrlMapper;
 use App\Settings\AboutSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
@@ -24,7 +21,6 @@ use Illuminate\View\View;
 class AboutController extends Controller
 {
     public function __construct(
-        private readonly WordPressMediaUrlMapper $mediaUrlMapper,
         private readonly FrontendSeoBuilder $seo,
         private readonly AboutSettings $settings,
         private readonly HomepageSettings $homepage,
@@ -34,19 +30,6 @@ class AboutController extends Controller
 
     public function __invoke(): View
     {
-        $legacyPage = ContentItem::query()
-            ->where('source', 'wordpress')
-            ->where('type', 'page')
-            ->where('status', 'published')
-            ->where('slug', 've-chung-toi')
-            ->first();
-
-        $legacyMedia = $legacyPage
-            ? MediaAsset::query()
-                ->where('source', 'wordpress')
-                ->where('source_id', $legacyPage->featured_media_source_id)
-                ->first()
-            : null;
         $managed = [
             'title' => $this->translated($this->settings->page_title),
             'intro' => $this->translated($this->settings->page_intro),
@@ -69,28 +52,23 @@ class AboutController extends Controller
         $hasManagedContent = collect($managed)->filter(fn (string $value): bool => filled($value))->isNotEmpty()
             || $historyTimeline->isNotEmpty();
 
-        abort_if(! $legacyPage && ! $hasManagedContent, 404);
+        abort_if(! $hasManagedContent, 404);
 
-        $legacyBody = $legacyPage
-            ? $this->mediaUrlMapper->absoluteLocalMediaUrls((string) $legacyPage->body)
-            : '';
         $managedImageUrl = $this->website->about_image_media_id
             ? Media::query()->find($this->website->about_image_media_id)?->url
             : null;
         $about = $managed;
-        $about['title'] = $managed['title'] ?: $legacyPage?->title ?: $this->website->company_name;
-        $about['intro'] = $managed['intro'] ?: $legacyPage?->excerpt ?: '';
-        $about['image_url'] = $managedImageUrl ?: MediaUrl::resolve(null, $legacyMedia);
-        $about['story'] = $managed['story'] ?: $legacyBody;
+        $about['title'] = $managed['title'] ?: $this->website->company_name;
+        $about['image_url'] = $managedImageUrl;
         $services = Landing::query()
             ->published()
-            ->with(['curatorMedia', 'legacyMedia', 'slugs'])
+            ->with(['curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->limit(6)
             ->get();
         foreach ($services as $service) {
-            $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia, $service->legacyMedia));
+            $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia));
         }
         $description = $about['intro'] ?: trim(strip_tags($about['story'])) ?: $about['title'];
 
@@ -99,8 +77,8 @@ class AboutController extends Controller
             'services' => $services,
             'stats' => $this->stats(),
             'seo' => $this->seo->listing(
-                $legacyPage?->seo_title ?: $about['title'].' | '.$this->seo->siteName(),
-                $legacyPage?->seo_description ?: $description,
+                $about['title'].' | '.$this->seo->siteName(),
+                $description,
                 LocalizedUrl::route('about'),
             ),
         ]);

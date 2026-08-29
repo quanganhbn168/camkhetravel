@@ -5,8 +5,8 @@ namespace App\Support\Landing;
 /**
  * Source-backed catalog for the ten landing-07 pages.
  *
- * This is a Laravel-owned snapshot of the legacy page data. It is deliberately
- * kept free of WordPress URLs, models, and runtime imports so the public page
+ * This is a Laravel-owned snapshot of the source page data. It is deliberately
+ * kept free of external URLs, models, and runtime imports so the public page
  * can be rendered from MySQL, Curator, and the Laravel view layer only.
  */
 final class Landing07Catalog

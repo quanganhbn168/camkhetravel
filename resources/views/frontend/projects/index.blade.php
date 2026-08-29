@@ -32,6 +32,7 @@
             @if ($backstageLanding)
                 <div class="mb-8 flex flex-col gap-4 rounded-[1.5rem] border border-primary/20 bg-sand/50 p-6 md:flex-row md:items-center md:justify-between">
                     <div>
+                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-accent">Hậu trường dịch vụ</p>
                         <p class="text-sm leading-7 text-slate-600">Đang xem các dự án được gắn với <strong class="font-semibold text-ink">{{ $backstageLanding->title }}</strong>.</p>
                     </div>
                     <a class="button-dark shrink-0" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a>
