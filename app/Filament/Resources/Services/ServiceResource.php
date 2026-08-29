@@ -2,23 +2,27 @@
 
 namespace App\Filament\Resources\Services;
 
+use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
-use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
+use App\Filament\Resources\Services\Schemas\LandingExperienceSchema;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Landing;
+use App\Support\Landing\LandingTemplateRegistry;
+use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\ContentSeoFallbacks;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
@@ -40,7 +44,7 @@ class ServiceResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
-    protected static ?string $navigationLabel = 'Dịch vụ';
+    protected static ?string $navigationLabel = 'Landing pages';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -53,12 +57,12 @@ class ServiceResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'dịch vụ';
+        return 'landing page';
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Dịch vụ';
+        return 'Landing pages';
     }
 
     public static function form(Schema $schema): Schema
@@ -174,6 +178,7 @@ class ServiceResource extends Resource
                                 ->columnSpanFull(),
                         ])
                         ->columns(1),
+                    ...LandingExperienceSchema::components(),
                 ])
                     ->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')
@@ -202,15 +207,42 @@ class ServiceResource extends Resource
                 TextColumn::make('title')->label('Dịch vụ')->searchable()->sortable()->wrap(),
                 TextColumn::make('category.name')->label('Danh mục')->badge()->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
+                TextColumn::make('layout_mode')
+                    ->label('Giao diện')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'builder' => 'Page builder',
+                        'custom_template' => 'Template đặc thù',
+                        default => 'Chuẩn',
+                    })
+                    ->color(fn (?string $state): string => match ($state) {
+                        'builder' => 'info',
+                        'custom_template' => 'warning',
+                        default => 'gray',
+                    }),
+                TextColumn::make('template_key')
+                    ->label('Template')
+                    ->badge()
+                    ->placeholder('—')
+                    ->formatStateUsing(fn (?string $state): string => LandingTemplateRegistry::options()[$state ?? ''] ?? 'Không chọn')
+                    ->toggleable(),
+                TextColumn::make('events_count')->counts('events')->label('Sự kiện')->sortable(),
+                TextColumn::make('contact_requests_count')->counts('contactRequests')->label('Leads')->sortable(),
                 IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('landing_category_id')->label('Nhóm dịch vụ')->relationship('category', 'name'),
                 SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư']),
+                SelectFilter::make('template_key')->label('Template')->options(LandingTemplateRegistry::options()),
             ])
             ->defaultSort('sort_order')
             ->recordActions([
+                Action::make('preview')
+                    ->label('Xem trang')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->url(fn (Landing $record): string => LocalizedUrl::slug($record->slug))
+                    ->openUrlInNewTab(),
                 EditAction::make(),
                 DeleteAction::make(),
             ]);

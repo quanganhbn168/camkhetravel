@@ -3,8 +3,11 @@
 namespace App\Filament\Resources\Services\Pages;
 
 use App\Filament\Resources\Services\ServiceResource;
+use App\Support\Localization\LocalizedUrl;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Support\Icons\Heroicon;
 
 class EditService extends EditRecord
 {
@@ -12,7 +15,14 @@ class EditService extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [DeleteAction::make()];
+        return [
+            Action::make('preview')
+                ->label('Xem landing page')
+                ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                ->url(fn (): string => LocalizedUrl::slug($this->record->slug))
+                ->openUrlInNewTab(),
+            DeleteAction::make(),
+        ];
     }
 
     protected function getRedirectUrl(): string

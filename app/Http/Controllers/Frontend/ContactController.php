@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
 use App\Models\Landing;
 use App\Settings\WebsiteSettings;
-use App\Support\Media\MediaUrl;
-use App\Support\Maps\GoogleMapsUrl;
-use App\Support\Seo\FrontendSeoBuilder;
+use App\Support\Landing\LandingEventRecorder;
 use App\Support\Localization\LocalizedUrl;
+use App\Support\Maps\GoogleMapsUrl;
+use App\Support\Media\MediaUrl;
+use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class ContactController extends Controller
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
         private readonly WebsiteSettings $website,
+        private readonly LandingEventRecorder $landingEvents,
     ) {}
 
     public function index(Request $request): View
@@ -56,6 +58,18 @@ class ContactController extends Controller
             'phone' => [$isLandingSubmission ? 'required' : 'nullable', 'string', 'max:32'],
             'company' => ['nullable', 'string', 'max:255'],
             'landing_id' => ['nullable', 'exists:landings,id'],
+            'landing_block_id' => ['nullable', 'string', 'max:100'],
+            'visitor_id' => ['nullable', 'string', 'max:64'],
+            'session_id' => ['nullable', 'string', 'max:64'],
+            'utm_source' => ['nullable', 'string', 'max:255'],
+            'utm_medium' => ['nullable', 'string', 'max:255'],
+            'utm_campaign' => ['nullable', 'string', 'max:255'],
+            'utm_content' => ['nullable', 'string', 'max:255'],
+            'utm_term' => ['nullable', 'string', 'max:255'],
+            'gclid' => ['nullable', 'string', 'max:255'],
+            'fbclid' => ['nullable', 'string', 'max:255'],
+            'first_url' => ['nullable', 'string', 'max:2048'],
+            'referrer' => ['nullable', 'string', 'max:2048'],
             'budget' => ['nullable', 'string', 'max:255'],
             'timeline' => ['nullable', 'string', 'max:255'],
             'message' => [$isLandingSubmission ? 'nullable' : 'required', 'string', 'max:5000'],
@@ -66,7 +80,14 @@ class ContactController extends Controller
             $data['message'] = filled($data['message'] ?? null) ? $data['message'] : 'Chưa cung cấp';
         }
 
-        ContactRequest::query()->create($data);
+        $contactRequest = ContactRequest::query()->create($data);
+
+        if ($contactRequest->landing_id && ($landing = Landing::query()->find($contactRequest->landing_id))) {
+            $this->landingEvents->record($landing, 'lead_submit', $request, [
+                'block_id' => $contactRequest->landing_block_id,
+                'payload' => ['contact_request_id' => $contactRequest->id],
+            ]);
+        }
 
         return redirect()->to($this->safeReturnPath($request->input('return_to')) ?? LocalizedUrl::route('contact'))
             ->with('success', __('site.contact_success'));

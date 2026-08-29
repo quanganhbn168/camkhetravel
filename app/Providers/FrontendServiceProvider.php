@@ -84,6 +84,9 @@ class FrontendServiceProvider extends ServiceProvider
 
         RateLimiter::for('frontend-contact', fn ($request) => Limit::perMinute(5)->by((string) $request->ip()));
         RateLimiter::for('frontend-comment', fn ($request) => Limit::perMinute(3)->by((string) $request->ip()));
+        RateLimiter::for('landing-tracking', fn ($request) => Limit::perMinute(120)->by(
+            (string) data_get($request->route('landing'), 'id', $request->route('landing')).'|'.(string) $request->ip(),
+        ));
 
         $website = app(WebsiteSettings::class);
         $media = Media::query()

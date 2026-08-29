@@ -216,6 +216,195 @@ const initialiseBniCountdowns = () => {
     });
 };
 
+const initialiseLandingPages = () => {
+    document.querySelectorAll('[data-landing-page]').forEach((page) => {
+        if (page.dataset.landingReady === 'true') {
+            return;
+        }
+
+        const endpoint = page.dataset.trackEndpoint;
+        const landingId = page.dataset.landingId;
+
+        if (!endpoint || !landingId) {
+            return;
+        }
+
+        page.dataset.landingReady = 'true';
+
+        const randomId = () => window.crypto?.randomUUID?.()
+            ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+        const visitorKey = 'tht_landing_visitor_id';
+        const sessionKey = 'tht_landing_session_id';
+        let visitorId;
+        let sessionId;
+
+        try {
+            visitorId = window.localStorage.getItem(visitorKey) || randomId();
+            sessionId = window.sessionStorage.getItem(sessionKey) || randomId();
+            window.localStorage.setItem(visitorKey, visitorId);
+            window.sessionStorage.setItem(sessionKey, sessionId);
+        } catch {
+            visitorId = randomId();
+            sessionId = randomId();
+        }
+
+        const query = new URLSearchParams(window.location.search);
+        const attributionKeys = [
+            'utm_source',
+            'utm_medium',
+            'utm_campaign',
+            'utm_content',
+            'utm_term',
+            'gclid',
+            'fbclid',
+        ];
+        const attribution = {
+            visitor_id: visitorId,
+            session_id: sessionId,
+            first_url: window.location.href,
+            referrer: document.referrer,
+        };
+
+        attributionKeys.forEach((key) => {
+            const currentValue = query.get(key);
+            const storageKey = `tht_landing_${key}`;
+
+            try {
+                if (currentValue) {
+                    window.sessionStorage.setItem(storageKey, currentValue);
+                }
+
+                attribution[key] = currentValue || window.sessionStorage.getItem(storageKey) || '';
+            } catch {
+                attribution[key] = currentValue || '';
+            }
+        });
+
+        page.querySelectorAll('[data-attribution-field]').forEach((input) => {
+            input.value = attribution[input.dataset.attributionField] || '';
+        });
+
+        const track = (eventName, blockId = '', payload = {}) => {
+            const formData = new FormData();
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.content;
+
+            if (csrf) {
+                formData.append('_token', csrf);
+            }
+
+            formData.append('event_name', eventName);
+            formData.append('block_id', blockId);
+            formData.append('page_url', window.location.href);
+
+            Object.entries(attribution).forEach(([key, value]) => {
+                if (value) {
+                    formData.append(key, value);
+                }
+            });
+
+            Object.entries(payload).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') {
+                    formData.append(`payload[${key}]`, String(value));
+                }
+            });
+
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(endpoint, formData);
+
+                return;
+            }
+
+            window.fetch(endpoint, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+                keepalive: true,
+            }).catch(() => {});
+        };
+
+        let pageViewTracked = false;
+
+        try {
+            const pageViewKey = `tht_landing_view_${landingId}`;
+            pageViewTracked = window.sessionStorage.getItem(pageViewKey) === '1';
+
+            if (!pageViewTracked) {
+                window.sessionStorage.setItem(pageViewKey, '1');
+            }
+        } catch {
+            pageViewTracked = false;
+        }
+
+        if (!pageViewTracked) {
+            track('page_view', 'page');
+        }
+
+        page.addEventListener('click', (event) => {
+            const target = event.target.closest('[data-landing-event]');
+
+            if (!target || !page.contains(target)) {
+                return;
+            }
+
+            track(target.dataset.landingEvent, target.dataset.blockId || '', {
+                label: target.textContent?.trim().slice(0, 255),
+                target_url: target.href || '',
+                project_id: target.dataset.projectId || '',
+                pricing_plan_id: target.dataset.pricingPlanId || '',
+            });
+        });
+
+        page.querySelectorAll('[data-landing-countdown]').forEach((countdown) => {
+            const target = new Date(countdown.dataset.countdownEnd || '').getTime();
+
+            if (Number.isNaN(target)) {
+                return;
+            }
+
+            const output = {
+                days: countdown.querySelector('[data-countdown-days]'),
+                hours: countdown.querySelector('[data-countdown-hours]'),
+                minutes: countdown.querySelector('[data-countdown-minutes]'),
+                seconds: countdown.querySelector('[data-countdown-seconds]'),
+            };
+            let expiredTracked = false;
+            let interval;
+            const render = () => {
+                const remaining = Math.max(0, Math.floor((target - Date.now()) / 1000));
+                const values = {
+                    days: Math.floor(remaining / 86400),
+                    hours: Math.floor((remaining % 86400) / 3600),
+                    minutes: Math.floor((remaining % 3600) / 60),
+                    seconds: remaining % 60,
+                };
+
+                Object.entries(values).forEach(([key, value]) => {
+                    if (output[key]) {
+                        output[key].textContent = String(value).padStart(2, '0');
+                    }
+                });
+
+                if (remaining === 0) {
+                    countdown.classList.add('is-expired');
+
+                    if (!expiredTracked) {
+                        expiredTracked = true;
+                        track('countdown_expired', countdown.dataset.blockId || 'countdown');
+                    }
+
+                    if (interval) {
+                        window.clearInterval(interval);
+                    }
+                }
+            };
+
+            track('countdown_view', countdown.dataset.blockId || 'countdown');
+            render();
+            interval = window.setInterval(render, 1000);
+        });
+    });
+};
+
 let lightbox;
 
 const initialiseLightboxes = () => {
@@ -242,6 +431,7 @@ if (document.readyState === 'loading') {
         initialiseAos();
         initialiseCountUps();
         initialiseBniCountdowns();
+        initialiseLandingPages();
         initialiseLightboxes();
     }, { once: true });
 } else {
@@ -252,5 +442,6 @@ if (document.readyState === 'loading') {
     initialiseAos();
     initialiseCountUps();
     initialiseBniCountdowns();
+    initialiseLandingPages();
     initialiseLightboxes();
 }

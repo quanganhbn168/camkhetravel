@@ -3,6 +3,9 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
+    @if ($usesBuilderLayout)
+        @include($landingTemplateView)
+    @else
     @if ($usesLandingLayout)
         <section class="section-space bg-white pb-10 md:pb-14">
             <div class="site-shell">
@@ -236,5 +239,6 @@
             <div class="site-shell flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><div><h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Khám phá thêm dịch vụ</h2></div><a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a></div>
             <div class="site-shell mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedServices as $service) @include('frontend.partials.service-card') @endforeach</div>
         </section>
+    @endif
     @endif
 @endsection

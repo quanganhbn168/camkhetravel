@@ -10,6 +10,9 @@
         @if ($project->category)
             <span class="resource-card__badge">{{ $project->category->name }}</span>
         @endif
+        @if ($showVideoCue ?? false)
+            <span class="resource-card__video-cue" aria-hidden="true">▶</span>
+        @endif
     </a>
     <div class="resource-card__body">
         <h3 class="text-lg leading-6 font-bold text-ink md:text-xl"><a class="hover:text-accent" href="{{ LocalizedUrl::project($project) }}">{{ $project->title }}</a></h3>

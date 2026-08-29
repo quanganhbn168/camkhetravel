@@ -31,7 +31,9 @@
 </head>
 <body class="@yield('body_class', 'min-h-screen')">
     @yield('before_header')
-    @include('partials.header')
+    @unless ($hideHeader ?? false)
+        @include('partials.header')
+    @endunless
 
     <main id="@yield('main_id', 'site-main')" class="@yield('main_class', 'overflow-x-clip')">
         @if (session('success'))
@@ -42,8 +44,10 @@
     </main>
 
     @yield('before_footer')
-    @include('partials.footer')
-    @include('partials.floating-actions')
+    @unless ($hideFooter ?? false)
+        @include('partials.footer')
+        @include('partials.floating-actions')
+    @endunless
     @yield('after_footer')
     @stack('scripts')
 </body>

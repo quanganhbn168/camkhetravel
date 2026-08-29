@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContentItem;
-use App\Models\MediaAsset;
 use App\Models\Landing;
 use App\Models\LandingCategory;
+use App\Models\MediaAsset;
 use App\Services\WordPress\WordPressMediaUrlMapper;
 use App\Support\Frontend\MediaUrl;
+use App\Support\Landing\LandingPageBlocks;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -21,6 +22,7 @@ class ServiceController extends Controller
     public function __construct(
         private readonly WordPressMediaUrlMapper $mediaUrlMapper,
         private readonly FrontendSeoBuilder $seo,
+        private readonly LandingPageBlocks $landingPageBlocks,
     ) {}
 
     public function index(): View
@@ -50,25 +52,41 @@ class ServiceController extends Controller
     {
         abort_unless($service->status === 'published' && (! $service->published_at || $service->published_at->isPast()), 404);
 
-        $service->load([
+        $isNativeLanding = $service->layout_mode === 'custom_template'
+            && filled($service->template_key);
+        $serviceRelations = [
             'category',
-            'legacyContent',
             'curatorMedia',
-            'legacyMedia',
             'pricingMedia',
+            'pricingPlans' => fn ($query) => $query->active()->orderBy('sort_order'),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
             'backstageProjects' => fn ($query) => $query
                 ->published()
-                ->with(['category', 'curatorMedia', 'legacyMedia'])
+                ->with(['category', 'curatorMedia'])
                 ->orderByDesc('published_at'),
-        ]);
-        $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia, $service->legacyMedia));
-        $service->setAttribute('body_html', $this->mediaUrlMapper->absoluteLocalMediaUrls((string) $service->body));
+        ];
+
+        if (! $isNativeLanding) {
+            $serviceRelations['legacyContent'] = fn ($query) => $query;
+            $serviceRelations['legacyMedia'] = fn ($query) => $query;
+            $serviceRelations['backstageProjects'] = fn ($query) => $query
+                ->published()
+                ->with(['category', 'curatorMedia', 'legacyMedia'])
+                ->orderByDesc('published_at');
+        }
+
+        $service->load($serviceRelations);
+        $legacyContent = $service->relationLoaded('legacyContent') ? $service->legacyContent : null;
+        $legacyMedia = $service->relationLoaded('legacyMedia') ? $service->legacyMedia : null;
+        $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia, $legacyMedia));
+        $service->setAttribute('body_html', $isNativeLanding
+            ? (string) $service->body
+            : $this->mediaUrlMapper->absoluteLocalMediaUrls((string) $service->body));
         $relatedServices = $this->withImages(Landing::query()
             ->published()
             ->whereKeyNot($service->id)
             ->when($service->landing_category_id, fn ($query) => $query->where('landing_category_id', $service->landing_category_id))
-            ->with(['category', 'curatorMedia', 'legacyMedia'])
+            ->with($isNativeLanding ? ['category', 'curatorMedia'] : ['category', 'curatorMedia', 'legacyMedia'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->limit(3)
@@ -77,7 +95,7 @@ class ServiceController extends Controller
             $relatedServices = $this->withImages(Landing::query()
                 ->published()
                 ->whereKeyNot($service->id)
-                ->with(['category', 'curatorMedia', 'legacyMedia'])
+                ->with($isNativeLanding ? ['category', 'curatorMedia'] : ['category', 'curatorMedia', 'legacyMedia'])
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
                 ->limit(3)
@@ -95,17 +113,19 @@ class ServiceController extends Controller
         $ratedComments = $service->approvedComments
             ->filter(fn ($comment): bool => $comment->rating !== null)
             ->values();
+        $usesBuilderLayout = in_array($service->layout_mode, ['builder', 'custom_template'], true)
+            && collect($service->sections)->isNotEmpty();
 
         return view('frontend.services.show', compact('service') + [
             'relatedServices' => $relatedServices,
             'usesLandingLayout' => true,
-            'isLegacyLanding' => $service->legacyContent?->type === 'landing',
+            'isLegacyLanding' => $legacyContent?->type === 'landing',
             'backstageProjects' => $this->withImages($service->backstageProjects),
             'pricingMediaUrl' => $service->pricingMedia?->url,
             'pricingMediaIsImage' => str_starts_with((string) $service->pricingMedia?->type, 'image/'),
             'introMediaUrl' => $service->pricingMedia?->url ?: $service->image_url,
             'introMediaIsPrice' => $service->pricingMedia !== null,
-            'referenceVideos' => $this->referenceVideos($service->legacyContent),
+            'referenceVideos' => $isNativeLanding ? [] : $this->referenceVideos($legacyContent),
             'referenceImages' => array_values(array_unique([...$galleryImages, ...$backstageGalleryImages])),
             'faqItems' => $faqItems,
             'ratingSummary' => [
@@ -113,6 +133,17 @@ class ServiceController extends Controller
                 'average' => $ratedComments->isNotEmpty() ? round((float) $ratedComments->avg('rating'), 1) : null,
             ],
             'serviceVideoUrl' => null,
+            'usesBuilderLayout' => $usesBuilderLayout,
+            'landingBlocks' => $usesBuilderLayout ? $this->landingPageBlocks->prepare($service) : [],
+            'landingTheme' => $this->landingPageBlocks->theme($service),
+            'landingTemplateView' => $this->landingPageBlocks->templateView($service),
+            'landingTemplateDefinition' => $this->landingPageBlocks->templateDefinition($service),
+            'landingTemplateSettings' => $this->landingPageBlocks->templateSettings($service),
+            'landingTemplateMedia' => $this->landingPageBlocks->templateMedia($service),
+            'landingCampaignState' => $this->landingPageBlocks->campaignState($service),
+            'landingTrackingUrl' => route('landings.track', ['landing' => $service->id]),
+            'hideHeader' => $usesBuilderLayout && ! $service->show_header,
+            'hideFooter' => $usesBuilderLayout && ! $service->show_footer,
             'seo' => $this->seo->landing($service),
         ]);
     }
@@ -289,7 +320,8 @@ class ServiceController extends Controller
     private function withImages(iterable $services): iterable
     {
         foreach ($services as $service) {
-            $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia, $service->legacyMedia));
+            $legacyMedia = $service->relationLoaded('legacyMedia') ? $service->legacyMedia : null;
+            $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia, $legacyMedia));
         }
 
         return $services;

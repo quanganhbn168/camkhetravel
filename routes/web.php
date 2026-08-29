@@ -12,6 +12,7 @@ use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LandingController;
+use App\Http\Controllers\Frontend\LandingTrackingController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\PricingController;
 use App\Http\Controllers\Frontend\ProjectController;
@@ -46,6 +47,9 @@ Route::get('/favicon.ico', function (WebsiteSettings $website, FaviconService $f
 
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
+Route::post('/landing/{landing:id}/track', LandingTrackingController::class)
+    ->middleware('throttle:landing-tracking')
+    ->name('landings.track');
 
 Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::get('/', HomeController::class)->name('home');
