@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
+use App\Models\BniEventSlide;
 use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
 use App\Models\BniScheduleItem;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Settings\BniInvitationSettings;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -25,7 +27,7 @@ class BniExperienceRoutesTest extends TestCase
         $this->get(route('bni.handover'))
             ->assertOk()
             ->assertSee('id="bni-handover-main"', false)
-            ->assertSee('Sự kiện chuyển giao')
+            ->assertSee('id="bni-handover-overview-title"', false)
             ->assertSee('bni-overview__featured-media')
             ->assertSee('bni-chapter-video-list')
             ->assertSee('id="chapter-kinhbac"', false)
@@ -36,6 +38,69 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Đăng ký ngay')
             ->assertSee('Những hoạt động đặc biệt')
             ->assertSee('Thư viện ảnh');
+    }
+
+    public function test_handover_slides_are_database_backed_webp_and_never_use_overlay_eyebrow_or_h1(): void
+    {
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $upload = UploadedFile::fake()->image('handover-slide.jpg', 2600, 1300);
+        $path = $upload->storeAs('media/bni/tests', 'handover-slide.jpg', 'public');
+        $sourceMedia = Media::query()->create([
+            'disk' => 'public',
+            'directory' => 'media/bni/tests',
+            'visibility' => 'public',
+            'name' => 'handover-slide',
+            'path' => $path,
+            'width' => 2600,
+            'height' => 1300,
+            'size' => Storage::disk('public')->size($path),
+            'type' => 'image/jpeg',
+            'ext' => 'jpg',
+            'title' => 'Ảnh slide kiểm thử',
+        ]);
+
+        $textSlide = BniEventSlide::query()->create([
+            'bni_event_id' => $event->id,
+            'media_id' => $sourceMedia->id,
+            'title' => 'Nội dung slide lấy từ database',
+            'description' => 'Phần chữ nằm riêng, không phủ lên ảnh.',
+            'button_label' => 'Xem lịch trình',
+            'button_url' => '#lich-trinh',
+            'alt_text' => 'Ảnh Lễ chuyển giao kiểm thử',
+            'is_active' => true,
+            'sort_order' => 1,
+        ])->refresh();
+        $optimizedMedia = $textSlide->media()->firstOrFail();
+
+        BniEventSlide::query()->create([
+            'bni_event_id' => $event->id,
+            'media_id' => $optimizedMedia->id,
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+
+        $this->assertSame('webp', $optimizedMedia->ext);
+        $this->assertSame('image/webp', $optimizedMedia->type);
+        $this->assertLessThanOrEqual(2400, max($optimizedMedia->width, $optimizedMedia->height));
+        Storage::disk('public')->assertExists($optimizedMedia->path);
+
+        $response = $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('data-bni-hero-swiper', false)
+            ->assertSee('Nội dung slide lấy từ database')
+            ->assertSee('bni-event-slide--image-only', false)
+            ->assertSee($optimizedMedia->path, false);
+
+        $body = $response->getContent();
+        $sliderStart = strpos($body, '<section class="bni-event-slider"');
+        $sliderEnd = strpos($body, '</section>', $sliderStart);
+        $slider = substr($body, $sliderStart, $sliderEnd - $sliderStart);
+
+        $this->assertStringContainsString('<h2>Nội dung slide lấy từ database</h2>', $slider);
+        $this->assertStringNotContainsString('<h1', $slider);
+        $this->assertStringNotContainsString('bni-experience-kicker', $slider);
+        $this->assertStringNotContainsString('overlay', strtolower($slider));
     }
 
     public function test_the_handover_countdown_uses_the_configured_first_of_october_start(): void

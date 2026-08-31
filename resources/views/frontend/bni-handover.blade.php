@@ -32,28 +32,44 @@
             </div>
         </nav>
 
-        <section class="bni-experience-hero" id="tong-quan" aria-labelledby="bni-handover-title">
-            @if ($heroImageUrl)
-                <img class="bni-experience-hero__image" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">
+        <section class="bni-event-slider" id="tong-quan" aria-label="Slide hình ảnh Lễ chuyển giao BNI">
+            @if ($heroSlides->isNotEmpty())
+                <div class="swiper bni-event-slider__swiper" data-bni-hero-swiper>
+                    <div class="swiper-wrapper">
+                        @foreach ($heroSlides as $slide)
+                            <article class="swiper-slide bni-event-slide{{ $slide['has_content'] ? '' : ' bni-event-slide--image-only' }}">
+                                <figure class="bni-event-slide__visual">
+                                    <img
+                                        src="{{ $slide['image_url'] }}"
+                                        alt="{{ $slide['alt_text'] }}"
+                                        @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif
+                                    >
+                                </figure>
+                                @if ($slide['has_content'])
+                                    <div class="bni-event-slide__content">
+                                        @if ($slide['title'])
+                                            <h2>{{ $slide['title'] }}</h2>
+                                        @endif
+                                        @if ($slide['description'])
+                                            <p>{{ $slide['description'] }}</p>
+                                        @endif
+                                        @if ($slide['button_label'] && $slide['button_url'])
+                                            <a class="bni-button bni-button--red" href="{{ $slide['button_url'] }}">{{ $slide['button_label'] }}</a>
+                                        @endif
+                                    </div>
+                                @endif
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+                @if ($heroSlides->count() > 1)
+                    <div class="site-shell bni-event-slider__controls" aria-label="Điều khiển slide">
+                        <button type="button" data-bni-hero-swiper-prev aria-label="Slide trước">←</button>
+                        <span>{{ $heroSlides->count() }} hình ảnh</span>
+                        <button type="button" data-bni-hero-swiper-next aria-label="Slide tiếp theo">→</button>
+                    </div>
+                @endif
             @endif
-            <div class="bni-experience-hero__shade" aria-hidden="true"></div>
-            <div class="site-shell bni-experience-hero__layout">
-                <div class="bni-experience-hero__content">
-                    <img class="bni-experience-hero__logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
-                    <p class="bni-experience-kicker">{{ $event?->kicker ?: 'BNI VIETNAM' }}</p>
-                    <h1 id="bni-handover-title">{{ $event?->title ?: 'Lễ chuyển giao Ban Điều hành BNI' }}</h1>
-                    <p class="bni-experience-hero__summary">{{ $event?->summary ?: 'Một dấu mốc kết nối, tri ân hành trình đã qua và mở ra nhiệm kỳ mới.' }}</p>
-                </div>
-                <div class="bni-experience-hero__actions">
-                    <a class="bni-button bni-button--red" href="#lich-trinh">Xem lịch trình <span aria-hidden="true">↓</span></a>
-                    <a class="bni-button bni-button--ghost" href="{{ $registration['url'] }}">{{ $registration['label'] }}</a>
-                    @guest
-                        <a class="bni-button bni-button--ghost" href="{{ LocalizedUrl::route('bni.member.login') }}">Đăng nhập hội viên</a>
-                    @else
-                        <form method="POST" action="{{ LocalizedUrl::route('bni.member.logout') }}">@csrf<button class="bni-button bni-button--ghost" type="submit">Đăng xuất</button></form>
-                    @endguest
-                </div>
-            </div>
         </section>
 
         <section class="bni-section bni-chapter-widgets" id="chapter-widgets" aria-labelledby="bni-chapter-widgets-title">
@@ -92,8 +108,20 @@
         <section class="bni-section bni-handover-overview-section" id="su-kien" aria-labelledby="bni-handover-overview-title">
             <div class="site-shell bni-overview">
                 <div class="bni-overview__content">
-                    <h2 id="bni-handover-overview-title">Sự kiện chuyển giao</h2>
+                    <h1 id="bni-handover-overview-title">{{ $event?->title ?: 'Sự kiện chuyển giao BNI' }}</h1>
+                    @if ($event?->summary)
+                        <p class="bni-overview__summary">{{ $event->summary }}</p>
+                    @endif
                     <div class="bni-rich-copy">{!! $event?->content ?: '<p>Không gian để các chapter cùng nhìn lại hành trình, tri ân Ban Điều hành và khởi động một chu kỳ phát triển mới.</p>' !!}</div>
+                    <div class="bni-overview__actions">
+                        <a class="bni-button bni-button--red" href="#lich-trinh">Xem lịch trình <span aria-hidden="true">↓</span></a>
+                        <a class="bni-button bni-button--dark" href="{{ $registration['url'] }}">{{ $registration['label'] }}</a>
+                        @guest
+                            <a class="bni-button bni-button--light" href="{{ LocalizedUrl::route('bni.member.login') }}">Đăng nhập hội viên</a>
+                        @else
+                            <form method="POST" action="{{ LocalizedUrl::route('bni.member.logout') }}">@csrf<button class="bni-button bni-button--light" type="submit">Đăng xuất</button></form>
+                        @endguest
+                    </div>
                     <div class="bni-purpose-grid">
                         @forelse ($purposes as $purpose)
                             <article class="bni-purpose-card"><h3>{{ $purpose['title'] }}</h3><p>{{ $purpose['description'] }}</p></article>

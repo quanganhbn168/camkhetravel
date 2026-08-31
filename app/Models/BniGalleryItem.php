@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ConvertsBniMediaToWebp;
 use App\Traits\HasComments;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BniGalleryItem extends Model
 {
+    use ConvertsBniMediaToWebp;
     use HasComments;
 
     public const STATUS_PENDING = 'pending';
@@ -115,5 +117,10 @@ class BniGalleryItem extends Model
             self::SOURCE_CHAPTER => 'Quản trị Chapter',
             self::SOURCE_GUEST => 'Khách tham dự',
         ];
+    }
+
+    protected function bniWebpMediaAttributes(): array
+    {
+        return ['media_id'];
     }
 }

@@ -8,6 +8,7 @@ use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
 use App\Support\Media\MediaUrl;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class BniExperienceService
 {
@@ -17,6 +18,40 @@ class BniExperienceService
         $event = $this->event('handover');
         $chapters = $event?->chapters->where('is_active', true)->values() ?? collect();
         $heroImageUrl = MediaUrl::versioned($event?->heroMedia);
+        $heroSlides = $event?->slides
+            ->where('is_active', true)
+            ->filter(fn ($slide): bool => filled(MediaUrl::versioned($slide->media)))
+            ->map(function ($slide) use ($event): array {
+                $buttonUrl = trim((string) $slide->button_url);
+
+                if ($buttonUrl !== '' && ! Str::startsWith($buttonUrl, ['http://', 'https://', '/', '#'])) {
+                    $buttonUrl = '';
+                }
+
+                return [
+                    'image_url' => MediaUrl::versioned($slide->media),
+                    'title' => $slide->title,
+                    'description' => $slide->description,
+                    'button_label' => $slide->button_label,
+                    'button_url' => $buttonUrl ?: null,
+                    'alt_text' => $slide->alt_text ?: $slide->media?->alt ?: $slide->media?->title ?: $event?->title,
+                    'has_content' => filled($slide->title) || filled($slide->description) || (filled($slide->button_label) && filled($buttonUrl)),
+                ];
+            })
+            ->values() ?? collect();
+
+        if ($heroSlides->isEmpty() && $heroImageUrl) {
+            $heroSlides = collect([[
+                'image_url' => $heroImageUrl,
+                'title' => null,
+                'description' => null,
+                'button_label' => null,
+                'button_url' => null,
+                'alt_text' => $event?->heroMedia?->alt ?: $event?->heroMedia?->title ?: $event?->title,
+                'has_content' => false,
+            ]]);
+        }
+
         $videoPosterUrl = MediaUrl::versioned($event?->videoPosterMedia) ?: $heroImageUrl;
         $articles = BniArticle::query()
             ->published()
@@ -31,6 +66,7 @@ class BniExperienceService
         return [
             'event' => $event,
             'heroImageUrl' => $heroImageUrl,
+            'heroSlides' => $heroSlides,
             'eventVideo' => [
                 'media_url' => MediaUrl::versioned($event?->videoMedia),
                 'external_url' => $event?->video_url,
@@ -122,6 +158,7 @@ class BniExperienceService
                 'heroMedia',
                 'videoMedia',
                 'videoPosterMedia',
+                'slides.media',
                 'chapters.logoMedia',
                 'chapters.coverMedia',
                 'chapters.videoMedia',

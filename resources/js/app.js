@@ -37,6 +37,35 @@ const initialiseHeroSwipers = () => {
     });
 };
 
+const initialiseBniHeroSwipers = () => {
+    document.querySelectorAll('[data-bni-hero-swiper]').forEach((element) => {
+        if (element.swiper) {
+            return;
+        }
+
+        const section = element.closest('.bni-event-slider');
+        const slideCount = element.querySelectorAll('.swiper-slide').length;
+
+        new Swiper(element, {
+            modules: [A11y, Autoplay, Keyboard, Navigation],
+            slidesPerView: 1,
+            speed: 650,
+            loop: slideCount > 1,
+            watchOverflow: true,
+            autoplay: slideCount > 1 ? {
+                delay: 6500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+            } : false,
+            keyboard: { enabled: true },
+            navigation: {
+                prevEl: section?.querySelector('[data-bni-hero-swiper-prev]'),
+                nextEl: section?.querySelector('[data-bni-hero-swiper-next]'),
+            },
+        });
+    });
+};
+
 const initialisePostSwipers = () => {
     document.querySelectorAll('[data-post-swiper]').forEach((element) => {
         if (element.swiper) {
@@ -533,6 +562,7 @@ window.refreshLightboxes = () => {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initialiseHeroSwipers();
+        initialiseBniHeroSwipers();
         initialisePostSwipers();
         initialiseTestimonialSwipers();
         initialiseScrollTop();
@@ -545,6 +575,7 @@ if (document.readyState === 'loading') {
     }, { once: true });
 } else {
     initialiseHeroSwipers();
+    initialiseBniHeroSwipers();
     initialisePostSwipers();
     initialiseTestimonialSwipers();
     initialiseScrollTop();

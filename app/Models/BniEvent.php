@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ConvertsBniMediaToWebp;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BniEvent extends Model
 {
+    use ConvertsBniMediaToWebp;
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -40,6 +43,11 @@ class BniEvent extends Model
     public function chapters(): HasMany
     {
         return $this->hasMany(BniChapter::class)->orderBy('sort_order');
+    }
+
+    public function slides(): HasMany
+    {
+        return $this->hasMany(BniEventSlide::class)->orderBy('sort_order');
     }
 
     public function purposes(): HasMany
@@ -75,5 +83,10 @@ class BniEvent extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published');
+    }
+
+    protected function bniWebpMediaAttributes(): array
+    {
+        return ['video_poster_media_id'];
     }
 }

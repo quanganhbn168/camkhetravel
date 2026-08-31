@@ -81,6 +81,62 @@ class BniEventResource extends Resource
                         Toggle::make('is_featured')->label('Sự kiện nổi bật')->columnSpanFull(),
                     ])->columns(2),
                 ]),
+                Tab::make('Slide')
+                    ->visible(fn ($get): bool => $get('type') === 'handover')
+                    ->schema([
+                        Section::make('Slide đầu trang BNI')
+                            ->icon('heroicon-o-photo')
+                            ->description('Mỗi slide bắt buộc có ảnh. Phần chữ là tùy chọn và luôn nằm tách khỏi ảnh, không phủ overlay lên ảnh.')
+                            ->schema([
+                                Repeater::make('slides')
+                                    ->relationship('slides')
+                                    ->label('Danh sách slide')
+                                    ->schema([
+                                        CuratorPicker::make('media_id')
+                                            ->label('Ảnh slide')
+                                            ->relationship('media', 'id')
+                                            ->disk('public')
+                                            ->constrained()
+                                            ->acceptedFileTypes(['image/*'])
+                                            ->required()
+                                            ->columnSpanFull(),
+                                        TextInput::make('title')
+                                            ->label('Tiêu đề (không bắt buộc)')
+                                            ->maxLength(255)
+                                            ->helperText('Tiêu đề được hiển thị bằng H2, không dùng H1 trong slide.')
+                                            ->columnSpanFull(),
+                                        Textarea::make('description')
+                                            ->label('Mô tả (không bắt buộc)')
+                                            ->rows(3)
+                                            ->columnSpanFull(),
+                                        TextInput::make('button_label')
+                                            ->label('Nhãn nút')
+                                            ->maxLength(255),
+                                        TextInput::make('button_url')
+                                            ->label('Liên kết nút')
+                                            ->maxLength(2048)
+                                            ->helperText('Có thể dùng URL đầy đủ hoặc liên kết trong trang như #lich-trinh.'),
+                                        TextInput::make('alt_text')
+                                            ->label('Mô tả ảnh cho SEO và trợ năng')
+                                            ->maxLength(255)
+                                            ->columnSpanFull(),
+                                        Toggle::make('is_active')
+                                            ->label('Hiển thị')
+                                            ->default(true),
+                                        TextInput::make('sort_order')
+                                            ->label('Thứ tự')
+                                            ->numeric()
+                                            ->default(0),
+                                    ])
+                                    ->columns(2)
+                                    ->defaultItems(0)
+                                    ->reorderable()
+                                    ->orderColumn('sort_order')
+                                    ->collapsible()
+                                    ->itemLabel(fn (array $state): string => filled($state['title'] ?? null) ? $state['title'] : 'Slide chỉ có ảnh')
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
                 Tab::make('Video & 4 chapter')->schema([
                     Section::make('Video sự kiện')
                         ->icon('heroicon-o-video-camera')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ConvertsBniMediaToWebp;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BniChapter extends Model
 {
+    use ConvertsBniMediaToWebp;
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -48,4 +51,8 @@ class BniChapter extends Model
         return $this->hasMany(BniInvitation::class);
     }
 
+    protected function bniWebpMediaAttributes(): array
+    {
+        return ['logo_media_id', 'cover_media_id'];
+    }
 }

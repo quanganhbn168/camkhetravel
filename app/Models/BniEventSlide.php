@@ -7,7 +7,7 @@ use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BniActivity extends Model
+class BniEventSlide extends Model
 {
     use ConvertsBniMediaToWebp;
 
@@ -15,7 +15,9 @@ class BniActivity extends Model
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return [
+            'is_active' => 'boolean',
+        ];
     }
 
     public function event(): BelongsTo
