@@ -2,9 +2,13 @@
 
 namespace App\Support\Bni;
 
+use App\Models\BniChapter;
+use App\Models\BniEvent;
+use App\Models\BniInvitation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class BniPanelAccess
 {
@@ -55,5 +59,125 @@ class BniPanelAccess
         }
 
         return $data;
+    }
+
+    /** @param Builder<Model> $query */
+    public static function scopePublishedEvents(Builder $query): Builder
+    {
+        if (self::isChapterManager() && ! self::canManageEverything()) {
+            $query->where('status', 'published');
+        }
+
+        return $query;
+    }
+
+    /** @param Builder<Model> $query */
+    public static function scopeInvitationEvents(Builder $query): Builder
+    {
+        if (self::isChapterManager() && ! self::canManageEverything()) {
+            $query->whereKey(self::chapterEventId() ?? 0);
+        }
+
+        return $query;
+    }
+
+    /** @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public static function prepareArticleData(array $data): array
+    {
+        $data = self::forceChapter($data);
+        self::ensurePublishedEvent($data['bni_event_id'] ?? null);
+
+        return $data;
+    }
+
+    /** @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public static function prepareInvitationData(array $data): array
+    {
+        $data = self::forceChapter($data);
+
+        if (self::isChapterManager() && ! self::canManageEverything()) {
+            $eventId = self::chapterEventId();
+
+            if ($eventId === null) {
+                throw ValidationException::withMessages([
+                    'bni_event_id' => 'Chapter chưa được gắn với sự kiện để tạo thư mời.',
+                ]);
+            }
+
+            $data['bni_event_id'] = $eventId;
+        }
+
+        return $data;
+    }
+
+    /** @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public static function prepareRegistrationData(array $data): array
+    {
+        $data = self::forceChapter($data);
+
+        if (! self::isChapterManager() || self::canManageEverything()) {
+            return $data;
+        }
+
+        $invitationId = $data['bni_invitation_id'] ?? null;
+
+        if (filled($invitationId)) {
+            $invitation = BniInvitation::query()
+                ->where('bni_chapter_id', self::chapterId() ?? 0)
+                ->find($invitationId);
+
+            if (! $invitation) {
+                throw ValidationException::withMessages([
+                    'bni_invitation_id' => 'Thư mời không thuộc chapter đang quản lý.',
+                ]);
+            }
+
+            $data['bni_event_id'] = $invitation->bni_event_id;
+        }
+
+        self::ensurePublishedEvent($data['bni_event_id'] ?? null);
+
+        return $data;
+    }
+
+    /** @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public static function prepareGalleryData(array $data): array
+    {
+        $data = self::forceChapter($data);
+        self::ensurePublishedEvent($data['bni_event_id'] ?? null);
+
+        if (self::isChapterManager() && ! self::canManageEverything()) {
+            $data['group'] = 'chapter';
+        }
+
+        return $data;
+    }
+
+    private static function chapterEventId(): ?int
+    {
+        $eventId = BniChapter::query()->whereKey(self::chapterId() ?? 0)->value('bni_event_id');
+
+        return $eventId === null ? null : (int) $eventId;
+    }
+
+    private static function ensurePublishedEvent(mixed $eventId): void
+    {
+        if (! self::isChapterManager() || self::canManageEverything() || blank($eventId)) {
+            return;
+        }
+
+        if (! BniEvent::query()->published()->whereKey($eventId)->exists()) {
+            throw ValidationException::withMessages([
+                'bni_event_id' => 'Chapter chỉ được chọn sự kiện đã xuất bản.',
+            ]);
+        }
     }
 }

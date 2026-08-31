@@ -7,13 +7,12 @@ use App\Models\BniArticle;
 use App\Support\Bni\BniPanelAccess;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
@@ -67,7 +66,7 @@ class BniArticleResource extends Resource
                 ])->columns(2),
             ])->columnSpan(['lg' => 2]),
             Section::make('Phân loại & xuất bản')->icon('heroicon-o-cog-6-tooth')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->searchable()->preload(),
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->searchable()->preload(),
                 Select::make('type')->label('Nhóm tin')->options(['event' => 'Tin sự kiện', 'chapter' => 'Tin chapter', 'pickleball' => 'Tin pickleball'])->required()->default('event'),
                 Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
                 Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required()->default('draft'),
@@ -88,7 +87,7 @@ class BniArticleResource extends Resource
             SelectFilter::make('type')->label('Nhóm tin')->options(['event' => 'Tin sự kiện', 'chapter' => 'Tin chapter', 'pickleball' => 'Tin pickleball']),
             SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản']),
         ])->defaultSort('published_at', 'desc')->recordActions([
-            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::forceChapter($data)),
+            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareArticleData($data)),
             DeleteAction::make(),
         ]);
     }

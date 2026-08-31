@@ -45,6 +45,26 @@ class BniGalleryItem extends Model
                 ? ($item->approved_at ?: now())
                 : null;
         });
+
+        static::deleting(function (self $item): void {
+            $item->comments()->delete();
+        });
+
+        static::deleted(function (self $item): void {
+            if ($item->source !== self::SOURCE_GUEST) {
+                return;
+            }
+
+            $media = $item->media;
+
+            if (! $media || ! str_starts_with((string) $media->path, 'media/bni/community/')) {
+                return;
+            }
+
+            if (! self::query()->where('media_id', $media->id)->exists()) {
+                $media->delete();
+            }
+        });
     }
 
     public function event(): BelongsTo

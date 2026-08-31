@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\HeroSlide;
 use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniGalleryItem;
+use App\Models\HeroSlide;
 use App\Models\LandingPage;
 use App\Models\Language;
 use App\Models\Menu;
@@ -87,6 +87,7 @@ class FrontendServiceProvider extends ServiceProvider
 
         RateLimiter::for('frontend-contact', fn ($request) => Limit::perMinute(5)->by((string) $request->ip()));
         RateLimiter::for('frontend-comment', fn ($request) => Limit::perMinute(3)->by((string) $request->ip()));
+        RateLimiter::for('bni-gallery-upload', fn ($request) => Limit::perHour(2)->by((string) $request->ip()));
         RateLimiter::for('landing-tracking', fn ($request) => Limit::perMinute(120)->by(
             (string) data_get($request->route('landingPage'), 'id', $request->route('landingPage')).'|'.(string) $request->ip(),
         ));

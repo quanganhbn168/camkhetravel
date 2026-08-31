@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
 use App\Models\BniScheduleItem;
+use App\Models\User;
 use App\Settings\BniInvitationSettings;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -122,7 +122,10 @@ class BniExperienceRoutesTest extends TestCase
             'slug' => 'thu-moi-kiem-thu',
         ]);
 
-        $this->get(route('bni.invitations.show', ['invitation' => $invitation]))
+        $this->get(route('bni.invitations.show', [
+            'invitation' => $invitation,
+            'accessToken' => $invitation->access_token,
+        ]))
             ->assertOk()
             ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
             ->assertSee('id="bni-invitation-main"', false)
@@ -236,6 +239,9 @@ class BniExperienceRoutesTest extends TestCase
         $this->actingAs($user)->get('/bni-admin/bni-chapters')->assertOk();
         $this->actingAs($user)->get('/bni-admin/bni-invitations')->assertOk();
         $this->actingAs($user)->get('/bni-admin/bni-registrations')->assertOk();
+        $this->actingAs($user)->get('/bni-admin/bni-article-comments')->assertOk();
         $this->actingAs($user)->get('/bni-admin/bni-events')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-members')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/manage-bni-invitation-settings')->assertForbidden();
     }
 }

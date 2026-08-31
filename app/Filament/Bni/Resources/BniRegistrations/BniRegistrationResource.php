@@ -6,13 +6,12 @@ use App\Filament\Bni\Resources\BniRegistrations\Pages\ManageBniRegistrations;
 use App\Models\BniRegistration;
 use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -50,9 +49,9 @@ class BniRegistrationResource extends Resource
     {
         return $schema->components([
             Section::make('Đăng ký tham dự')->icon('heroicon-o-ticket')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->required()->searchable()->preload(),
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->required()->searchable()->preload(),
                 Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                Select::make('bni_invitation_id')->label('Khách mời')->relationship('invitation', 'guest_name')->searchable()->preload(),
+                Select::make('bni_invitation_id')->label('Khách mời')->relationship('invitation', 'guest_name', fn (Builder $query): Builder => BniPanelAccess::scopeChapter($query))->searchable()->preload(),
                 Select::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions())->required()->default(BniRegistration::STATUS_PENDING),
                 TextInput::make('full_name')->label('Họ và tên')->required()->maxLength(255),
                 TextInput::make('phone')->label('Số điện thoại')->required()->tel(),
@@ -77,7 +76,7 @@ class BniRegistrationResource extends Resource
         ])->filters([
             SelectFilter::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions()),
         ])->defaultSort('created_at', 'desc')->recordActions([
-            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::forceChapter($data)),
+            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareRegistrationData($data)),
             DeleteAction::make(),
         ]);
     }

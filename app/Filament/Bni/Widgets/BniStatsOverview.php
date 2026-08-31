@@ -2,6 +2,7 @@
 
 namespace App\Filament\Bni\Widgets;
 
+use App\Models\BniArticle;
 use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
 use App\Models\BniRegistration;
@@ -23,14 +24,17 @@ class BniStatsOverview extends StatsOverviewWidget
             ->where('status', BniGalleryItem::STATUS_PENDING)
             ->count();
         $pendingComments = Comment::query()
-            ->where('commentable_type', (new BniGalleryItem)->getMorphClass())
+            ->whereIn('commentable_type', [
+                (new BniArticle)->getMorphClass(),
+                (new BniGalleryItem)->getMorphClass(),
+            ])
             ->where('status', Comment::STATUS_PENDING)
             ->when(
                 BniPanelAccess::isChapterManager() && ! BniPanelAccess::canManageEverything(),
                 fn (Builder $query): Builder => $query->whereHasMorph(
                     'commentable',
-                    [BniGalleryItem::class],
-                    fn (Builder $galleryQuery): Builder => $galleryQuery->where('bni_chapter_id', BniPanelAccess::chapterId() ?? 0),
+                    [BniArticle::class, BniGalleryItem::class],
+                    fn (Builder $contentQuery): Builder => $contentQuery->where('bni_chapter_id', BniPanelAccess::chapterId() ?? 0),
                 ),
             )
             ->count();
@@ -49,7 +53,7 @@ class BniStatsOverview extends StatsOverviewWidget
                 ->descriptionIcon('heroicon-o-photo')
                 ->color($pendingPhotos > 0 ? 'warning' : 'success'),
             Stat::make('Bình luận chờ duyệt', $pendingComments)
-                ->description('Bình luận trong thư viện ảnh')
+                ->description('Tin BNI và thư viện ảnh')
                 ->descriptionIcon('heroicon-o-chat-bubble-left-right')
                 ->color($pendingComments > 0 ? 'warning' : 'success'),
         ];

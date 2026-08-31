@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class BniInvitation extends Model
 {
@@ -15,6 +16,19 @@ class BniInvitation extends Model
     public const RSVP_DECLINED = 'declined';
 
     protected $guarded = [];
+
+    protected $hidden = [
+        'access_token',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $invitation): void {
+            if (blank($invitation->access_token)) {
+                $invitation->access_token = self::generateAccessToken();
+            }
+        });
+    }
 
     protected function casts(): array
     {
@@ -41,6 +55,26 @@ class BniInvitation extends Model
         return filled($this->guest_name) ? $this->guest_name : $fallback;
     }
 
+    public function hasValidAccessToken(?string $token): bool
+    {
+        return filled($this->access_token)
+            && filled($token)
+            && hash_equals((string) $this->access_token, (string) $token);
+    }
+
+    public function regenerateAccessToken(): void
+    {
+        $this->forceFill(['access_token' => self::generateAccessToken()])->save();
+    }
+
+    public function publicUrl(): string
+    {
+        return route('bni.invitations.show', [
+            'invitation' => $this,
+            'accessToken' => $this->access_token,
+        ]);
+    }
+
     public function registrations(): HasMany
     {
         return $this->hasMany(BniRegistration::class);
@@ -53,5 +87,14 @@ class BniInvitation extends Model
             self::RSVP_ATTENDING => 'Tham dự',
             self::RSVP_DECLINED => 'Không tham dự',
         ];
+    }
+
+    private static function generateAccessToken(): string
+    {
+        do {
+            $token = Str::random(48);
+        } while (self::query()->where('access_token', $token)->exists());
+
+        return $token;
     }
 }

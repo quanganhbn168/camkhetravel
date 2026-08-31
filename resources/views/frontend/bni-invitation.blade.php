@@ -153,7 +153,7 @@
                     <p>{{ $invitationContent['rsvp_description'] }}</p>
                 </div>
                 @if ($invitation)
-                    <form class="bni-rsvp-form" method="POST" action="{{ LocalizedUrl::route('bni.invitations.rsvp', ['invitation' => $invitation]) }}">
+                    <form class="bni-rsvp-form" method="POST" action="{{ LocalizedUrl::route('bni.invitations.rsvp', ['invitation' => $invitation, 'accessToken' => $invitation->access_token]) }}">
                         @csrf
                         <fieldset>
                             <legend>Trạng thái tham dự</legend>

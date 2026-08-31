@@ -6,7 +6,6 @@ use App\Filament\Bni\Resources\BniMembers\Pages\ManageBniMembers;
 use App\Models\User;
 use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -26,7 +25,7 @@ class BniMemberResource extends Resource
 
     protected static ?string $navigationLabel = 'Tài khoản hội viên';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 9;
 
     public static function getNavigationGroup(): ?string
     {

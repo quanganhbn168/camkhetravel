@@ -110,7 +110,10 @@ class FrontendSeoBuilder
     /** @param array<string, mixed> $content */
     public function invitation(BniInvitation $invitation, string $guestName, array $content, ?string $image = null): array
     {
-        $canonical = LocalizedUrl::route('bni.invitations.show', ['invitation' => $invitation]);
+        $canonical = LocalizedUrl::route('bni.invitations.show', [
+            'invitation' => $invitation,
+            'accessToken' => $invitation->access_token,
+        ]);
         $event = $invitation->event;
         $eventLabel = trim((string) ($content['event_label'] ?? 'LỄ CHUYỂN GIAO'));
         $eventTitle = $event?->title ?: $eventLabel;
@@ -349,8 +352,7 @@ class FrontendSeoBuilder
         string $type = 'website',
         array $schema = [],
         string $robots = self::INDEX_ROBOTS,
-    ): array
-    {
+    ): array {
         $description = $this->description($description);
         $image = $image ?: $this->defaultImageUrl();
 

@@ -31,7 +31,7 @@ class ManageBniGalleryItems extends ManageRecords
                         ->icon('heroicon-o-photo')
                         ->description('Chọn nhiều ảnh theo dạng lưới. Có thể dùng nút Xóa tất cả trước khi lưu.')
                         ->schema([
-                            Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->required()->searchable()->preload(),
+                            Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn ($query) => BniPanelAccess::scopePublishedEvents($query))->required()->searchable()->preload(),
                             Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
                             Select::make('group')->label('Nhóm hiển thị')->options(['event' => 'Theo sự kiện', 'chapter' => 'Theo chapter'])->required()->default(fn (): string => BniPanelAccess::isChapterManager() ? 'chapter' : 'event'),
                             TextInput::make('title')->label('Tiêu đề chung')->maxLength(255),

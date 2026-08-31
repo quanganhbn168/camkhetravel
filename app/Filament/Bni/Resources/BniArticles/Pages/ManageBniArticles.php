@@ -16,7 +16,7 @@ class ManageBniArticles extends ManageRecords
         return [
             CreateAction::make()
                 ->label('Viết bài')
-                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::forceChapter($data)),
+                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareArticleData($data)),
         ];
     }
 }

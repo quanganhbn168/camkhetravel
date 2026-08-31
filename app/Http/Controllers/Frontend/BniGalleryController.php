@@ -8,6 +8,7 @@ use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
 use App\Models\Comment;
+use App\Support\Bni\BniGalleryImageProcessor;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -18,12 +19,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use RuntimeException;
 use Throwable;
 
 class BniGalleryController extends Controller
 {
-    public function __construct(private readonly FrontendSeoBuilder $seo) {}
+    public function __construct(
+        private readonly FrontendSeoBuilder $seo,
+        private readonly BniGalleryImageProcessor $imageProcessor,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -91,8 +94,9 @@ class BniGalleryController extends Controller
             'uploader_phone' => ['required', 'string', 'max:32'],
             'title' => ['nullable', 'string', 'max:255'],
             'caption' => ['nullable', 'string', 'max:500'],
-            'images' => ['required', 'array', 'min:1', 'max:8'],
-            'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:12288'],
+            'website' => ['nullable', 'prohibited'],
+            'images' => ['required', 'array', 'min:1', 'max:6'],
+            'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:6144', 'dimensions:min_width=320,min_height=320,max_width=6000,max_height=6000'],
         ]);
 
         $event = BniEvent::query()->published()->findOrFail($data['bni_event_id']);
@@ -104,28 +108,19 @@ class BniGalleryController extends Controller
         try {
             DB::transaction(function () use ($request, $data, $event, $chapter, &$storedPaths): void {
                 foreach ($request->file('images', []) as $position => $image) {
-                    $extension = mb_strtolower($image->guessExtension() ?: $image->getClientOriginalExtension());
-                    $name = (string) Str::uuid();
-                    $directory = 'media/bni/community/'.now()->format('Y/m');
-                    $path = $image->storePubliclyAs($directory, $name.'.'.$extension, 'public');
-
-                    if (! is_string($path)) {
-                        throw new RuntimeException('Không thể lưu hình ảnh tải lên.');
-                    }
-
-                    $storedPaths[] = $path;
-                    $dimensions = @getimagesize(Storage::disk('public')->path($path));
+                    $processed = $this->imageProcessor->store($image);
+                    $storedPaths[] = $processed['path'];
                     $media = Media::query()->create([
                         'disk' => 'public',
-                        'directory' => $directory,
+                        'directory' => $processed['directory'],
                         'visibility' => 'public',
-                        'name' => $name,
-                        'path' => $path,
-                        'width' => is_array($dimensions) ? $dimensions[0] : null,
-                        'height' => is_array($dimensions) ? $dimensions[1] : null,
-                        'size' => Storage::disk('public')->size($path),
-                        'type' => $image->getMimeType(),
-                        'ext' => $extension,
+                        'name' => $processed['name'],
+                        'path' => $processed['path'],
+                        'width' => $processed['width'],
+                        'height' => $processed['height'],
+                        'size' => $processed['size'],
+                        'type' => $processed['type'],
+                        'ext' => $processed['ext'],
                         'alt' => trim(strip_tags((string) ($data['title'] ?: 'Khoảnh khắc sự kiện BNI'))),
                         'title' => trim(strip_tags((string) ($data['title'] ?: pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME)))),
                         'caption' => filled($data['caption'] ?? null) ? trim(strip_tags($data['caption'])) : null,

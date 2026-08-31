@@ -8,6 +8,7 @@ use App\Support\Bni\BniPanelAccess;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -50,7 +51,7 @@ class BniGalleryItemResource extends Resource
     {
         return $schema->components([
             Section::make('Ảnh sự kiện')->icon('heroicon-o-photo')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->searchable()->preload(),
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->searchable()->preload(),
                 Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
                 Select::make('group')->label('Nhóm hiển thị')->options(['event' => 'Theo sự kiện', 'chapter' => 'Theo chapter'])->required()->default('event'),
                 TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0),
@@ -80,13 +81,22 @@ class BniGalleryItemResource extends Resource
             SelectFilter::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions()),
         ])->defaultSort('sort_order')->recordActions([
             EditAction::make()->mutateDataUsing(fn (array $data): array => self::prepareUpdateData($data)),
+            Action::make('rejectAndDeleteGuestUpload')
+                ->label('Từ chối & xóa file')
+                ->icon('heroicon-o-trash')
+                ->color('danger')
+                ->visible(fn (BniGalleryItem $record): bool => $record->source === BniGalleryItem::SOURCE_GUEST)
+                ->requiresConfirmation()
+                ->modalHeading('Từ chối ảnh và xóa file?')
+                ->modalDescription('Ảnh, file gốc và các bình luận liên quan sẽ bị xóa khỏi hệ thống.')
+                ->action(fn (BniGalleryItem $record) => $record->delete()),
             DeleteAction::make(),
         ]);
     }
 
     public static function prepareCreateData(array $data): array
     {
-        $data = BniPanelAccess::forceChapter($data);
+        $data = BniPanelAccess::prepareGalleryData($data);
         $data['uploaded_by_user_id'] = auth()->id();
         $data['approved_by_user_id'] = auth()->id();
         $data['source'] = BniPanelAccess::isChapterManager() && ! BniPanelAccess::canManageEverything()
@@ -99,7 +109,7 @@ class BniGalleryItemResource extends Resource
 
     public static function prepareUpdateData(array $data): array
     {
-        $data = BniPanelAccess::forceChapter($data);
+        $data = BniPanelAccess::prepareGalleryData($data);
 
         if (($data['status'] ?? null) === BniGalleryItem::STATUS_APPROVED) {
             $data['approved_by_user_id'] = auth()->id();

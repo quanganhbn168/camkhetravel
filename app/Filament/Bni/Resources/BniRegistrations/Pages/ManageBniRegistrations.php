@@ -16,7 +16,7 @@ class ManageBniRegistrations extends ManageRecords
         return [
             CreateAction::make()
                 ->label('Thêm đăng ký')
-                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::forceChapter($data)),
+                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareRegistrationData($data)),
         ];
     }
 }

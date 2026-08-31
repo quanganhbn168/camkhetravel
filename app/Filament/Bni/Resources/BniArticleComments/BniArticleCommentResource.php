@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Bni\Resources\BniGalleryComments;
+namespace App\Filament\Bni\Resources\BniArticleComments;
 
-use App\Filament\Bni\Resources\BniGalleryComments\Pages\ManageBniGalleryComments;
-use App\Models\BniGalleryItem;
+use App\Filament\Bni\Resources\BniArticleComments\Pages\ManageBniArticleComments;
+use App\Models\BniArticle;
 use App\Models\Comment;
 use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
@@ -21,15 +21,15 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class BniGalleryCommentResource extends Resource
+class BniArticleCommentResource extends Resource
 {
     protected static ?string $model = Comment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
 
-    protected static ?string $navigationLabel = 'Bình luận ảnh';
+    protected static ?string $navigationLabel = 'Bình luận tin BNI';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 7;
 
     public static function getNavigationGroup(): ?string
     {
@@ -38,12 +38,12 @@ class BniGalleryCommentResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'bình luận ảnh';
+        return 'bình luận tin BNI';
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Bình luận ảnh';
+        return 'Bình luận tin BNI';
     }
 
     public static function canViewAny(): bool
@@ -59,14 +59,14 @@ class BniGalleryCommentResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $query = parent::getEloquentQuery()
-            ->where('commentable_type', (new BniGalleryItem)->getMorphClass())
-            ->with(['commentable.event', 'commentable.chapter']);
+            ->where('commentable_type', (new BniArticle)->getMorphClass())
+            ->with(['commentable.chapter', 'user']);
 
         if (BniPanelAccess::isChapterManager() && ! BniPanelAccess::canManageEverything()) {
             $query->whereHasMorph(
                 'commentable',
-                [BniGalleryItem::class],
-                fn (Builder $galleryQuery): Builder => $galleryQuery->where('bni_chapter_id', BniPanelAccess::chapterId() ?? 0),
+                [BniArticle::class],
+                fn (Builder $articleQuery): Builder => $articleQuery->where('bni_chapter_id', BniPanelAccess::chapterId() ?? 0),
             );
         }
 
@@ -77,9 +77,9 @@ class BniGalleryCommentResource extends Resource
     {
         return $schema->components([
             Section::make('Nội dung bình luận')
-                ->icon('heroicon-o-chat-bubble-left-right')
+                ->icon('heroicon-o-chat-bubble-left-ellipsis')
                 ->schema([
-                    TextInput::make('author_name')->label('Người bình luận')->required()->maxLength(120)->columnSpanFull(),
+                    TextInput::make('author_name')->label('Hội viên')->required()->maxLength(120)->columnSpanFull(),
                     TextInput::make('author_email')->label('Email')->email()->maxLength(255),
                     Select::make('status')->label('Trạng thái')->options(Comment::statusOptions())->required(),
                     Textarea::make('body')->label('Nội dung')->required()->rows(5)->columnSpanFull(),
@@ -92,9 +92,9 @@ class BniGalleryCommentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('commentable.title')->label('Ảnh')->placeholder('Khoảnh khắc BNI')->wrap()->toggleable(),
-                TextColumn::make('commentable.chapter.short_name')->label('Chapter')->badge()->placeholder('Sự kiện chung'),
-                TextColumn::make('author_name')->label('Người bình luận')->searchable()->sortable(),
+                TextColumn::make('commentable.title')->label('Tin BNI')->wrap(),
+                TextColumn::make('commentable.chapter.short_name')->label('Chapter')->badge()->placeholder('Tin sự kiện'),
+                TextColumn::make('author_name')->label('Hội viên')->searchable()->sortable(),
                 TextColumn::make('body')->label('Nội dung')->limit(80)->wrap()->searchable(),
                 TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn (string $state): string => Comment::statusOptions()[$state] ?? $state),
                 TextColumn::make('created_at')->label('Gửi lúc')->dateTime('d/m/Y H:i')->sortable(),
@@ -117,6 +117,6 @@ class BniGalleryCommentResource extends Resource
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniGalleryComments::route('/')];
+        return ['index' => ManageBniArticleComments::route('/')];
     }
 }

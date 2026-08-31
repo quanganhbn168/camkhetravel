@@ -89,6 +89,32 @@ class BniCompletionTest extends TestCase
             'status' => BniGalleryItem::STATUS_PENDING,
         ]);
         $this->assertSame($mediaCount + 2, Media::query()->count());
+        $storedMedia = Media::query()->latest('id')->firstOrFail();
+        $this->assertContains($storedMedia->ext, ['webp', 'png']);
+        $this->assertLessThanOrEqual(2400, max($storedMedia->width, $storedMedia->height));
+        Storage::disk('public')->assertExists($storedMedia->path);
+    }
+
+    public function test_gallery_upload_honeypot_is_rejected_before_files_are_stored(): void
+    {
+        $this->withoutMiddleware(PreventRequestForgery::class);
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $galleryCount = BniGalleryItem::query()->count();
+
+        $this->from(route('bni.gallery.index'))
+            ->post(route('bni.gallery.store'), [
+                'bni_event_id' => $event->id,
+                'uploader_name' => 'Bot kiểm thử',
+                'uploader_phone' => '0900000000',
+                'website' => 'https://spam.example.test',
+                'images' => [UploadedFile::fake()->image('spam.jpg', 800, 800)],
+            ])
+            ->assertRedirect(route('bni.gallery.index'))
+            ->assertSessionHasErrors('website');
+
+        $this->assertSame($galleryCount, BniGalleryItem::query()->count());
+        $this->assertSame([], Storage::disk('public')->allFiles());
     }
 
     public function test_only_approved_photos_and_comments_are_public(): void
@@ -184,6 +210,46 @@ class BniCompletionTest extends TestCase
         $this->assertFalse($galleryIds->contains($otherGalleryItem->id));
         $this->assertTrue($commentIds->contains($ownComment->id));
         $this->assertFalse($commentIds->contains($otherComment->id));
+    }
+
+    public function test_deleting_a_guest_gallery_item_removes_its_private_upload_and_comments(): void
+    {
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $path = 'media/bni/community/tests/guest-upload.webp';
+        Storage::disk('public')->put($path, 'guest-image');
+        $media = Media::query()->create([
+            'disk' => 'public',
+            'directory' => 'media/bni/community/tests',
+            'visibility' => 'public',
+            'name' => 'guest-upload',
+            'path' => $path,
+            'size' => 11,
+            'type' => 'image/webp',
+            'ext' => 'webp',
+            'title' => 'Ảnh khách cần xóa',
+        ]);
+        $galleryItem = BniGalleryItem::query()->create([
+            'bni_event_id' => $event->id,
+            'group' => 'event',
+            'title' => 'Ảnh khách cần xóa',
+            'source' => BniGalleryItem::SOURCE_GUEST,
+            'status' => BniGalleryItem::STATUS_PENDING,
+            'media_id' => $media->id,
+            'is_active' => true,
+        ]);
+        $comment = $galleryItem->comments()->create([
+            'author_name' => 'Người bình luận',
+            'body' => 'Bình luận cần xóa cùng ảnh.',
+            'status' => Comment::STATUS_PENDING,
+        ]);
+
+        $galleryItem->delete();
+
+        $this->assertDatabaseMissing('bni_gallery_items', ['id' => $galleryItem->id]);
+        $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
+        $this->assertDatabaseMissing('curator', ['id' => $media->id]);
+        Storage::disk('public')->assertMissing($path);
     }
 
     public function test_bni_manifest_includes_gallery_and_pickleball_shortcuts(): void

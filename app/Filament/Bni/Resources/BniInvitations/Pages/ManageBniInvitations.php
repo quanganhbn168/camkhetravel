@@ -16,7 +16,7 @@ class ManageBniInvitations extends ManageRecords
         return [
             CreateAction::make()
                 ->label('Thêm khách mời')
-                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::forceChapter($data)),
+                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareInvitationData($data)),
         ];
     }
 }

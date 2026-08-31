@@ -90,7 +90,7 @@
             <div class="bni-gallery-upload__intro">
                 <p class="bni-experience-kicker">CHIA SẺ KHOẢNH KHẮC</p>
                 <h2 id="bni-gallery-upload-title">Gửi ảnh của anh/chị</h2>
-                <p>Mỗi lần có thể gửi tối đa 8 ảnh JPG, PNG hoặc WebP. Ảnh sẽ ở trạng thái chờ duyệt; thông tin liên hệ chỉ dùng để Ban tổ chức xác minh khi cần.</p>
+                <p>Mỗi lần có thể gửi tối đa 6 ảnh JPG, PNG hoặc WebP. Ảnh sẽ được chuẩn hóa kích thước và ở trạng thái chờ duyệt; thông tin liên hệ chỉ dùng để Ban tổ chức xác minh khi cần.</p>
                 <ul>
                     <li>Ảnh rõ nét, liên quan trực tiếp đến hoạt động BNI.</li>
                     <li>Không đăng thông tin riêng tư hoặc nội dung chưa được phép chia sẻ.</li>
@@ -99,6 +99,10 @@
             </div>
             <form class="bni-form bni-gallery-upload__form" method="POST" action="{{ LocalizedUrl::route('bni.gallery.store') }}" enctype="multipart/form-data" x-data="{ fileCount: 0 }">
                 @csrf
+                <div class="bni-form-honeypot" aria-hidden="true">
+                    <label for="gallery-website">Website</label>
+                    <input id="gallery-website" name="website" type="text" tabindex="-1" autocomplete="off">
+                </div>
                 <div>
                     <label for="gallery-event">Sự kiện</label>
                     <select id="gallery-event" name="bni_event_id" required>
@@ -147,7 +151,7 @@
                 <div class="bni-form__full bni-gallery-file-field">
                     <label for="gallery-images">Chọn ảnh</label>
                     <input id="gallery-images" type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required @change="fileCount = $event.target.files.length">
-                    <p><span x-text="fileCount"></span> ảnh đã chọn · tối đa 8 ảnh, mỗi ảnh tối đa 12MB.</p>
+                    <p><span x-text="fileCount"></span> ảnh đã chọn · tối đa 6 ảnh, mỗi ảnh tối đa 6MB.</p>
                     @error('images')<p class="bni-form-error">{{ $message }}</p>@enderror
                     @error('images.*')<p class="bni-form-error">{{ $message }}</p>@enderror
                 </div>
