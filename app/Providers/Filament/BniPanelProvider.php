@@ -13,7 +13,6 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -45,7 +44,7 @@ class BniPanelProvider extends PanelProvider
                 Dashboard::class,
                 ManageBniInvitationSettings::class,
             ])
-            ->widgets([BniStatsOverview::class, AccountWidget::class])
+            ->widgets([BniStatsOverview::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

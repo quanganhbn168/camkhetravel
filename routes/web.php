@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\BniArticleController;
+use App\Http\Controllers\Frontend\BniChapterController;
 use App\Http\Controllers\Frontend\BniGalleryController;
 use App\Http\Controllers\Frontend\BniHandoverController;
 use App\Http\Controllers\Frontend\BniInteractionController;
@@ -56,6 +57,7 @@ Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::get('/gioi-thieu', AboutController::class)->name('about');
     Route::get('/le-chuyen-giao-bni', fn () => redirect()->route('bni.handover', status: 301));
     Route::get('/le-chuyen-giao', BniHandoverController::class)->name('bni.handover');
+    Route::get('/le-chuyen-giao/chapter/{chapter:slug}', [BniChapterController::class, 'show'])->name('bni.chapters.show');
     Route::get('/le-chuyen-giao/pickleball', [BniPickleballController::class, 'index'])->name('bni.pickleball');
     Route::post('/le-chuyen-giao/pickleball/dang-ky', [BniPickleballController::class, 'store'])->middleware('throttle:frontend-contact')->name('bni.pickleball.register');
     Route::get('/le-chuyen-giao/thu-vien-anh', [BniGalleryController::class, 'index'])->name('bni.gallery.index');

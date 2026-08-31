@@ -3,6 +3,7 @@
 namespace App\Filament\Bni\Resources\BniGalleryItems\Pages;
 
 use App\Filament\Bni\Resources\BniGalleryItems\BniGalleryItemResource;
+use App\Models\BniActivity;
 use App\Models\BniGalleryItem;
 use App\Support\Bni\BniPanelAccess;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
@@ -31,10 +32,29 @@ class ManageBniGalleryItems extends ManageRecords
                         ->icon('heroicon-o-photo')
                         ->description('Chọn nhiều ảnh theo dạng lưới. Có thể dùng nút Xóa tất cả trước khi lưu.')
                         ->schema([
-                            Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn ($query) => BniPanelAccess::scopePublishedEvents($query))->required()->searchable()->preload(),
-                            Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                            Select::make('group')->label('Nhóm hiển thị')->options(['event' => 'Theo sự kiện', 'chapter' => 'Theo chapter'])->required()->default(fn (): string => BniPanelAccess::isChapterManager() ? 'chapter' : 'event'),
-                            TextInput::make('title')->label('Tiêu đề chung')->maxLength(255),
+                            TextInput::make('title')->label('Tiêu đề chung')->maxLength(255)->columnSpanFull(),
+                            Select::make('bni_event_id')
+                                ->label('Sự kiện tổ chức')
+                                ->relationship('event', 'title', fn ($query) => BniPanelAccess::scopePublishedEvents($query))
+                                ->required()
+                                ->searchable()
+                                ->preload()
+                                ->live()
+                                ->afterStateUpdated(fn ($set) => $set('bni_activity_id', null))
+                                ->columnSpanFull(),
+                            Select::make('bni_activity_id')
+                                ->label('Hoạt động / album ảnh')
+                                ->options(fn ($get): array => BniActivity::query()
+                                    ->where('bni_event_id', $get('bni_event_id'))
+                                    ->where('is_active', true)
+                                    ->orderBy('sort_order')
+                                    ->orderBy('title')
+                                    ->pluck('title', 'id')
+                                    ->all())
+                                ->helperText('Muốn có album mới, thêm một hoạt động trong mục Sự kiện rồi chọn tại đây.')
+                                ->required()
+                                ->searchable()
+                                ->columnSpanFull(),
                             CuratorPicker::make('media_ids')
                                 ->label('Hình ảnh')
                                 ->multiple()
@@ -52,8 +72,7 @@ class ManageBniGalleryItems extends ManageRecords
                 ->action(function (array $data): void {
                     $base = BniGalleryItemResource::prepareCreateData([
                         'bni_event_id' => $data['bni_event_id'],
-                        'bni_chapter_id' => $data['bni_chapter_id'] ?? null,
-                        'group' => $data['group'],
+                        'bni_activity_id' => $data['bni_activity_id'],
                         'title' => $data['title'] ?? null,
                         'status' => BniGalleryItem::STATUS_APPROVED,
                         'is_active' => $data['is_active'] ?? true,

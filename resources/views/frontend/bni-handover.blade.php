@@ -11,7 +11,7 @@
         $eventPosterUrl = $eventVideo['poster_url'];
         $chapterMedia = $chapters;
     @endphp
-    <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: 'event', galleryTab: 'event' }">
+    <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: 'event', galleryTab: @js($galleryInitialGroup) }">
         <nav class="bni-handover-page-nav" aria-label="Điều hướng Lễ chuyển giao">
             <div class="site-shell bni-handover-page-nav__inner">
                 <a class="bni-handover-page-nav__brand" href="#tong-quan" aria-label="Về đầu trang Lễ chuyển giao">
@@ -95,7 +95,7 @@
                                 <p>BNI Chapter</p>
                                 <h3>{{ $chapter['short_name'] }}</h3>
                                 @if ($chapter['description'])<span>{{ $chapter['description'] }}</span>@endif
-                                <a href="#chapter-{{ $chapter['slug'] }}" aria-label="Xem chi tiết {{ $chapter['name'] }}">Xem chi tiết <b aria-hidden="true">↗</b></a>
+                                <a href="{{ $chapter['detail_url'] }}" aria-label="Xem chi tiết {{ $chapter['name'] }}">Xem chi tiết <b aria-hidden="true">↗</b></a>
                             </div>
                         </article>
                     @empty
@@ -118,8 +118,6 @@
                         <a class="bni-button bni-button--dark" href="{{ $registration['url'] }}">{{ $registration['label'] }}</a>
                         @guest
                             <a class="bni-button bni-button--light" href="{{ LocalizedUrl::route('bni.member.login') }}">Đăng nhập hội viên</a>
-                        @else
-                            <form method="POST" action="{{ LocalizedUrl::route('bni.member.logout') }}">@csrf<button class="bni-button bni-button--light" type="submit">Đăng xuất</button></form>
                         @endguest
                     </div>
                     <div class="bni-purpose-grid">
@@ -252,10 +250,26 @@
         </section>
 
         <section class="bni-section bni-gallery" id="thu-vien-anh" aria-labelledby="bni-gallery-title">
-            <div class="site-shell"><div class="bni-news__heading"><div><h2 id="bni-gallery-title">Thư viện ảnh</h2><p class="bni-section-heading__description">Những khoảnh khắc kết nối từ sự kiện và các chapter; mỗi ảnh có khu vực xem và bình luận riêng.</p></div><div class="bni-gallery-heading-actions"><div class="bni-tab-list" role="tablist"><button type="button" @click="galleryTab = 'event'" :class="galleryTab === 'event' && 'is-active'">Theo sự kiện</button><button type="button" @click="galleryTab = 'chapter'" :class="galleryTab === 'chapter' && 'is-active'">Theo chapter</button></div><a class="bni-button bni-button--red" href="{{ LocalizedUrl::route('bni.gallery.index') }}">Xem & gửi ảnh</a></div></div>
+            <div class="site-shell">
+                <div class="bni-news__heading">
+                    <div>
+                        <h2 id="bni-gallery-title">Thư viện ảnh</h2>
+                        <p class="bni-section-heading__description">Khoảnh khắc được sắp xếp theo từng hoạt động trong chương trình; mỗi ảnh có khu vực xem và bình luận riêng.</p>
+                    </div>
+                    <div class="bni-gallery-heading-actions">
+                        @if ($galleryGroups->isNotEmpty())
+                            <div class="bni-tab-list" role="tablist" aria-label="Hoạt động trong thư viện ảnh">
+                                @foreach ($galleryGroups as $group)
+                                    <button type="button" @click="galleryTab = @js($group['key'])" :class="galleryTab === @js($group['key']) && 'is-active'">{{ $group['label'] }}</button>
+                                @endforeach
+                            </div>
+                        @endif
+                        <a class="bni-button bni-button--red" href="{{ LocalizedUrl::route('bni.gallery.index') }}">Xem & gửi ảnh</a>
+                    </div>
+                </div>
                 <div class="bni-gallery-grid">
                     @forelse ($galleries as $gallery)
-                        @if ($gallery['image_url'])<a class="bni-gallery-card" href="{{ LocalizedUrl::route('bni.gallery.show', ['galleryItem' => $gallery['id']]) }}" x-show="galleryTab === '{{ $gallery['group'] }}'" x-transition.opacity><img src="{{ $gallery['image_url'] }}" alt="{{ $gallery['title'] ?: 'Hình ảnh BNI' }}" loading="lazy"><span>{{ $gallery['title'] ?: 'Xem ảnh & bình luận' }}</span></a>@endif
+                        @if ($gallery['image_url'])<a class="bni-gallery-card" href="{{ LocalizedUrl::route('bni.gallery.show', ['galleryItem' => $gallery['id']]) }}" x-show="galleryTab === @js($gallery['group_key'])" x-transition.opacity><img src="{{ $gallery['image_url'] }}" alt="{{ $gallery['title'] ?: 'Hình ảnh BNI' }}" loading="lazy"><span>{{ $gallery['title'] ?: $gallery['group_label'] }}</span></a>@endif
                     @empty
                         <p class="bni-empty-copy">Hình ảnh sẽ được chọn từ thư viện ảnh BNI trong panel riêng.</p>
                     @endforelse

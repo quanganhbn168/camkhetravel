@@ -75,10 +75,10 @@ class ManageBniInvitationSettings extends Page
                                     ->icon(Heroicon::OutlinedEnvelope)
                                     ->description('Các trường ở đây áp dụng cho tất cả sự kiện, chapter và thư mời BNI.')
                                     ->schema([
-                                        TextInput::make('label')->label('Nhãn thư mời')->required()->maxLength(255),
-                                        TextInput::make('event_label')->label('Tên loại sự kiện trên thiệp')->required()->maxLength(255),
-                                        TextInput::make('greeting')->label('Lời kính mời')->required()->maxLength(255),
-                                        TextInput::make('default_guest_name')->label('Tên mặc định khi chưa chỉ định khách')->required()->maxLength(255),
+                                        TextInput::make('label')->label('Nhãn thư mời')->required()->maxLength(255)->columnSpanFull(),
+                                        TextInput::make('event_label')->label('Tên loại sự kiện trên thiệp')->required()->maxLength(255)->columnSpanFull(),
+                                        TextInput::make('greeting')->label('Lời kính mời')->required()->maxLength(255)->columnSpanFull(),
+                                        TextInput::make('default_guest_name')->label('Tên mặc định khi chưa chỉ định khách')->required()->maxLength(255)->columnSpanFull(),
                                     ])
                                     ->columns(2),
                             ]),
@@ -87,7 +87,7 @@ class ManageBniInvitationSettings extends Page
                                 Section::make('Lời mời')
                                     ->icon(Heroicon::OutlinedDocumentText)
                                     ->schema([
-                                        TextInput::make('content_title')->label('Tiêu đề nội dung')->required()->maxLength(255),
+                                        TextInput::make('content_title')->label('Tiêu đề nội dung')->required()->maxLength(255)->columnSpanFull(),
                                         RichEditor::make('content')->label('Nội dung thư mời')->required()->columnSpanFull(),
                                     ])
                                     ->columns(2),
@@ -97,8 +97,8 @@ class ManageBniInvitationSettings extends Page
                                 Section::make('Thông tin tham dự')
                                     ->icon(Heroicon::OutlinedCalendarDays)
                                     ->schema([
-                                        TextInput::make('schedule_title')->label('Tiêu đề lịch trình')->required()->maxLength(255),
-                                        TextInput::make('note_title')->label('Tiêu đề lưu ý')->required()->maxLength(255),
+                                        TextInput::make('schedule_title')->label('Tiêu đề lịch trình')->required()->maxLength(255)->columnSpanFull(),
+                                        TextInput::make('note_title')->label('Tiêu đề lưu ý')->required()->maxLength(255)->columnSpanFull(),
                                         RichEditor::make('note_content')->label('Lưu ý tham dự / dress code')->required()->columnSpanFull(),
                                     ])
                                     ->columns(2),
@@ -108,9 +108,9 @@ class ManageBniInvitationSettings extends Page
                                 Section::make('Phản hồi tham dự')
                                     ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                                     ->schema([
-                                        TextInput::make('rsvp_title')->label('Tiêu đề RSVP')->required()->maxLength(255),
+                                        TextInput::make('rsvp_title')->label('Tiêu đề RSVP')->required()->maxLength(255)->columnSpanFull(),
                                         Textarea::make('rsvp_description')->label('Mô tả RSVP')->required()->rows(3)->columnSpanFull(),
-                                        TextInput::make('contact_title')->label('Tiêu đề liên hệ')->required()->maxLength(255),
+                                        TextInput::make('contact_title')->label('Tiêu đề liên hệ')->required()->maxLength(255)->columnSpanFull(),
                                         Textarea::make('contact_description')->label('Mô tả liên hệ')->required()->rows(3)->columnSpanFull(),
                                     ])
                                     ->columns(2),

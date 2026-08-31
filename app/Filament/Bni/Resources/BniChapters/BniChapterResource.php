@@ -7,12 +7,11 @@ use App\Models\BniChapter;
 use App\Support\Bni\BniPanelAccess;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -51,18 +50,18 @@ class BniChapterResource extends Resource
         return $schema->components([
             Section::make('Thông tin chapter')->icon('heroicon-o-user-group')->schema([
                 TextInput::make('name')->label('Tên chapter')->required()->maxLength(255)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated(),
-                TextInput::make('slug')->label('Slug')->required()->maxLength(255)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated(),
-                Select::make('bni_event_id')->label('Thuộc sự kiện')->relationship('event', 'title')->searchable()->preload()->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated(),
-                TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated(),
+                TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                TextInput::make('slug')->label('Slug')->required()->maxLength(255)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                Select::make('bni_event_id')->label('Thuộc sự kiện')->relationship('event', 'title')->searchable()->preload()->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 CuratorPicker::make('logo_media_id')->label('Logo')->relationship('logoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 CuratorPicker::make('cover_media_id')->label('Ảnh cover')->relationship('coverMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 CuratorPicker::make('video_media_id')->label('Video chapter')->relationship('videoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 TextInput::make('video_url')->label('Hoặc URL video ngoài')->url()->maxLength(2048)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 Textarea::make('description')->label('Giới thiệu')->rows(3)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                TextInput::make('contact_name')->label('Đầu mối liên hệ trên thư mời')->helperText('Dữ liệu riêng của chapter; đây là người khách mời liên hệ khi cần hỗ trợ.'),
-                TextInput::make('contact_email')->label('Email liên hệ trên thư mời')->email(),
-                TextInput::make('contact_phone')->label('Số điện thoại liên hệ trên thư mời')->tel(),
+                TextInput::make('contact_name')->label('Đầu mối liên hệ trên thư mời')->helperText('Dữ liệu riêng của chapter; đây là người khách mời liên hệ khi cần hỗ trợ.')->columnSpanFull(),
+                TextInput::make('contact_email')->label('Email liên hệ trên thư mời')->email()->columnSpanFull(),
+                TextInput::make('contact_phone')->label('Số điện thoại liên hệ trên thư mời')->tel()->columnSpanFull(),
                 Toggle::make('is_active')->label('Hiển thị')->default(true)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
             ])->columns(2),
         ]);

@@ -6,6 +6,7 @@ use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
+use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -62,6 +63,32 @@ class BniExperienceService
             ->latest('published_at')
             ->limit(4)
             ->get();
+        $galleries = BniGalleryItem::query()
+            ->published()
+            ->with(['activity', 'event', 'media'])
+            ->where(fn ($query) => $query
+                ->whereNull('bni_event_id')
+                ->orWhereHas('event', fn ($query) => $query->published()->whereIn('type', ['handover', 'pickleball'])))
+            ->orderByDesc('approved_at')
+            ->orderBy('sort_order')
+            ->limit(12)
+            ->get();
+        $galleryCards = $galleries->map(fn (BniGalleryItem $item): array => [
+            'id' => $item->id,
+            'group_key' => $item->galleryGroupKey(),
+            'group_label' => $item->galleryGroupLabel(),
+            'title' => $item->title,
+            'caption' => $item->caption,
+            'image_url' => MediaUrl::versioned($item->media),
+            'source' => $item->publicSourceLabel(),
+        ])->values();
+        $galleryGroups = $galleryCards
+            ->map(fn (array $gallery): array => [
+                'key' => $gallery['group_key'],
+                'label' => $gallery['group_label'],
+            ])
+            ->unique('key')
+            ->values();
 
         return [
             'event' => $event,
@@ -79,6 +106,7 @@ class BniExperienceService
             'chapters' => $chapters->map(fn ($chapter): array => [
                 'name' => $chapter->name,
                 'slug' => $chapter->slug,
+                'detail_url' => LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]),
                 'short_name' => $chapter->short_name ?: $chapter->name,
                 'description' => $chapter->description,
                 'logo_url' => MediaUrl::versioned($chapter->logoMedia),
@@ -100,15 +128,83 @@ class BniExperienceService
                 'link_url' => $activity->link_url,
             ])->values() ?? collect(),
             'articles' => $articles->map(fn (BniArticle $article): array => $this->articleCard($article)),
-            'galleries' => $event?->galleries->where('is_active', true)->map(fn ($item): array => [
-                'id' => $item->id,
-                'group' => $item->group,
-                'title' => $item->title,
-                'caption' => $item->caption,
-                'image_url' => MediaUrl::versioned($item->media),
-                'chapter' => $item->chapter?->short_name ?: $item->chapter?->name,
-                'source' => BniGalleryItem::sourceOptions()[$item->source] ?? $item->source,
-            ])->values() ?? collect(),
+            'galleryGroups' => $galleryGroups,
+            'galleryInitialGroup' => $galleryGroups->first()['key'] ?? null,
+            'galleries' => $galleryCards,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    public function chapter(BniChapter $chapter): array
+    {
+        $chapter->loadMissing(['event', 'logoMedia', 'coverMedia', 'videoMedia']);
+        $event = $chapter->event;
+        $coverUrl = MediaUrl::versioned($chapter->coverMedia);
+        $externalVideoUrl = trim((string) $chapter->video_url);
+
+        if ($externalVideoUrl !== '' && ! Str::startsWith($externalVideoUrl, ['http://', 'https://'])) {
+            $externalVideoUrl = '';
+        }
+
+        $articles = BniArticle::query()
+            ->published()
+            ->with('coverMedia')
+            ->where('bni_chapter_id', $chapter->id)
+            ->latest('published_at')
+            ->latest('id')
+            ->limit(6)
+            ->get();
+
+        $siblings = $event
+            ? $event->chapters()
+                ->where('is_active', true)
+                ->whereKeyNot($chapter->getKey())
+                ->with(['logoMedia', 'coverMedia'])
+                ->get()
+            : collect();
+
+        $phone = trim((string) $chapter->contact_phone);
+        $email = trim((string) $chapter->contact_email);
+        $phoneTarget = preg_replace('/[^0-9+]/', '', $phone) ?: null;
+
+        return [
+            'chapter' => [
+                'name' => $chapter->name,
+                'short_name' => $chapter->short_name ?: $chapter->name,
+                'description' => $chapter->description,
+                'logo_url' => MediaUrl::versioned($chapter->logoMedia),
+                'cover_url' => $coverUrl,
+            ],
+            'chapterVideo' => [
+                'media_url' => MediaUrl::versioned($chapter->videoMedia),
+                'external_url' => $externalVideoUrl ?: null,
+                'poster_url' => $coverUrl,
+            ],
+            'chapterContact' => [
+                'name' => $chapter->contact_name,
+                'phone' => $phone ?: null,
+                'phone_url' => $phoneTarget ? 'tel:'.$phoneTarget : null,
+                'email' => $email ?: null,
+                'email_url' => $email ? 'mailto:'.$email : null,
+                'has_details' => filled($chapter->contact_name) || $phone !== '' || $email !== '',
+            ],
+            'eventContext' => $event ? [
+                'title' => $event->title,
+                'date' => $this->eventDate($event),
+                'location' => collect([$event->venue, $event->address])->filter()->unique()->implode(', '),
+                'url' => LocalizedUrl::route('bni.handover'),
+            ] : null,
+            'chapterArticles' => $articles->map(fn (BniArticle $article): array => $this->articleCard($article) + [
+                'url' => LocalizedUrl::route('bni.articles.show', ['article' => $article->slug]),
+            ]),
+            'siblingChapters' => $siblings->map(fn (BniChapter $sibling): array => [
+                'name' => $sibling->name,
+                'short_name' => $sibling->short_name ?: $sibling->name,
+                'description' => $sibling->description,
+                'logo_url' => MediaUrl::versioned($sibling->logoMedia),
+                'cover_url' => MediaUrl::versioned($sibling->coverMedia),
+                'url' => LocalizedUrl::route('bni.chapters.show', ['chapter' => $sibling->slug]),
+            ])->values(),
         ];
     }
 
@@ -165,10 +261,6 @@ class BniExperienceService
                 'purposes',
                 'scheduleItems',
                 'activities.media',
-                'galleries' => fn ($query) => $query
-                    ->published()
-                    ->with(['media', 'chapter'])
-                    ->orderBy('sort_order'),
             ])
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
@@ -212,5 +304,18 @@ class BniExperienceService
             'image_url' => MediaUrl::versioned($article->coverMedia),
             'featured' => $article->is_featured,
         ];
+    }
+
+    private function eventDate(BniEvent $event): ?string
+    {
+        if (! $event->starts_at) {
+            return null;
+        }
+
+        if (! $event->ends_at || $event->starts_at->isSameDay($event->ends_at)) {
+            return $event->starts_at->translatedFormat('d/m/Y');
+        }
+
+        return $event->starts_at->translatedFormat('d/m/Y').' – '.$event->ends_at->translatedFormat('d/m/Y');
     }
 }

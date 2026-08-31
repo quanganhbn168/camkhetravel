@@ -2,6 +2,7 @@
 
 namespace App\Support\Seo;
 
+use App\Models\BniChapter;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
@@ -23,6 +24,8 @@ class SitemapBuilder
 
         $this->addNativePages($sitemap);
         $this->addNativeContent($sitemap);
+        $this->addBniChapters($sitemap);
+
         return $sitemap;
     }
 
@@ -68,6 +71,23 @@ class SitemapBuilder
                     }
                 });
         }
+    }
+
+    private function addBniChapters(Sitemap $sitemap): void
+    {
+        BniChapter::query()
+            ->where('is_active', true)
+            ->where(fn ($query) => $query
+                ->whereNull('bni_event_id')
+                ->orWhereHas('event', fn ($query) => $query->published()))
+            ->get()
+            ->each(fn (BniChapter $chapter) => $this->addUrl(
+                $sitemap,
+                LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]),
+                $chapter->updated_at,
+                Url::CHANGE_FREQUENCY_MONTHLY,
+                0.6,
+            ));
     }
 
     private function addUrl(Sitemap $sitemap, string $url, ?DateTimeInterface $lastModified, string $frequency, float $priority): void

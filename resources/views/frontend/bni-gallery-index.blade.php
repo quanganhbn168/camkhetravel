@@ -2,7 +2,6 @@
 
 @use(App\Support\Localization\LocalizedUrl)
 @use(App\Support\Media\MediaUrl)
-@use(App\Models\BniGalleryItem)
 
 @section('body_class', 'bni-experience-page bni-gallery-page')
 @section('main_id', 'bni-gallery-main')
@@ -14,7 +13,7 @@
             <a class="bni-back-link" href="{{ LocalizedUrl::route('bni.handover') }}">← Website sự kiện BNI</a>
             <p class="bni-experience-kicker">KHOẢNH KHẮC KẾT NỐI</p>
             <h1>Thư viện ảnh cộng đồng BNI</h1>
-            <p>Xem ảnh được Ban tổ chức và quản trị viên Chapter đăng tải, gửi khoảnh khắc của anh/chị và cùng để lại bình luận sau khi nội dung được duyệt.</p>
+            <p>Khám phá ảnh theo từng hoạt động của chương trình, gửi khoảnh khắc của anh/chị và cùng để lại bình luận sau khi nội dung được duyệt.</p>
             <div class="bni-gallery-hero__actions">
                 <a class="bni-button bni-button--white" href="#thu-vien">Xem thư viện</a>
                 <a class="bni-button bni-button--ghost" href="#gui-anh">Gửi ảnh cá nhân</a>
@@ -32,20 +31,11 @@
                 </div>
                 <form class="bni-gallery-filter" method="GET" action="{{ LocalizedUrl::route('bni.gallery.index') }}">
                     <label>
-                        <span>Sự kiện</span>
-                        <select name="event">
-                            <option value="">Tất cả sự kiện</option>
-                            @foreach ($events as $event)
-                                <option value="{{ $event->id }}" @selected($selectedEventId === $event->id)>{{ $event->title }}</option>
-                            @endforeach
-                        </select>
-                    </label>
-                    <label>
-                        <span>Chapter</span>
-                        <select name="chapter">
-                            <option value="">Tất cả chapter</option>
-                            @foreach ($chapters as $chapter)
-                                <option value="{{ $chapter->id }}" @selected($selectedChapterId === $chapter->id)>{{ $chapter->short_name ?: $chapter->name }}</option>
+                        <span>Hoạt động / album</span>
+                        <select name="activity">
+                            <option value="">Tất cả hoạt động</option>
+                            @foreach ($activityOptions as $activity)
+                                <option value="{{ $activity['id'] }}" @selected($selectedActivity === $activity['id'])>{{ $activity['select_label'] }}</option>
                             @endforeach
                         </select>
                     </label>
@@ -60,10 +50,10 @@
                         <article class="bni-community-gallery-card">
                             <a class="bni-community-gallery-card__image" href="{{ LocalizedUrl::route('bni.gallery.show', ['galleryItem' => $galleryItem]) }}">
                                 <img src="{{ $imageUrl }}" alt="{{ $galleryItem->title ?: 'Khoảnh khắc sự kiện BNI' }}" loading="lazy">
-                                <span>{{ $galleryItem->chapter?->short_name ?: ($galleryItem->event?->type === 'pickleball' ? 'Pickleball' : 'Sự kiện BNI') }}</span>
+                                <span>{{ $galleryItem->galleryGroupLabel() }}</span>
                             </a>
                             <div class="bni-community-gallery-card__body">
-                                <p>{{ BniGalleryItem::sourceOptions()[$galleryItem->source] ?? 'Cộng đồng BNI' }}</p>
+                                <p>{{ $galleryItem->publicSourceLabel() }}</p>
                                 <h3><a href="{{ LocalizedUrl::route('bni.gallery.show', ['galleryItem' => $galleryItem]) }}">{{ $galleryItem->title ?: 'Khoảnh khắc kết nối BNI' }}</a></h3>
                                 @if ($galleryItem->caption)<span>{{ $galleryItem->caption }}</span>@endif
                                 <div><span>{{ $galleryItem->approved_comments_count }} bình luận</span><strong>Xem ảnh →</strong></div>
@@ -74,7 +64,7 @@
                     <div class="bni-gallery-empty">
                         <img src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
                         <h3>Thư viện đang chờ những khoảnh khắc đầu tiên</h3>
-                        <p>Ảnh do Ban tổ chức, Chapter Admin và khách tham dự gửi sẽ hiển thị tại đây sau khi được duyệt.</p>
+                        <p>Ảnh từ các hoạt động BNI sẽ hiển thị tại đây sau khi được duyệt.</p>
                     </div>
                 @endforelse
             </div>
@@ -97,31 +87,36 @@
                     <li>Bình luận và ảnh đều được kiểm duyệt trước khi công khai.</li>
                 </ul>
             </div>
-            <form class="bni-form bni-gallery-upload__form" method="POST" action="{{ LocalizedUrl::route('bni.gallery.store') }}" enctype="multipart/form-data" x-data="{ fileCount: 0 }">
+            <form class="bni-form bni-gallery-upload__form" method="POST" action="{{ LocalizedUrl::route('bni.gallery.store') }}" enctype="multipart/form-data" x-data="{
+                fileCount: 0,
+                previews: [],
+                selectFiles(event) {
+                    this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+                    this.previews = Array.from(event.target.files).map((file) => ({ name: file.name, url: URL.createObjectURL(file) }));
+                    this.fileCount = this.previews.length;
+                },
+                clearFiles() {
+                    if (! window.confirm('Xóa toàn bộ ảnh đã chọn?')) return;
+                    this.previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+                    this.previews = [];
+                    this.fileCount = 0;
+                    this.$refs.galleryImages.value = '';
+                }
+            }">
                 @csrf
                 <div class="bni-form-honeypot" aria-hidden="true">
                     <label for="gallery-website">Website</label>
                     <input id="gallery-website" name="website" type="text" tabindex="-1" autocomplete="off">
                 </div>
                 <div>
-                    <label for="gallery-event">Sự kiện</label>
-                    <select id="gallery-event" name="bni_event_id" required>
-                        <option value="">Chọn sự kiện</option>
-                        @foreach ($events as $event)
-                            <option value="{{ $event->id }}" @selected((int) old('bni_event_id') === $event->id)>{{ $event->title }}</option>
+                    <label for="gallery-activity">Hoạt động / album ảnh</label>
+                    <select id="gallery-activity" name="bni_activity_id" required>
+                        <option value="">Chọn hoạt động</option>
+                        @foreach ($activityOptions as $activity)
+                            <option value="{{ $activity['id'] }}" @selected((int) old('bni_activity_id') === $activity['id'])>{{ $activity['select_label'] }}</option>
                         @endforeach
                     </select>
-                    @error('bni_event_id')<p class="bni-form-error">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label for="gallery-chapter">Chapter (nếu có)</label>
-                    <select id="gallery-chapter" name="bni_chapter_id">
-                        <option value="">Ảnh sự kiện chung</option>
-                        @foreach ($chapters as $chapter)
-                            <option value="{{ $chapter->id }}" @selected((int) old('bni_chapter_id') === $chapter->id)>{{ $chapter->short_name ?: $chapter->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('bni_chapter_id')<p class="bni-form-error">{{ $message }}</p>@enderror
+                    @error('bni_activity_id')<p class="bni-form-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
                     <label for="gallery-uploader-name">Họ và tên</label>
@@ -150,8 +145,16 @@
                 </div>
                 <div class="bni-form__full bni-gallery-file-field">
                     <label for="gallery-images">Chọn ảnh</label>
-                    <input id="gallery-images" type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required @change="fileCount = $event.target.files.length">
-                    <p><span x-text="fileCount"></span> ảnh đã chọn · tối đa 6 ảnh, mỗi ảnh tối đa 6MB.</p>
+                    <input id="gallery-images" x-ref="galleryImages" type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required @change="selectFiles($event)">
+                    <div class="bni-gallery-file-actions">
+                        <p><span x-text="fileCount"></span> ảnh đã chọn · tối đa 6 ảnh, mỗi ảnh tối đa 6MB.</p>
+                        <button type="button" x-show="fileCount > 0" x-cloak @click="clearFiles">Xóa tất cả</button>
+                    </div>
+                    <div class="bni-gallery-file-preview" x-show="previews.length > 0" x-cloak>
+                        <template x-for="preview in previews" :key="preview.url">
+                            <figure><img :src="preview.url" alt=""><figcaption x-text="preview.name"></figcaption></figure>
+                        </template>
+                    </div>
                     @error('images')<p class="bni-form-error">{{ $message }}</p>@enderror
                     @error('images.*')<p class="bni-form-error">{{ $message }}</p>@enderror
                 </div>

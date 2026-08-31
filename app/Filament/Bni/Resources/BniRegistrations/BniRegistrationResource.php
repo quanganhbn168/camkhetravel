@@ -49,16 +49,16 @@ class BniRegistrationResource extends Resource
     {
         return $schema->components([
             Section::make('Đăng ký tham dự')->icon('heroicon-o-ticket')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->required()->searchable()->preload(),
-                Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                Select::make('bni_invitation_id')->label('Khách mời')->relationship('invitation', 'guest_name', fn (Builder $query): Builder => BniPanelAccess::scopeChapter($query))->searchable()->preload(),
-                Select::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions())->required()->default(BniRegistration::STATUS_PENDING),
-                TextInput::make('full_name')->label('Họ và tên')->required()->maxLength(255),
-                TextInput::make('phone')->label('Số điện thoại')->required()->tel(),
-                TextInput::make('email')->label('Email')->email(),
-                TextInput::make('team_name')->label('Tên đội'),
-                TextInput::make('skill_level')->label('Trình độ'),
-                DateTimePicker::make('checked_in_at')->label('Check-in lúc'),
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->required()->searchable()->preload()->columnSpanFull(),
+                Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything())->columnSpanFull(),
+                Select::make('bni_invitation_id')->label('Khách mời')->relationship('invitation', 'guest_name', fn (Builder $query): Builder => BniPanelAccess::scopeChapter($query))->searchable()->preload()->columnSpanFull(),
+                Select::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions())->required()->default(BniRegistration::STATUS_PENDING)->columnSpanFull(),
+                TextInput::make('full_name')->label('Họ và tên')->required()->maxLength(255)->columnSpanFull(),
+                TextInput::make('phone')->label('Số điện thoại')->required()->tel()->columnSpanFull(),
+                TextInput::make('email')->label('Email')->email()->columnSpanFull(),
+                TextInput::make('team_name')->label('Tên đội')->columnSpanFull(),
+                TextInput::make('skill_level')->label('Trình độ')->columnSpanFull(),
+                DateTimePicker::make('checked_in_at')->label('Check-in lúc')->columnSpanFull(),
                 Textarea::make('note')->label('Ghi chú')->rows(3)->columnSpanFull(),
             ])->columns(2),
         ]);

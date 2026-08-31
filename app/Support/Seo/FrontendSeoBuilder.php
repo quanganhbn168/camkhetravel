@@ -2,6 +2,7 @@
 
 namespace App\Support\Seo;
 
+use App\Models\BniChapter;
 use App\Models\BniInvitation;
 use App\Models\LandingPage;
 use App\Models\Post;
@@ -104,6 +105,30 @@ class FrontendSeoBuilder
                 $this->webPageSchema($canonical, $title, $description),
             ],
             robots: $indexable ? self::INDEX_ROBOTS : self::NOINDEX_ROBOTS,
+        );
+    }
+
+    public function bniChapter(BniChapter $chapter, ?string $image = null): array
+    {
+        $canonical = LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]);
+        $chapterName = $chapter->short_name ?: $chapter->name;
+        $title = 'BNI Chapter '.$chapterName.' | '.$this->website->site_name;
+        $description = $chapter->description ?: $chapter->name;
+
+        return $this->page(
+            title: $title,
+            description: $description,
+            canonical: $canonical,
+            image: $image,
+            schema: [
+                $this->organizationSchema(),
+                $this->webPageSchema($canonical, $title, $description),
+                $this->breadcrumb([
+                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
+                    ['name' => $chapter->event?->title ?: 'Lễ chuyển giao BNI', 'url' => LocalizedUrl::route('bni.handover')],
+                    ['name' => $chapterName, 'url' => $canonical],
+                ]),
+            ],
         );
     }
 

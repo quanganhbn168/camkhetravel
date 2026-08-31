@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\BniChapter;
 use App\Models\BniEvent;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -66,5 +67,13 @@ class BniHandoverPageTest extends TestCase
         $this->assertStringNotContainsString('bni-chapter-video-item__label', $body);
         $this->assertFileExists(resource_path('images/bni/handover-network-wave.webp'));
         $this->assertFileExists(resource_path('images/bni/handover-city-network.webp'));
+    }
+
+    public function test_an_authenticated_user_does_not_see_a_logout_button_in_the_handover_content(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('bni.handover'))
+            ->assertOk()
+            ->assertDontSee('Đăng xuất');
     }
 }

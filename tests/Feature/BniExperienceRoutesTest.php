@@ -40,6 +40,62 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Thư viện ảnh');
     }
 
+    public function test_each_active_chapter_has_a_database_backed_public_detail_page(): void
+    {
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $chapter = BniChapter::query()->create([
+            'bni_event_id' => $event->id,
+            'name' => 'Chapter Chi Tiết Kiểm Thử',
+            'short_name' => 'CHI TIẾT',
+            'slug' => 'chapter-chi-tiet-'.str()->random(8),
+            'description' => 'Giới thiệu chapter lấy trực tiếp từ cơ sở dữ liệu.',
+            'contact_name' => 'Đầu mối chapter kiểm thử',
+            'contact_phone' => '0900 111 222',
+            'contact_email' => 'chapter-detail@example.test',
+            'is_active' => true,
+            'sort_order' => 99,
+        ]);
+        $article = BniArticle::query()->create([
+            'bni_event_id' => $event->id,
+            'bni_chapter_id' => $chapter->id,
+            'type' => 'chapter',
+            'title' => 'Tin riêng của chapter kiểm thử',
+            'slug' => 'tin-chapter-chi-tiet-'.str()->random(8),
+            'excerpt' => 'Bài viết được lọc đúng theo chapter.',
+            'body' => '<p>Nội dung bài viết chapter.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $url = route('bni.chapters.show', ['chapter' => $chapter]);
+
+        $response = $this->get($url)
+            ->assertOk()
+            ->assertSee('id="bni-chapter-main"', false)
+            ->assertSee('CHI TIẾT')
+            ->assertSee($chapter->description)
+            ->assertSee('Đầu mối chapter kiểm thử')
+            ->assertSee('0900 111 222')
+            ->assertSee('chapter-detail@example.test')
+            ->assertSee($article->title)
+            ->assertSee('<meta name="robots" content="index, follow', false)
+            ->assertSee('<link rel="canonical" href="'.$url.'">', false)
+            ->assertDontSee('bni-gallery-grid')
+            ->assertDontSee('Theo chapter');
+
+        $this->assertSame(1, substr_count($response->getContent(), '<h1'));
+
+        $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('href="'.$url.'"', false);
+
+        $this->get(route('seo.sitemap'))
+            ->assertOk()
+            ->assertSee($url, false);
+
+        $chapter->update(['is_active' => false]);
+        $this->get($url)->assertNotFound();
+    }
+
     public function test_handover_slides_are_database_backed_webp_and_never_use_overlay_eyebrow_or_h1(): void
     {
         Storage::fake('public');
@@ -209,6 +265,7 @@ class BniExperienceRoutesTest extends TestCase
     {
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $activity = $event->activities()->where('is_active', true)->firstOrFail();
         BniArticle::query()->update(['is_featured' => false]);
         $article = BniArticle::query()->create([
             'bni_event_id' => $event->id,
@@ -237,7 +294,8 @@ class BniExperienceRoutesTest extends TestCase
         ]);
         $gallery = BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
-            'group' => 'event',
+            'bni_activity_id' => $activity->id,
+            'group' => $activity->type,
             'title' => 'Ảnh BNI lấy trực tiếp từ database',
             'source' => BniGalleryItem::SOURCE_ADMIN,
             'status' => BniGalleryItem::STATUS_APPROVED,
@@ -249,6 +307,7 @@ class BniExperienceRoutesTest extends TestCase
         $this->get(route('bni.handover'))
             ->assertOk()
             ->assertSee($article->title)
+            ->assertSee($activity->title)
             ->assertSee($gallery->title)
             ->assertSee($path, false);
     }

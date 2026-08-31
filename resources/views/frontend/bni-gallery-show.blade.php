@@ -1,7 +1,6 @@
 @extends('layouts.master')
 
 @use(App\Support\Localization\LocalizedUrl)
-@use(App\Models\BniGalleryItem)
 @use(Illuminate\Support\Str)
 
 @section('body_class', 'bni-experience-page bni-gallery-detail-page')
@@ -12,7 +11,7 @@
     <section class="bni-gallery-detail-hero">
         <div class="site-shell">
             <a class="bni-back-link" href="{{ LocalizedUrl::route('bni.gallery.index') }}">← Trở lại thư viện ảnh</a>
-            <p class="bni-experience-kicker">{{ $galleryItem->chapter?->short_name ?: ($galleryItem->event?->title ?: 'SỰ KIỆN BNI') }}</p>
+            <p class="bni-experience-kicker">{{ $galleryItem->galleryGroupLabel() }}</p>
             <h1>{{ $galleryItem->title ?: 'Khoảnh khắc kết nối BNI' }}</h1>
         </div>
     </section>
@@ -62,16 +61,15 @@
 
             <aside class="bni-gallery-detail__meta">
                 <img src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
+                <p>Album</p>
+                <strong>{{ $galleryItem->galleryGroupLabel() }}</strong>
                 <p>Nguồn ảnh</p>
-                <strong>{{ BniGalleryItem::sourceOptions()[$galleryItem->source] ?? 'Cộng đồng BNI' }}</strong>
+                <strong>{{ $galleryItem->publicSourceLabel() }}</strong>
                 @if ($galleryItem->uploader_name)
                     <p>Người chia sẻ</p><strong>{{ $galleryItem->uploader_name }}</strong>
                 @endif
                 @if ($galleryItem->event)
                     <p>Sự kiện</p><strong>{{ $galleryItem->event->title }}</strong>
-                @endif
-                @if ($galleryItem->chapter)
-                    <p>Chapter</p><strong>{{ $galleryItem->chapter->name }}</strong>
                 @endif
                 <a class="bni-button bni-button--red" href="{{ LocalizedUrl::route('bni.gallery.index') }}#gui-anh">Gửi ảnh của bạn</a>
             </aside>

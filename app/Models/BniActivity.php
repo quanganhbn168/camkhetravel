@@ -6,6 +6,7 @@ use App\Traits\ConvertsBniMediaToWebp;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BniActivity extends Model
 {
@@ -26,6 +27,11 @@ class BniActivity extends Model
     public function media(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'media_id');
+    }
+
+    public function galleryItems(): HasMany
+    {
+        return $this->hasMany(BniGalleryItem::class)->orderBy('sort_order');
     }
 
     protected function bniWebpMediaAttributes(): array

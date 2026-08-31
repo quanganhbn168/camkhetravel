@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCommentRequest;
+use App\Models\BniActivity;
 use App\Models\BniChapter;
-use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
 use App\Models\Comment;
 use App\Support\Bni\BniGalleryImageProcessor;
@@ -15,9 +15,12 @@ use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Throwable;
 
@@ -30,30 +33,26 @@ class BniGalleryController extends Controller
 
     public function index(Request $request): View
     {
-        $eventId = $request->integer('event') ?: null;
-        $chapterId = $request->integer('chapter') ?: null;
-        $events = BniEvent::query()->published()->orderByDesc('starts_at')->get(['id', 'title', 'type']);
-        $chapters = BniChapter::query()->where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'short_name']);
+        $activityOptions = $this->galleryActivities();
+        $selectedActivity = $request->integer('activity') ?: null;
+        $selectedActivity = $activityOptions->contains('id', $selectedActivity) ? $selectedActivity : null;
         $galleryItems = BniGalleryItem::query()
             ->published()
-            ->with(['event', 'chapter', 'media'])
+            ->forActivity($selectedActivity)
+            ->with(['activity', 'event', 'media'])
             ->withCount('approvedComments')
-            ->when($eventId, fn ($query) => $query->where('bni_event_id', $eventId))
-            ->when($chapterId, fn ($query) => $query->where('bni_chapter_id', $chapterId))
             ->orderByDesc('approved_at')
             ->orderByDesc('id')
             ->paginate(18)
             ->withQueryString();
 
         return view('frontend.bni-gallery-index', [
-            'events' => $events,
-            'chapters' => $chapters,
+            'activityOptions' => $activityOptions,
             'galleryItems' => $galleryItems,
-            'selectedEventId' => $eventId,
-            'selectedChapterId' => $chapterId,
+            'selectedActivity' => $selectedActivity,
             'seo' => $this->seo->listing(
                 'Thư viện ảnh sự kiện BNI | '.$this->seo->siteName(),
-                'Xem, gửi và bình luận những khoảnh khắc từ Lễ chuyển giao, Pickleball và các chapter BNI.',
+                'Xem, gửi và bình luận những khoảnh khắc từ các hoạt động trong chương trình BNI.',
                 LocalizedUrl::route('bni.gallery.index'),
             ),
         ]);
@@ -64,8 +63,8 @@ class BniGalleryController extends Controller
         abort_unless($galleryItem->status === BniGalleryItem::STATUS_APPROVED && $galleryItem->is_active, 404);
 
         $galleryItem->load([
+            'activity',
             'event',
-            'chapter',
             'media',
             'uploadedBy',
             'approvedComments' => fn ($query) => $query->with('user')->latest('approved_at'),
@@ -87,8 +86,7 @@ class BniGalleryController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'bni_event_id' => ['required', 'integer', 'exists:bni_events,id'],
-            'bni_chapter_id' => ['nullable', 'integer', 'exists:bni_chapters,id'],
+            'bni_activity_id' => ['required', 'integer', Rule::exists('bni_activities', 'id')->where('is_active', true)],
             'uploader_name' => ['required', 'string', 'max:120'],
             'uploader_email' => ['nullable', 'email', 'max:255'],
             'uploader_phone' => ['required', 'string', 'max:32'],
@@ -99,14 +97,28 @@ class BniGalleryController extends Controller
             'images.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:6144', 'dimensions:min_width=320,min_height=320,max_width=6000,max_height=6000'],
         ]);
 
-        $event = BniEvent::query()->published()->findOrFail($data['bni_event_id']);
-        $chapter = filled($data['bni_chapter_id'] ?? null)
-            ? BniChapter::query()->where('is_active', true)->findOrFail($data['bni_chapter_id'])
-            : null;
+        $activity = BniActivity::query()
+            ->with('event')
+            ->whereKey($data['bni_activity_id'])
+            ->where('is_active', true)
+            ->whereHas('event', fn ($query) => $query->published())
+            ->first();
+
+        if (! $activity || ! $activity->event) {
+            throw ValidationException::withMessages([
+                'bni_activity_id' => 'Hoạt động này hiện không nhận ảnh.',
+            ]);
+        }
+
+        $event = $activity->event;
+        $chapterId = BniChapter::query()
+            ->where('is_active', true)
+            ->whereKey($request->user()?->bni_chapter_id ?? 0)
+            ->value('id');
         $storedPaths = [];
 
         try {
-            DB::transaction(function () use ($request, $data, $event, $chapter, &$storedPaths): void {
+            DB::transaction(function () use ($request, $data, $activity, $event, $chapterId, &$storedPaths): void {
                 foreach ($request->file('images', []) as $position => $image) {
                     $processed = $this->imageProcessor->store($image);
                     $storedPaths[] = $processed['path'];
@@ -128,9 +140,10 @@ class BniGalleryController extends Controller
 
                     BniGalleryItem::query()->create([
                         'bni_event_id' => $event->id,
-                        'bni_chapter_id' => $chapter?->id,
+                        'bni_activity_id' => $activity->id,
+                        'bni_chapter_id' => $chapterId,
                         'uploaded_by_user_id' => $request->user()?->id,
-                        'group' => $chapter ? 'chapter' : 'event',
+                        'group' => $activity->type,
                         'title' => filled($data['title'] ?? null) ? trim(strip_tags($data['title'])) : null,
                         'caption' => filled($data['caption'] ?? null) ? trim(strip_tags($data['caption'])) : null,
                         'uploader_name' => trim(strip_tags($data['uploader_name'])),
@@ -173,5 +186,24 @@ class BniGalleryController extends Controller
         ]);
 
         return back()->with('success', 'Bình luận đã được gửi và đang chờ Ban tổ chức duyệt.');
+    }
+
+    /** @return Collection<int, array{id: int, title: string, event_title: string, select_label: string}> */
+    private function galleryActivities(): Collection
+    {
+        return BniActivity::query()
+            ->where('is_active', true)
+            ->whereHas('event', fn ($query) => $query->published())
+            ->with('event')
+            ->orderBy('bni_event_id')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (BniActivity $activity): array => [
+                'id' => (int) $activity->getKey(),
+                'title' => $activity->title,
+                'event_title' => $activity->event?->title ?: 'Sự kiện BNI',
+                'select_label' => $activity->title.' — '.($activity->event?->title ?: 'Sự kiện BNI'),
+            ]);
     }
 }

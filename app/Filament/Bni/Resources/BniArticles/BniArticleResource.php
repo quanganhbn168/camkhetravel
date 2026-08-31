@@ -66,11 +66,11 @@ class BniArticleResource extends Resource
                 ])->columns(2),
             ])->columnSpan(['lg' => 2]),
             Section::make('Phân loại & xuất bản')->icon('heroicon-o-cog-6-tooth')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->searchable()->preload(),
-                Select::make('type')->label('Nhóm tin')->options(['event' => 'Tin sự kiện', 'chapter' => 'Tin chapter', 'pickleball' => 'Tin pickleball'])->required()->default('event'),
-                Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required()->default('draft'),
-                Toggle::make('is_featured')->label('Tin nổi bật'),
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->searchable()->preload()->columnSpanFull(),
+                Select::make('type')->label('Nhóm tin')->options(['event' => 'Tin sự kiện', 'chapter' => 'Tin chapter', 'pickleball' => 'Tin pickleball'])->required()->default('event')->columnSpanFull(),
+                Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything())->columnSpanFull(),
+                Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required()->default('draft')->columnSpanFull(),
+                Toggle::make('is_featured')->label('Tin nổi bật')->columnSpanFull(),
             ])->columnSpan(['lg' => 1]),
         ]);
     }

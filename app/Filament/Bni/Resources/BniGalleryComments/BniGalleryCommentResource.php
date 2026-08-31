@@ -80,8 +80,8 @@ class BniGalleryCommentResource extends Resource
                 ->icon('heroicon-o-chat-bubble-left-right')
                 ->schema([
                     TextInput::make('author_name')->label('Người bình luận')->required()->maxLength(120)->columnSpanFull(),
-                    TextInput::make('author_email')->label('Email')->email()->maxLength(255),
-                    Select::make('status')->label('Trạng thái')->options(Comment::statusOptions())->required(),
+                    TextInput::make('author_email')->label('Email')->email()->maxLength(255)->columnSpanFull(),
+                    Select::make('status')->label('Trạng thái')->options(Comment::statusOptions())->required()->columnSpanFull(),
                     Textarea::make('body')->label('Nội dung')->required()->rows(5)->columnSpanFull(),
                 ])
                 ->columns(2),

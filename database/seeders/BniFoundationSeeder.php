@@ -8,8 +8,8 @@ use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniPurpose;
 use App\Models\BniScheduleItem;
-use Carbon\Carbon;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -87,18 +87,22 @@ class BniFoundationSeeder extends Seeder
             ]);
         }
 
-        foreach ([
-            ['handover', 'Hình ảnh lễ chuyển giao', 'Khoảnh khắc trang trọng của nghi thức chuyển giao và vinh danh.'],
-            ['gala', 'Gala dinner & sinh nhật', 'Một buổi tối kết nối, sẻ chia và lan tỏa niềm vui.'],
-            ['pickleball', 'BNI Pickleball', 'Giải đấu giao hữu dành cho cộng đồng doanh nhân BNI.'],
-        ] as $index => [$type, $title, $description]) {
-            BniActivity::query()->updateOrCreate(['bni_event_id' => $handover->id, 'type' => $type], [
-                'title' => $title,
-                'description' => $description,
-                'link_url' => $type === 'pickleball' ? route('bni.pickleball') : null,
-                'sort_order' => $index + 1,
-                'is_active' => true,
-            ]);
+        if (! $handover->activities()->exists()) {
+            foreach ([
+                ['handover', 'Hình ảnh lễ chuyển giao', 'Khoảnh khắc trang trọng của nghi thức chuyển giao và vinh danh.'],
+                ['gala', 'Gala dinner & sinh nhật', 'Một buổi tối kết nối, sẻ chia và lan tỏa niềm vui.'],
+                ['pickleball', 'BNI Pickleball', 'Giải đấu giao hữu dành cho cộng đồng doanh nhân BNI.'],
+            ] as $index => [$type, $title, $description]) {
+                BniActivity::query()->create([
+                    'bni_event_id' => $handover->id,
+                    'type' => $type,
+                    'title' => $title,
+                    'description' => $description,
+                    'link_url' => $type === 'pickleball' ? route('bni.pickleball') : null,
+                    'sort_order' => $index + 1,
+                    'is_active' => true,
+                ]);
+            }
         }
 
         $pickleball = BniEvent::query()->firstOrNew(['slug' => 'bni-pickleball']);

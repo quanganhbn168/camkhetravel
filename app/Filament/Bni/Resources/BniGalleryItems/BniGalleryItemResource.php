@@ -3,6 +3,7 @@
 namespace App\Filament\Bni\Resources\BniGalleryItems;
 
 use App\Filament\Bni\Resources\BniGalleryItems\Pages\ManageBniGalleryItems;
+use App\Models\BniActivity;
 use App\Models\BniGalleryItem;
 use App\Support\Bni\BniPanelAccess;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
@@ -44,22 +45,43 @@ class BniGalleryItemResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return BniPanelAccess::scopeChapter(parent::getEloquentQuery())->withCount('comments');
+        return BniPanelAccess::scopeChapter(parent::getEloquentQuery())
+            ->with(['activity', 'event'])
+            ->withCount('comments');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
             Section::make('Ảnh sự kiện')->icon('heroicon-o-photo')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))->searchable()->preload(),
-                Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                Select::make('group')->label('Nhóm hiển thị')->options(['event' => 'Theo sự kiện', 'chapter' => 'Theo chapter'])->required()->default('event'),
-                TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0),
                 TextInput::make('title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                Select::make('bni_event_id')
+                    ->label('Sự kiện tổ chức')
+                    ->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopePublishedEvents($query))
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->live()
+                    ->afterStateUpdated(fn ($set) => $set('bni_activity_id', null))
+                    ->columnSpanFull(),
+                Select::make('bni_activity_id')
+                    ->label('Hoạt động / album ảnh')
+                    ->options(fn ($get): array => BniActivity::query()
+                        ->where('bni_event_id', $get('bni_event_id'))
+                        ->where('is_active', true)
+                        ->orderBy('sort_order')
+                        ->orderBy('title')
+                        ->pluck('title', 'id')
+                        ->all())
+                    ->helperText('Tên hoạt động được quản lý trong mục Sự kiện; có thể thêm tự do như “Trước lễ chuyển giao” hoặc “Trong Gala Dinner”.')
+                    ->required()
+                    ->searchable()
+                    ->columnSpanFull(),
+                TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->columnSpanFull(),
                 TextInput::make('caption')->label('Chú thích')->maxLength(255)->columnSpanFull(),
                 CuratorPicker::make('media_id')->label('Hình ảnh')->relationship('media', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->required()->columnSpanFull(),
-                Select::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions())->default(BniGalleryItem::SOURCE_ADMIN)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated(),
-                Select::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions())->required()->default(BniGalleryItem::STATUS_APPROVED),
+                Select::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions())->default(BniGalleryItem::SOURCE_ADMIN)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                Select::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions())->required()->default(BniGalleryItem::STATUS_APPROVED)->columnSpanFull(),
                 Toggle::make('is_active')->label('Hiển thị')->default(true)->columnSpanFull(),
             ])->columns(2),
         ]);
@@ -70,13 +92,17 @@ class BniGalleryItemResource extends Resource
         return $table->columns([
             CuratorColumn::make('media')->label('Ảnh')->square(),
             TextColumn::make('title')->label('Tiêu đề')->searchable()->wrap(),
-            TextColumn::make('group')->label('Nhóm')->badge(),
-            TextColumn::make('event.title')->label('Sự kiện')->toggleable(),
-            TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
+            TextColumn::make('activity.title')->label('Hoạt động / album')->badge()->placeholder('Chưa phân loại'),
+            TextColumn::make('event.title')->label('Sự kiện tổ chức')->toggleable(),
             TextColumn::make('source')->label('Nguồn')->badge()->formatStateUsing(fn (string $state): string => BniGalleryItem::sourceOptions()[$state] ?? $state),
             TextColumn::make('status')->label('Kiểm duyệt')->badge()->formatStateUsing(fn (string $state): string => BniGalleryItem::statusOptions()[$state] ?? $state),
             TextColumn::make('comments_count')->label('Bình luận')->badge(),
         ])->filters([
+            SelectFilter::make('bni_activity_id')
+                ->label('Hoạt động / album')
+                ->relationship('activity', 'title')
+                ->searchable()
+                ->preload(),
             SelectFilter::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions()),
             SelectFilter::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions()),
         ])->defaultSort('sort_order')->recordActions([

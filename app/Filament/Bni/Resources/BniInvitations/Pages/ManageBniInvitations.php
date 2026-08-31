@@ -37,7 +37,8 @@ class ManageBniInvitations extends ManageRecords
                         ->required()
                         ->helperText(fn (): string => BniPanelAccess::canManageEverything()
                             ? 'Chọn một lần cho toàn bộ danh sách bên dưới.'
-                            : 'Danh sách được tự động nhập vào Chapter của tài khoản.'),
+                            : 'Danh sách được tự động nhập vào Chapter của tài khoản.')
+                        ->columnSpanFull(),
                     Textarea::make('guest_names')
                         ->label('Tên khách mời')
                         ->placeholder("Nguyễn Văn An\nTrần Thu Hà\nLê Minh Đức")

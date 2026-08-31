@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Filament\Bni\Resources\BniGalleryComments\BniGalleryCommentResource;
 use App\Filament\Bni\Resources\BniGalleryItems\BniGalleryItemResource;
+use App\Models\BniActivity;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
@@ -59,14 +60,13 @@ class BniCompletionTest extends TestCase
         $this->withoutMiddleware(PreventRequestForgery::class);
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
-        $chapter = BniChapter::query()->where('is_active', true)->firstOrFail();
+        $activity = $event->activities()->where('is_active', true)->firstOrFail();
         $galleryCount = BniGalleryItem::query()->count();
         $mediaCount = Media::query()->count();
 
         $this->from(route('bni.gallery.index'))
             ->post(route('bni.gallery.store'), [
-                'bni_event_id' => $event->id,
-                'bni_chapter_id' => $chapter->id,
+                'bni_activity_id' => $activity->id,
                 'uploader_name' => 'Khách gửi ảnh kiểm thử',
                 'uploader_phone' => '0900000000',
                 'uploader_email' => 'gallery@example.test',
@@ -83,7 +83,9 @@ class BniCompletionTest extends TestCase
         $this->assertSame($galleryCount + 2, BniGalleryItem::query()->count());
         $this->assertDatabaseHas('bni_gallery_items', [
             'bni_event_id' => $event->id,
-            'bni_chapter_id' => $chapter->id,
+            'bni_activity_id' => $activity->id,
+            'bni_chapter_id' => null,
+            'group' => $activity->type,
             'uploader_name' => 'Khách gửi ảnh kiểm thử',
             'source' => BniGalleryItem::SOURCE_GUEST,
             'status' => BniGalleryItem::STATUS_PENDING,
@@ -95,16 +97,89 @@ class BniCompletionTest extends TestCase
         Storage::disk('public')->assertExists($storedMedia->path);
     }
 
+    public function test_gallery_uses_database_managed_activities_without_public_chapter_grouping(): void
+    {
+        Storage::fake('public');
+        $handoverEvent = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $pickleballEvent = BniEvent::query()->published()->where('type', 'pickleball')->firstOrFail();
+        $chapter = BniChapter::query()->where('is_active', true)->firstOrFail();
+        $beforeHandover = BniActivity::query()->create([
+            'bni_event_id' => $handoverEvent->id,
+            'type' => 'handover',
+            'title' => 'Trước lễ chuyển giao',
+            'sort_order' => 91,
+            'is_active' => true,
+        ]);
+        $insideGala = BniActivity::query()->create([
+            'bni_event_id' => $handoverEvent->id,
+            'type' => 'gala',
+            'title' => 'Trong Gala Dinner',
+            'sort_order' => 92,
+            'is_active' => true,
+        ]);
+        $pickleballActivity = BniActivity::query()->create([
+            'bni_event_id' => $pickleballEvent->id,
+            'type' => 'pickleball',
+            'title' => 'Giao lưu sau trận đấu',
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+        $handover = $this->makeGalleryItem($handoverEvent, 'Ảnh trước chuyển giao kiểm thử', BniGalleryItem::STATUS_APPROVED, $beforeHandover);
+        $gala = $this->makeGalleryItem($handoverEvent, 'Ảnh trong Gala kiểm thử', BniGalleryItem::STATUS_APPROVED, $insideGala);
+        $pickleball = $this->makeGalleryItem($pickleballEvent, 'Ảnh giao lưu Pickleball kiểm thử', BniGalleryItem::STATUS_APPROVED, $pickleballActivity);
+        $legacy = $this->makeGalleryItem($handoverEvent, 'Ảnh chapter cũ được giữ lại', BniGalleryItem::STATUS_APPROVED);
+        $legacy->update(['bni_activity_id' => null, 'bni_chapter_id' => $chapter->id, 'group' => 'chapter']);
+
+        $this->get(route('bni.gallery.index'))
+            ->assertOk()
+            ->assertSee('name="activity"', false)
+            ->assertSee('name="bni_activity_id"', false)
+            ->assertSee('Trước lễ chuyển giao')
+            ->assertSee('Trong Gala Dinner')
+            ->assertSee('Giao lưu sau trận đấu')
+            ->assertSee('Xóa tất cả')
+            ->assertDontSee('name="chapter"', false)
+            ->assertDontSee('name="bni_chapter_id"', false)
+            ->assertDontSee('Theo chapter');
+
+        $this->get(route('bni.gallery.index', ['activity' => $insideGala->id]))
+            ->assertOk()
+            ->assertSee($gala->title)
+            ->assertDontSee($handover->title)
+            ->assertDontSee($pickleball->title)
+            ->assertDontSee($legacy->title);
+
+        $this->get(route('bni.gallery.index', ['activity' => $beforeHandover->id]))
+            ->assertOk()
+            ->assertSee($handover->title)
+            ->assertDontSee($legacy->title)
+            ->assertDontSee($gala->title)
+            ->assertDontSee($pickleball->title);
+
+        $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('Trước lễ chuyển giao')
+            ->assertSee('Trong Gala Dinner')
+            ->assertSee('Giao lưu sau trận đấu')
+            ->assertDontSee('Theo sự kiện')
+            ->assertDontSee('Theo chapter');
+
+        $this->get(route('bni.gallery.show', ['galleryItem' => $legacy]))
+            ->assertOk()
+            ->assertSee($handoverEvent->title)
+            ->assertDontSee('<p>Chapter</p>', false);
+    }
+
     public function test_gallery_upload_honeypot_is_rejected_before_files_are_stored(): void
     {
         $this->withoutMiddleware(PreventRequestForgery::class);
         Storage::fake('public');
-        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $activity = BniEvent::query()->published()->where('type', 'handover')->firstOrFail()->activities()->where('is_active', true)->firstOrFail();
         $galleryCount = BniGalleryItem::query()->count();
 
         $this->from(route('bni.gallery.index'))
             ->post(route('bni.gallery.store'), [
-                'bni_event_id' => $event->id,
+                'bni_activity_id' => $activity->id,
                 'uploader_name' => 'Bot kiểm thử',
                 'uploader_phone' => '0900000000',
                 'website' => 'https://spam.example.test',
@@ -200,7 +275,9 @@ class BniCompletionTest extends TestCase
         $this->actingAs($user)->get('/bni-admin/bni-gallery-items')
             ->assertOk()
             ->assertSee('Thư viện ảnh')
-            ->assertSee('Tải nhiều ảnh');
+            ->assertSee('Tải nhiều ảnh')
+            ->assertSee('Hoạt động / album')
+            ->assertDontSee('Theo chapter');
         $this->actingAs($user)->get('/bni-admin/bni-gallery-comments')->assertOk()->assertSee('Bình luận ảnh');
 
         $galleryIds = BniGalleryItemResource::getEloquentQuery()->pluck('id');
@@ -216,6 +293,7 @@ class BniCompletionTest extends TestCase
     {
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $activity = $event->activities()->where('is_active', true)->firstOrFail();
         $path = 'media/bni/community/tests/guest-upload.webp';
         Storage::disk('public')->put($path, 'guest-image');
         $media = Media::query()->create([
@@ -231,7 +309,8 @@ class BniCompletionTest extends TestCase
         ]);
         $galleryItem = BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
-            'group' => 'event',
+            'bni_activity_id' => $activity->id,
+            'group' => $activity->type,
             'title' => 'Ảnh khách cần xóa',
             'source' => BniGalleryItem::SOURCE_GUEST,
             'status' => BniGalleryItem::STATUS_PENDING,
@@ -260,8 +339,9 @@ class BniCompletionTest extends TestCase
             ->assertJsonFragment(['url' => '/le-chuyen-giao/pickleball']);
     }
 
-    private function makeGalleryItem(BniEvent $event, string $title, string $status): BniGalleryItem
+    private function makeGalleryItem(BniEvent $event, string $title, string $status, ?BniActivity $activity = null): BniGalleryItem
     {
+        $activity ??= $event->activities()->where('is_active', true)->firstOrFail();
         $path = 'media/bni/tests/'.str()->uuid().'.jpg';
         Storage::disk('public')->put($path, 'fake-image-content');
         $media = Media::query()->create([
@@ -278,7 +358,8 @@ class BniCompletionTest extends TestCase
 
         return BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
-            'group' => 'event',
+            'bni_activity_id' => $activity->id,
+            'group' => $activity->type,
             'title' => $title,
             'source' => BniGalleryItem::SOURCE_ADMIN,
             'status' => $status,

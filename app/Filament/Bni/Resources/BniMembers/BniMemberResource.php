@@ -49,8 +49,8 @@ class BniMemberResource extends Resource
                 TextInput::make('name')->label('Họ và tên')->required()->maxLength(255)->columnSpanFull(),
                 TextInput::make('email')->label('Email đăng nhập')->email()->required()->unique(ignoreRecord: true)->maxLength(255)->columnSpanFull(),
                 TextInput::make('password')->label('Mật khẩu')->password()->required(fn (?User $record): bool => $record === null)->dehydrated(fn (?string $state): bool => filled($state))->columnSpanFull(),
-                Select::make('bni_chapter_id')->label('Chapter')->relationship('bniChapter', 'name')->searchable()->preload(),
-                Select::make('roles')->label('Vai trò')->relationship('roles', 'name', fn (Builder $query) => $query->whereIn('name', ['bni_admin', 'bni_chapter_manager', 'bni_member']))->multiple()->preload()->required()->default(['bni_member']),
+                Select::make('bni_chapter_id')->label('Chapter')->relationship('bniChapter', 'name')->searchable()->preload()->columnSpanFull(),
+                Select::make('roles')->label('Vai trò')->relationship('roles', 'name', fn (Builder $query) => $query->whereIn('name', ['bni_admin', 'bni_chapter_manager', 'bni_member']))->multiple()->preload()->required()->default(['bni_member'])->columnSpanFull(),
             ])->columns(2),
         ]);
     }

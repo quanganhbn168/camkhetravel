@@ -54,8 +54,8 @@ class BniInvitationResource extends Resource
     {
         return $schema->components([
             Section::make('Thông tin khách mời')->icon('heroicon-o-user')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopeInvitationEvents($query))->required()->searchable()->preload(),
-                Select::make('bni_chapter_id')->label('Chapter phụ trách')->relationship('chapter', 'name')->required(fn (): bool => BniPanelAccess::canManageEverything())->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopeInvitationEvents($query))->required()->searchable()->preload()->columnSpanFull(),
+                Select::make('bni_chapter_id')->label('Chapter phụ trách')->relationship('chapter', 'name')->required(fn (): bool => BniPanelAccess::canManageEverything())->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything())->columnSpanFull(),
                 TextInput::make('guest_name')->label('Tên người nhận (tuỳ chọn)')->helperText('Bỏ trống để hiển thị “Anh/Chị chủ doanh nghiệp”.')->maxLength(255)->columnSpanFull(),
                 TextInput::make('invitation_code')
                     ->label('Mã thư mời & đường dẫn')
@@ -66,12 +66,12 @@ class BniInvitationResource extends Resource
                     ->maxLength(32)
                     ->helperText('Dùng trực tiếp trong liên kết, ví dụ: /thu-moi/tm-k4x9p2q7. Không dùng tên khách trong URL.')
                     ->columnSpanFull(),
-                TextInput::make('company_name')->label('Doanh nghiệp'),
-                TextInput::make('position')->label('Chức danh'),
-                TextInput::make('email')->label('Email')->email(),
-                TextInput::make('phone')->label('Số điện thoại')->tel(),
-                TextInput::make('guest_count')->label('Số người tham dự')->numeric()->minValue(1)->default(1),
-                Select::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions())->required()->default(BniInvitation::RSVP_PENDING),
+                TextInput::make('company_name')->label('Doanh nghiệp')->columnSpanFull(),
+                TextInput::make('position')->label('Chức danh')->columnSpanFull(),
+                TextInput::make('email')->label('Email')->email()->columnSpanFull(),
+                TextInput::make('phone')->label('Số điện thoại')->tel()->columnSpanFull(),
+                TextInput::make('guest_count')->label('Số người tham dự')->numeric()->minValue(1)->default(1)->columnSpanFull(),
+                Select::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions())->required()->default(BniInvitation::RSVP_PENDING)->columnSpanFull(),
                 Textarea::make('rsvp_note')->label('Ghi chú RSVP')->rows(3)->columnSpanFull(),
             ])->columns(2),
         ]);

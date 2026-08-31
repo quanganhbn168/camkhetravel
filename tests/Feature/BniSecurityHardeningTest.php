@@ -89,6 +89,7 @@ class BniSecurityHardeningTest extends TestCase
         $user->assignRole('bni_chapter_manager');
         $this->actingAs($user);
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $activity = $event->activities()->where('is_active', true)->firstOrFail();
         $invitation = BniInvitation::query()->create([
             'bni_event_id' => $event->id,
             'bni_chapter_id' => $chapter->id,
@@ -99,7 +100,7 @@ class BniSecurityHardeningTest extends TestCase
         $galleryData = BniPanelAccess::prepareGalleryData([
             'bni_event_id' => $event->id,
             'bni_chapter_id' => null,
-            'group' => 'event',
+            'bni_activity_id' => $activity->id,
         ]);
         $registrationData = BniPanelAccess::prepareRegistrationData([
             'bni_event_id' => $event->id,
@@ -108,7 +109,8 @@ class BniSecurityHardeningTest extends TestCase
         ]);
 
         $this->assertSame($chapter->id, $galleryData['bni_chapter_id']);
-        $this->assertSame('chapter', $galleryData['group']);
+        $this->assertSame($activity->id, $galleryData['bni_activity_id']);
+        $this->assertSame($activity->type, $galleryData['group']);
         $this->assertSame($chapter->id, $registrationData['bni_chapter_id']);
         $this->assertSame($invitation->bni_event_id, $registrationData['bni_event_id']);
     }

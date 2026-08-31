@@ -74,6 +74,11 @@ class BniGalleryItem extends Model
         return $this->belongsTo(BniEvent::class, 'bni_event_id');
     }
 
+    public function activity(): BelongsTo
+    {
+        return $this->belongsTo(BniActivity::class, 'bni_activity_id');
+    }
+
     public function chapter(): BelongsTo
     {
         return $this->belongsTo(BniChapter::class, 'bni_chapter_id');
@@ -99,6 +104,30 @@ class BniGalleryItem extends Model
         return $query
             ->where('status', self::STATUS_APPROVED)
             ->where('is_active', true);
+    }
+
+    public function scopeForActivity(Builder $query, ?int $activityId): Builder
+    {
+        return $activityId ? $query->where('bni_activity_id', $activityId) : $query;
+    }
+
+    public function galleryGroupKey(): string
+    {
+        return $this->activity
+            ? 'activity-'.$this->activity->getKey()
+            : 'event-'.($this->event?->getKey() ?: 'bni');
+    }
+
+    public function galleryGroupLabel(): string
+    {
+        return $this->activity?->title ?: $this->event?->title ?: 'Sự kiện BNI';
+    }
+
+    public function publicSourceLabel(): string
+    {
+        return $this->source === self::SOURCE_GUEST
+            ? 'Khách tham dự'
+            : 'Ban tổ chức BNI';
     }
 
     public static function statusOptions(): array

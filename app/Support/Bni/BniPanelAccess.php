@@ -2,6 +2,7 @@
 
 namespace App\Support\Bni;
 
+use App\Models\BniActivity;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniInvitation;
@@ -152,11 +153,23 @@ class BniPanelAccess
     public static function prepareGalleryData(array $data): array
     {
         $data = self::forceChapter($data);
-        self::ensurePublishedEvent($data['bni_event_id'] ?? null);
+        $activity = BniActivity::query()->find($data['bni_activity_id'] ?? null);
 
-        if (self::isChapterManager() && ! self::canManageEverything()) {
-            $data['group'] = 'chapter';
+        if (! $activity) {
+            throw ValidationException::withMessages([
+                'bni_activity_id' => 'Vui lòng chọn hoạt động / album ảnh.',
+            ]);
         }
+
+        if (filled($data['bni_event_id'] ?? null) && (int) $data['bni_event_id'] !== (int) $activity->bni_event_id) {
+            throw ValidationException::withMessages([
+                'bni_activity_id' => 'Hoạt động đã chọn không thuộc sự kiện này.',
+            ]);
+        }
+
+        $data['bni_event_id'] = $activity->bni_event_id;
+        $data['group'] = $activity->type;
+        self::ensurePublishedEvent($data['bni_event_id'] ?? null);
 
         return $data;
     }

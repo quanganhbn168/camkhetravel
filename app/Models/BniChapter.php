@@ -21,6 +21,11 @@ class BniChapter extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(BniEvent::class, 'bni_event_id');
