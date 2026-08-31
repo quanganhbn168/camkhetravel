@@ -64,8 +64,8 @@ Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::post('/le-chuyen-giao/thu-vien-anh/{galleryItem}/binh-luan', [BniGalleryController::class, 'comment'])->middleware('throttle:frontend-comment')->name('bni.gallery.comments.store');
     Route::get('/le-chuyen-giao/thu-moi', [BniInvitationController::class, 'template'])->name('bni.invitations.template');
     Route::post('/le-chuyen-giao/thu-moi/rsvp', [BniInvitationController::class, 'templateRsvp'])->middleware('throttle:frontend-contact')->name('bni.invitations.template.rsvp');
-    Route::get('/le-chuyen-giao/thu-moi/{invitation}/{accessToken}', [BniInvitationController::class, 'show'])->name('bni.invitations.show');
-    Route::post('/le-chuyen-giao/thu-moi/{invitation}/{accessToken}/rsvp', [BniInvitationController::class, 'rsvp'])->middleware('throttle:frontend-contact')->name('bni.invitations.rsvp');
+    Route::get('/le-chuyen-giao/thu-moi/{invitation}', [BniInvitationController::class, 'show'])->name('bni.invitations.show');
+    Route::post('/le-chuyen-giao/thu-moi/{invitation}/rsvp', [BniInvitationController::class, 'rsvp'])->middleware('throttle:frontend-contact')->name('bni.invitations.rsvp');
     Route::get('/le-chuyen-giao/tin-tuc/{article}', [BniArticleController::class, 'show'])->name('bni.articles.show');
     Route::post('/le-chuyen-giao/tin-tuc/{article}/binh-luan', [BniInteractionController::class, 'comment'])->middleware(['auth', 'throttle:frontend-comment'])->name('bni.articles.comments.store');
     Route::post('/le-chuyen-giao/tin-tuc/{article}/cam-xuc', [BniInteractionController::class, 'react'])->middleware(['auth', 'throttle:frontend-comment'])->name('bni.articles.reactions.store');

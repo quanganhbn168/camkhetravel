@@ -110,10 +110,7 @@ class FrontendSeoBuilder
     /** @param array<string, mixed> $content */
     public function invitation(BniInvitation $invitation, string $guestName, array $content, ?string $image = null): array
     {
-        $canonical = LocalizedUrl::route('bni.invitations.show', [
-            'invitation' => $invitation,
-            'accessToken' => $invitation->access_token,
-        ]);
+        $canonical = LocalizedUrl::route('bni.invitations.show', ['invitation' => $invitation]);
         $event = $invitation->event;
         $eventLabel = trim((string) ($content['event_label'] ?? 'LỄ CHUYỂN GIAO'));
         $eventTitle = $event?->title ?: $eventLabel;

@@ -13,7 +13,6 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -21,7 +20,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 class BniInvitationResource extends Resource
 {
@@ -58,17 +56,20 @@ class BniInvitationResource extends Resource
             Section::make('Thông tin khách mời')->icon('heroicon-o-user')->schema([
                 Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopeInvitationEvents($query))->required()->searchable()->preload(),
                 Select::make('bni_chapter_id')->label('Chapter phụ trách')->relationship('chapter', 'name')->required(fn (): bool => BniPanelAccess::canManageEverything())->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                TextInput::make('guest_name')->label('Tên người nhận (tuỳ chọn)')->helperText('Bỏ trống để hiển thị “Anh/Chị chủ doanh nghiệp”.')->maxLength(255)->live(onBlur: true)->afterStateUpdated(function (?string $state, $get, $set): void {
-                    if ((blank($get('slug')) || Str::startsWith((string) $get('slug'), 'thu-moi-')) && filled($state)) {
-                        $set('slug', Str::slug($state));
-                    }
-                })->columnSpanFull(),
-                TextInput::make('slug')->label('Slug thư mời')->default(fn (): string => 'thu-moi-'.Str::lower(Str::random(8)))->required()->maxLength(255)->helperText('Tự sinh mã truy cập; có thể chỉnh lại khi cần.')->columnSpanFull(),
+                TextInput::make('guest_name')->label('Tên người nhận (tuỳ chọn)')->helperText('Bỏ trống để hiển thị “Anh/Chị chủ doanh nghiệp”.')->maxLength(255)->columnSpanFull(),
+                TextInput::make('invitation_code')
+                    ->label('Mã thư mời & đường dẫn')
+                    ->default(fn (): string => BniInvitation::newInvitationCode())
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->regex('/^[A-Za-z0-9-]+$/')
+                    ->maxLength(32)
+                    ->helperText('Dùng trực tiếp trong liên kết, ví dụ: /thu-moi/tm-k4x9p2q7. Không dùng tên khách trong URL.')
+                    ->columnSpanFull(),
                 TextInput::make('company_name')->label('Doanh nghiệp'),
                 TextInput::make('position')->label('Chức danh'),
                 TextInput::make('email')->label('Email')->email(),
                 TextInput::make('phone')->label('Số điện thoại')->tel(),
-                TextInput::make('invitation_code')->label('Mã thư mời')->maxLength(32),
                 TextInput::make('guest_count')->label('Số người tham dự')->numeric()->minValue(1)->default(1),
                 Select::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions())->required()->default(BniInvitation::RSVP_PENDING),
                 Textarea::make('rsvp_note')->label('Ghi chú RSVP')->rows(3)->columnSpanFull(),
@@ -80,11 +81,12 @@ class BniInvitationResource extends Resource
     {
         return $table->columns([
             TextColumn::make('guest_name')->label('Khách mời')->formatStateUsing(fn (?string $state): string => filled($state) ? $state : 'Anh/Chị chủ doanh nghiệp')->searchable()->sortable(),
+            TextColumn::make('invitation_code')->label('Mã thư mời')->copyable()->copyMessage('Đã sao chép mã thư mời')->searchable(),
             TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
             TextColumn::make('company_name')->label('Doanh nghiệp')->searchable()->toggleable(),
             TextColumn::make('phone')->label('Số điện thoại')->toggleable(),
-            TextColumn::make('secure_url')
-                ->label('Liên kết bảo mật')
+            TextColumn::make('public_url')
+                ->label('Liên kết thư mời')
                 ->getStateUsing(fn (BniInvitation $record): string => $record->publicUrl())
                 ->copyable()
                 ->copyMessage('Đã sao chép liên kết thư mời')
@@ -98,25 +100,7 @@ class BniInvitationResource extends Resource
             Action::make('preview')
                 ->label('Xem thư mời')
                 ->icon('heroicon-o-arrow-top-right-on-square')
-                ->url(fn (BniInvitation $record): string => LocalizedUrl::route('bni.invitations.show', [
-                    'invitation' => $record,
-                    'accessToken' => $record->access_token,
-                ]), true),
-            Action::make('regenerateAccessToken')
-                ->label('Đổi mã bảo mật')
-                ->icon('heroicon-o-key')
-                ->color('warning')
-                ->requiresConfirmation()
-                ->modalHeading('Đổi mã bảo mật của thư mời?')
-                ->modalDescription('Liên kết cũ sẽ ngừng hoạt động ngay. Hãy gửi lại liên kết mới cho khách mời.')
-                ->action(function (BniInvitation $record): void {
-                    $record->regenerateAccessToken();
-
-                    Notification::make()
-                        ->title('Đã đổi mã bảo mật thư mời')
-                        ->success()
-                        ->send();
-                }),
+                ->url(fn (BniInvitation $record): string => LocalizedUrl::route('bni.invitations.show', ['invitation' => $record]), true),
             EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareInvitationData($data)),
             DeleteAction::make(),
         ]);

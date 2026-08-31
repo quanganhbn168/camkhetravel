@@ -103,7 +103,7 @@ class LocalizedUrl
             'bni.pickleball' => 'le-chuyen-giao/pickleball',
             'bni.invitations.template' => 'le-chuyen-giao/thu-moi',
             'bni.invitations.template.rsvp' => 'le-chuyen-giao/thu-moi/rsvp',
-            'bni.invitations.show' => 'le-chuyen-giao/thu-moi/'.($parameters['invitation'] ?? '').'/'.($parameters['accessToken'] ?? ''),
+            'bni.invitations.show' => 'le-chuyen-giao/thu-moi/'.($parameters['invitation'] ?? ''),
             'bni.articles.show' => 'le-chuyen-giao/tin-tuc/'.($parameters['article'] ?? ''),
             'bni.member.login' => 'le-chuyen-giao/dang-nhap',
             'contact' => 'lien-he',

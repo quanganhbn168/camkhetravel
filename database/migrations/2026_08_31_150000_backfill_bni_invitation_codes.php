@@ -10,30 +10,31 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('bni_invitations', function (Blueprint $table): void {
-            $table->string('access_token', 64)->nullable()->unique()->after('slug');
-        });
-
         DB::table('bni_invitations')
             ->select('id')
-            ->whereNull('access_token')
+            ->where(function ($query): void {
+                $query->whereNull('invitation_code')->orWhere('invitation_code', '');
+            })
             ->orderBy('id')
             ->eachById(function (object $invitation): void {
                 do {
-                    $token = Str::random(48);
-                } while (DB::table('bni_invitations')->where('access_token', $token)->exists());
+                    $code = 'tm-'.Str::lower(Str::random(10));
+                } while (DB::table('bni_invitations')->where('invitation_code', $code)->exists());
 
                 DB::table('bni_invitations')
                     ->where('id', $invitation->id)
-                    ->update(['access_token' => $token]);
+                    ->update(['invitation_code' => $code]);
             });
+
+        Schema::table('bni_invitations', function (Blueprint $table): void {
+            $table->string('invitation_code', 32)->nullable(false)->change();
+        });
     }
 
     public function down(): void
     {
         Schema::table('bni_invitations', function (Blueprint $table): void {
-            $table->dropUnique('bni_invitations_access_token_unique');
-            $table->dropColumn('access_token');
+            $table->string('invitation_code', 32)->nullable()->change();
         });
     }
 };

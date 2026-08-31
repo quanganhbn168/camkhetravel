@@ -45,10 +45,8 @@ class BniInvitationController extends Controller
         ]);
     }
 
-    public function show(BniInvitation $invitation, string $accessToken): View
+    public function show(BniInvitation $invitation): View
     {
-        abort_unless($invitation->hasValidAccessToken($accessToken), 404);
-
         $invitation->load(['event.heroMedia', 'event.scheduleItems', 'chapter']);
         abort_unless($invitation->event, 404);
 
@@ -88,10 +86,8 @@ class BniInvitationController extends Controller
         return back()->with('success', 'Thông tin RSVP đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.');
     }
 
-    public function rsvp(Request $request, BniInvitation $invitation, string $accessToken): RedirectResponse
+    public function rsvp(Request $request, BniInvitation $invitation): RedirectResponse
     {
-        abort_unless($invitation->hasValidAccessToken($accessToken), 404);
-
         $data = $request->validate([
             'rsvp_status' => ['required', 'in:attending,declined'],
             'guest_count' => ['required', 'integer', 'min:1', 'max:10'],

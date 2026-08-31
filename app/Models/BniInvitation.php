@@ -17,15 +17,15 @@ class BniInvitation extends Model
 
     protected $guarded = [];
 
-    protected $hidden = [
-        'access_token',
-    ];
-
     protected static function booted(): void
     {
         static::creating(function (self $invitation): void {
-            if (blank($invitation->access_token)) {
-                $invitation->access_token = self::generateAccessToken();
+            if (blank($invitation->invitation_code)) {
+                $invitation->invitation_code = self::newInvitationCode();
+            }
+
+            if (blank($invitation->slug)) {
+                $invitation->slug = $invitation->invitation_code;
             }
         });
     }
@@ -37,7 +37,7 @@ class BniInvitation extends Model
 
     public function getRouteKeyName(): string
     {
-        return 'slug';
+        return 'invitation_code';
     }
 
     public function event(): BelongsTo
@@ -55,23 +55,10 @@ class BniInvitation extends Model
         return filled($this->guest_name) ? $this->guest_name : $fallback;
     }
 
-    public function hasValidAccessToken(?string $token): bool
-    {
-        return filled($this->access_token)
-            && filled($token)
-            && hash_equals((string) $this->access_token, (string) $token);
-    }
-
-    public function regenerateAccessToken(): void
-    {
-        $this->forceFill(['access_token' => self::generateAccessToken()])->save();
-    }
-
     public function publicUrl(): string
     {
         return route('bni.invitations.show', [
             'invitation' => $this,
-            'accessToken' => $this->access_token,
         ]);
     }
 
@@ -89,12 +76,12 @@ class BniInvitation extends Model
         ];
     }
 
-    private static function generateAccessToken(): string
+    public static function newInvitationCode(): string
     {
         do {
-            $token = Str::random(48);
-        } while (self::query()->where('access_token', $token)->exists());
+            $code = 'tm-'.Str::lower(Str::random(10));
+        } while (self::query()->where('invitation_code', $code)->exists());
 
-        return $token;
+        return $code;
     }
 }

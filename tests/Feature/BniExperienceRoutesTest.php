@@ -122,10 +122,7 @@ class BniExperienceRoutesTest extends TestCase
             'slug' => 'thu-moi-kiem-thu',
         ]);
 
-        $this->get(route('bni.invitations.show', [
-            'invitation' => $invitation,
-            'accessToken' => $invitation->access_token,
-        ]))
+        $this->get(route('bni.invitations.show', ['invitation' => $invitation]))
             ->assertOk()
             ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
             ->assertSee('id="bni-invitation-main"', false)

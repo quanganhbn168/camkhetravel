@@ -19,7 +19,7 @@ class BniSecurityHardeningTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_personal_invitation_requires_its_private_access_token_for_view_and_rsvp(): void
+    public function test_personal_invitation_uses_one_generated_code_for_view_and_rsvp(): void
     {
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
         $chapter = BniChapter::query()->where('is_active', true)->firstOrFail();
@@ -30,37 +30,24 @@ class BniSecurityHardeningTest extends TestCase
             'slug' => 'khach-bao-mat-'.str()->random(8),
         ]);
 
-        $this->assertNotEmpty($invitation->access_token);
-        $this->assertSame(48, strlen($invitation->access_token));
+        $this->assertMatchesRegularExpression('/^tm-[a-z0-9]{10}$/', $invitation->invitation_code);
 
-        $validUrl = route('bni.invitations.show', [
-            'invitation' => $invitation,
-            'accessToken' => $invitation->access_token,
-        ]);
+        $validUrl = route('bni.invitations.show', ['invitation' => $invitation]);
 
         $this->get($validUrl)->assertOk()->assertSee('Khách bảo mật');
-        $this->get(route('bni.invitations.show', [
-            'invitation' => $invitation,
-            'accessToken' => str_repeat('x', 48),
-        ]))->assertNotFound();
         $this->get('/le-chuyen-giao/thu-moi/'.$invitation->slug)->assertNotFound();
+        $this->get('/le-chuyen-giao/thu-moi/tm-xxxxxxxxxx')->assertNotFound();
 
-        $this->post(route('bni.invitations.rsvp', [
-            'invitation' => $invitation,
-            'accessToken' => str_repeat('x', 48),
-        ]), [
+        $this->post('/le-chuyen-giao/thu-moi/tm-xxxxxxxxxx/rsvp', [
             'rsvp_status' => BniInvitation::RSVP_ATTENDING,
             'guest_count' => 2,
         ])->assertNotFound();
         $this->assertSame(BniInvitation::RSVP_PENDING, $invitation->fresh()->rsvp_status);
 
-        $this->post(route('bni.invitations.rsvp', [
-            'invitation' => $invitation,
-            'accessToken' => $invitation->access_token,
-        ]), [
+        $this->post(route('bni.invitations.rsvp', ['invitation' => $invitation]), [
             'rsvp_status' => BniInvitation::RSVP_ATTENDING,
             'guest_count' => 2,
-            'rsvp_note' => 'Đã xác nhận bằng link bảo mật.',
+            'rsvp_note' => 'Đã xác nhận bằng mã thư mời.',
         ])->assertRedirect();
 
         $this->assertDatabaseHas('bni_invitations', [
