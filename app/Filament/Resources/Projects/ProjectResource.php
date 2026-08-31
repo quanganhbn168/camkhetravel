@@ -165,9 +165,9 @@ class ProjectResource extends Resource
                         ->icon(Heroicon::OutlinedLink)
                         ->description('Chọn dịch vụ và bài viết cần hiển thị tại chi tiết dự án.')
                         ->schema([
-                            Select::make('backstageLandings')
+                            Select::make('backstageServices')
                                 ->label('Dịch vụ liên quan')
-                                ->relationship('backstageLandings', 'title')
+                                ->relationship('backstageServices', 'title')
                                 ->multiple()
                                 ->searchable()
                                 ->preload()

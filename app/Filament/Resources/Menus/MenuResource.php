@@ -5,11 +5,12 @@ namespace App\Filament\Resources\Menus;
 use App\Filament\Resources\Menus\Pages\CreateMenu;
 use App\Filament\Resources\Menus\Pages\EditMenu;
 use App\Filament\Resources\Menus\Pages\ListMenus;
-use App\Models\Landing;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
+use App\Models\Service;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -126,6 +127,7 @@ class MenuResource extends Resource
                 ->options([
                     'route' => 'Route hệ thống',
                     'service' => 'Dịch vụ',
+                    'landing_page' => 'Landing page',
                     'project' => 'Dự án',
                     'post' => 'Bài viết',
                     'custom' => 'Liên kết tuỳ chỉnh',
@@ -215,10 +217,12 @@ class MenuResource extends Resource
         return match ($record->linked_source_type) {
             'native_route' => 'route',
             'native_service' => 'service',
+            'native_landing_page' => 'landing_page',
             'native_project' => 'project',
             'native_post' => 'post',
             'custom' => 'custom',
-            Landing::class => 'service',
+            Service::class => 'service',
+            LandingPage::class => 'landing_page',
             Project::class => 'project',
             Post::class => 'post',
             default => self::routeNameFromValue($record->url) ? 'route' : 'custom',
@@ -230,6 +234,7 @@ class MenuResource extends Resource
         return match ($type) {
             'route' => 'native_route',
             'service' => 'native_service',
+            'landing_page' => 'native_landing_page',
             'project' => 'native_project',
             'post' => 'native_post',
             default => 'custom',
@@ -294,14 +299,19 @@ class MenuResource extends Resource
 
     private static function usesContentReference(string $type): bool
     {
-        return in_array($type, ['service', 'project', 'post'], true);
+        return in_array($type, ['service', 'landing_page', 'project', 'post'], true);
     }
 
     /** @return array<int, string> */
     private static function contentOptions(string $type): array
     {
         return match ($type) {
-            'service' => Landing::query()
+            'service' => Service::query()
+                ->published()
+                ->orderBy('title')
+                ->pluck('title', 'id')
+                ->all(),
+            'landing_page' => LandingPage::query()
                 ->published()
                 ->orderBy('title')
                 ->pluck('title', 'id')

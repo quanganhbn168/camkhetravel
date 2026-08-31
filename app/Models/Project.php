@@ -37,9 +37,16 @@ class Project extends Model
         return $this->belongsTo(Media::class, 'curator_media_id');
     }
 
-    public function backstageLandings(): BelongsToMany
+    public function backstageServices(): BelongsToMany
     {
-        return $this->belongsToMany(Landing::class)->withTimestamps();
+        return $this->belongsToMany(Service::class, 'project_service')->withTimestamps();
+    }
+
+    public function landingPages(): BelongsToMany
+    {
+        return $this->belongsToMany(LandingPage::class, 'landing_page_project')
+            ->withPivot('sort_order')
+            ->withTimestamps();
     }
 
     public function relatedPosts(): BelongsToMany

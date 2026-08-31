@@ -2,10 +2,13 @@
 
 namespace App\Support\Localization;
 
+use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\Service;
+use App\Models\ServiceCategory;
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Support\Str;
 
@@ -19,10 +22,16 @@ class LocalizedUrl
                 : $parameters['post']->getRouteKey();
         }
 
-        if (($parameters['landing'] ?? null) instanceof UrlRoutable) {
-            $parameters['landing'] = $name === 'landings.comments.store'
-                ? $parameters['landing']->getKey()
-                : $parameters['landing']->getRouteKey();
+        if (($parameters['service'] ?? null) instanceof UrlRoutable) {
+            $parameters['service'] = $name === 'services.comments.store'
+                ? $parameters['service']->getKey()
+                : $parameters['service']->getRouteKey();
+        }
+
+        if (($parameters['landingPage'] ?? null) instanceof UrlRoutable) {
+            $parameters['landingPage'] = $name === 'landing-pages.comments.store'
+                ? $parameters['landingPage']->getKey()
+                : $parameters['landingPage']->getRouteKey();
         }
 
         if (($parameters['project'] ?? null) instanceof UrlRoutable) {
@@ -31,20 +40,11 @@ class LocalizedUrl
                 : $parameters['project']->getRouteKey();
         }
 
-        $languages = app(LanguageCatalog::class);
-        $locale ??= app()->getLocale();
-        $defaultLocale = $languages->defaultCode();
-        $name = str_starts_with($name, 'localized.') ? substr($name, 10) : $name;
-
-        if (! app('router')->has($locale === $defaultLocale ? $name : 'localized.'.$name)) {
-            return self::fallbackUrl($name, $parameters, $locale);
+        if (! app('router')->has($name)) {
+            return self::fallbackUrl($name, $parameters);
         }
 
-        if ($locale === $defaultLocale) {
-            return self::absoluteRoute($name, $parameters);
-        }
-
-        return self::absoluteRoute('localized.'.$name, ['locale' => $locale, ...$parameters]);
+        return self::absoluteRoute($name, $parameters);
     }
 
     public static function slug(string $slug, ?string $locale = null): string
@@ -55,6 +55,21 @@ class LocalizedUrl
     public static function post(Post $post, ?string $locale = null): string
     {
         return self::slug(self::contentSlug($post), $locale);
+    }
+
+    public static function service(Service $service, ?string $locale = null): string
+    {
+        return self::slug(self::contentSlug($service), $locale);
+    }
+
+    public static function serviceCategory(ServiceCategory $category, ?string $locale = null): string
+    {
+        return self::route('services.category', ['category' => self::termSlug($category)], $locale);
+    }
+
+    public static function landingPage(LandingPage $landingPage, ?string $locale = null): string
+    {
+        return self::slug(self::contentSlug($landingPage), $locale);
     }
 
     public static function postCategory(PostCategory $category, ?string $locale = null): string
@@ -72,34 +87,7 @@ class LocalizedUrl
         return self::route('projects.category', ['slug' => self::termSlug($category)], $locale);
     }
 
-    public static function switchUrl(string $targetLocale): string
-    {
-        $languages = app(LanguageCatalog::class);
-        abort_unless($languages->isSupported($targetLocale), 404);
-
-        $route = request()->route();
-        $name = $route?->getName();
-
-        if (! $name) {
-            return self::route('home', locale: $targetLocale);
-        }
-
-        $name = str_starts_with($name, 'localized.') ? substr($name, 10) : $name;
-        $available = [
-            'home', 'services.index', 'services.category', 'search', 'projects.index', 'projects.category', 'projects.show', 'pricing.index', 'about', 'bni.handover', 'bni.pickleball', 'bni.invitations.show', 'bni.articles.show', 'bni.member.login', 'contact', 'posts.index', 'posts.category', 'posts.show', 'slug.show',
-        ];
-
-        if (! in_array($name, $available, true)) {
-            return self::route('home', locale: $targetLocale);
-        }
-
-        $parameters = $route->parameters();
-        unset($parameters['locale']);
-
-        return self::route($name, $parameters, $targetLocale);
-    }
-
-    private static function fallbackUrl(string $name, array $parameters, string $locale): string
+    private static function fallbackUrl(string $name, array $parameters): string
     {
         $paths = [
             'home' => '',
@@ -113,13 +101,16 @@ class LocalizedUrl
             'about' => 'gioi-thieu',
             'bni.handover' => 'le-chuyen-giao',
             'bni.pickleball' => 'le-chuyen-giao/pickleball',
+            'bni.invitations.template' => 'le-chuyen-giao/thu-moi',
+            'bni.invitations.template.rsvp' => 'le-chuyen-giao/thu-moi/rsvp',
             'bni.invitations.show' => 'le-chuyen-giao/thu-moi/'.($parameters['invitation'] ?? ''),
             'bni.articles.show' => 'le-chuyen-giao/tin-tuc/'.($parameters['article'] ?? ''),
             'bni.member.login' => 'le-chuyen-giao/dang-nhap',
             'contact' => 'lien-he',
             'contact.store' => 'lien-he',
             'comments.store' => 'binh-luan/'.($parameters['post'] ?? ''),
-            'landings.comments.store' => 'binh-luan/dich-vu/'.($parameters['landing'] ?? ''),
+            'services.comments.store' => 'binh-luan/dich-vu/'.($parameters['service'] ?? ''),
+            'landing-pages.comments.store' => 'binh-luan/landing-page/'.($parameters['landingPage'] ?? ''),
             'projects.comments.store' => 'binh-luan/du-an/'.($parameters['project'] ?? ''),
             'posts.index' => 'tin-tuc',
             'posts.category' => 'tin-tuc/danh-muc/'.($parameters['slug'] ?? ''),
@@ -127,10 +118,7 @@ class LocalizedUrl
             'slug.show' => $parameters['slug'] ?? '',
         ];
         $path = trim($paths[$name] ?? '', '/');
-        $prefix = $locale === app(LanguageCatalog::class)->defaultCode() ? '' : $locale;
-        $segments = array_filter([$prefix, $path]);
-
-        return rtrim((string) config('app.url'), '/').'/'.implode('/', $segments);
+        return rtrim((string) config('app.url'), '/').'/'.$path;
     }
 
     /**
@@ -146,12 +134,12 @@ class LocalizedUrl
             : $baseUrl.'/'.ltrim($path, '/');
     }
 
-    private static function contentSlug(Post|Project $content): string
+    private static function contentSlug(Post|Project|Service|LandingPage $content): string
     {
         return $content->slug ?: Str::slug($content->title);
     }
 
-    private static function termSlug(PostCategory|ProjectCategory $category): string
+    private static function termSlug(PostCategory|ProjectCategory|ServiceCategory $category): string
     {
         return $category->slug ?: Str::slug($category->name);
     }

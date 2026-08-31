@@ -36,7 +36,7 @@ final class LandingTemplateRegistry
             self::ANNIVERSARY => [
                 'label' => 'Tri ân / Sự kiện',
                 'description' => 'Phong cách xanh – vàng sang trọng, phù hợp chương trình kỷ niệm, khai trương và ưu đãi có countdown.',
-                'view' => 'frontend.services.templates.anniversary-campaign',
+                'view' => 'frontend.landing-pages.templates.anniversary-campaign',
                 'css_class' => 'landing-page--anniversary',
                 'css_source' => 'resources/css/landing-templates/anniversary.css',
                 'use_case' => 'Countdown · Quyền lợi · Bảng giá · Form đăng ký',
@@ -56,7 +56,7 @@ final class LandingTemplateRegistry
             self::CONVERSION => [
                 'label' => 'Chuyển đổi / Báo giá',
                 'description' => 'Tương phản mạnh, CTA nổi bật và form được ưu tiên cho quảng cáo, dịch vụ hoặc chiến dịch thu lead.',
-                'view' => 'frontend.services.templates.conversion-offer',
+                'view' => 'frontend.landing-pages.templates.conversion-offer',
                 'css_class' => 'landing-page--conversion',
                 'css_source' => 'resources/css/landing-templates/conversion-offer.css',
                 'use_case' => 'Hero bán hàng · Gói giá · Bằng chứng · Form thu lead',
@@ -77,7 +77,7 @@ final class LandingTemplateRegistry
             self::PORTFOLIO => [
                 'label' => 'Dự án / Hồ sơ năng lực',
                 'description' => 'Bố cục editorial giàu hình ảnh, dành cho case study, dự án tiêu biểu và hồ sơ năng lực theo chiến dịch.',
-                'view' => 'frontend.services.templates.portfolio-showcase',
+                'view' => 'frontend.landing-pages.templates.portfolio-showcase',
                 'css_class' => 'landing-page--portfolio',
                 'css_source' => 'resources/css/landing-templates/portfolio-showcase.css',
                 'use_case' => 'Dự án · Gallery · Nội dung dài · CTA liên hệ',
@@ -98,7 +98,7 @@ final class LandingTemplateRegistry
             self::CORPORATE_FILM => [
                 'label' => 'Landing07 / Phim doanh nghiệp',
                 'description' => 'Template Laravel cho landing sản xuất phim: hero điện ảnh, dự án, bảng giá và CTA tư vấn.',
-                'view' => 'frontend.services.templates.landing07-corporate-film',
+                'view' => 'frontend.landing-pages.templates.landing07-corporate-film',
                 'css_class' => 'landing-page--landing07-film',
                 'css_source' => 'resources/css/landing-templates/landing07-corporate-film.css',
                 'use_case' => 'Hero video · Showreel · Dự án · Bảng giá · Form tư vấn',
@@ -122,7 +122,7 @@ final class LandingTemplateRegistry
             self::EVENT_MEDIA => [
                 'label' => 'Landing07 / Quay chụp sự kiện',
                 'description' => 'Template Laravel cho landing event media: hero contact-sheet, lưới đầu ra và bảng giá theo cấu hình ekip.',
-                'view' => 'frontend.services.templates.landing07-event-media',
+                'view' => 'frontend.landing-pages.templates.landing07-event-media',
                 'css_class' => 'landing-page--landing07-event',
                 'css_source' => 'resources/css/landing-templates/landing07-event-media.css',
                 'use_case' => 'Hero sự kiện · Bộ đầu ra · Gallery · Gói ekip · Dự án',

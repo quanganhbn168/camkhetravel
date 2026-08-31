@@ -16,8 +16,13 @@ class ContactRequest extends Model
         ];
     }
 
-    public function landing(): BelongsTo
+    public function service(): BelongsTo
     {
-        return $this->belongsTo(Landing::class);
+        return $this->belongsTo(Service::class);
+    }
+
+    public function landingPage(): BelongsTo
+    {
+        return $this->belongsTo(LandingPage::class);
     }
 }

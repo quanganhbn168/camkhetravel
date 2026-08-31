@@ -8,6 +8,7 @@ use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniPurpose;
 use App\Models\BniScheduleItem;
+use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
@@ -24,20 +25,27 @@ class BniFoundationSeeder extends Seeder
             User::role('super_admin')->each(fn (User $user) => $user->assignRole('bni_admin'));
         }
 
-        $handover = BniEvent::query()->updateOrCreate(['slug' => 'le-chuyen-giao-bni'], [
+        $handover = BniEvent::query()->firstOrNew(['slug' => 'le-chuyen-giao-bni']);
+        $handoverIsNew = ! $handover->exists;
+        $handover->fill([
             'type' => 'handover',
             'title' => 'Lễ chuyển giao Ban Điều hành BNI',
             'kicker' => 'BNI VIETNAM',
             'summary' => 'Một dấu mốc kết nối bốn chapter, tôn vinh hành trình đã qua và cùng mở ra nhiệm kỳ mới.',
             'content' => '<p>Lễ chuyển giao là không gian để các chapter cùng nhìn lại hành trình, tri ân Ban Điều hành và khởi động một chu kỳ phát triển mới.</p>',
-            'starts_at' => now()->addMonths(3)->setTime(8, 0),
-            'ends_at' => now()->addMonths(3)->setTime(21, 0),
             'venue' => 'Địa điểm sự kiện',
             'address' => 'Thông tin địa điểm sẽ được Ban tổ chức cập nhật',
             'contact_name' => 'Ban tổ chức BNI',
+            'registration_label' => 'Đăng ký ngay',
+            'registration_url' => '#dang-ky',
             'status' => 'published',
             'is_featured' => true,
         ]);
+        if ($handoverIsNew) {
+            $handover->starts_at = Carbon::create(2026, 10, 1, 8, 0, 0, config('app.timezone'));
+            $handover->ends_at = Carbon::create(2026, 10, 1, 21, 0, 0, config('app.timezone'));
+        }
+        $handover->save();
 
         $chapters = collect([
             ['name' => 'KINHBAC', 'slug' => 'kinhbac', 'description' => 'Kết nối doanh nhân Bắc Ninh bằng tinh thần cho đi để nhận lại.'],
@@ -93,17 +101,22 @@ class BniFoundationSeeder extends Seeder
             ]);
         }
 
-        $pickleball = BniEvent::query()->updateOrCreate(['slug' => 'bni-pickleball'], [
+        $pickleball = BniEvent::query()->firstOrNew(['slug' => 'bni-pickleball']);
+        $pickleballIsNew = ! $pickleball->exists;
+        $pickleball->fill([
             'type' => 'pickleball',
             'title' => 'BNI Pickleball Championship',
             'kicker' => 'KẾT NỐI BẰNG NĂNG LƯỢNG',
             'summary' => 'Giải đấu giao hữu giúp hội viên kết nối ngoài không gian kinh doanh, bằng thể thao và tinh thần đồng đội.',
-            'starts_at' => now()->addMonths(3)->addDay()->setTime(13, 30),
-            'ends_at' => now()->addMonths(3)->addDay()->setTime(18, 0),
             'venue' => 'Sân thi đấu sẽ được cập nhật',
             'status' => 'published',
             'is_featured' => true,
         ]);
+        if ($pickleballIsNew) {
+            $pickleball->starts_at = $handover->starts_at?->copy()->addDay()->setTime(13, 30);
+            $pickleball->ends_at = $handover->starts_at?->copy()->addDay()->setTime(18, 0);
+        }
+        $pickleball->save();
 
         foreach ([
             [1, '13:30', '14:00', 'Check-in vận động viên', 'Xác nhận danh sách và phổ biến điều lệ.', 'Khu check-in'],

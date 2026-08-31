@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Bni\Pages\ManageBniInvitationSettings;
+use App\Filament\Bni\Widgets\BniStatsOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,8 +41,11 @@ class BniPanelProvider extends PanelProvider
                 NavigationGroup::make('Lễ chuyển giao'),
                 NavigationGroup::make('Cộng đồng & vận hành'),
             ])
-            ->pages([Dashboard::class])
-            ->widgets([AccountWidget::class])
+            ->pages([
+                Dashboard::class,
+                ManageBniInvitationSettings::class,
+            ])
+            ->widgets([BniStatsOverview::class, AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

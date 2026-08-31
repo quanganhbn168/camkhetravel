@@ -1,7 +1,8 @@
 @use(App\Settings\DesignSettings)
 @php($design = app(DesignSettings::class))
+@php($isBniExperience = request()->routeIs('bni.*'))
 <!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="vi">
 <head>
     @include('partials.head.seo')
     @yield('head')
@@ -29,7 +30,7 @@
         }
     </style>
 </head>
-<body class="@yield('body_class', 'min-h-screen')">
+<body class="@yield('body_class', 'min-h-screen'){{ $isBniExperience ? ' bni-app-shell' : '' }}" data-bni-page="{{ $isBniExperience ? 'true' : 'false' }}">
     @yield('before_header')
     @unless ($hideHeader ?? false)
         @include('partials.header')
@@ -49,6 +50,7 @@
         @include('partials.floating-actions')
     @endunless
     @yield('after_footer')
+    @include('partials.bni-pwa')
     @stack('scripts')
 </body>
 </html>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Landing;
+use App\Models\LandingPage;
 use App\Support\Landing\LandingEventRecorder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,10 +13,10 @@ class LandingTrackingController extends Controller
 {
     public function __invoke(
         Request $request,
-        Landing $landing,
+        LandingPage $landingPage,
         LandingEventRecorder $recorder,
     ): Response {
-        abort_unless($landing->status === 'published', 404);
+        abort_unless($landingPage->status === 'published', 404);
 
         $data = $request->validate([
             'event_name' => ['required', 'string', Rule::in(LandingEventRecorder::EVENT_NAMES)],
@@ -39,7 +39,7 @@ class LandingTrackingController extends Controller
             'payload.project_id' => ['nullable', 'integer'],
         ]);
 
-        $recorder->record($landing, $data['event_name'], $request, [
+        $recorder->record($landingPage, $data['event_name'], $request, [
             'block_id' => $data['block_id'] ?? null,
             'payload' => $data['payload'] ?? [],
         ]);

@@ -27,6 +27,16 @@ class BniEvent extends Model
         return $this->belongsTo(Media::class, 'hero_media_id');
     }
 
+    public function videoMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'video_media_id');
+    }
+
+    public function videoPosterMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'video_poster_media_id');
+    }
+
     public function chapters(): HasMany
     {
         return $this->hasMany(BniChapter::class)->orderBy('sort_order');

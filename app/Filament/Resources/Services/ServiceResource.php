@@ -6,10 +6,9 @@ use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
-use App\Filament\Resources\Services\Schemas\LandingExperienceSchema;
+use App\Filament\Resources\ServicePricings\ServicePricingResource;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
-use App\Models\Landing;
-use App\Support\Landing\LandingTemplateRegistry;
+use App\Models\Service;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\ContentSeoFallbacks;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
@@ -38,13 +37,13 @@ class ServiceResource extends Resource
 {
     use UsesPrimaryKeyForRecordRoutes;
 
-    protected static ?string $model = Landing::class;
+    protected static ?string $model = Service::class;
 
     protected static ?string $recordRouteKeyName = 'id';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBriefcase;
 
-    protected static ?string $navigationLabel = 'Landing pages';
+    protected static ?string $navigationLabel = 'Dịch vụ';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -57,12 +56,12 @@ class ServiceResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return 'landing page';
+        return 'dịch vụ';
     }
 
     public static function getPluralModelLabel(): string
     {
-        return 'Landing pages';
+        return 'Dịch vụ';
     }
 
     public static function form(Schema $schema): Schema
@@ -83,7 +82,6 @@ class ServiceResource extends Resource
                                     if (blank($get('slug')) && ($slug = ContentSeoFallbacks::slug($state))) {
                                         $set('slug', $slug);
                                     }
-
                                     if (blank($get('seo_title')) && ($seoTitle = ContentSeoFallbacks::title($state))) {
                                         $set('seo_title', $seoTitle);
                                     }
@@ -92,19 +90,24 @@ class ServiceResource extends Resource
                             TextInput::make('slug')
                                 ->label('Đường dẫn (slug)')
                                 ->maxLength(255)
-                                ->formatStateUsing(fn (?string $state, ?Landing $record): ?string => $state ?: $record?->slug)
+                                ->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: $record?->slug)
                                 ->columnSpanFull(),
                             CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
-                            CuratorPicker::make('pricing_media_id')->label('Bảng giá dịch vụ')->relationship('pricingMedia', 'id')->disk('public')->constrained()->helperText('Ảnh hoặc PDF bảng giá. Nếu có gói giá cấu trúc, vẫn quản lý thêm tại mục Bảng giá.')->columnSpanFull(),
-                            CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hậu trường gắn trực tiếp với dịch vụ; hiển thị thành một phần riêng trên trang công khai.')->columnSpanFull(),
-                            CuratorPicker::make('gallery')->label('Thư viện hình ảnh')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Chọn thêm ảnh để hiển thị tại trang chi tiết.')->columnSpanFull(),
+                            CuratorPicker::make('banner_video_media_id')->label('Video banner dịch vụ')->relationship('bannerVideoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/*'])->helperText('Video được phát nền ở banner; ảnh đại diện sẽ làm poster khi cần.')->columnSpanFull(),
+                            CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                            CuratorPicker::make('gallery')->label('Ảnh tài liệu tham khảo')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị cùng khối Các dự án nổi bật.')->columnSpanFull(),
                             Select::make('backstageProjects')
-                                ->label('Dự án hậu trường')
+                                ->label('Dự án đã triển khai')
                                 ->relationship('backstageProjects', 'title')
                                 ->multiple()
                                 ->searchable()
                                 ->preload()
-                                ->helperText('Các dự án này sẽ hiện ở phần “Hậu trường” của trang dịch vụ và được lọc khi khách xem Dự án.')
+                                ->helperText('Các dự án này hiển thị ở chi tiết dịch vụ và bộ lọc Dự án.')
+                                ->columnSpanFull(),
+                            TextInput::make('projects_title')
+                                ->label('Tiêu đề khối dự án')
+                                ->placeholder('Các dự án nổi bật')
+                                ->maxLength(255)
                                 ->columnSpanFull(),
                             Textarea::make('excerpt')
                                 ->label('Mô tả ngắn')
@@ -134,41 +137,20 @@ class ServiceResource extends Resource
                     Section::make('SEO')
                         ->icon(Heroicon::OutlinedMagnifyingGlass)
                         ->schema([
-                            TextInput::make('seo_title')
-                                ->label('SEO title')
-                                ->maxLength(255)
-                                ->formatStateUsing(fn (?string $state, ?Landing $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))
-                                ->columnSpanFull(),
-                            Textarea::make('seo_description')
-                                ->label('Meta description')
-                                ->rows(5)
-                                ->formatStateUsing(fn (?string $state, ?Landing $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))
-                                ->columnSpanFull(),
+                            TextInput::make('seo_title')->label('SEO title')->maxLength(255)->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))->columnSpanFull(),
+                            Textarea::make('seo_description')->label('Meta description')->rows(5)->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))->columnSpanFull(),
                         ])
                         ->columns(2),
                     Section::make('Câu hỏi thường gặp')
                         ->icon(Heroicon::OutlinedQuestionMarkCircle)
-                        ->description('Chỉ hiển thị khi dịch vụ có ít nhất một câu hỏi và câu trả lời.')
                         ->schema([
-                            TextInput::make('faq_title')
-                                ->label('Tiêu đề')
-                                ->maxLength(255)
-                                ->columnSpanFull(),
-                            Textarea::make('faq_description')
-                                ->label('Mô tả ngắn')
-                                ->rows(2)
-                                ->columnSpanFull(),
+                            TextInput::make('faq_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('faq_description')->label('Mô tả ngắn')->rows(2)->columnSpanFull(),
                             Repeater::make('faq_items')
                                 ->label('Danh sách câu hỏi')
                                 ->schema([
-                                    TextInput::make('question')
-                                        ->label('Câu hỏi')
-                                        ->maxLength(500)
-                                        ->columnSpanFull(),
-                                    Textarea::make('answer')
-                                        ->label('Trả lời')
-                                        ->rows(4)
-                                        ->columnSpanFull(),
+                                    TextInput::make('question')->label('Câu hỏi')->maxLength(500)->columnSpanFull(),
+                                    Textarea::make('answer')->label('Trả lời')->rows(4)->columnSpanFull(),
                                 ])
                                 ->addActionLabel('Thêm câu hỏi')
                                 ->reorderable()
@@ -178,20 +160,120 @@ class ServiceResource extends Resource
                                 ->columnSpanFull(),
                         ])
                         ->columns(1),
-                    ...LandingExperienceSchema::components(),
-                ])
-                    ->columnSpan(['lg' => 2]),
+                    Section::make('Giá trị nổi bật')
+                        ->icon(Heroicon::OutlinedSparkles)
+                        ->schema([
+                            TextInput::make('benefit_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('benefit_description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                            Repeater::make('benefit_items')
+                                ->label('Các giá trị / hạng mục')
+                                ->schema([
+                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
+                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Nhập ID media trong Curator nếu hạng mục có ảnh.'),
+                                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm giá trị')
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Giá trị mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                    Section::make('Quy trình triển khai')
+                        ->icon(Heroicon::OutlinedListBullet)
+                        ->schema([
+                            Textarea::make('process_description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                            CuratorPicker::make('process_background_media_id')->label('Ảnh nền quy trình')->relationship('processBackgroundMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh nền cho toàn bộ section quy trình.')->columnSpanFull(),
+                            Repeater::make('process_items')
+                                ->label('Các bước')
+                                ->schema([
+                                    TextInput::make('step')->label('Số bước')->numeric()->minValue(1),
+                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
+                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Nhập ID ảnh minh họa trong Curator nếu có.'),
+                                    TextInput::make('color')->label('Màu nhãn')->maxLength(32),
+                                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm bước')
+                                ->reorderable()
+                                ->collapsible()
+                                ->default([
+                                    ['step' => 1, 'title' => 'Tiếp nhận yêu cầu', 'description' => 'Làm rõ mục tiêu, phạm vi và đầu ra cần đạt.'],
+                                    ['step' => 2, 'title' => 'Tư vấn & định hướng', 'description' => 'Đề xuất hướng triển khai phù hợp với bối cảnh thực tế.'],
+                                    ['step' => 3, 'title' => 'Xây dựng ý tưởng', 'description' => 'Phát triển ý tưởng, nội dung và kế hoạch thực hiện.'],
+                                    ['step' => 4, 'title' => 'Triển khai sản xuất', 'description' => 'Phối hợp nhân sự, lịch trình và các hạng mục đã thống nhất.'],
+                                    ['step' => 5, 'title' => 'Duyệt & hoàn thiện', 'description' => 'Tiếp nhận phản hồi, hoàn thiện và bàn giao thành phẩm.'],
+                                ])
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                    Section::make('Cam kết dịch vụ')
+                        ->icon(Heroicon::OutlinedShieldCheck)
+                        ->schema([
+                            CuratorPicker::make('commitment_media_id')->label('Ảnh cam kết')->relationship('commitmentMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị ở một bên của khối cam kết.')->columnSpanFull(),
+                            TextInput::make('commitment_title')->label('Tiêu đề')->placeholder('Cam kết của THT MEDIA')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('commitment_description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                            Repeater::make('commitment_items')
+                                ->label('Các cam kết')
+                                ->schema([
+                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
+                                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm cam kết')
+                                ->reorderable()
+                                ->collapsible()
+                                ->default([
+                                    ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Phạm vi, tiến độ và đầu ra được thống nhất trước khi triển khai.'],
+                                    ['title' => 'Đồng hành xuyên suốt', 'description' => 'Đội ngũ phối hợp cùng khách hàng từ định hướng đến bàn giao.'],
+                                    ['title' => 'Chỉn chu từng chi tiết', 'description' => 'Mỗi hạng mục được kiểm tra trước khi hoàn thiện và bàn giao.'],
+                                ])
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Cam kết mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                    Section::make('Số liệu & video tham khảo')
+                        ->icon(Heroicon::OutlinedChartBar)
+                        ->schema([
+                            TextInput::make('stats_title')->label('Tiêu đề số liệu')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('stats_description')->label('Mô tả số liệu')->rows(2)->columnSpanFull(),
+                            Repeater::make('stats_items')
+                                ->label('Số liệu nổi bật')
+                                ->schema([
+                                    TextInput::make('label')->label('Nhãn')->required()->maxLength(255),
+                                    Textarea::make('description')->label('Mô tả')->rows(2),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm số liệu')
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Số liệu mới')
+                                ->columnSpanFull(),
+                            Repeater::make('reference_videos')
+                                ->label('Video tham khảo')
+                                ->schema([
+                                    TextInput::make('title')->label('Tên video')->required()->maxLength(255),
+                                    TextInput::make('url')->label('Link video')->url()->required()->maxLength(1000),
+                                    TextInput::make('thumbnail_media_id')->label('ID thumbnail Curator')->numeric(),
+                                    Textarea::make('description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm video')
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Video mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                ])->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')
                     ->icon(Heroicon::OutlinedCog6Tooth)
                     ->schema([
-                        Select::make('landing_category_id')->label('Nhóm dịch vụ')->relationship('category', 'name')->searchable()->preload(),
-                        Select::make('status')->label('Trạng thái')->options([
-                            'draft' => 'Bản nháp',
-                            'published' => 'Đã xuất bản',
-                            'pending' => 'Chờ duyệt',
-                            'private' => 'Riêng tư',
-                        ])->required()->default('draft'),
-                        TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(fn (): int => ((int) Landing::query()->max('sort_order')) + 1),
+                        Select::make('service_category_id')->label('Danh mục dịch vụ')->relationship('category', 'name')->searchable()->preload(),
+                        Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư'])->required()->default('draft'),
+                        TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(fn (): int => ((int) Service::query()->max('sort_order')) + 1),
                         Toggle::make('is_featured')->label('Dịch vụ nổi bật'),
                     ])
                     ->columns(1)
@@ -207,42 +289,28 @@ class ServiceResource extends Resource
                 TextColumn::make('title')->label('Dịch vụ')->searchable()->sortable()->wrap(),
                 TextColumn::make('category.name')->label('Danh mục')->badge()->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
-                TextColumn::make('layout_mode')
-                    ->label('Giao diện')
-                    ->badge()
-                    ->formatStateUsing(fn (?string $state): string => match ($state) {
-                        'builder' => 'Page builder',
-                        'custom_template' => 'Template đặc thù',
-                        default => 'Chuẩn',
-                    })
-                    ->color(fn (?string $state): string => match ($state) {
-                        'builder' => 'info',
-                        'custom_template' => 'warning',
-                        default => 'gray',
-                    }),
-                TextColumn::make('template_key')
-                    ->label('Template')
-                    ->badge()
-                    ->placeholder('—')
-                    ->formatStateUsing(fn (?string $state): string => LandingTemplateRegistry::options()[$state ?? ''] ?? 'Không chọn')
-                    ->toggleable(),
-                TextColumn::make('events_count')->counts('events')->label('Sự kiện')->sortable(),
-                TextColumn::make('contact_requests_count')->counts('contactRequests')->label('Leads')->sortable(),
+                TextColumn::make('backstage_projects_count')->counts('backstageProjects')->label('Dự án')->sortable(),
+                TextColumn::make('pricingCatalog.title')->label('Bảng giá')->placeholder('Chưa có')->wrap()->toggleable(),
                 IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('landing_category_id')->label('Nhóm dịch vụ')->relationship('category', 'name'),
+                SelectFilter::make('service_category_id')->label('Danh mục dịch vụ')->relationship('category', 'name'),
                 SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư']),
-                SelectFilter::make('template_key')->label('Template')->options(LandingTemplateRegistry::options()),
             ])
             ->defaultSort('sort_order')
             ->recordActions([
-                Action::make('preview')
-                    ->label('Xem trang')
-                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                    ->url(fn (Landing $record): string => LocalizedUrl::slug($record->slug))
-                    ->openUrlInNewTab(),
+                Action::make('preview')->label('Xem dịch vụ')->icon(Heroicon::OutlinedArrowTopRightOnSquare)->url(fn (Service $record): string => LocalizedUrl::service($record))->openUrlInNewTab(),
+                Action::make('pricing')
+                    ->label(fn (Service $record): string => $record->pricingCatalog()->exists() ? 'Bảng giá' : 'Tạo bảng giá')
+                    ->icon(Heroicon::OutlinedBanknotes)
+                    ->url(function (Service $record): string {
+                        $pricing = $record->pricingCatalog()->first();
+
+                        return $pricing
+                            ? ServicePricingResource::getUrl('edit', ['record' => $pricing])
+                            : ServicePricingResource::getUrl('create', ['service_id' => $record->id]);
+                    }),
                 EditAction::make(),
                 DeleteAction::make(),
             ]);

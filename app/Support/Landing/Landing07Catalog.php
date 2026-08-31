@@ -451,7 +451,7 @@ final class Landing07Catalog
         return [
             'label' => $label,
             'description' => $description,
-            'view' => 'frontend.services.templates.landing07-source',
+            'view' => 'frontend.landing-pages.templates.landing07-source',
             'css_class' => 'landing-page--'.$slug,
             'css_source' => 'resources/css/landing-templates/landing07-source.css',
             'use_case' => $useCase,

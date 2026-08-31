@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Landing;
 use App\Models\Post;
+use App\Models\Service;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -33,7 +33,7 @@ class SearchController extends Controller
 
     private function services(string $keyword): LengthAwarePaginator
     {
-        $services = Landing::query()
+        $services = Service::query()
             ->published()
             ->with(['category', 'curatorMedia'])
             ->when($keyword === '', fn (Builder $query) => $query->whereRaw('1 = 0'), fn (Builder $query) => $this->applyKeyword($query, $keyword))
@@ -42,7 +42,7 @@ class SearchController extends Controller
             ->paginate(9, ['*'], 'services_page')
             ->withQueryString();
 
-        $services->getCollection()->each(fn (Landing $service) => $service->setAttribute(
+        $services->getCollection()->each(fn (Service $service) => $service->setAttribute(
             'image_url',
             MediaUrl::resolve($service->curatorMedia),
         ));

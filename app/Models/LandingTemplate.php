@@ -21,9 +21,9 @@ class LandingTemplate extends Model
         ];
     }
 
-    public function landings(): HasMany
+    public function landingPages(): HasMany
     {
-        return $this->hasMany(Landing::class);
+        return $this->hasMany(LandingPage::class);
     }
 
     public function scopeActive(Builder $query): Builder

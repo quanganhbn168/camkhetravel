@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Landing;
+use App\Models\LandingPage;
 use App\Models\LandingTemplate;
 use App\Support\Landing\LandingTemplateRegistry;
 use Illuminate\Database\Seeder;
@@ -47,7 +47,7 @@ class LandingTemplateSeeder extends Seeder
                 'icon' => $definition['icon'],
             ])->save();
 
-            Landing::query()
+            LandingPage::query()
                 ->where('template_key', $key)
                 ->whereNull('landing_template_id')
                 ->update(['landing_template_id' => $template->id]);

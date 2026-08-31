@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
-use App\Models\Landing;
+use App\Models\LandingPage;
+use App\Models\Service;
 use App\Settings\WebsiteSettings;
 use App\Support\Landing\LandingEventRecorder;
 use App\Support\Localization\LocalizedUrl;
@@ -33,7 +34,7 @@ class ContactController extends Controller
         }
 
         return view('frontend.contact', [
-            'services' => Landing::query()->published()->orderBy('sort_order')->get(['id', 'title']),
+            'services' => Service::query()->published()->orderBy('sort_order')->get(['id', 'title']),
             'contactHeroImageUrl' => MediaUrl::versioned(
                 Media::query()->find($this->website->contact_image_media_id),
             ),
@@ -51,13 +52,14 @@ class ContactController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $isLandingSubmission = $request->boolean('from_landing');
+        $isLandingSubmission = $request->boolean('from_landing_page');
         $data = $request->validate([
             'name' => [$isLandingSubmission ? 'nullable' : 'required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => [$isLandingSubmission ? 'required' : 'nullable', 'string', 'max:32'],
             'company' => ['nullable', 'string', 'max:255'],
-            'landing_id' => ['nullable', 'exists:landings,id'],
+            'service_id' => ['nullable', 'exists:services,id'],
+            'landing_page_id' => ['nullable', 'exists:landing_pages,id'],
             'landing_block_id' => ['nullable', 'string', 'max:100'],
             'visitor_id' => ['nullable', 'string', 'max:64'],
             'session_id' => ['nullable', 'string', 'max:64'],
@@ -82,8 +84,8 @@ class ContactController extends Controller
 
         $contactRequest = ContactRequest::query()->create($data);
 
-        if ($contactRequest->landing_id && ($landing = Landing::query()->find($contactRequest->landing_id))) {
-            $this->landingEvents->record($landing, 'lead_submit', $request, [
+        if ($contactRequest->landing_page_id && ($landingPage = LandingPage::query()->find($contactRequest->landing_page_id))) {
+            $this->landingEvents->record($landingPage, 'lead_submit', $request, [
                 'block_id' => $contactRequest->landing_block_id,
                 'payload' => ['contact_request_id' => $contactRequest->id],
             ]);

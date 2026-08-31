@@ -2,34 +2,30 @@
 
 namespace Tests\Feature;
 
-use App\Models\HeroSlide;
-use App\Models\Landing;
+use App\Models\Service;
+use App\Support\Localization\LanguageCatalog;
 use Tests\TestCase;
 
 class LocalizedFrontendTest extends TestCase
 {
-    public function test_prefixed_home_uses_the_requested_locale_and_canonical_url(): void
+    public function test_the_public_website_is_vietnamese_only(): void
     {
-        $this->get('/en')
+        $this->get('/')
             ->assertOk()
-            ->assertSee('<html lang="en">', false)
-            ->assertSee('<link rel="canonical" href="'.rtrim(config('app.url'), '/').'/en">', false)
-            ->assertSee('/zh', false)
-            ->assertSee('/ko', false);
+            ->assertSee('<html lang="vi">', false)
+            ->assertDontSee('hreflang=', false)
+            ->assertDontSee('Chọn ngôn ngữ');
+
+        $this->assertSame(['vi'], app(LanguageCatalog::class)->active()->keys()->values()->all());
     }
 
-    public function test_localized_slug_falls_back_to_vietnamese_content_until_a_translation_exists(): void
+    public function test_old_locale_prefixed_urls_are_not_public_routes(): void
     {
-        $service = Landing::query()->published()->firstOrFail();
+        $service = Service::query()->published()->firstOrFail();
 
-        $this->get('/en/'.$service->slug)
-            ->assertOk()
-            ->assertSee('<link rel="canonical" href="'.rtrim(config('app.url'), '/').'/en/'.$service->slug.'">', false);
-    }
-
-    public function test_hero_slides_have_seeded_multilingual_content(): void
-    {
-        $this->assertGreaterThanOrEqual(1, HeroSlide::query()->active()->count());
-        $this->assertTrue(HeroSlide::query()->whereHas('translations', fn ($query) => $query->where('locale', 'en'))->exists());
+        $this->get('/en')->assertNotFound();
+        $this->get('/en/'.$service->slug)->assertNotFound();
+        $this->get('/zh/bang-gia')->assertNotFound();
+        $this->get('/ko/le-chuyen-giao')->assertNotFound();
     }
 }

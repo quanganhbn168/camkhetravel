@@ -21,7 +21,12 @@ class PricingPlanForm
                 ->icon(Heroicon::OutlinedReceiptPercent)
                 ->schema([
                     TextInput::make('name')->label('Tên gói')->required()->maxLength(255)->columnSpanFull(),
-                    Select::make('landing_id')->label('Landing page liên quan')->relationship('landing', 'title')->searchable()->preload(),
+                    Select::make('landing_page_id')
+                        ->label('Landing page liên quan (tuỳ chọn)')
+                        ->relationship('landingPage', 'title')
+                        ->searchable()
+                        ->preload()
+                        ->columnSpanFull(),
                     TextInput::make('badge')->label('Nhãn nổi bật')->maxLength(100)->placeholder('Ví dụ: Phổ biến'),
                     Textarea::make('description')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                     TextInput::make('price')->label('Giá từ')->numeric()->minValue(0)->prefix('₫')->helperText('Để trống nếu cần báo giá theo yêu cầu.'),

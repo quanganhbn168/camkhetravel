@@ -7,15 +7,14 @@ use App\Models\BniEvent;
 use App\Support\Bni\BniPanelAccess;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -63,24 +62,112 @@ class BniEventResource extends Resource
                     Section::make('Nội dung sự kiện')->icon('heroicon-o-document-text')->schema([
                         TextInput::make('title')->label('Tên sự kiện')->required()->maxLength(255)->columnSpanFull(),
                         TextInput::make('slug')->label('Slug')->required()->maxLength(255),
-                        Select::make('type')->label('Loại')->options(['handover' => 'Lễ chuyển giao', 'pickleball' => 'Pickleball'])->required(),
+                        Select::make('type')->label('Loại')->options(['handover' => 'Lễ chuyển giao', 'pickleball' => 'Pickleball'])->required()->live(),
                         TextInput::make('kicker')->label('Dòng nhãn')->maxLength(255),
                         Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required(),
                         CuratorPicker::make('hero_media_id')->label('Ảnh banner')->relationship('heroMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
-                        TextInput::make('video_url')->label('Video giới thiệu')->url()->maxLength(2048)->columnSpanFull(),
                         Textarea::make('summary')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                         RichEditor::make('content')->label('Nội dung')->columnSpanFull(),
                     ])->columns(2),
-                    Section::make('Thời gian & liên hệ')->icon('heroicon-o-clock')->schema([
+                    Section::make('Thời gian & liên hệ')->icon('heroicon-o-clock')->description('Đầu mối ở đây chỉ dành cho trang sự kiện. Mỗi thư mời sẽ dùng đầu mối riêng của chapter phụ trách.')->schema([
                         DateTimePicker::make('starts_at')->label('Bắt đầu'),
                         DateTimePicker::make('ends_at')->label('Kết thúc'),
                         TextInput::make('venue')->label('Địa điểm'),
                         TextInput::make('address')->label('Địa chỉ'),
-                        TextInput::make('contact_name')->label('Đầu mối liên hệ'),
+                        TextInput::make('directions_url')->label('Link chỉ đường')->url()->maxLength(2048)->helperText('Dán link Google Maps hoặc bản đồ của địa điểm sự kiện.'),
+                        TextInput::make('contact_name')->label('Đầu mối trang sự kiện'),
                         TextInput::make('contact_phone')->label('Số điện thoại')->tel(),
                         TextInput::make('contact_email')->label('Email')->email(),
                         Toggle::make('is_featured')->label('Sự kiện nổi bật')->columnSpanFull(),
                     ])->columns(2),
+                ]),
+                Tab::make('Video & 4 chapter')->schema([
+                    Section::make('Video sự kiện')
+                        ->icon('heroicon-o-video-camera')
+                        ->description('Ảnh poster luôn được dùng làm hình mặc định; khi có video, người xem có thể phát trực tiếp trên trang Lễ chuyển giao.')
+                        ->schema([
+                            CuratorPicker::make('video_poster_media_id')
+                                ->label('Ảnh mặc định / poster video')
+                                ->relationship('videoPosterMedia', 'id')
+                                ->disk('public')
+                                ->constrained()
+                                ->acceptedFileTypes(['image/*'])
+                                ->helperText('Nếu bỏ trống, hệ thống dùng ảnh banner của sự kiện.')
+                                ->columnSpanFull(),
+                            CuratorPicker::make('video_media_id')
+                                ->label('Video tải lên')
+                                ->relationship('videoMedia', 'id')
+                                ->disk('public')
+                                ->constrained()
+                                ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                                ->helperText('Ưu tiên video tải lên. Nên dùng MP4/WebM tối ưu cho website.')
+                                ->columnSpanFull(),
+                            TextInput::make('video_url')
+                                ->label('Hoặc URL video ngoài')
+                                ->url()
+                                ->maxLength(2048)
+                                ->helperText('Dùng YouTube/Vimeo khi không chọn video tải lên.')
+                                ->columnSpanFull(),
+                            TextInput::make('registration_label')
+                                ->label('Nhãn nút đăng ký')
+                                ->default('Đăng ký ngay')
+                                ->maxLength(255),
+                            TextInput::make('registration_url')
+                                ->label('Liên kết đăng ký')
+                                ->default('#dang-ky')
+                                ->maxLength(2048)
+                                ->helperText('Có thể dùng URL biểu mẫu bên ngoài hoặc #dang-ky để cuộn xuống khu liên hệ.'),
+                        ])
+                        ->columns(2),
+                    Section::make('Bốn chapter')
+                        ->icon('heroicon-o-user-group')
+                        ->description('Mỗi chapter là một khối độc lập gồm nhận diện, ảnh poster và video tương ứng.')
+                        ->schema([
+                            Repeater::make('chapters')
+                                ->relationship('chapters')
+                                ->label('Chapter tham gia')
+                                ->schema([
+                                    TextInput::make('name')->label('Tên chapter')->required()->maxLength(255)->columnSpanFull(),
+                                    TextInput::make('short_name')->label('Tên ngắn')->maxLength(48),
+                                    TextInput::make('slug')->label('Slug')->required()->maxLength(255),
+                                    Textarea::make('description')->label('Giới thiệu')->rows(3)->columnSpanFull(),
+                                    CuratorPicker::make('logo_media_id')
+                                        ->label('Logo')
+                                        ->relationship('logoMedia', 'id')
+                                        ->disk('public')
+                                        ->constrained()
+                                        ->acceptedFileTypes(['image/*'])
+                                        ->columnSpanFull(),
+                                    CuratorPicker::make('cover_media_id')
+                                        ->label('Ảnh mặc định / poster video')
+                                        ->relationship('coverMedia', 'id')
+                                        ->disk('public')
+                                        ->constrained()
+                                        ->acceptedFileTypes(['image/*'])
+                                        ->columnSpanFull(),
+                                    CuratorPicker::make('video_media_id')
+                                        ->label('Video chapter tải lên')
+                                        ->relationship('videoMedia', 'id')
+                                        ->disk('public')
+                                        ->constrained()
+                                        ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                                        ->columnSpanFull(),
+                                    TextInput::make('video_url')
+                                        ->label('Hoặc URL video ngoài')
+                                        ->url()
+                                        ->maxLength(2048)
+                                        ->columnSpanFull(),
+                                    Toggle::make('is_active')->label('Hiển thị')->default(true),
+                                    TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0),
+                                ])
+                                ->columns(2)
+                                ->defaultItems(0)
+                                ->maxItems(4)
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['short_name'] ?? $state['name'] ?? 'Chapter')
+                                ->columnSpanFull(),
+                        ]),
                 ]),
                 Tab::make('Mục đích')->schema([
                     Repeater::make('purposes')->relationship('purposes')->label('4 mục đích của sự kiện')->schema([
@@ -103,6 +190,70 @@ class BniEventResource extends Resource
                         TextInput::make('location')->label('Khu vực')->columnSpanFull(),
                     ])->columns(2)->defaultItems(0)->columnSpanFull(),
                 ]),
+                Tab::make('Pickleball landing')
+                    ->visible(fn ($get): bool => $get('type') === 'pickleball')
+                    ->schema([
+                        Section::make('Đếm ngược & RSVP')
+                            ->icon('heroicon-o-clock')
+                            ->description('Các nội dung hiển thị riêng trên landing page Pickleball.')
+                            ->schema([
+                                TextInput::make('settings.countdown_label')
+                                    ->label('Nhãn đếm ngược')
+                                    ->default('Đếm ngược đến giải đấu')
+                                    ->maxLength(255),
+                                TextInput::make('settings.registration_title')
+                                    ->label('Tiêu đề RSVP')
+                                    ->default('Đăng ký tham gia')
+                                    ->maxLength(255),
+                                Textarea::make('settings.registration_description')
+                                    ->label('Mô tả RSVP')
+                                    ->rows(3)
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2),
+                        Section::make('Cơ cấu giải thưởng')
+                            ->icon('heroicon-o-trophy')
+                            ->description('Chỉ nhập thông tin đã được Ban tổ chức xác nhận; có thể kéo thả để sắp xếp.')
+                            ->schema([
+                                TextInput::make('settings.prizes_title')
+                                    ->label('Tiêu đề khu giải thưởng')
+                                    ->default('Cơ cấu giải thưởng')
+                                    ->maxLength(255),
+                                Textarea::make('settings.prizes_description')
+                                    ->label('Mô tả chung')
+                                    ->rows(2)
+                                    ->columnSpanFull(),
+                                Repeater::make('settings.prizes')
+                                    ->label('Các hạng mục giải thưởng')
+                                    ->schema([
+                                        TextInput::make('title')->label('Tên hạng mục')->required()->maxLength(255)->columnSpanFull(),
+                                        TextInput::make('value')->label('Giá trị / phần thưởng')->maxLength(255),
+                                        Toggle::make('highlight')->label('Nhấn mạnh'),
+                                        Textarea::make('description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                                    ])
+                                    ->columns(2)
+                                    ->defaultItems(0)
+                                    ->maxItems(8)
+                                    ->reorderable()
+                                    ->collapsible()
+                                    ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Hạng mục giải thưởng')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2),
+                        Section::make('Thể lệ giải đấu')
+                            ->icon('heroicon-o-clipboard-document-check')
+                            ->description('Nội dung chính thức về đối tượng, thể thức, luật thi đấu và lưu ý.')
+                            ->schema([
+                                TextInput::make('settings.rules_title')
+                                    ->label('Tiêu đề thể lệ')
+                                    ->default('Thể lệ giải đấu')
+                                    ->maxLength(255),
+                                RichEditor::make('settings.rules')
+                                    ->label('Nội dung thể lệ')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tab::make('Hoạt động')->schema([
                     Repeater::make('activities')->relationship('activities')->label('Hoạt động đặc biệt')->schema([
                         Select::make('type')->label('Loại')->options(['handover' => 'Lễ chuyển giao', 'gala' => 'Gala & sinh nhật', 'pickleball' => 'Pickleball'])->required(),

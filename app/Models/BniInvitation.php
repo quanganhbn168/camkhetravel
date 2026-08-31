@@ -36,6 +36,11 @@ class BniInvitation extends Model
         return $this->belongsTo(BniChapter::class, 'bni_chapter_id');
     }
 
+    public function displayGuestName(string $fallback = 'Anh/Chị chủ doanh nghiệp'): string
+    {
+        return filled($this->guest_name) ? $this->guest_name : $fallback;
+    }
+
     public function registrations(): HasMany
     {
         return $this->hasMany(BniRegistration::class);

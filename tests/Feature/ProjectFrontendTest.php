@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Landing;
+use App\Models\Service;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\User;
@@ -46,10 +46,10 @@ class ProjectFrontendTest extends TestCase
     public function test_project_detail_renders_managed_related_services_posts_and_sidebar_links(): void
     {
         $project = Project::query()->published()->firstOrFail();
-        $service = Landing::query()->published()->firstOrFail();
+        $service = Service::query()->published()->firstOrFail();
         $post = Post::query()->published()->firstOrFail();
 
-        $project->backstageLandings()->syncWithoutDetaching([$service->id]);
+        $project->backstageServices()->syncWithoutDetaching([$service->id]);
         $project->relatedPosts()->syncWithoutDetaching([$post->id]);
 
         $this->get(LocalizedUrl::project($project))

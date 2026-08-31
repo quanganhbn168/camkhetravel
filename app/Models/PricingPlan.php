@@ -19,9 +19,9 @@ class PricingPlan extends Model
         ];
     }
 
-    public function landing(): BelongsTo
+    public function landingPage(): BelongsTo
     {
-        return $this->belongsTo(Landing::class);
+        return $this->belongsTo(LandingPage::class);
     }
 
     public function scopeActive(Builder $query): Builder

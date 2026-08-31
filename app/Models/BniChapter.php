@@ -13,7 +13,9 @@ class BniChapter extends Model
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return [
+            'is_active' => 'boolean',
+        ];
     }
 
     public function event(): BelongsTo
@@ -31,6 +33,11 @@ class BniChapter extends Model
         return $this->belongsTo(Media::class, 'cover_media_id');
     }
 
+    public function videoMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'video_media_id');
+    }
+
     public function articles(): HasMany
     {
         return $this->hasMany(BniArticle::class);
@@ -40,4 +47,5 @@ class BniChapter extends Model
     {
         return $this->hasMany(BniInvitation::class);
     }
+
 }

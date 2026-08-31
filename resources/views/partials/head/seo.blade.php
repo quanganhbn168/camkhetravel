@@ -1,6 +1,3 @@
-@php
-    $defaultLocale = app(\App\Support\Localization\LanguageCatalog::class)->defaultCode();
-@endphp
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -12,7 +9,7 @@
     <meta name="keywords" content="{{ $seo['keywords'] }}">
 @endif
 <meta name="author" content="@yield('author', $website->company_name ?: $website->site_name)">
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="robots" content="{{ $seo['robots'] }}">
 <link rel="canonical" href="@yield('canonical', $seo['canonical'])">
 @include('partials.head.favicon')
 <meta property="og:type" content="@yield('og_type', $seo['type'])">
@@ -32,7 +29,3 @@
 @if ($seo['schema_json'])<script type="application/ld+json">{!! $seo['schema_json'] !!}</script>@endif
 @yield('schema')
 @stack('schema')
-@foreach ($indexableLanguages as $language)
-    <link rel="alternate" hreflang="{{ $language->code }}" href="{{ \App\Support\Localization\LocalizedUrl::switchUrl($language->code) }}">
-@endforeach
-<link rel="alternate" hreflang="x-default" href="{{ \App\Support\Localization\LocalizedUrl::switchUrl($defaultLocale) }}">

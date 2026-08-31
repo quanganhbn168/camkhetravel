@@ -12,6 +12,6 @@ class ListServices extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [CreateAction::make()->label('Thêm Landing page')];
+        return [CreateAction::make()->label('Thêm dịch vụ')];
     }
 }

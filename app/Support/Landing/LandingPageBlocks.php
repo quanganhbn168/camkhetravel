@@ -2,7 +2,7 @@
 
 namespace App\Support\Landing;
 
-use App\Models\Landing;
+use App\Models\LandingPage;
 use Awcodes\Curator\Models\Media;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -13,32 +13,35 @@ class LandingPageBlocks
 {
     /** @var array<string, string> */
     private const VIEWS = [
-        'hero' => 'frontend.services.blocks.hero',
-        'countdown' => 'frontend.services.blocks.countdown',
-        'benefits' => 'frontend.services.blocks.benefits',
-        'content_grid' => 'frontend.services.blocks.content-grid',
-        'process' => 'frontend.services.blocks.process',
-        'stats' => 'frontend.services.blocks.stats',
-        'testimonials' => 'frontend.services.blocks.testimonials',
-        'projects' => 'frontend.services.blocks.projects',
-        'pricing' => 'frontend.services.blocks.pricing',
-        'rich_text' => 'frontend.services.blocks.rich-text',
-        'gallery' => 'frontend.services.blocks.gallery',
-        'faqs' => 'frontend.services.blocks.faqs',
-        'lead_form' => 'frontend.services.blocks.lead-form',
-        'cta' => 'frontend.services.blocks.cta',
+        'hero' => 'frontend.landing-pages.blocks.hero',
+        'countdown' => 'frontend.landing-pages.blocks.countdown',
+        'benefits' => 'frontend.landing-pages.blocks.benefits',
+        'content_grid' => 'frontend.landing-pages.blocks.content-grid',
+        'process' => 'frontend.landing-pages.blocks.process',
+        'stats' => 'frontend.landing-pages.blocks.stats',
+        'testimonials' => 'frontend.landing-pages.blocks.testimonials',
+        'projects' => 'frontend.landing-pages.blocks.projects',
+        'service_categories' => 'frontend.landing-pages.blocks.service-categories',
+        'services' => 'frontend.landing-pages.blocks.services',
+        'posts' => 'frontend.landing-pages.blocks.posts',
+        'pricing' => 'frontend.landing-pages.blocks.pricing',
+        'rich_text' => 'frontend.landing-pages.blocks.rich-text',
+        'gallery' => 'frontend.landing-pages.blocks.gallery',
+        'faqs' => 'frontend.landing-pages.blocks.faqs',
+        'lead_form' => 'frontend.landing-pages.blocks.lead-form',
+        'cta' => 'frontend.landing-pages.blocks.cta',
     ];
 
     /** @return list<array<string, mixed>> */
-    public function prepare(Landing $landing): array
+    public function prepare(LandingPage $landingPage): array
     {
-        $sections = collect($landing->sections ?? [])
+        $sections = collect($landingPage->sections ?? [])
             ->filter(fn (mixed $section): bool => is_array($section) && isset(self::VIEWS[$section['type'] ?? '']))
             ->values();
-        $media = $this->mediaFor($landing, $sections);
+        $media = $this->mediaFor($landingPage, $sections);
 
         return $sections
-            ->map(function (array $section, int $index) use ($landing, $media): array {
+            ->map(function (array $section, int $index) use ($landingPage, $media): array {
                 $type = (string) $section['type'];
                 $data = is_array($section['data'] ?? null) ? $section['data'] : [];
                 foreach (['cta_url', 'secondary_url'] as $linkField) {
@@ -59,11 +62,11 @@ class LandingPageBlocks
 
                 return match ($type) {
                     'hero' => $prepared + [
-                        'media' => $media->get((int) ($data['media_id'] ?? 0)) ?: $landing->curatorMedia,
+                        'media' => $media->get((int) ($data['media_id'] ?? 0)) ?: $landingPage->curatorMedia,
                     ],
                     'countdown' => $prepared + [
-                        'starts_at' => $this->dateValue($data['starts_at'] ?? null, $landing->campaign_starts_at),
-                        'ends_at' => $this->dateValue($data['ends_at'] ?? null, $landing->campaign_ends_at),
+                        'starts_at' => $this->dateValue($data['starts_at'] ?? null, $landingPage->campaign_starts_at),
+                        'ends_at' => $this->dateValue($data['ends_at'] ?? null, $landingPage->campaign_ends_at),
                     ],
                     'benefits' => $prepared + [
                         'items' => collect($data['items'] ?? [])->filter(fn (mixed $item): bool => is_array($item) && filled($item['title'] ?? null))->values(),
@@ -74,10 +77,19 @@ class LandingPageBlocks
                             ->values(),
                     ],
                     'projects' => $prepared + [
-                        'projects' => $landing->backstageProjects->take(max(1, min(12, (int) ($data['limit'] ?? 6)))),
+                        'projects' => $landingPage->projects->take(max(1, min(12, (int) ($data['limit'] ?? 6)))),
+                    ],
+                    'service_categories' => $prepared + [
+                        'categories' => $landingPage->serviceCategories->take(max(1, min(12, (int) ($data['limit'] ?? 6)))),
+                    ],
+                    'services' => $prepared + [
+                        'services' => $landingPage->services->take(max(1, min(12, (int) ($data['limit'] ?? 6)))),
+                    ],
+                    'posts' => $prepared + [
+                        'posts' => $landingPage->posts->take(max(1, min(12, (int) ($data['limit'] ?? 6)))),
                     ],
                     'pricing' => $prepared + [
-                        'plans' => $landing->pricingPlans->where('is_active', true)->sortBy('sort_order')->values(),
+                        'plans' => $landingPage->pricingPlans->where('is_active', true)->sortBy('sort_order')->values(),
                     ],
                     'gallery' => $prepared + [
                         'media_items' => collect($data['media_ids'] ?? [])
@@ -86,7 +98,7 @@ class LandingPageBlocks
                             ->values(),
                     ],
                     'faqs' => $prepared + [
-                        'items' => $this->faqItems($data['items'] ?? $landing->faq_items ?? []),
+                        'items' => $this->faqItems($data['items'] ?? $landingPage->faq_items ?? []),
                     ],
                     default => $prepared,
                 };
@@ -95,10 +107,10 @@ class LandingPageBlocks
     }
 
     /** @return array{primary: string, accent: string, surface: string, ink: string} */
-    public function theme(Landing $landing): array
+    public function theme(LandingPage $landingPage): array
     {
-        $settings = $landing->theme_settings ?? [];
-        $palette = LandingTemplateRegistry::palette($landing->template_key);
+        $settings = $landingPage->theme_settings ?? [];
+        $palette = LandingTemplateRegistry::palette($landingPage->template_key);
 
         return [
             'primary' => $this->color($settings['primary'] ?? null, $palette['primary']),
@@ -108,31 +120,31 @@ class LandingPageBlocks
         ];
     }
 
-    public function templateView(Landing $landing): string
+    public function templateView(LandingPage $landingPage): string
     {
-        if ($landing->layout_mode === 'custom_template') {
-            return LandingTemplateRegistry::find($landing->template_key)['view']
-                ?? 'frontend.services.builder';
+        if ($landingPage->layout_mode === 'custom_template') {
+            return LandingTemplateRegistry::find($landingPage->template_key)['view']
+                ?? 'frontend.landing-pages.builder';
         }
 
-        return 'frontend.services.builder';
+        return 'frontend.landing-pages.builder';
     }
 
     /** @return array<string, mixed>|null */
-    public function templateDefinition(Landing $landing): ?array
+    public function templateDefinition(LandingPage $landingPage): ?array
     {
-        return $landing->layout_mode === 'custom_template'
-            ? LandingTemplateRegistry::find($landing->template_key)
+        return $landingPage->layout_mode === 'custom_template'
+            ? LandingTemplateRegistry::find($landingPage->template_key)
             : null;
     }
 
     /** @return array<string, mixed> */
-    public function templateSettings(Landing $landing): array
+    public function templateSettings(LandingPage $landingPage): array
     {
         $settings = array_replace(
-            LandingTemplateRegistry::defaultSettings($landing->template_key),
+            LandingTemplateRegistry::defaultSettings($landingPage->template_key),
             array_filter(
-                is_array($landing->template_settings) ? $landing->template_settings : [],
+                is_array($landingPage->template_settings) ? $landingPage->template_settings : [],
                 fn (mixed $value): bool => is_array($value)
                     ? $value !== []
                     : is_scalar($value) && filled((string) $value),
@@ -149,10 +161,10 @@ class LandingPageBlocks
     }
 
     /** @return array<string, Media> */
-    public function templateMedia(Landing $landing): array
+    public function templateMedia(LandingPage $landingPage): array
     {
-        $settings = is_array($landing->template_settings) ? $landing->template_settings : [];
-        $fields = collect(LandingTemplateRegistry::settingsSchema($landing->template_key)['fields'] ?? [])
+        $settings = is_array($landingPage->template_settings) ? $landingPage->template_settings : [];
+        $fields = collect(LandingTemplateRegistry::settingsSchema($landingPage->template_key)['fields'] ?? [])
             ->filter(fn (mixed $field): bool => is_array($field)
                 && ($field['type'] ?? null) === 'media'
                 && filled($field['key'] ?? null))
@@ -183,15 +195,15 @@ class LandingPageBlocks
             ->all();
     }
 
-    public function campaignState(Landing $landing): string
+    public function campaignState(LandingPage $landingPage): string
     {
         $now = now();
 
-        if ($landing->campaign_starts_at?->isFuture()) {
+        if ($landingPage->campaign_starts_at?->isFuture()) {
             return 'upcoming';
         }
 
-        if ($landing->campaign_ends_at?->isPast()) {
+        if ($landingPage->campaign_ends_at?->isPast()) {
             return 'expired';
         }
 
@@ -199,7 +211,7 @@ class LandingPageBlocks
     }
 
     /** @param Collection<int, array<string, mixed>> $sections */
-    private function mediaFor(Landing $landing, Collection $sections): Collection
+    private function mediaFor(LandingPage $landingPage, Collection $sections): Collection
     {
         $ids = $sections
             ->flatMap(function (array $section): array {
@@ -210,7 +222,7 @@ class LandingPageBlocks
                     ...(is_array($data['media_ids'] ?? null) ? $data['media_ids'] : []),
                 ];
             })
-            ->push($landing->curator_media_id)
+            ->push($landingPage->curator_media_id)
             ->filter(fn (mixed $id): bool => is_numeric($id))
             ->map(fn (mixed $id): int => (int) $id)
             ->unique()

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Landing;
+use App\Models\Service;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use Illuminate\Database\Seeder;
@@ -42,7 +42,7 @@ class ThtMediaHeaderMenuSeeder extends Seeder
 
         foreach ($items as $item) {
             $linkedSourceId = match ($item['type']) {
-                'service' => Landing::query()
+                'service' => Service::query()
                     ->whereHas('slugs', fn ($query) => $query->where('slug', $item['slug']))
                     ->value('id'),
                 default => null,

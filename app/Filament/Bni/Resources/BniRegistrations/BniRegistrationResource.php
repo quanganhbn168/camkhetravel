@@ -27,7 +27,7 @@ class BniRegistrationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
 
-    protected static ?string $navigationLabel = 'RSVP Pickleball';
+    protected static ?string $navigationLabel = 'Đăng ký tham dự';
 
     protected static ?int $navigationSort = 5;
 
@@ -49,8 +49,8 @@ class BniRegistrationResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Đăng ký thi đấu')->icon('heroicon-o-trophy')->schema([
-                Select::make('bni_event_id')->label('Giải đấu')->relationship('event', 'title')->required()->searchable()->preload(),
+            Section::make('Đăng ký tham dự')->icon('heroicon-o-ticket')->schema([
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->required()->searchable()->preload(),
                 Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
                 Select::make('bni_invitation_id')->label('Khách mời')->relationship('invitation', 'guest_name')->searchable()->preload(),
                 Select::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions())->required()->default(BniRegistration::STATUS_PENDING),

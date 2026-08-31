@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Landing;
+use App\Models\LandingPage;
 use App\Models\PricingPlan;
 use App\Models\Project;
 use App\Support\Landing\LandingTemplateRegistry;
@@ -67,12 +67,12 @@ class SeedAnniversaryLandingCommand extends Command
         $startsAt = CarbonImmutable::create(2026, 8, 15, 0, 0, 0, 'Asia/Ho_Chi_Minh');
         $endsAt = CarbonImmutable::create(2026, 9, 30, 23, 59, 59, 'Asia/Ho_Chi_Minh');
 
-        $landing = DB::transaction(function () use ($media, $startsAt, $endsAt): Landing {
-            $landing = Landing::query()
+        $landing = DB::transaction(function () use ($media, $startsAt, $endsAt): LandingPage {
+            $landing = LandingPage::query()
                 ->whereHas('slugs', fn ($query) => $query->where('slug', 'tri-an-khach-hang-8-nam'))
                 ->first()
-                ?? Landing::query()->where('title', 'Tri ân khách hàng - Kỷ niệm 8 năm thành lập')->first()
-                ?? new Landing;
+                ?? LandingPage::query()->where('title', 'Tri ân khách hàng - Kỷ niệm 8 năm thành lập')->first()
+                ?? new LandingPage;
 
             $landing->fill([
                 'title' => 'Tri ân khách hàng - Kỷ niệm 8 năm thành lập',
@@ -101,7 +101,7 @@ class SeedAnniversaryLandingCommand extends Command
             $landing->save();
 
             PricingPlan::query()->updateOrCreate(
-                ['landing_id' => $landing->id, 'name' => 'Hỗ trợ Website'],
+                ['landing_page_id' => $landing->id, 'name' => 'Hỗ trợ Website'],
                 [
                     'badge' => 'Tri ân 8 năm',
                     'description' => 'Hỗ trợ Website trong thời gian chương trình.',
@@ -119,7 +119,7 @@ class SeedAnniversaryLandingCommand extends Command
             );
 
             PricingPlan::query()->updateOrCreate(
-                ['landing_id' => $landing->id, 'name' => 'Hỗ trợ Fanpage'],
+                ['landing_page_id' => $landing->id, 'name' => 'Hỗ trợ Fanpage'],
                 [
                     'badge' => 'Tri ân 8 năm',
                     'description' => 'Hỗ trợ Fanpage trong thời gian chương trình.',
@@ -146,14 +146,14 @@ class SeedAnniversaryLandingCommand extends Command
                 ->limit(6)
                 ->pluck('id');
 
-            $landing->backstageProjects()->sync($projectIds);
+            $landing->projects()->sync($projectIds);
 
-            return $landing->fresh(['pricingPlans', 'backstageProjects', 'slugs']);
+            return $landing->fresh(['pricingPlans', 'projects', 'slugs']);
         });
 
         $this->info('Đã tạo/cập nhật landing: '.LocalizedUrl::slug($landing->slug));
         $this->line('Ảnh runtime: storage/app/public/'.$relativePath);
-        $this->line('Gói hỗ trợ: '.$landing->pricingPlans->count().'; dự án liên kết: '.$landing->backstageProjects->count());
+        $this->line('Gói hỗ trợ: '.$landing->pricingPlans->count().'; dự án liên kết: '.$landing->projects->count());
 
         return self::SUCCESS;
     }

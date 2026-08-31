@@ -58,7 +58,7 @@
                     <label class="text-sm font-semibold text-ink">Số điện thoại<input class="form-field" name="phone" value="{{ old('phone') }}"></label>
                     <label class="text-sm font-semibold text-ink">Email<input class="form-field" type="email" name="email" value="{{ old('email') }}"></label>
                     <label class="text-sm font-semibold text-ink">Công ty<input class="form-field" name="company" value="{{ old('company') }}"></label>
-                    <label class="text-sm font-semibold text-ink">Dịch vụ quan tâm<select class="form-field" name="landing_id"><option value="">Chọn dịch vụ</option>@foreach ($services as $service)<option value="{{ $service->id }}" @selected(old('landing_id') == $service->id || request('landing') == $service->id)>{{ $service->title }}</option>@endforeach</select></label>
+                    <label class="text-sm font-semibold text-ink">Dịch vụ quan tâm<select class="form-field" name="service_id"><option value="">Chọn dịch vụ</option>@foreach ($services as $service)<option value="{{ $service->id }}" @selected(old('service_id') == $service->id || request('service') == $service->id)>{{ $service->title }}</option>@endforeach</select></label>
                     <label class="text-sm font-semibold text-ink">Ngân sách dự kiến<input class="form-field" name="budget" value="{{ old('budget') }}"></label>
                     <label class="text-sm font-semibold text-ink">Thời gian dự kiến<input class="form-field" name="timeline" value="{{ old('timeline') }}"></label>
                     <label class="text-sm font-semibold text-ink md:col-span-2">Nhu cầu của bạn<textarea class="form-field" name="message" rows="7" required>{{ old('message') }}</textarea></label>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Landing;
+use App\Models\Service;
 use App\Models\Post;
 use App\Models\Project;
 use App\Settings\AboutSettings;
@@ -60,7 +60,7 @@ class AboutController extends Controller
         $about = $managed;
         $about['title'] = $managed['title'] ?: $this->website->company_name;
         $about['image_url'] = $managedImageUrl;
-        $services = Landing::query()
+        $services = Service::query()
             ->published()
             ->with(['curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
@@ -139,7 +139,7 @@ class AboutController extends Controller
 
         return collect([
             ['value' => (string) Project::query()->published()->count(), 'label' => 'dự án đã thực hiện'],
-            ['value' => (string) Landing::query()->published()->count(), 'label' => 'dịch vụ đang cung cấp'],
+            ['value' => (string) Service::query()->published()->count(), 'label' => 'dịch vụ đang cung cấp'],
             ['value' => (string) Post::query()->published()->count(), 'label' => 'bài viết chuyên môn'],
         ]);
     }

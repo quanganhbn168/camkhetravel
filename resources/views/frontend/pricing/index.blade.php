@@ -3,43 +3,115 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
-    <section class="relative isolate overflow-hidden bg-ink py-18 text-white md:py-26">
-        <div class="absolute top-[-10rem] right-[8%] -z-10 size-96 rounded-full bg-primary/15 blur-3xl"></div>
-        <div class="site-shell text-center">
-            <h1 class="font-display mx-auto max-w-3xl text-4xl leading-tight tracking-[-0.045em] md:text-5xl">{{ $selectedService ? 'Bảng giá '.$selectedService->title : 'Mức đầu tư rõ ràng cho từng mục tiêu truyền thông.' }}</h1>
-            <p class="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">{{ $selectedService ? 'Các gói và mức đầu tư tham khảo cho dịch vụ này.' : 'Các gói dưới đây là mức tham khảo. THT Media sẽ điều chỉnh phạm vi và báo giá khi đã hiểu đúng nhu cầu thực tế của anh/chị.' }}</p>
-            @if ($selectedService)
-                <a class="mt-6 inline-flex text-sm font-semibold text-primary-soft hover:text-white" href="{{ LocalizedUrl::route('pricing.index') }}">Xem toàn bộ bảng giá <span class="ml-2" aria-hidden="true">→</span></a>
+    <section class="pricing-page-hero">
+        <div class="pricing-page-hero__glow" aria-hidden="true"></div>
+        <div class="site-shell pricing-page-hero__inner">
+            <p class="pricing-page-hero__eyebrow">BẢNG GIÁ THEO DỊCH VỤ</p>
+            <h1>{{ $selectedService ? 'Mức đầu tư cho '.$selectedService->title : 'Chọn đúng dịch vụ, xem đúng bảng giá' }}</h1>
+            <p>Thay vì trộn tất cả gói trên một màn hình, mỗi dịch vụ có bảng giá, phạm vi công việc và tài liệu riêng để anh/chị dễ so sánh.</p>
+        </div>
+    </section>
+
+    <section class="pricing-service-directory" aria-labelledby="pricing-service-directory-title">
+        <div class="site-shell">
+            <header class="pricing-service-directory__heading">
+                <div>
+                    <p class="pricing-service-directory__eyebrow">01 · CHỌN DỊCH VỤ</p>
+                    <h2 id="pricing-service-directory-title">Anh/chị đang cần báo giá dịch vụ nào?</h2>
+                </div>
+                <p>Chỉ bảng giá của dịch vụ được chọn mới hiển thị bên dưới.</p>
+            </header>
+
+            @if ($pricingServices->isNotEmpty())
+                <form class="pricing-service-directory__select" action="{{ LocalizedUrl::route('pricing.index') }}" method="GET">
+                    <label for="pricing-service-select">Dịch vụ</label>
+                    <div>
+                        <select id="pricing-service-select" name="dich-vu" onchange="this.form.submit()">
+                            @foreach ($pricingServices as $service)
+                                <option value="{{ $service->slug }}" @selected($selectedService?->is($service))>{{ $service->title }}</option>
+                            @endforeach
+                        </select>
+                        <button class="button-dark" type="submit">Xem bảng giá</button>
+                    </div>
+                </form>
+
+                <nav class="pricing-service-directory__grid" aria-label="Danh sách dịch vụ có bảng giá">
+                    @foreach ($pricingServices as $service)
+                        @php($isSelected = $selectedService?->is($service))
+                        <a class="pricing-service-card {{ $isSelected ? 'is-active' : '' }}"
+                           href="{{ LocalizedUrl::route('pricing.index', ['dich-vu' => $service->slug]) }}#chi-tiet-bang-gia"
+                           @if ($isSelected) aria-current="page" @endif>
+                            <span class="pricing-service-card__number">{{ str_pad((string) ($loop->index + 1), 2, '0', STR_PAD_LEFT) }}</span>
+                            <span class="pricing-service-card__content">
+                                @if ($service->category?->name)<small>{{ $service->category->name }}</small>@endif
+                                <strong>{{ $service->title }}</strong>
+                                <em>
+                                    @if (($service->pricingCatalog?->active_packages_count ?? 0) > 0)
+                                        {{ $service->pricingCatalog->active_packages_count }} gói dịch vụ
+                                    @else
+                                        Bảng giá tài liệu
+                                    @endif
+                                </em>
+                            </span>
+                            <span class="pricing-service-card__arrow" aria-hidden="true">↗</span>
+                        </a>
+                    @endforeach
+                </nav>
+            @else
+                <div class="pricing-page-empty">
+                    <h2>Bảng giá đang được cập nhật</h2>
+                    <p>Quản trị viên có thể tạo bảng giá theo từng dịch vụ trong mục “Bảng giá dịch vụ”.</p>
+                </div>
             @endif
         </div>
     </section>
 
-    <section class="section-space">
-        <div class="site-shell">
-            @forelse ($plans as $plan)
-                @if ($loop->first)<div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">@endif
-                <article class="relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border p-7 {{ $plan->is_featured ? 'border-ink bg-ink text-white shadow-[0_24px_60px_rgba(31,43,37,0.18)]' : 'border-slate-200 bg-white text-ink' }}" id="bang-gia-{{ $plan->id }}">
-                    @if ($plan->badge)<span class="mb-6 w-fit rounded-full px-3 py-1 text-[0.68rem] font-bold tracking-[0.12em] uppercase {{ $plan->is_featured ? 'bg-primary text-white' : 'bg-sand text-accent' }}">{{ $plan->badge }}</span>@endif
-                    @if ($plan->landing)<a class="text-sm font-semibold {{ $plan->is_featured ? 'text-primary-soft hover:text-white' : 'text-accent hover:text-ink' }}" href="{{ LocalizedUrl::slug($plan->landing->slug) }}">{{ $plan->landing->title }}</a>@endif
-                    <h2 class="font-display mt-3 text-3xl leading-tight">{{ $plan->name }}</h2>
-                    @if ($plan->description)<p class="mt-4 text-sm leading-7 {{ $plan->is_featured ? 'text-slate-300' : 'text-slate-500' }}">{{ $plan->description }}</p>@endif
-                    <div class="mt-8 border-y py-6 {{ $plan->is_featured ? 'border-white/15' : 'border-slate-200' }}">
-                        @if ($plan->price)<p class="font-display text-4xl tracking-[-0.04em]">{{ number_format($plan->price) }}<span class="ml-1 text-lg">đ</span></p>@else<p class="font-display text-3xl leading-tight">{{ $plan->price_label ?: 'Liên hệ' }}</p>@endif
-                        @if ($plan->price_unit)<p class="mt-2 text-xs font-medium {{ $plan->is_featured ? 'text-slate-400' : 'text-slate-400' }}">{{ $plan->price_unit }}</p>@endif
+    @if ($selectedService)
+        <section class="pricing-selected-service" id="chi-tiet-bang-gia" aria-labelledby="pricing-selected-service-title">
+            <div class="site-shell pricing-selected-service__layout">
+                <div>
+                    <p class="pricing-service-directory__eyebrow">02 · BẢNG GIÁ ĐANG XEM</p>
+                    <h2 id="pricing-selected-service-title">{{ $selectedService->title }}</h2>
+                    <p>{{ $servicePricing?->description ?: 'Mức đầu tư dưới đây là dữ liệu đang được quản lý riêng cho dịch vụ này. Phạm vi cuối cùng sẽ được xác nhận theo yêu cầu thực tế.' }}</p>
+                </div>
+                <div class="pricing-selected-service__actions">
+                    <a class="button-dark" href="{{ LocalizedUrl::service($selectedService) }}">Xem chi tiết dịch vụ <span aria-hidden="true">→</span></a>
+                    <a class="pricing-selected-service__contact" href="{{ LocalizedUrl::route('contact', ['service' => $selectedService->id]) }}">Nhận tư vấn</a>
+                </div>
+            </div>
+        </section>
+
+        @if ($servicePricingMatrix['packages'] !== [])
+            @include('frontend.services.partials.pricing-plans', ['service' => $selectedService, 'pricingMatrix' => $servicePricingMatrix])
+        @endif
+
+        @if ($pricingMediaUrl || $pricingSourceUrl)
+            @include('frontend.services.partials.pricing-media', [
+                'service' => $selectedService,
+                'pricingCatalog' => $servicePricing,
+                'pricingMediaUrl' => $pricingMediaUrl,
+                'pricingMediaIsImage' => $pricingMediaIsImage,
+                'pricingSourceUrl' => $pricingSourceUrl,
+            ])
+        @endif
+
+        @if ($servicePricingMatrix['packages'] === [] && ! $pricingMediaUrl && ! $pricingSourceUrl)
+            <section class="section-space">
+                <div class="site-shell">
+                    <div class="pricing-page-empty">
+                        <h2>Bảng giá dịch vụ đang được hoàn thiện</h2>
+                        <p>Anh/chị để lại mục tiêu và ngân sách dự kiến, THT Media sẽ tư vấn phạm vi phù hợp.</p>
+                        <a class="button-dark" href="{{ LocalizedUrl::route('contact', ['service' => $selectedService->id]) }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
                     </div>
-                    <ul class="mt-6 grid gap-3 text-sm leading-6 {{ $plan->is_featured ? 'text-slate-200' : 'text-slate-600' }}">
-                        @forelse ($plan->features ?? [] as $feature)
-                            <li class="flex gap-3"><svg class="mt-1 size-4 shrink-0 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg><span>{{ $feature }}</span></li>
-                        @empty
-                            <li class="flex gap-3"><svg class="mt-1 size-4 shrink-0 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg><span>Phạm vi được tư vấn theo yêu cầu thực tế.</span></li>
-                        @endforelse
-                    </ul>
-                    <a class="mt-8 {{ $plan->is_featured ? 'button-primary' : 'button-dark' }} w-full" href="{{ LocalizedUrl::route('contact', array_filter(['landing' => $plan->landing_id])) }}">{{ __('site.consult') }}</a>
-                </article>
-                @if ($loop->last)</div>@endif
-            @empty
-                <div class="mx-auto max-w-2xl rounded-[1.75rem] border border-dashed border-slate-300 bg-mist/55 p-9 text-center"><h2 class="display-title text-3xl">Đang hoàn thiện các gói dịch vụ</h2><p class="mt-4 text-sm leading-7 text-slate-600">Anh/chị có thể để lại mục tiêu và ngân sách dự kiến để THT Media tư vấn phạm vi phù hợp.</p><a class="button-dark mt-6" href="{{ LocalizedUrl::route('contact') }}">{{ __('site.consult') }}</a></div>
-            @endforelse
+                </div>
+            </section>
+        @endif
+    @endif
+
+    <section class="bg-ink py-14 text-white">
+        <div class="site-shell flex flex-col items-start justify-between gap-7 md:flex-row md:items-center">
+            <div><h2 class="font-display text-3xl md:text-4xl">Cần một cấu hình riêng?</h2><p class="mt-3 max-w-2xl leading-7 text-slate-300">THT Media có thể ghép phạm vi theo mục tiêu, kênh triển khai, tiến độ và ngân sách thực tế.</p></div>
+            <a class="button-primary shrink-0" href="{{ LocalizedUrl::route('contact') }}">Yêu cầu báo giá <span aria-hidden="true">→</span></a>
         </div>
     </section>
 @endsection

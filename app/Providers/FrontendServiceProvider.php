@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\HeroSlide;
-use App\Models\Landing;
-use App\Models\LandingCategory;
+use App\Models\BniArticle;
+use App\Models\BniChapter;
+use App\Models\BniGalleryItem;
+use App\Models\LandingPage;
 use App\Models\Language;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -14,6 +16,8 @@ use App\Models\PostCategory;
 use App\Models\PricingPlan;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\AssignNextOrderObserver;
@@ -48,8 +52,11 @@ class FrontendServiceProvider extends ServiceProvider
             'post-category' => PostCategory::class,
             'project' => Project::class,
             'project-category' => ProjectCategory::class,
-            'landing' => Landing::class,
-            'landing-category' => LandingCategory::class,
+            'service' => Service::class,
+            'service-category' => ServiceCategory::class,
+            'landing-page' => LandingPage::class,
+            'bni-article' => BniArticle::class,
+            'bni-gallery-item' => BniGalleryItem::class,
             'user' => User::class,
         ]);
 
@@ -57,8 +64,9 @@ class FrontendServiceProvider extends ServiceProvider
         PostCategory::observe(SlugObserver::class);
         Project::observe(SlugObserver::class);
         ProjectCategory::observe(SlugObserver::class);
-        Landing::observe(SlugObserver::class);
-        LandingCategory::observe(SlugObserver::class);
+        Service::observe(SlugObserver::class);
+        ServiceCategory::observe(SlugObserver::class);
+        LandingPage::observe(SlugObserver::class);
 
         HeroSlide::observe(AssignNextOrderObserver::class);
         Language::observe(AssignNextOrderObserver::class);
@@ -67,18 +75,20 @@ class FrontendServiceProvider extends ServiceProvider
         PricingPlan::observe(AssignNextOrderObserver::class);
         Project::observe(AssignNextOrderObserver::class);
         ProjectCategory::observe(AssignNextOrderObserver::class);
-        Landing::observe(AssignNextOrderObserver::class);
-        LandingCategory::observe(AssignNextOrderObserver::class);
+        Service::observe(AssignNextOrderObserver::class);
+        ServiceCategory::observe(AssignNextOrderObserver::class);
+        LandingPage::observe(AssignNextOrderObserver::class);
         Testimonial::observe(AssignNextOrderObserver::class);
 
         Post::observe(ContentSeoFallbackObserver::class);
         Project::observe(ContentSeoFallbackObserver::class);
-        Landing::observe(ContentSeoFallbackObserver::class);
+        Service::observe(ContentSeoFallbackObserver::class);
+        LandingPage::observe(ContentSeoFallbackObserver::class);
 
         RateLimiter::for('frontend-contact', fn ($request) => Limit::perMinute(5)->by((string) $request->ip()));
         RateLimiter::for('frontend-comment', fn ($request) => Limit::perMinute(3)->by((string) $request->ip()));
         RateLimiter::for('landing-tracking', fn ($request) => Limit::perMinute(120)->by(
-            (string) data_get($request->route('landing'), 'id', $request->route('landing')).'|'.(string) $request->ip(),
+            (string) data_get($request->route('landingPage'), 'id', $request->route('landingPage')).'|'.(string) $request->ip(),
         ));
 
         $website = app(WebsiteSettings::class);
@@ -112,8 +122,6 @@ class FrontendServiceProvider extends ServiceProvider
             ]),
             'faviconLinks' => app(FaviconService::class)->links($faviconMedia),
             'seo' => app(FrontendSeoBuilder::class)->default(),
-            'languages' => app(LanguageCatalog::class)->active(),
-            'indexableLanguages' => app(LanguageCatalog::class)->indexable(),
         ]);
 
         View::composer('partials.footer', function (BladeView $view) use ($website): void {
@@ -127,7 +135,7 @@ class FrontendServiceProvider extends ServiceProvider
                 )
                 ->first();
 
-            $view->with('footerServices', Landing::query()
+            $view->with('footerServices', Service::query()
                 ->published()
                 ->with('slugs')
                 ->orderByDesc('is_featured')
@@ -153,10 +161,6 @@ class FrontendServiceProvider extends ServiceProvider
                 ->first();
             $requestPath = trim(request()->path(), '/');
 
-            if (app()->getLocale() !== app(LanguageCatalog::class)->defaultCode()) {
-                $requestPath = preg_replace('#^'.preg_quote(app()->getLocale(), '#').'(?:/|$)#', '', $requestPath) ?? $requestPath;
-            }
-
             $applicationHost = parse_url((string) config('app.url'), PHP_URL_HOST);
 
             $headerNavigation = $headerMenu?->items
@@ -173,6 +177,9 @@ class FrontendServiceProvider extends ServiceProvider
             $view->with([
                 'headerLogoUrl' => MediaUrl::versioned($media->get($website->logo_media_id)),
                 'headerNavigation' => $headerNavigation,
+                'bniHeaderChapters' => request()->routeIs('bni.*')
+                    ? BniChapter::query()->where('is_active', true)->orderBy('sort_order')->limit(4)->get(['name', 'short_name'])
+                    : collect(),
             ]);
         });
     }

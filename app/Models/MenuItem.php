@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Support\Localization\LocalizedUrl;
+use App\Models\LandingPage;
+use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,6 +49,7 @@ class MenuItem extends Model
         return match ($this->linkType()) {
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
+            'landing-page' => $this->landingPageLink(),
             'project' => $this->projectLink(),
             'post' => $this->postLink(),
             'page' => $this->pageLink(),
@@ -60,11 +63,13 @@ class MenuItem extends Model
         return match ($this->linked_source_type) {
             'native_route' => 'route',
             'native_service' => 'service',
+            'native_landing_page' => 'landing-page',
             'native_project' => 'project',
             'native_post' => 'post',
             'native_page' => 'custom',
             'custom' => 'custom',
-            Landing::class => 'service',
+            Service::class => 'service',
+            LandingPage::class => 'landing-page',
             Project::class => 'project',
             Post::class => 'post',
             default => 'custom',
@@ -113,12 +118,22 @@ class MenuItem extends Model
 
     private function serviceLink(): string
     {
-        $service = Landing::query()
+        $service = Service::query()
             ->published()
             ->with('slugs')
             ->find($this->linked_source_id);
 
         return $service?->slug ? LocalizedUrl::slug($service->slug) : '#';
+    }
+
+    private function landingPageLink(): string
+    {
+        $landingPage = LandingPage::query()
+            ->published()
+            ->with('slugs')
+            ->find($this->linked_source_id);
+
+        return $landingPage ? LocalizedUrl::landingPage($landingPage) : '#';
     }
 
     private function projectLink(): string

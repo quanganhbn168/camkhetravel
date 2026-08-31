@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ProjectCategory;
-use App\Models\Landing;
+use App\Models\Service;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -22,9 +22,9 @@ class ProjectController extends Controller
 
     public function index(Request $request): View
     {
-        $backstageLanding = $this->backstageLanding($request);
+        $backstageService = $this->backstageService($request);
 
-        return view('frontend.projects.index', $this->listingData(backstageLanding: $backstageLanding, request: $request) + [
+        return view('frontend.projects.index', $this->listingData(backstageService: $backstageService, request: $request) + [
             'seo' => $this->seo->listing(
                 'Dự án | '.$this->seo->siteName(),
                 'Các case study và dự án truyền thông nổi bật.',
@@ -42,7 +42,7 @@ class ProjectController extends Controller
 
         $request ??= request();
 
-        return view('frontend.projects.index', $this->listingData($category, $this->backstageLanding($request), $request) + [
+        return view('frontend.projects.index', $this->listingData($category, $this->backstageService($request), $request) + [
             'seo' => $this->seo->listing($title, $description, LocalizedUrl::projectCategory($category)),
         ]);
     }
@@ -55,7 +55,7 @@ class ProjectController extends Controller
             'category',
             'curatorMedia',
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
-            'backstageLandings' => fn ($query) => $query
+            'backstageServices' => fn ($query) => $query
                 ->published()
                 ->with(['category', 'curatorMedia'])
                 ->orderByDesc('published_at'),
@@ -88,7 +88,7 @@ class ProjectController extends Controller
 
         return view('frontend.projects.show', compact('project') + [
             'relatedProjects' => $relatedProjects,
-            'relatedServices' => $this->withImages($project->backstageLandings),
+            'relatedServices' => $this->withImages($project->backstageServices),
             'relatedPosts' => $this->withImages($project->relatedPosts),
             'galleryImages' => $this->galleryImages($project->gallery),
             'projectVideoUrl' => filter_var($project->video_url, FILTER_VALIDATE_URL) ? $project->video_url : null,
@@ -114,7 +114,7 @@ class ProjectController extends Controller
     /** @return array<string, mixed> */
     private function listingData(
         ?ProjectCategory $activeCategory = null,
-        ?Landing $backstageLanding = null,
+        ?Service $backstageService = null,
         ?Request $request = null,
     ): array
     {
@@ -130,8 +130,8 @@ class ProjectController extends Controller
             $projectsQuery->where('project_category_id', $activeCategory->id);
         }
 
-        if ($backstageLanding) {
-            $projectsQuery->whereHas('backstageLandings', fn ($query) => $query->whereKey($backstageLanding->id));
+        if ($backstageService) {
+            $projectsQuery->whereHas('backstageServices', fn ($query) => $query->whereKey($backstageService->id));
         }
 
         $this->applyOrdering($projectsQuery, $sort);
@@ -143,7 +143,7 @@ class ProjectController extends Controller
         $heroProject = Project::query()
             ->published()
             ->when($activeCategory, fn (Builder $query) => $query->where('project_category_id', $activeCategory->id))
-            ->when($backstageLanding, fn (Builder $query) => $query->whereHas('backstageLandings', fn ($landingQuery) => $landingQuery->whereKey($backstageLanding->id)))
+            ->when($backstageService, fn (Builder $query) => $query->whereHas('backstageServices', fn ($serviceQuery) => $serviceQuery->whereKey($backstageService->id)))
             ->with(['curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -151,13 +151,13 @@ class ProjectController extends Controller
 
         return [
             'activeCategory' => $activeCategory,
-            'backstageLanding' => $backstageLanding,
+            'backstageService' => $backstageService,
             'categories' => $this->categories(),
             'projects' => $projects,
             'heroImageUrl' => $heroProject ? MediaUrl::resolve($heroProject->curatorMedia) : null,
-            'pageTitle' => $activeCategory?->name ?? ($backstageLanding ? 'Hậu trường: '.$backstageLanding->title : 'Dự án'),
-            'pageDescription' => $activeCategory?->description ?: ($backstageLanding
-                ? 'Các dự án và tư liệu hậu trường được gắn với landing '.$backstageLanding->title.'.'
+            'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án'),
+            'pageDescription' => $activeCategory?->description ?: ($backstageService
+                ? 'Các dự án đã được gắn với dịch vụ '.$backstageService->title.'.'
                 : 'Những dự án THT Media đã đồng hành từ định hướng ban đầu đến sản phẩm truyền thông hoàn chỉnh.'),
             'sort' => $sort,
             'sortOptions' => [
@@ -209,12 +209,12 @@ class ProjectController extends Controller
         return $projects;
     }
 
-    private function backstageLanding(Request $request): ?Landing
+    private function backstageService(Request $request): ?Service
     {
-        $landingId = $request->integer('landing') ?: $request->integer('service');
+        $serviceId = $request->integer('service');
 
-        return $landingId
-            ? Landing::query()->published()->find($landingId)
+        return $serviceId
+            ? Service::query()->published()->find($serviceId)
             : null;
     }
 

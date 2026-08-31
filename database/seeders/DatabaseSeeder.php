@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
+            SourceServiceSeeder::class,
             Landing07ContentSeeder::class,
         ]);
     }

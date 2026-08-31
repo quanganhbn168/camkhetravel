@@ -1,8 +1,8 @@
-@props(['post' => null, 'landing' => null, 'project' => null, 'compact' => false, 'ratingEnabled' => false])
+@props(['post' => null, 'service' => null, 'landingPage' => null, 'project' => null, 'compact' => false, 'ratingEnabled' => false])
 
 @php
-    $routeName = $project ? 'projects.comments.store' : ($landing ? 'landings.comments.store' : 'comments.store');
-    $routeParameters = $project ? ['project' => $project] : ($landing ? ['landing' => $landing] : ['post' => $post]);
+    $routeName = $project ? 'projects.comments.store' : ($landingPage ? 'landing-pages.comments.store' : ($service ? 'services.comments.store' : 'comments.store'));
+    $routeParameters = $project ? ['project' => $project] : ($landingPage ? ['landingPage' => $landingPage] : ($service ? ['service' => $service] : ['post' => $post]));
 @endphp
 
 <form class="{{ $compact ? '' : 'mt-8 ' }}rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm md:p-8" action="{{ \App\Support\Localization\LocalizedUrl::route($routeName, $routeParameters) }}" method="post">

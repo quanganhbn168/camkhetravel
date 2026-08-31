@@ -108,8 +108,9 @@
                 @endif
             </div>
             <div data-aos="fade-left">
-                <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">{{ $about['eyebrow'] }}</h2>
-                <p class="mt-5 max-w-xl text-base leading-8 text-slate-600 md:text-lg">{{ $about['title'] }}</p>
+                <p class="text-sm font-bold uppercase tracking-[0.16em] text-primary">{{ $about['eyebrow'] }}</p>
+                <h1 class="display-title mt-3 text-3xl leading-tight uppercase md:text-4xl">{{ $companyName }}</h1>
+                @if ($about['title'])<p class="mt-5 max-w-xl text-base leading-8 text-slate-600 md:text-lg">{{ $about['title'] }}</p>@endif
                 <p class="mt-4 text-base leading-8 text-slate-600">{{ $about['content'] }}</p>
                 <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                     <a class="button-dark" href="{{ LocalizedUrl::route('about') }}">Xem chi tiết <span aria-hidden="true">↗</span></a>
@@ -371,7 +372,7 @@
                     @csrf
                     <label class="text-sm font-semibold text-ink">Họ và tên<input class="form-field" name="name" value="{{ old('name') }}" required></label>
                     <label class="text-sm font-semibold text-ink">Số điện thoại<input class="form-field" name="phone" value="{{ old('phone') }}"></label>
-                    <label class="text-sm font-semibold text-ink">Dịch vụ quan tâm<select class="form-field" name="landing_id"><option value="">Chọn dịch vụ</option>@foreach ($contactServices as $service)<option value="{{ $service->id }}" @selected(old('landing_id') == $service->id)>{{ $service->title }}</option>@endforeach</select></label>
+                    <label class="text-sm font-semibold text-ink">Dịch vụ quan tâm<select class="form-field" name="service_id"><option value="">Chọn dịch vụ</option>@foreach ($contactServices as $service)<option value="{{ $service->id }}" @selected(old('service_id') == $service->id)>{{ $service->title }}</option>@endforeach</select></label>
                     <label class="text-sm font-semibold text-ink">Nhu cầu của bạn<textarea class="form-field" name="message" rows="5" required>{{ old('message') }}</textarea></label>
                     <button class="button-primary justify-self-start" type="submit">Gửi yêu cầu <span aria-hidden="true">↗</span></button>
                 </form>

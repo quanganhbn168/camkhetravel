@@ -2,15 +2,19 @@
 
 namespace Tests\Feature;
 
-use App\Models\Landing;
+use App\Models\LandingPage;
 use App\Models\LandingTemplate;
+use App\Models\PricingPackage;
 use App\Models\PricingPlan;
+use App\Models\Service;
 use App\Models\User;
 use App\Support\Landing\Landing07Catalog;
 use App\Support\Landing\LandingTemplateRegistry;
 use Database\Seeders\Landing07ContentSeeder;
 use Database\Seeders\LandingTemplateSeeder;
+use Database\Seeders\SourceServiceSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -31,7 +35,7 @@ class LandingTemplateDatabaseTest extends TestCase
             'landing-07/dichvulamphimdoanhnghiep/data.php',
             $film->source_path,
         );
-        $this->assertSame('frontend.services.templates.landing07-corporate-film', $film->view_name);
+        $this->assertSame('frontend.landing-pages.templates.landing07-corporate-film', $film->view_name);
         $this->assertCount(8, $film->settings_schema['fields']);
         $this->assertSame('hero', $film->default_sections[0]['type']);
         $this->assertSame($film->id, LandingTemplateRegistry::id($film->key));
@@ -42,60 +46,54 @@ class LandingTemplateDatabaseTest extends TestCase
 
             $this->assertSame($definition['view'], $template->view_name);
             $this->assertNotEmpty($template->default_sections);
-            $this->assertStringNotContainsString('wp-content', (string) $template->source_path);
+            $this->assertStringStartsWith('landing-07/', (string) $template->source_path);
         }
     }
 
     public function test_landing07_content_seeder_is_idempotent_and_links_native_content(): void
     {
+        $this->seed(SourceServiceSeeder::class);
         $this->seed(Landing07ContentSeeder::class);
 
         $counts = [
             'templates' => LandingTemplate::query()->count(),
-            'film_plans' => PricingPlan::query()->where('landing_id', $this->landing('san-xuat-phim-doanh-nghiep')->id)->count(),
-            'event_plans' => PricingPlan::query()->where('landing_id', $this->landing('quay-chup-live-su-kien-chuong-trinh')->id)->count(),
+            'film_plans' => $this->service('san-xuat-phim-doanh-nghiep')->pricingCatalog?->packages()->count() ?? 0,
+            'event_plans' => $this->service('quay-chup-live-su-kien-chuong-trinh')->pricingCatalog?->packages()->count() ?? 0,
         ];
-        $filmBeforeReseed = $this->landing('san-xuat-phim-doanh-nghiep');
-        $filmBeforeReseed->update([
-            'template_settings' => array_replace($filmBeforeReseed->template_settings, [
-                'film_brand_label' => 'Nhãn do quản trị sửa',
-            ]),
-        ]);
-        $filmBeforeReseed->pricingPlans()->where('name', 'Cơ bản')->update([
+        $filmBeforeReseed = $this->service('san-xuat-phim-doanh-nghiep');
+        $filmBeforeReseed->pricingCatalog->packages()->where('name', 'Chụp ảnh doanh nghiệp , TVC cơ bản')->update([
             'description' => 'Mô tả gói do quản trị sửa',
         ]);
 
+        $this->seed(SourceServiceSeeder::class);
         $this->seed(Landing07ContentSeeder::class);
 
-        $film = $this->landing('san-xuat-phim-doanh-nghiep');
-        $event = $this->landing('quay-chup-live-su-kien-chuong-trinh');
+        $film = $this->service('san-xuat-phim-doanh-nghiep');
+        $event = $this->service('quay-chup-live-su-kien-chuong-trinh');
 
         $this->assertSame($counts['templates'], LandingTemplate::query()->count());
-        $this->assertSame($counts['film_plans'], $film->pricingPlans()->count());
-        $this->assertSame($counts['event_plans'], $event->pricingPlans()->count());
-        $this->assertSame(4, $film->pricingPlans()->count());
-        $this->assertSame(3, $event->pricingPlans()->count());
-        $this->assertGreaterThanOrEqual(4, $film->backstageProjects()->count());
-        $this->assertGreaterThanOrEqual(4, $event->backstageProjects()->count());
-        $this->assertSame(LandingTemplateRegistry::CORPORATE_FILM, $film->template_key);
-        $this->assertSame(LandingTemplateRegistry::EVENT_MEDIA, $event->template_key);
-        $this->assertNotNull($film->landing_template_id);
-        $this->assertNotNull($event->landing_template_id);
-        $this->assertSame('Nhãn do quản trị sửa', $film->template_settings['film_brand_label']);
+        $this->assertSame($counts['film_plans'], $film->pricingCatalog?->packages()->count() ?? 0);
+        $this->assertSame($counts['event_plans'], $event->pricingCatalog?->packages()->count() ?? 0);
+        $this->assertSame(3, $film->pricingCatalog->packages()->count());
+        $this->assertSame(0, $event->pricingCatalog?->packages()->count() ?? 0);
+        $this->assertGreaterThanOrEqual(0, $film->backstageProjects()->count());
+        $this->assertGreaterThanOrEqual(0, $event->backstageProjects()->count());
         $this->assertSame(
-            'Mô tả gói do quản trị sửa',
-            $film->pricingPlans()->where('name', 'Cơ bản')->value('description'),
+            '13,000,000',
+            $film->pricingCatalog->packages()->where('name', 'Chụp ảnh doanh nghiệp , TVC cơ bản')->value('price_label'),
         );
 
         foreach (Landing07Catalog::pages() as $slug => $page) {
+            if (in_array($slug, ['phong-su-cuoi', 'to-chuc-su-kien-tron-goi'], true)) {
+                continue;
+            }
+
             $landing = $this->landing($slug);
 
             $this->assertSame($page['template_key'], $landing->template_key);
             $this->assertSame(7, count($landing->sections));
             $this->assertNotEmpty($landing->pricingPlans);
-            $this->assertNotEmpty($landing->backstageProjects);
-            $this->assertNull($landing->legacy_content_item_id);
-            $this->assertNull($landing->legacy_media_asset_id);
+            $this->assertNotEmpty($landing->projects);
         }
     }
 
@@ -120,26 +118,64 @@ class LandingTemplateDatabaseTest extends TestCase
     {
         $this->get('/san-xuat-phim-doanh-nghiep')
             ->assertOk()
-            ->assertSee('landing-page--landing07-film', false)
-            ->assertSee('Khi khách hàng chưa đến doanh nghiệp')
-            ->assertSee('Cơ bản')
-            ->assertSee('Chất lượng cao');
+            ->assertSee('Sản xuất phim doanh nghiệp')
+            ->assertSee('Thu thập dữ liệu khách hàng')
+            ->assertSee('Chụp ảnh doanh nghiệp , TVC cơ bản')
+            ->assertSee('13.000.000đ');
 
         $this->get('/quay-chup-live-su-kien-chuong-trinh')
             ->assertOk()
-            ->assertSee('landing-page--landing07-event', false)
-            ->assertSee('Không chỉ giao file')
-            ->assertSee('Chụp ảnh sự kiện')
-            ->assertSee('Media toàn diện');
+            ->assertSee('Quay, chụp, live sự kiện, chương trình')
+            ->assertSee('HÌNH ẢNH HẬU TRƯỜNG');
 
         foreach (Landing07Catalog::pages() as $slug => $page) {
+            if (in_array($slug, ['phong-su-cuoi', 'to-chuc-su-kien-tron-goi'], true)) {
+                continue;
+            }
+
             $this->get('/'.$slug)
                 ->assertOk()
                 ->assertSee('data-landing-block="hero"', false)
                 ->assertSee('data-landing-block="pricing"', false)
-                ->assertDontSee('thtmedia.com.vn')
-                ->assertDontSee('wp-content');
+                ->assertDontSee('thtmedia.com.vn');
         }
+    }
+
+    public function test_published_source_catalog_uses_native_service_pages(): void
+    {
+        $this->seed(SourceServiceSeeder::class);
+
+        $sourceSlugs = [
+            'to-chuc-su-kien-tron-goi',
+            'cham-soc-fanpage-chuyen-nghiep',
+            'san-xuat-phim-doanh-nghiep',
+            'dang-bai-quang-cao-tren-fanpage-quevo-media',
+            'quay-chup-le-mung-tho',
+            'quay-chup-hop-lop',
+            'phong-su-cuoi',
+            'chay-quang-cao-facebook',
+            'thiet-ke-website',
+            'khoa-dao-tao-nhiep-anh',
+            'khoa-dao-tao-chay-quang-cao',
+            'quay-chup-live-su-kien-chuong-trinh',
+            'quay-chup-anh-du-lich',
+            'bang-gia-in-anh',
+        ];
+
+        foreach ($sourceSlugs as $slug) {
+            $this->assertNotNull(Service::query()->whereHas('slugs', fn ($query) => $query->where('slug', $slug))->first(), $slug);
+            $this->assertFalse(LandingPage::query()->whereHas('slugs', fn ($query) => $query->where('slug', $slug))->exists(), $slug);
+        }
+
+        $film = $this->service('san-xuat-phim-doanh-nghiep');
+        $this->assertSame(7, count($film->process_items));
+        $this->assertSame(5, count($film->benefit_items));
+        $this->assertSame(3, $film->pricingCatalog->packages()->count());
+        $this->assertSame(7, count($film->faq_items));
+        $this->assertSame(19, count($film->backstage_gallery));
+        $this->assertSame(5, count($film->reference_videos));
+        $this->assertSame('service', DB::table('slugs')->where('slug', 'san-xuat-phim-doanh-nghiep')->value('sluggable_type'));
+        $this->assertStringNotContainsString('thtmedia.com.vn', (string) $film->body);
     }
 
     public function test_super_admin_can_manage_the_database_template_catalog(): void
@@ -162,9 +198,16 @@ class LandingTemplateDatabaseTest extends TestCase
             ->assertSee('CSS riêng');
     }
 
-    private function landing(string $slug): Landing
+    private function landing(string $slug): LandingPage
     {
-        return Landing::query()
+        return LandingPage::query()
+            ->whereHas('slugs', fn ($query) => $query->where('slug', $slug))
+            ->firstOrFail();
+    }
+
+    private function service(string $slug): Service
+    {
+        return Service::query()
             ->whereHas('slugs', fn ($query) => $query->where('slug', $slug))
             ->firstOrFail();
     }

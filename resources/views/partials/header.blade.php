@@ -3,31 +3,29 @@
 <div class="relative z-40"
     x-data="{
         open: false,
-        languageOpen: false,
         searchOpen: false,
         syncBodyLock() {
             document.body.classList.toggle('overflow-hidden', this.open || this.searchOpen);
         }
     }"
     x-init="$watch('open', () => syncBodyLock()); $watch('searchOpen', () => syncBodyLock())"
-    @keydown.escape.window="open = false; languageOpen = false; searchOpen = false">
+    @keydown.escape.window="open = false; searchOpen = false">
     <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 shadow-[0_8px_28px_rgba(16,35,62,0.05)] backdrop-blur-xl">
         <div class="site-shell flex min-h-20 items-center justify-between gap-5 py-3">
             <a class="flex shrink-0 items-center gap-3" href="{{ LocalizedUrl::route('home') }}" aria-label="{{ $website->site_name }}">
                 @if ($headerLogoUrl)
-                    <img src="{{ $headerLogoUrl }}" alt="{{ $website->site_name }}" class="h-12 max-w-52 object-contain object-left">
+                    <img src="{{ $headerLogoUrl }}" alt="{{ $website->site_name }}" class="h-14 max-w-56 object-contain object-left">
                 @else
                     <span class="grid size-11 place-items-center rounded-xl bg-ink font-display text-base font-bold text-white">THT</span>
                     <span class="text-sm font-bold tracking-[-0.04em] text-ink sm:text-base">{{ $website->site_name }}</span>
                 @endif
-                @if (request()->routeIs('bni.handover', 'localized.bni.handover'))
+                @if (request()->routeIs('bni.handover'))
                     <span class="bni-handover-header-brand hidden xl:grid">
                         <img class="bni-handover-header-logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
                         <span class="bni-handover-header-chapters" aria-label="Các chapter BNI">
-                            <span>KINHBAC</span>
-                            <span>KBG</span>
-                            <span>IMPACT</span>
-                            <span>FAMOUS</span>
+                            @foreach ($bniHeaderChapters as $chapter)
+                                <span>{{ $chapter->short_name ?: $chapter->name }}</span>
+                            @endforeach
                         </span>
                     </span>
                 @endif
@@ -38,20 +36,6 @@
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
                 </button>
 
-                <div class="relative">
-                    <button class="flex min-h-10 items-center gap-2 rounded-full border border-slate-200 px-3 text-xs font-bold text-ink transition hover:border-slate-300 hover:bg-slate-50" type="button" @click="languageOpen = !languageOpen" :aria-expanded="languageOpen.toString()">
-                        <svg class="size-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-                        {{ $languages->get(app()->getLocale())?->native_name }}
-                        <svg class="size-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="absolute right-0 mt-2 w-44 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl" x-cloak x-show="languageOpen" x-transition.origin.top.right @click.outside="languageOpen = false">
-                        @foreach ($languages as $language)
-                            <a class="flex items-center justify-between rounded-xl px-3 py-2 text-sm {{ app()->getLocale() === $language->code ? 'bg-sand font-semibold text-accent' : 'text-slate-600 hover:bg-slate-50 hover:text-ink' }}" href="{{ LocalizedUrl::switchUrl($language->code) }}">
-                                <span>{{ $language->name }}</span><span class="text-xs font-bold">{{ $language->native_name }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
                 @if ($website->hotline || $website->contact_phone)
                     <div class="group flex items-center gap-2 border-l border-slate-200 pl-5 text-right">
                         <span class="grid size-9 place-items-center rounded-full bg-mist text-accent transition group-hover:bg-primary group-hover:text-white">
@@ -69,9 +53,6 @@
             <div class="flex items-center gap-2 lg:hidden">
                 <button class="grid size-10 place-items-center rounded-xl border border-slate-200 text-ink" type="button" @click="searchOpen = true; $nextTick(() => $refs.headerSearchInput.focus())" aria-label="Tìm dịch vụ và bài viết">
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
-                </button>
-                <button class="grid size-10 place-items-center rounded-xl border border-slate-200 text-xs font-bold text-ink" type="button" @click="languageOpen = !languageOpen" :aria-expanded="languageOpen.toString()" aria-label="Chọn ngôn ngữ">
-                    {{ $languages->get(app()->getLocale())?->code }}
                 </button>
                 <button class="grid size-11 place-items-center rounded-xl bg-ink text-white shadow-sm" type="button" @click="open = true" :aria-expanded="open.toString()" aria-controls="mobile-drawer">
                     <span class="sr-only">Mở menu</span>
@@ -111,7 +92,7 @@
                         @endif
                     </div>
                 @endforeach
-                <a class="bni-handover-menu-link {{ request()->routeIs('bni.handover', 'localized.bni.handover') ? 'is-active' : '' }}" href="{{ LocalizedUrl::route('bni.handover') }}" @if (request()->routeIs('bni.handover', 'localized.bni.handover')) aria-current="page" @endif>
+                <a class="bni-handover-menu-link {{ request()->routeIs('bni.handover') ? 'is-active' : '' }}" href="{{ LocalizedUrl::route('bni.handover') }}" @if (request()->routeIs('bni.handover')) aria-current="page" @endif>
                     <img class="bni-handover-menu-link__logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
                     <span>LỄ CHUYỂN GIAO</span>
                 </a>
@@ -152,7 +133,7 @@
                         @endif
                     </div>
                 @endforeach
-                <a class="bni-handover-menu-link bni-handover-menu-link--mobile {{ request()->routeIs('bni.handover', 'localized.bni.handover') ? 'is-active' : '' }}" href="{{ LocalizedUrl::route('bni.handover') }}" @click="open = false" @if (request()->routeIs('bni.handover', 'localized.bni.handover')) aria-current="page" @endif>
+                <a class="bni-handover-menu-link bni-handover-menu-link--mobile {{ request()->routeIs('bni.handover') ? 'is-active' : '' }}" href="{{ LocalizedUrl::route('bni.handover') }}" @click="open = false" @if (request()->routeIs('bni.handover')) aria-current="page" @endif>
                     <img class="bni-handover-menu-link__logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
                     <span>LỄ CHUYỂN GIAO</span>
                 </a>
@@ -186,13 +167,4 @@
         </section>
     </div>
 
-    <div class="fixed inset-0 z-[70] lg:hidden" x-cloak x-show="languageOpen" @click="languageOpen = false">
-        <div class="absolute right-5 top-18 w-44 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl" @click.stop>
-            @foreach ($languages as $language)
-                <a class="flex items-center justify-between rounded-xl px-3 py-2 text-sm {{ app()->getLocale() === $language->code ? 'bg-sand font-semibold text-accent' : 'text-slate-600 hover:bg-slate-50 hover:text-ink' }}" href="{{ LocalizedUrl::switchUrl($language->code) }}">
-                    <span>{{ $language->name }}</span><span class="text-xs font-bold">{{ $language->native_name }}</span>
-                </a>
-            @endforeach
-        </div>
-    </div>
 </div>

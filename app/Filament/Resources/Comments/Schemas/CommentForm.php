@@ -6,7 +6,8 @@ use App\Models\BniArticle;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Project;
-use App\Models\Landing;
+use App\Models\Service;
+use App\Models\LandingPage;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Select;
@@ -30,7 +31,8 @@ class CommentForm
                             MorphToSelect\Type::make(BniArticle::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Project::class)->titleAttribute('title'),
-                            MorphToSelect\Type::make(Landing::class)->titleAttribute('title'),
+                            MorphToSelect\Type::make(Service::class)->titleAttribute('title'),
+                            MorphToSelect\Type::make(LandingPage::class)->titleAttribute('title'),
                         ])
                         ->disabled()
                         ->columnSpanFull(),

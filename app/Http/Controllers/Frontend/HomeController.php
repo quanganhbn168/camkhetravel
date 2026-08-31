@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\HeroSlide;
-use App\Models\Landing;
 use App\Models\Post;
 use App\Models\Partner;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Models\Service;
 use App\Models\Testimonial;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
@@ -70,7 +70,7 @@ class HomeController extends Controller
                 ];
             });
 
-        $services = Landing::query()
+        $services = Service::query()
             ->published()
             ->with(['category', 'curatorMedia'])
             ->orderByDesc('is_featured')
@@ -141,7 +141,7 @@ class HomeController extends Controller
                 ->orderBy('sort_order')
                 ->limit(6)
                 ->get(),
-            'contactServices' => Landing::query()
+            'contactServices' => Service::query()
                 ->published()
                 ->orderBy('sort_order')
                 ->get(['id', 'title']),
@@ -186,7 +186,7 @@ class HomeController extends Controller
 
         return collect([
             ['value' => (string) Project::query()->published()->count(), 'label' => 'dự án đã xuất bản'],
-            ['value' => (string) Landing::query()->published()->count(), 'label' => 'hạng mục dịch vụ'],
+            ['value' => (string) Service::query()->published()->count(), 'label' => 'hạng mục dịch vụ'],
             ['value' => (string) Post::query()->published()->count(), 'label' => 'bài viết và góc nhìn'],
             ['value' => (string) $projectCategories->count(), 'label' => 'nhóm dự án'],
         ])->map(fn (array $stat): array => $this->stat($stat));

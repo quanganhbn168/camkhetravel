@@ -18,7 +18,7 @@ class LandingTemplatesTable
                 TextColumn::make('key')->label('Khóa')->badge()->copyable(),
                 TextColumn::make('use_case')->label('Cấu trúc')->wrap()->toggleable(),
                 TextColumn::make('source_name')->label('Nguồn')->wrap()->toggleable(),
-                TextColumn::make('landings_count')->counts('landings')->label('Landing đang dùng')->sortable(),
+                TextColumn::make('landing_pages_count')->counts('landingPages')->label('Landing đang dùng')->sortable(),
                 IconColumn::make('is_active')->label('Cho phép chọn')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])

@@ -44,10 +44,17 @@ class LanguageCatalog
             });
     }
 
-    /** @return Collection<string, Language> */
+    /**
+     * The public website is intentionally Vietnamese-only. Historical language
+     * rows are retained so existing translated records are not destroyed.
+     *
+     * @return Collection<string, Language>
+     */
     public function active(): Collection
     {
-        return $this->all()->filter(fn (Language $language): bool => $language->is_active);
+        $default = $this->default();
+
+        return collect([$default->code => $default]);
     }
 
     /** @return Collection<string, Language> */

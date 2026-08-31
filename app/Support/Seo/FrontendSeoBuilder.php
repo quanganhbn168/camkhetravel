@@ -2,10 +2,11 @@
 
 namespace App\Support\Seo;
 
-use App\Models\Landing;
+use App\Models\BniInvitation;
+use App\Models\LandingPage;
 use App\Models\Post;
-use App\Models\PricingPlan;
 use App\Models\Project;
+use App\Models\Service;
 use App\Settings\WebsiteSettings;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
@@ -14,6 +15,10 @@ use Illuminate\Support\Str;
 
 class FrontendSeoBuilder
 {
+    private const INDEX_ROBOTS = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
+    private const NOINDEX_ROBOTS = 'noindex, nofollow, noarchive';
+
     private ?string $defaultImage = null;
 
     public function __construct(
@@ -88,7 +93,7 @@ class FrontendSeoBuilder
         );
     }
 
-    public function listing(string $title, string $description, string $canonical): array
+    public function listing(string $title, string $description, string $canonical, bool $indexable = true): array
     {
         return $this->page(
             title: $title,
@@ -98,23 +103,46 @@ class FrontendSeoBuilder
                 $this->organizationSchema(),
                 $this->webPageSchema($canonical, $title, $description),
             ],
+            robots: $indexable ? self::INDEX_ROBOTS : self::NOINDEX_ROBOTS,
         );
     }
 
-    /** @param iterable<PricingPlan> $plans */
-    public function pricing(iterable $plans): array
+    /** @param array<string, mixed> $content */
+    public function invitation(BniInvitation $invitation, string $guestName, array $content, ?string $image = null): array
     {
-        $canonical = LocalizedUrl::route('pricing.index');
-        $title = 'Bảng giá | '.$this->website->site_name;
-        $description = 'Các gói dịch vụ và mức đầu tư tham khảo tại '.$this->website->site_name.'.';
-        $offers = [];
+        $canonical = LocalizedUrl::route('bni.invitations.show', ['invitation' => $invitation]);
+        $event = $invitation->event;
+        $eventLabel = trim((string) ($content['event_label'] ?? 'LỄ CHUYỂN GIAO'));
+        $eventTitle = $event?->title ?: $eventLabel;
+        $title = trim(($content['label'] ?? 'THƯ MỜI').' '.$eventLabel.' – '.$guestName.' | '.$this->website->site_name);
+        $description = trim(($content['greeting'] ?? 'Trân trọng kính mời').' '.$guestName.' tham dự '.$eventTitle.'.');
 
-        foreach ($plans as $plan) {
-            $offers[] = [
-                '@type' => 'Offer',
-                'name' => $plan->name,
-                'description' => $this->description($plan->description ?: $plan->name),
-                'url' => $canonical.'#bang-gia-'.$plan->id,
+        $eventSchema = [
+            '@type' => 'Event',
+            '@id' => $canonical.'#event',
+            'name' => $eventTitle,
+            'description' => $this->description($description),
+            'url' => $canonical,
+            'eventStatus' => 'https://schema.org/EventScheduled',
+            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
+            'organizer' => ['@id' => $this->baseUrl().'#organization'],
+            ...$this->imageProperty($image),
+        ];
+
+        if ($event?->starts_at) {
+            $eventSchema['startDate'] = $event->starts_at->toAtomString();
+        }
+
+        if ($event?->ends_at) {
+            $eventSchema['endDate'] = $event->ends_at->toAtomString();
+        }
+
+        $locationName = collect([$event?->venue, $event?->address])->filter()->implode(', ');
+        if ($locationName !== '') {
+            $eventSchema['location'] = [
+                '@type' => 'Place',
+                'name' => $locationName,
+                'address' => $event?->address ?: $event?->venue,
             ];
         }
 
@@ -122,49 +150,117 @@ class FrontendSeoBuilder
             title: $title,
             description: $description,
             canonical: $canonical,
+            image: $image,
             schema: [
                 $this->organizationSchema(),
                 $this->webPageSchema($canonical, $title, $description),
-                [
-                    '@type' => 'OfferCatalog',
-                    '@id' => $canonical.'#offer-catalog',
-                    'name' => 'Bảng giá dịch vụ',
-                    'itemListElement' => $offers,
-                ],
+                $eventSchema,
                 $this->breadcrumb([
                     ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => __('site.pricing'), 'url' => $canonical],
+                    ['name' => $eventLabel, 'url' => LocalizedUrl::route('bni.handover')],
+                    ['name' => $guestName, 'url' => $canonical],
                 ]),
             ],
+            robots: self::NOINDEX_ROBOTS,
         );
     }
 
-    public function landing(Landing $landing): array
+    /** @param iterable<array<string, mixed>> $packages */
+    public function pricing(?Service $service, iterable $packages): array
     {
-        $canonical = LocalizedUrl::slug($landing->slug);
-        $title = $landing->seo_title ?: $landing->title.' | '.$this->website->site_name;
-        $description = $landing->seo_description ?: $landing->excerpt ?: $landing->title;
+        $canonical = LocalizedUrl::route('pricing.index');
+        $title = $service
+            ? 'Bảng giá '.$service->title.' | '.$this->website->site_name
+            : 'Bảng giá theo dịch vụ | '.$this->website->site_name;
+        $description = $service
+            ? 'Các gói và mức đầu tư tham khảo cho dịch vụ '.$service->title.' tại '.$this->website->site_name.'.'
+            : 'Chọn từng dịch vụ để xem đúng bảng giá và phạm vi công việc tại '.$this->website->site_name.'.';
+        $offers = [];
+
+        foreach ($packages as $package) {
+            $offers[] = [
+                '@type' => 'Offer',
+                'name' => $package['name'],
+                'description' => $this->description($package['description'] ?: $package['name']),
+                'url' => $canonical.'#goi-dich-vu',
+            ];
+        }
+
+        $schema = [
+            $this->organizationSchema(),
+            $this->webPageSchema($canonical, $title, $description),
+            $this->breadcrumb([
+                ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
+                ['name' => __('site.pricing'), 'url' => $canonical],
+            ]),
+        ];
+
+        if ($offers !== []) {
+            $schema[] = [
+                '@type' => 'OfferCatalog',
+                '@id' => $canonical.'#offer-catalog',
+                'name' => $service ? 'Bảng giá '.$service->title : 'Bảng giá dịch vụ',
+                'itemListElement' => $offers,
+            ];
+        }
 
         return $this->page(
             title: $title,
             description: $description,
             canonical: $canonical,
-            image: $landing->image_url,
+            schema: $schema,
+        );
+    }
+
+    public function service(Service $service): array
+    {
+        $canonical = LocalizedUrl::service($service);
+        $title = $service->seo_title ?: $service->title.' | '.$this->website->site_name;
+        $description = $service->seo_description ?: $service->excerpt ?: $service->title;
+
+        return $this->page(
+            title: $title,
+            description: $description,
+            canonical: $canonical,
+            image: $service->image_url,
             schema: [
                 $this->organizationSchema(),
                 [
                     '@type' => 'Service',
                     '@id' => $canonical.'#service',
-                    'name' => $landing->title,
+                    'name' => $service->title,
                     'description' => $this->description($description),
                     'url' => $canonical,
-                    ...$this->imageProperty($landing->image_url),
+                    ...$this->imageProperty($service->image_url),
                     'provider' => ['@id' => $this->baseUrl().'#organization'],
                 ],
                 $this->breadcrumb([
                     ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
                     ['name' => __('site.services'), 'url' => LocalizedUrl::route('services.index')],
-                    ['name' => $landing->title, 'url' => $canonical],
+                    ['name' => $service->title, 'url' => $canonical],
+                ]),
+            ],
+        );
+    }
+
+    public function landingPage(LandingPage $landingPage): array
+    {
+        $canonical = LocalizedUrl::landingPage($landingPage);
+        $title = $landingPage->seo_title ?: $landingPage->title.' | '.$this->website->site_name;
+        $description = $landingPage->seo_description ?: $landingPage->excerpt ?: $landingPage->title;
+
+        return $this->page(
+            title: $title,
+            description: $description,
+            canonical: $canonical,
+            image: $landingPage->image_url,
+            schema: [
+                $this->organizationSchema(),
+                $this->webPageSchema($canonical, $landingPage->title, $description),
+                $this->breadcrumb([
+                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
+                    ['name' => 'Landing page', 'url' => $canonical],
+                    ['name' => $landingPage->title, 'url' => $canonical],
                 ]),
             ],
         );
@@ -245,7 +341,15 @@ class FrontendSeoBuilder
         );
     }
 
-    private function page(string $title, ?string $description, string $canonical, ?string $image = null, string $type = 'website', array $schema = []): array
+    private function page(
+        string $title,
+        ?string $description,
+        string $canonical,
+        ?string $image = null,
+        string $type = 'website',
+        array $schema = [],
+        string $robots = self::INDEX_ROBOTS,
+    ): array
     {
         $description = $this->description($description);
         $image = $image ?: $this->defaultImageUrl();
@@ -254,7 +358,7 @@ class FrontendSeoBuilder
             'title' => $title,
             'description' => $description,
             'keywords' => $this->website->seo_keywords,
-            'robots' => 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1',
+            'robots' => $robots,
             'canonical' => $canonical,
             'type' => $type,
             'locale' => $this->languages->ogLocale(app()->getLocale()),
@@ -368,13 +472,11 @@ class FrontendSeoBuilder
 
     private function languageTag(): string
     {
-        return $this->languages->languageTag(app()->getLocale());
+        return 'vi-VN';
     }
 
     private function homeCanonical(): string
     {
-        return app()->getLocale() === $this->languages->defaultCode()
-            ? $this->absoluteUrl('/')
-            : LocalizedUrl::route('home');
+        return $this->absoluteUrl('/');
     }
 }

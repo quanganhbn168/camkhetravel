@@ -20,7 +20,7 @@ class PricingPlanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $navigationLabel = 'Bảng giá';
+    protected static ?string $navigationLabel = 'Gói giá landing page';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -28,7 +28,7 @@ class PricingPlanResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung trang chủ';
+        return 'Nội dung website';
     }
 
     public static function getModelLabel(): string
@@ -38,7 +38,7 @@ class PricingPlanResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return 'Bảng giá';
+        return 'Bảng giá landing page';
     }
 
     public static function form(Schema $schema): Schema

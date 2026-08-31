@@ -2,10 +2,10 @@
 
 namespace App\Support\Seo;
 
-use App\Models\Landing;
+use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
-use App\Support\Localization\LanguageCatalog;
+use App\Models\Service;
 use App\Support\Localization\LocalizedUrl;
 use DateTimeInterface;
 use Spatie\Sitemap\Sitemap;
@@ -15,8 +15,6 @@ class SitemapBuilder
 {
     /** @var array<string, true> */
     private array $seenUrls = [];
-
-    public function __construct(private readonly LanguageCatalog $languages) {}
 
     public function build(): Sitemap
     {
@@ -30,8 +28,6 @@ class SitemapBuilder
 
     private function addNativePages(Sitemap $sitemap): void
     {
-        $defaultLocale = $this->languages->defaultCode();
-
         foreach ([
             ['home', Url::CHANGE_FREQUENCY_WEEKLY, 1.0],
             ['services.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.9],
@@ -43,14 +39,15 @@ class SitemapBuilder
             ['bni.pickleball', Url::CHANGE_FREQUENCY_WEEKLY, 0.5],
             ['contact', Url::CHANGE_FREQUENCY_MONTHLY, 0.5],
         ] as [$route, $frequency, $priority]) {
-            $this->addUrl($sitemap, LocalizedUrl::route($route, locale: $defaultLocale), null, $frequency, $priority);
+            $this->addUrl($sitemap, LocalizedUrl::route($route), null, $frequency, $priority);
         }
     }
 
     private function addNativeContent(Sitemap $sitemap): void
     {
         foreach ([
-            [Landing::class, Url::CHANGE_FREQUENCY_MONTHLY, 0.8],
+            [Service::class, Url::CHANGE_FREQUENCY_MONTHLY, 0.8],
+            [LandingPage::class, Url::CHANGE_FREQUENCY_MONTHLY, 0.8],
             [Project::class, Url::CHANGE_FREQUENCY_MONTHLY, 0.8],
             [Post::class, Url::CHANGE_FREQUENCY_MONTHLY, 0.7],
         ] as [$model, $frequency, $priority]) {
@@ -58,9 +55,10 @@ class SitemapBuilder
                 ->published()
                 ->with('slugs')
                 ->get()
-                ->each(function (Landing|Project|Post $item) use ($sitemap, $frequency, $priority): void {
+                ->each(function (Service|LandingPage|Project|Post $item) use ($sitemap, $frequency, $priority): void {
                     $url = match (true) {
-                        $item instanceof Landing => filled($item->slug) ? LocalizedUrl::slug($item->slug) : null,
+                        $item instanceof Service => LocalizedUrl::service($item),
+                        $item instanceof LandingPage => LocalizedUrl::landingPage($item),
                         $item instanceof Project => LocalizedUrl::project($item),
                         $item instanceof Post => LocalizedUrl::post($item),
                     };

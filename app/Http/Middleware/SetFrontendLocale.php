@@ -11,13 +11,7 @@ class SetFrontendLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $languages = app(LanguageCatalog::class);
-        $routeLocale = $request->route('locale');
-        $locale = (string) ($routeLocale ?: $languages->defaultCode());
-
-        abort_unless($languages->isSupported($locale), 404);
-
-        app()->setLocale($locale);
+        app()->setLocale(app(LanguageCatalog::class)->defaultCode());
 
         return $next($request);
     }

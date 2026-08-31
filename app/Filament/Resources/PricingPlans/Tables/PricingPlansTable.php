@@ -17,7 +17,7 @@ class PricingPlansTable
         return $table
             ->columns([
                 TextColumn::make('name')->label('Gói giá')->searchable()->sortable()->wrap(),
-                TextColumn::make('landing.title')->label('Landing page')->badge()->toggleable(),
+                TextColumn::make('landingPage.title')->label('Landing page')->badge()->toggleable(),
                 TextColumn::make('price')
                     ->label('Mức giá')
                     ->formatStateUsing(fn ($state, $record): string => filled($state)
@@ -27,7 +27,7 @@ class PricingPlansTable
                 IconColumn::make('is_active')->label('Hiển thị')->boolean(),
             ])
             ->filters([
-                SelectFilter::make('landing_id')->label('Landing page')->relationship('landing', 'title'),
+                SelectFilter::make('landing_page_id')->label('Landing page')->relationship('landingPage', 'title'),
                 TernaryFilter::make('is_active')->label('Hiển thị'),
             ])
             ->defaultSort('sort_order')

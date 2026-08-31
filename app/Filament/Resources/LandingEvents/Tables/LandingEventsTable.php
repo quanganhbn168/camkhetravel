@@ -17,7 +17,8 @@ class LandingEventsTable
         return $table
             ->columns([
                 TextColumn::make('occurred_at')->label('Thời gian')->dateTime('d/m/Y H:i:s')->sortable(),
-                TextColumn::make('landing.title')->label('Landing page')->searchable()->wrap(),
+                TextColumn::make('landingPage.title')->label('Landing page')->searchable()->wrap(),
+                TextColumn::make('service.title')->label('Dịch vụ')->searchable()->wrap()->toggleable(),
                 TextColumn::make('event_name')
                     ->label('Sự kiện')
                     ->badge()
@@ -47,7 +48,8 @@ class LandingEventsTable
                 TextColumn::make('referrer')->label('Referrer')->limit(42)->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('landing_id')->label('Landing page')->relationship('landing', 'title')->searchable()->preload(),
+                SelectFilter::make('landing_page_id')->label('Landing page')->relationship('landingPage', 'title')->searchable()->preload(),
+                SelectFilter::make('service_id')->label('Dịch vụ')->relationship('service', 'title')->searchable()->preload(),
                 SelectFilter::make('event_name')->label('Sự kiện')->options(array_combine(
                     LandingEventRecorder::EVENT_NAMES,
                     LandingEventRecorder::EVENT_NAMES,

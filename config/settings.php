@@ -12,6 +12,7 @@ return [
         App\Settings\CompanySettings::class,
         App\Settings\AboutSettings::class,
         App\Settings\DesignSettings::class,
+        App\Settings\BniInvitationSettings::class,
     ],
 
     /*

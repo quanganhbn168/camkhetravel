@@ -17,7 +17,7 @@ class EditService extends EditRecord
     {
         return [
             Action::make('preview')
-                ->label('Xem landing page')
+                ->label('Xem dịch vụ')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->url(fn (): string => LocalizedUrl::slug($this->record->slug))
                 ->openUrlInNewTab(),

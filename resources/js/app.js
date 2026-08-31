@@ -216,6 +216,105 @@ const initialiseBniCountdowns = () => {
     });
 };
 
+const initialiseBniPwa = () => {
+    if (document.body.dataset.bniPage !== 'true' || !('serviceWorker' in navigator)) {
+        return;
+    }
+
+    const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
+    const bniPath = pathname.match(/^((?:\/[^/]+)?\/le-chuyen-giao)(?:\/.*)?$/i);
+
+    if (!bniPath) {
+        return;
+    }
+
+    navigator.serviceWorker.register('/bni-sw.js', { scope: bniPath[1] }).catch(() => {});
+
+    const banner = document.querySelector('[data-bni-install-banner]');
+    const bannerCopy = banner?.querySelector('.bni-pwa-install__copy span');
+    const actions = document.querySelectorAll('[data-bni-install-action]');
+    const dismiss = document.querySelector('[data-bni-install-dismiss]');
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    let deferredPrompt = null;
+
+    if (isStandalone || !banner) {
+        return;
+    }
+
+    const isDismissed = () => {
+        try {
+            const dismissedAt = Number(window.localStorage.getItem('tht_bni_install_dismissed_at') || 0);
+
+            return dismissedAt > Date.now() - (14 * 24 * 60 * 60 * 1000);
+        } catch {
+            return false;
+        }
+    };
+
+    const showBanner = (copy = null) => {
+        if (copy && bannerCopy) {
+            bannerCopy.textContent = copy;
+        }
+
+        banner.hidden = false;
+    };
+
+    const hideBanner = () => {
+        banner.hidden = true;
+    };
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        deferredPrompt = event;
+
+        if (!isDismissed()) {
+            showBanner();
+        }
+    });
+
+    window.addEventListener('appinstalled', () => {
+        deferredPrompt = null;
+        hideBanner();
+    });
+
+    actions.forEach((action) => {
+        action.addEventListener('click', async () => {
+            if (!deferredPrompt) {
+                showBanner(isIos
+                    ? 'Mở nút Chia sẻ rồi chọn “Thêm vào Màn hình chính”.'
+                    : 'Mở menu trình duyệt và chọn “Thêm vào màn hình chính” khi tùy chọn này xuất hiện.');
+
+                return;
+            }
+
+            deferredPrompt.prompt();
+            const choice = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+
+            if (choice.outcome === 'dismissed') {
+                try {
+                    window.localStorage.setItem('tht_bni_install_dismissed_at', String(Date.now()));
+                } catch {
+                    // Installation remains available even when local storage is disabled.
+                }
+
+                hideBanner();
+            }
+        });
+    });
+
+    dismiss?.addEventListener('click', () => {
+        try {
+            window.localStorage.setItem('tht_bni_install_dismissed_at', String(Date.now()));
+        } catch {
+            // The banner can still be dismissed for the current page.
+        }
+
+        hideBanner();
+    });
+};
+
 const initialiseLandingPages = () => {
     document.querySelectorAll('[data-landing-page]').forEach((page) => {
         if (page.dataset.landingReady === 'true') {
@@ -422,6 +521,15 @@ const initialiseLightboxes = () => {
     });
 };
 
+window.refreshLightboxes = () => {
+    if (lightbox?.reload) {
+        lightbox.reload();
+        return;
+    }
+
+    initialiseLightboxes();
+};
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         initialiseHeroSwipers();
@@ -431,6 +539,7 @@ if (document.readyState === 'loading') {
         initialiseAos();
         initialiseCountUps();
         initialiseBniCountdowns();
+        initialiseBniPwa();
         initialiseLandingPages();
         initialiseLightboxes();
     }, { once: true });
@@ -442,6 +551,7 @@ if (document.readyState === 'loading') {
     initialiseAos();
     initialiseCountUps();
     initialiseBniCountdowns();
+    initialiseBniPwa();
     initialiseLandingPages();
     initialiseLightboxes();
 }

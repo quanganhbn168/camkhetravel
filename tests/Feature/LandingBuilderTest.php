@@ -2,16 +2,20 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\Services\Pages\EditService;
-use App\Models\Landing;
+use App\Filament\Resources\LandingPages\Pages\EditLandingPage;
+use App\Models\LandingPage;
 use App\Models\LandingEvent;
+use App\Models\Post;
 use App\Models\PricingPlan;
 use App\Models\Project;
+use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Models\User;
 use App\Support\Landing\Landing07Catalog;
 use App\Support\Landing\LandingTemplateRegistry;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -24,10 +28,24 @@ class LandingBuilderTest extends TestCase
     {
         $media = Media::query()->firstOrFail();
         $project = Project::query()->published()->firstOrFail();
+        $category = ServiceCategory::query()->where('is_active', true)->firstOrFail();
+        $service = Service::query()->published()->firstOrFail();
+        $post = Post::query()->published()->firstOrFail();
         $landing = $this->createBuilderLanding($media);
-        $landing->backstageProjects()->sync([$project->id]);
+        $landing->projects()->sync([$project->id]);
+        $landing->serviceCategories()->sync([$category->id]);
+        $landing->services()->sync([$service->id]);
+        $landing->posts()->sync([$post->id]);
+        $landing->update([
+            'sections' => [
+                ...$landing->sections,
+                ['type' => 'service_categories', 'data' => ['block_id' => 'danh-muc-dich-vu', 'title' => 'Danh mục dịch vụ']],
+                ['type' => 'services', 'data' => ['block_id' => 'dich-vu-lien-quan', 'title' => 'Dịch vụ liên quan']],
+                ['type' => 'posts', 'data' => ['block_id' => 'bai-viet-lien-quan', 'title' => 'Bài viết liên quan']],
+            ],
+        ]);
         PricingPlan::query()->create([
-            'landing_id' => $landing->id,
+            'landing_page_id' => $landing->id,
             'name' => 'Gói landing kiểm thử',
             'price_label' => 'Miễn phí',
             'features' => ['Quyền lợi kiểm thử'],
@@ -43,16 +61,23 @@ class LandingBuilderTest extends TestCase
             ->assertSee('Landing builder kiểm thử')
             ->assertSee('Gói landing kiểm thử')
             ->assertSee($project->title)
+            ->assertSee('data-landing-block="service_categories"', false)
+            ->assertSee('data-landing-block="services"', false)
+            ->assertSee('data-landing-block="posts"', false)
+            ->assertSee($category->name)
+            ->assertSee($service->title)
+            ->assertSee($post->title)
             ->assertDontSee('javascript:alert', false)
             ->assertSee($media->url, false);
     }
 
     public function test_tracking_endpoint_records_first_party_attribution_without_raw_ip(): void
     {
+        $this->withoutMiddleware(PreventRequestForgery::class);
         $landing = $this->createBuilderLanding(Media::query()->firstOrFail());
 
         $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.50'])
-            ->post(route('landings.track', ['landing' => $landing->id]), [
+            ->post(route('landing-pages.track', ['landingPage' => $landing->id]), [
                 'event_name' => 'cta_click',
                 'block_id' => 'hero-test',
                 'visitor_id' => 'visitor-test',
@@ -64,7 +89,7 @@ class LandingBuilderTest extends TestCase
             ])
             ->assertNoContent();
 
-        $event = LandingEvent::query()->where('landing_id', $landing->id)->firstOrFail();
+        $event = LandingEvent::query()->where('landing_page_id', $landing->id)->firstOrFail();
 
         $this->assertSame('cta_click', $event->event_name);
         $this->assertSame('facebook', $event->utm_source);
@@ -75,11 +100,12 @@ class LandingBuilderTest extends TestCase
 
     public function test_landing_form_stores_attribution_and_records_a_lead_conversion(): void
     {
+        $this->withoutMiddleware(PreventRequestForgery::class);
         $landing = $this->createBuilderLanding(Media::query()->firstOrFail());
 
         $this->post('/lien-he', [
-            'from_landing' => 1,
-            'landing_id' => $landing->id,
+            'from_landing_page' => 1,
+            'landing_page_id' => $landing->id,
             'landing_block_id' => 'lead-test',
             'name' => 'Khách hàng kiểm thử',
             'phone' => '0900000000',
@@ -93,13 +119,13 @@ class LandingBuilderTest extends TestCase
         ])->assertRedirect('/'.$landing->slug.'#tu-van');
 
         $this->assertDatabaseHas('contact_requests', [
-            'landing_id' => $landing->id,
+            'landing_page_id' => $landing->id,
             'landing_block_id' => 'lead-test',
             'utm_source' => 'google',
             'utm_campaign' => 'landing-test',
         ]);
         $this->assertDatabaseHas('landing_events', [
-            'landing_id' => $landing->id,
+            'landing_page_id' => $landing->id,
             'event_name' => 'lead_submit',
             'block_id' => 'lead-test',
         ]);
@@ -112,12 +138,14 @@ class LandingBuilderTest extends TestCase
         $landing = $this->createBuilderLanding(Media::query()->firstOrFail());
 
         $response = $this->actingAs($user)
-            ->get('/admin/services/'.$landing->id.'/edit')
+            ->get('/admin/landing-pages/'.$landing->id.'/edit')
             ->assertOk();
 
         foreach ([
             'Bố cục landing page',
             'Các khối nội dung',
+            'Danh mục dịch vụ',
+            'Bài viết / blog liên quan',
             'Tri ân / Sự kiện',
             'Thiết lập template Tri ân / Sự kiện',
         ] as $expectedAdminCopy) {
@@ -136,7 +164,7 @@ class LandingBuilderTest extends TestCase
             $this->assertArrayHasKey($key, $options);
         }
 
-        Livewire::test(EditService::class, ['record' => $landing->id])
+        Livewire::test(EditLandingPage::class, ['record' => $landing->id])
             ->set('data.template_key', LandingTemplateRegistry::CONVERSION)
             ->assertSee('Thiết lập template Chuyển đổi / Báo giá')
             ->assertDontSee('Thiết lập template Tri ân / Sự kiện')
@@ -235,7 +263,7 @@ class LandingBuilderTest extends TestCase
 
         $this->actingAs($user);
 
-        Livewire::test(EditService::class, ['record' => $landing->id])
+        Livewire::test(EditLandingPage::class, ['record' => $landing->id])
             ->set('data.template_key', LandingTemplateRegistry::CORPORATE_FILM)
             ->assertSet('data.sections.0.type', 'hero')
             ->assertSet('data.sections.2.data.title', 'Các sản phẩm tiêu biểu');
@@ -247,7 +275,7 @@ class LandingBuilderTest extends TestCase
             ]],
         ]);
 
-        Livewire::test(EditService::class, ['record' => $landing->id])
+        Livewire::test(EditLandingPage::class, ['record' => $landing->id])
             ->set('data.template_key', LandingTemplateRegistry::EVENT_MEDIA)
             ->assertSet('data.sections', fn (mixed $sections): bool => str_contains(
                 json_encode($sections, JSON_UNESCAPED_UNICODE),
@@ -255,9 +283,9 @@ class LandingBuilderTest extends TestCase
             ));
     }
 
-    private function createBuilderLanding(Media $media): Landing
+    private function createBuilderLanding(Media $media): LandingPage
     {
-        return Landing::query()->create([
+        return LandingPage::query()->create([
             'title' => 'Landing builder kiểm thử '.uniqid(),
             'slug' => 'landing-builder-kiem-thu-'.uniqid(),
             'excerpt' => 'Nội dung landing builder kiểm thử.',

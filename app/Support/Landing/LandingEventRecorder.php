@@ -2,7 +2,7 @@
 
 namespace App\Support\Landing;
 
-use App\Models\Landing;
+use App\Models\LandingPage;
 use App\Models\LandingEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -24,9 +24,9 @@ class LandingEventRecorder
     ];
 
     /** @param array<string, mixed> $attributes */
-    public function record(Landing $landing, string $eventName, Request $request, array $attributes = []): ?LandingEvent
+    public function record(LandingPage $landingPage, string $eventName, Request $request, array $attributes = []): ?LandingEvent
     {
-        if (! $landing->tracking_enabled || ! in_array($eventName, self::EVENT_NAMES, true)) {
+        if (! $landingPage->tracking_enabled || ! in_array($eventName, self::EVENT_NAMES, true)) {
             return null;
         }
 
@@ -38,7 +38,7 @@ class LandingEventRecorder
             'project_id',
         ]);
 
-        return $landing->events()->create([
+        return $landingPage->events()->create([
             'event_name' => $eventName,
             'block_id' => $this->stringValue($attributes['block_id'] ?? $request->input('block_id'), 100),
             'visitor_id' => $this->stringValue($request->input('visitor_id'), 64),

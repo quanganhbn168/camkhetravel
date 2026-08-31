@@ -90,7 +90,8 @@ class Comment extends Model
             'post' => 'Bài viết',
             'project' => 'Dự án',
             'service' => 'Dịch vụ',
-            BniArticle::class => 'Tin BNI',
+            'bni-article' => 'Tin BNI',
+            'bni-gallery-item' => 'Ảnh sự kiện BNI',
         ];
     }
 }

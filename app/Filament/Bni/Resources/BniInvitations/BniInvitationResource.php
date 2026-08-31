@@ -3,9 +3,12 @@
 namespace App\Filament\Bni\Resources\BniInvitations;
 
 use App\Filament\Bni\Resources\BniInvitations\Pages\ManageBniInvitations;
+use App\Models\BniChapter;
 use App\Models\BniInvitation;
 use App\Support\Bni\BniPanelAccess;
+use App\Support\Localization\LocalizedUrl;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -50,14 +53,22 @@ class BniInvitationResource extends Resource
     {
         return $schema->components([
             Section::make('Thông tin khách mời')->icon('heroicon-o-user')->schema([
-                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->required()->searchable()->preload(),
-                Select::make('bni_chapter_id')->label('Chapter phụ trách')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                TextInput::make('guest_name')->label('Họ và tên')->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(function (?string $state, $get, $set): void {
-                    if (blank($get('slug')) && filled($state)) {
+                Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', function (Builder $query): Builder {
+                    if (BniPanelAccess::isChapterManager() && ! BniPanelAccess::canManageEverything()) {
+                        $eventId = BniChapter::query()->whereKey(BniPanelAccess::chapterId())->value('bni_event_id');
+
+                        return $query->whereKey($eventId ?? 0);
+                    }
+
+                    return $query;
+                })->required()->searchable()->preload(),
+                Select::make('bni_chapter_id')->label('Chapter phụ trách')->relationship('chapter', 'name')->required(fn (): bool => BniPanelAccess::canManageEverything())->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
+                TextInput::make('guest_name')->label('Tên người nhận (tuỳ chọn)')->helperText('Bỏ trống để hiển thị “Anh/Chị chủ doanh nghiệp”.')->maxLength(255)->live(onBlur: true)->afterStateUpdated(function (?string $state, $get, $set): void {
+                    if ((blank($get('slug')) || Str::startsWith((string) $get('slug'), 'thu-moi-')) && filled($state)) {
                         $set('slug', Str::slug($state));
                     }
                 })->columnSpanFull(),
-                TextInput::make('slug')->label('Slug thư mời')->required()->maxLength(255)->columnSpanFull(),
+                TextInput::make('slug')->label('Slug thư mời')->default(fn (): string => 'thu-moi-'.Str::lower(Str::random(8)))->required()->maxLength(255)->helperText('Tự sinh mã truy cập; có thể chỉnh lại khi cần.')->columnSpanFull(),
                 TextInput::make('company_name')->label('Doanh nghiệp'),
                 TextInput::make('position')->label('Chức danh'),
                 TextInput::make('email')->label('Email')->email(),
@@ -73,15 +84,20 @@ class BniInvitationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            TextColumn::make('guest_name')->label('Khách mời')->searchable()->sortable(),
+            TextColumn::make('guest_name')->label('Khách mời')->formatStateUsing(fn (?string $state): string => filled($state) ? $state : 'Anh/Chị chủ doanh nghiệp')->searchable()->sortable(),
             TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
             TextColumn::make('company_name')->label('Doanh nghiệp')->searchable()->toggleable(),
             TextColumn::make('phone')->label('Số điện thoại')->toggleable(),
+            TextColumn::make('slug')->label('Liên kết')->copyable()->copyMessage('Đã sao chép mã liên kết')->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('rsvp_status')->label('RSVP')->badge()->formatStateUsing(fn (string $state): string => BniInvitation::rsvpOptions()[$state] ?? $state),
             TextColumn::make('responded_at')->label('Phản hồi lúc')->dateTime('d/m/Y H:i')->toggleable(),
         ])->filters([
             SelectFilter::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions()),
         ])->defaultSort('created_at', 'desc')->recordActions([
+            Action::make('preview')
+                ->label('Xem thư mời')
+                ->icon('heroicon-o-arrow-top-right-on-square')
+                ->url(fn (BniInvitation $record): string => LocalizedUrl::route('bni.invitations.show', ['invitation' => $record]), true),
             EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::forceChapter($data)),
             DeleteAction::make(),
         ]);
