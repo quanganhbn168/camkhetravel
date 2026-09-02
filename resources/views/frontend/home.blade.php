@@ -17,7 +17,7 @@
                     <div class="hero-brand-glow absolute inset-0"></div>
                 @endif
                 @if ($slide['image_url'])
-                    <img class="absolute inset-0 h-full w-full object-cover" src="{{ $slide['image_url'] }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                    <img src="{{ $slide['image_url'] }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                 @endif
 
                 @if ($slide['video_url'])
@@ -49,8 +49,6 @@
                     @if ($slide['image_url'])
                         <div class="hero-image-overlay" aria-hidden="true"></div>
                     @endif
-                @else
-                    <div class="hero-slide__spacer" aria-hidden="true"></div>
                 @endif
             </article>
 
