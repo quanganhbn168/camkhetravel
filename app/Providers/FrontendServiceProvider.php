@@ -96,7 +96,6 @@ class FrontendServiceProvider extends ServiceProvider
         $media = Media::query()
             ->whereIn('id', array_filter([
                 $website->logo_media_id,
-                $website->favicon_media_id,
                 $website->seo_image_media_id,
                 $website->company_profile_media_id,
                 $website->about_image_media_id,
@@ -104,10 +103,6 @@ class FrontendServiceProvider extends ServiceProvider
             ]))
             ->get()
             ->keyBy('id');
-        $faviconMedia = $website->favicon_media_id
-            ? $media->get($website->favicon_media_id)
-            : null;
-
         View::share([
             'website' => $website,
             'websiteMedia' => $media,
@@ -121,7 +116,7 @@ class FrontendServiceProvider extends ServiceProvider
                     'sizes' => MediaUrl::iconSizes($media),
                 ],
             ]),
-            'faviconLinks' => app(FaviconService::class)->links($faviconMedia),
+            'faviconLinks' => app(FaviconService::class)->links(),
             'seo' => app(FrontendSeoBuilder::class)->default(),
         ]);
 

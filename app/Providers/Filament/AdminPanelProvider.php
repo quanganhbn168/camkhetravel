@@ -12,10 +12,10 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Navigation\NavigationGroup;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
@@ -42,19 +42,10 @@ class AdminPanelProvider extends PanelProvider
                 return MediaUrl::versioned(Media::query()->find($website->logo_media_id));
             })
             ->brandLogoHeight('2.5rem')
-            ->favicon(function (): ?string {
-                $website = app(WebsiteSettings::class);
-                $mediaId = $website->favicon_media_id;
-
-                return app(FaviconService::class)->primaryUrl(Media::query()->find($mediaId));
-            })
+            ->favicon(fn (): string => app(FaviconService::class)->primaryUrl())
             ->renderHook(PanelsRenderHook::HEAD_END, function (): string {
-                $website = app(WebsiteSettings::class);
-                $mediaId = $website->favicon_media_id;
-                $favicon = Media::query()->find($mediaId);
-
                 return view('filament.partials.favicon', [
-                    'faviconLinks' => app(FaviconService::class)->links($favicon),
+                    'faviconLinks' => app(FaviconService::class)->links(),
                 ])->render();
             })
             ->colors([

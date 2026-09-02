@@ -22,17 +22,12 @@ use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\ServiceController;
 use App\Http\Controllers\SeoController;
 use App\Http\Middleware\SetFrontendLocale;
-use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/favicon.ico', function (WebsiteSettings $website, FaviconService $favicons) {
-    $mediaId = $website->favicon_media_id;
-    $favicon = Media::query()->find($mediaId);
-
-    return response()->file($favicons->primaryPath($favicon), [
-        'Content-Type' => $favicons->primaryMimeType($favicon),
+Route::get('/favicon.ico', function (FaviconService $favicons) {
+    return response()->file($favicons->primaryPath(), [
+        'Content-Type' => $favicons->primaryMimeType(),
         'Cache-Control' => 'public, max-age=604800',
     ]);
 });

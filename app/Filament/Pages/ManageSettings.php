@@ -11,8 +11,8 @@ use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
 use App\Support\Localization\LanguageCatalog;
-use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Maps\GoogleMapsShareResolver;
+use App\Support\Maps\GoogleMapsUrl;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
@@ -24,8 +24,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -228,7 +228,7 @@ class ManageSettings extends Page
                         ->disk('public')
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
-                        ->helperText('Khi lưu, hệ thống lấy file này làm nguồn và tạo bộ favicon tĩnh trong public.'),
+                        ->helperText('Khi lưu, hệ thống chuyển đổi file upload và ghi đè trực tiếp bộ favicon cố định trong public.'),
                 ])
                 ->columns(2),
             Section::make('Liên hệ và mạng xã hội')

@@ -4,8 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
-use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Maps\GoogleMapsShareResolver;
+use App\Support\Maps\GoogleMapsUrl;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
@@ -86,7 +86,7 @@ class ManageWebsiteSettings extends Page
                                             ->disk('public')
                                             ->constrained()
                                             ->acceptedFileTypes(['image/*'])
-                                            ->helperText('Khi lưu, hệ thống lấy file này làm nguồn và tạo bộ favicon tĩnh trong public.'),
+                                            ->helperText('Khi lưu, hệ thống chuyển đổi file upload và ghi đè trực tiếp bộ favicon cố định trong public.'),
                                     ])
                                     ->columns(2),
                             ]),

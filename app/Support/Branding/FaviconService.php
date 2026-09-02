@@ -5,7 +5,6 @@ namespace App\Support\Branding;
 use Awcodes\Curator\Facades\Curator;
 use Awcodes\Curator\Facades\Glide;
 use Awcodes\Curator\Models\Media;
-use App\Support\Media\MediaUrl;
 use Illuminate\Support\Facades\Storage;
 use Imagick;
 use ImagickPixel;
@@ -13,8 +12,6 @@ use RuntimeException;
 
 final class FaviconService
 {
-    private const GENERATED_DIRECTORY = 'favicon-assets';
-
     /** @var array<string, int> */
     private const PNG_FILES = [
         'favicon-16x16.png' => 16,
@@ -27,21 +24,9 @@ final class FaviconService
     ];
 
     /** @return array<int, array{rel: string, type: string, href: string, sizes?: string, color?: string}> */
-    public function links(?Media $customMedia = null): array
+    public function links(): array
     {
-        if (! $customMedia || ! $this->hasGeneratedPack($customMedia)) {
-            $href = MediaUrl::versioned($customMedia) ?: asset('favicon.ico');
-            $type = $customMedia ? MediaUrl::mimeType($customMedia) : 'image/x-icon';
-
-            return [
-                ['rel' => 'icon', 'type' => $type, 'href' => $href],
-                ['rel' => 'shortcut icon', 'type' => $type, 'href' => $href],
-                ['rel' => 'apple-touch-icon', 'type' => $type, 'href' => $href],
-            ];
-        }
-
-        $directory = $this->activeDirectory($customMedia);
-        $asset = fn (string $filename): string => asset($directory.'/'.$filename);
+        $asset = fn (string $filename): string => $this->versionedAsset($filename);
 
         return [
             [
@@ -115,40 +100,24 @@ final class FaviconService
         ];
     }
 
-    public function primaryUrl(?Media $customMedia = null): string
+    public function primaryUrl(): string
     {
-        if ($customMedia && ! $this->hasGeneratedPack($customMedia)) {
-            return MediaUrl::versioned($customMedia) ?: asset('favicon.ico');
-        }
-
-        return asset($this->activeDirectory($customMedia).'/favicon.ico');
+        return $this->versionedAsset('favicon.ico');
     }
 
-    public function primaryPath(?Media $customMedia = null): string
+    public function primaryPath(): string
     {
-        if ($customMedia && ! $this->hasGeneratedPack($customMedia)) {
-            $storage = Storage::disk($customMedia->disk);
-
-            if ($storage->exists($customMedia->path)) {
-                return $storage->path($customMedia->path);
-            }
-        }
-
-        return public_path($this->activeDirectory($customMedia).'/favicon.ico');
+        return public_path('favicon.ico');
     }
 
-    public function primaryMimeType(?Media $customMedia = null): string
+    public function primaryMimeType(): string
     {
-        if ($customMedia && ! $this->hasGeneratedPack($customMedia)) {
-            return MediaUrl::mimeType($customMedia);
-        }
-
         return 'image/x-icon';
     }
 
     /**
-     * Turn the selected Curator upload into a complete static favicon pack.
-     * Curator remains the source file; no Curator URL is emitted to a page.
+     * Turn the selected Curator upload into the fixed favicon files in public.
+     * Curator remains the source file; every existing static favicon is overwritten.
      */
     public function sync(?Media $customMedia): void
     {
@@ -163,76 +132,29 @@ final class FaviconService
         }
 
         $source = (string) $storage->get($customMedia->path);
-        $directory = public_path(self::GENERATED_DIRECTORY);
+        $directory = public_path();
 
         $this->ensureDirectory($directory);
 
         $pngs = [];
+        $files = [];
 
         foreach (self::PNG_FILES as $filename => $size) {
             $pngs[$size] = $this->renderPng($source, strtolower($customMedia->ext), $size);
-            $this->writeFile($directory.DIRECTORY_SEPARATOR.$filename, $pngs[$size]);
+            $files[$filename] = $pngs[$size];
         }
 
-        $this->writeFile(
-            $directory.DIRECTORY_SEPARATOR.'favicon.svg',
-            $this->svgFromPng($pngs[512]),
-        );
-        $this->writeFile(
-            $directory.DIRECTORY_SEPARATOR.'favicon.ico',
-            $this->icoFromPngs([
-                16 => $pngs[16],
-                32 => $pngs[32],
-                48 => $pngs[48],
-            ]),
-        );
-        $this->writeFile(
-            $directory.DIRECTORY_SEPARATOR.'site.webmanifest',
-            $this->manifest(),
-        );
-        $this->writeFile(
-            $directory.DIRECTORY_SEPARATOR.'.source',
-            $this->sourceSignature($customMedia),
-        );
-    }
-
-    private function activeDirectory(?Media $customMedia): string
-    {
-        if ($customMedia && $this->hasGeneratedPack($customMedia)) {
-            return self::GENERATED_DIRECTORY;
-        }
-
-        return '';
-    }
-
-    private function hasGeneratedPack(Media $customMedia): bool
-    {
-        $directory = public_path(self::GENERATED_DIRECTORY);
-        $marker = $directory.DIRECTORY_SEPARATOR.'.source';
-
-        if (! is_file($marker) || trim((string) file_get_contents($marker)) !== $this->sourceSignature($customMedia)) {
-            return false;
-        }
-
-        foreach (array_keys(self::PNG_FILES) as $filename) {
-            if (! is_file($directory.DIRECTORY_SEPARATOR.$filename)) {
-                return false;
-            }
-        }
-
-        return is_file($directory.DIRECTORY_SEPARATOR.'favicon.svg')
-            && is_file($directory.DIRECTORY_SEPARATOR.'favicon.ico')
-            && is_file($directory.DIRECTORY_SEPARATOR.'site.webmanifest');
-    }
-
-    private function sourceSignature(Media $customMedia): string
-    {
-        return implode('|', [
-            (string) $customMedia->getKey(),
-            (string) ($customMedia->updated_at?->getTimestamp() ?? 0),
-            $customMedia->disk,
-            $customMedia->path,
+        $files['favicon.svg'] = $this->svgFromPng($pngs[512]);
+        $files['favicon.ico'] = $this->icoFromPngs([
+            16 => $pngs[16],
+            32 => $pngs[32],
+            48 => $pngs[48],
         ]);
+        $files['site.webmanifest'] = $this->manifest();
+
+        foreach ($files as $filename => $contents) {
+            $this->writeFile($directory.DIRECTORY_SEPARATOR.$filename, $contents);
+        }
     }
 
     private function renderPng(string $source, string $extension, int $size): string
@@ -256,8 +178,8 @@ final class FaviconService
             throw new RuntimeException('Để xử lý favicon SVG cần bật PHP Imagick, hoặc anh upload bản PNG vuông.');
         }
 
-        $image = new Imagick();
-        $canvas = new Imagick();
+        $image = new Imagick;
+        $canvas = new Imagick;
 
         try {
             $image->setBackgroundColor(new ImagickPixel('transparent'));
@@ -351,5 +273,15 @@ final class FaviconService
         if (file_put_contents($path, $contents, LOCK_EX) === false) {
             throw new RuntimeException("Không thể ghi file favicon tĩnh: {$path}");
         }
+
+        clearstatcache(true, $path);
+    }
+
+    private function versionedAsset(string $filename): string
+    {
+        $path = public_path($filename);
+        $version = is_file($path) ? hash_file('sha256', $path) : false;
+
+        return asset($filename).($version === false ? '' : '?v='.substr($version, 0, 12));
     }
 }

@@ -11,7 +11,7 @@ class SyncFaviconAssetsCommand extends Command
 {
     protected $signature = 'favicon:sync';
 
-    protected $description = 'Tạo bộ favicon tĩnh từ favicon đã chọn trong Curator.';
+    protected $description = 'Ghi đè bộ favicon cố định trong public từ favicon đã chọn trong Curator.';
 
     public function handle(WebsiteSettings $settings, FaviconService $favicons): int
     {
@@ -27,7 +27,7 @@ class SyncFaviconAssetsCommand extends Command
 
         $favicons->sync($media);
 
-        $this->components->info("Đã tạo bộ favicon tĩnh từ media Curator #{$media->getKey()}.");
+        $this->components->info("Đã ghi đè bộ favicon cố định từ media Curator #{$media->getKey()}.");
 
         return self::SUCCESS;
     }
