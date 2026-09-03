@@ -9,8 +9,11 @@ use App\Models\BniEventSlide;
 use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
 use App\Models\BniScheduleItem;
+use App\Models\Post;
+use App\Models\PostCategory;
 use App\Models\User;
 use App\Settings\BniInvitationSettings;
+use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -311,18 +314,17 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('"@type":"Event"', false);
     }
 
-    public function test_handover_news_and_gallery_images_are_rendered_from_database_records(): void
+    public function test_handover_news_tabs_use_post_categories_and_gallery_images_are_rendered_from_database_records(): void
     {
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
         $activity = $event->activities()->where('is_active', true)->firstOrFail();
-        BniArticle::query()->update(['is_featured' => false]);
-        $article = BniArticle::query()->create([
+        $legacyArticle = BniArticle::query()->create([
             'bni_event_id' => $event->id,
             'type' => 'event',
-            'title' => 'Tin BNI lấy trực tiếp từ database',
-            'slug' => 'tin-bni-database-'.str()->random(8),
-            'excerpt' => 'Nội dung kiểm thử nguồn dữ liệu BNI.',
+            'title' => 'Tin BNI cũ không còn dùng cho tab chuyên mục',
+            'slug' => 'tin-bni-cu-'.str()->random(8),
+            'excerpt' => 'Bài thuộc nguồn BNI riêng.',
             'body' => '<p>Nội dung kiểm thử.</p>',
             'status' => 'published',
             'is_featured' => true,
@@ -342,6 +344,30 @@ class BniExperienceRoutesTest extends TestCase
             'ext' => 'jpg',
             'title' => 'Ảnh BNI từ database',
         ]);
+        PostCategory::query()->update(['is_active' => false]);
+        $category = PostCategory::query()->create([
+            'name' => 'Chuyên mục sự kiện kiểm thử',
+            'slug' => 'chuyen-muc-su-kien-'.str()->random(8),
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+        $emptyCategory = PostCategory::query()->create([
+            'name' => 'Chuyên mục chưa có bài xuất bản',
+            'slug' => 'chuyen-muc-trong-'.str()->random(8),
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+        $post = Post::query()->create([
+            'curator_media_id' => $media->id,
+            'title' => 'Bài viết lấy từ chuyên mục Post',
+            'slug' => 'bai-viet-chuyen-muc-'.str()->random(8),
+            'excerpt' => 'Nội dung kiểm thử nguồn Post và PostCategory.',
+            'body' => '<p>Nội dung bài viết.</p>',
+            'status' => 'published',
+            'is_featured' => true,
+            'published_at' => now(),
+        ]);
+        $post->categories()->attach($category);
         $gallery = BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
             'bni_activity_id' => $activity->id,
@@ -356,7 +382,14 @@ class BniExperienceRoutesTest extends TestCase
 
         $this->get(route('bni.handover'))
             ->assertOk()
-            ->assertSee($article->title)
+            ->assertSee($category->name)
+            ->assertSee("@click=\"newsTab = 'post-category-{$category->id}'\"", false)
+            ->assertSee($post->title)
+            ->assertSee(LocalizedUrl::post($post), false)
+            ->assertDontSee($emptyCategory->name)
+            ->assertDontSee($legacyArticle->title)
+            ->assertDontSee('>Tin sự kiện</button>', false)
+            ->assertDontSee('>Tin các chapter</button>', false)
             ->assertSee($activity->title)
             ->assertSee($gallery->title)
             ->assertSee($path, false);

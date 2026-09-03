@@ -6,6 +6,8 @@ use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
+use App\Models\Post;
+use App\Models\PostCategory;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use Illuminate\Support\Collection;
@@ -58,15 +60,7 @@ class BniExperienceService
         if ($registrationUrl === '' || $registrationUrl === '#dang-ky') {
             $registrationUrl = LocalizedUrl::route('bni.registrations.create');
         }
-        $articles = BniArticle::query()
-            ->published()
-            ->with(['chapter', 'coverMedia'])
-            ->whereIn('type', ['event', 'chapter'])
-            ->when($event, fn ($query) => $query->where(fn ($query) => $query->where('bni_event_id', $event->id)->orWhereNull('bni_event_id')))
-            ->orderByDesc('is_featured')
-            ->latest('published_at')
-            ->limit(4)
-            ->get();
+        $newsCategories = $this->newsCategories();
         $galleries = BniGalleryItem::query()
             ->published()
             ->with(['activity', 'event', 'media'])
@@ -131,7 +125,8 @@ class BniExperienceService
                 'image_url' => MediaUrl::versioned($activity->media),
                 'link_url' => $activity->link_url,
             ])->values() ?? collect(),
-            'articles' => $articles->map(fn (BniArticle $article): array => $this->articleCard($article)),
+            'newsCategories' => $newsCategories,
+            'newsInitialCategory' => $newsCategories->first()['key'] ?? null,
             'galleryGroups' => $galleryGroups,
             'galleryInitialGroup' => $galleryGroups->first()['key'] ?? null,
             'galleries' => $galleryCards,
@@ -269,6 +264,46 @@ class BniExperienceService
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
             ->first();
+    }
+
+    /**
+     * @return Collection<int, array{
+     *     key: string,
+     *     label: string,
+     *     posts: Collection<int, array<string, mixed>>
+     * }>
+     */
+    private function newsCategories(): Collection
+    {
+        return PostCategory::query()
+            ->where('is_active', true)
+            ->whereHas('posts', fn ($query) => $query->published())
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->map(function (PostCategory $category): array {
+                $posts = $category->posts()
+                    ->published()
+                    ->with('curatorMedia')
+                    ->orderByDesc('is_featured')
+                    ->latest('published_at')
+                    ->latest('posts.id')
+                    ->limit(4)
+                    ->get();
+
+                return [
+                    'key' => 'post-category-'.$category->getKey(),
+                    'label' => $category->name,
+                    'posts' => $posts->map(fn (Post $post): array => [
+                        'title' => $post->title,
+                        'excerpt' => Str::limit(trim(strip_tags((string) $post->excerpt)), 180),
+                        'published_at' => $post->published_at,
+                        'image_url' => MediaUrl::versioned($post->curatorMedia),
+                        'url' => LocalizedUrl::post($post),
+                    ])->values(),
+                ];
+            })
+            ->values();
     }
 
     /** @return Collection<int, array{number: int, label: string, items: Collection<int, array<string, mixed>>}> */

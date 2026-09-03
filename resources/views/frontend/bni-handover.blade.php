@@ -12,7 +12,7 @@
         $eventPosterUrl = $eventVideo['poster_url'];
         $chapterMedia = $chapters;
     @endphp
-    <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: 'event', galleryTab: @js($galleryInitialGroup) }">
+    <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: @js($newsInitialCategory), galleryTab: @js($galleryInitialGroup) }">
         <nav class="bni-handover-page-nav" aria-label="Điều hướng Lễ chuyển giao">
             <div class="site-shell bni-handover-page-nav__inner">
                 <a class="bni-handover-page-nav__brand" href="#tong-quan" aria-label="Về đầu trang Lễ chuyển giao">
@@ -236,17 +236,52 @@
 
         <section class="bni-section bni-news" id="tin-tuc-bni" aria-labelledby="bni-news-title">
             <div class="site-shell">
-                <div class="bni-news__heading"><div><h2 id="bni-news-title">Tin tức</h2><p class="bni-section-heading__description">Cập nhật từ sự kiện và các chapter.</p></div><div class="bni-tab-list" role="tablist"><button type="button" @click="newsTab = 'event'" :class="newsTab === 'event' && 'is-active'">Tin sự kiện</button><button type="button" @click="newsTab = 'chapter'" :class="newsTab === 'chapter' && 'is-active'">Tin các chapter</button></div></div>
-                <div class="bni-news-grid">
-                    @forelse ($articles as $article)
-                        <article class="bni-news-card {{ $loop->first ? 'bni-news-card--featured' : '' }}" x-show="newsTab === '{{ $article['type'] === 'chapter' ? 'chapter' : 'event' }}'" x-transition.opacity>
-                            @if ($article['image_url'])<img src="{{ $article['image_url'] }}" alt="" loading="lazy">@endif
-                            <div><p>{{ $article['chapter'] ?: ($article['type'] === 'chapter' ? 'Tin chapter' : 'Tin sự kiện') }}</p><h3><a href="{{ LocalizedUrl::route('bni.articles.show', ['article' => $article['slug']]) }}">{{ $article['title'] }}</a></h3>@if ($article['excerpt'])<span>{{ $article['excerpt'] }}</span>@endif @if ($article['published_at'])<time datetime="{{ $article['published_at']->toDateString() }}">{{ $article['published_at']->translatedFormat('d/m/Y') }}</time>@endif</div>
-                        </article>
-                    @empty
-                        <p class="bni-empty-copy">Tin tức sẽ hiển thị sau khi Ban tổ chức xuất bản từ panel BNI.</p>
-                    @endforelse
+                <div class="bni-news__heading">
+                    <div>
+                        <h2 id="bni-news-title">Tin tức</h2>
+                        <p class="bni-section-heading__description">Bài viết mới nhất được cập nhật theo từng chuyên mục.</p>
+                    </div>
+                    @if ($newsCategories->isNotEmpty())
+                        <div class="bni-tab-list" role="tablist" aria-label="Chuyên mục bài viết">
+                            @foreach ($newsCategories as $category)
+                                <button
+                                    type="button"
+                                    id="{{ $category['key'] }}-tab"
+                                    role="tab"
+                                    aria-controls="{{ $category['key'] }}-panel"
+                                    @click="newsTab = @js($category['key'])"
+                                    :aria-selected="newsTab === @js($category['key'])"
+                                    :class="newsTab === @js($category['key']) && 'is-active'"
+                                >{{ $category['label'] }}</button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
+                @forelse ($newsCategories as $category)
+                    <div
+                        class="bni-news-grid"
+                        id="{{ $category['key'] }}-panel"
+                        role="tabpanel"
+                        aria-labelledby="{{ $category['key'] }}-tab"
+                        x-show="newsTab === @js($category['key'])"
+                        x-cloak
+                        x-transition.opacity
+                    >
+                        @foreach ($category['posts'] as $post)
+                            <article class="bni-news-card {{ $loop->first ? 'bni-news-card--featured' : '' }}">
+                                @if ($post['image_url'])<img src="{{ $post['image_url'] }}" alt="{{ $post['title'] }}" loading="lazy">@endif
+                                <div>
+                                    <p>{{ $category['label'] }}</p>
+                                    <h3><a href="{{ $post['url'] }}">{{ $post['title'] }}</a></h3>
+                                    @if ($post['excerpt'])<span>{{ $post['excerpt'] }}</span>@endif
+                                    @if ($post['published_at'])<time datetime="{{ $post['published_at']->toDateString() }}">{{ $post['published_at']->translatedFormat('d/m/Y') }}</time>@endif
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                @empty
+                    <p class="bni-empty-copy">Tin tức sẽ hiển thị sau khi có bài viết đã xuất bản trong một chuyên mục đang hoạt động.</p>
+                @endforelse
             </div>
         </section>
 
