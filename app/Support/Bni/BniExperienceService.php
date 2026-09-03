@@ -54,6 +54,11 @@ class BniExperienceService
         }
 
         $videoPosterUrl = MediaUrl::versioned($event?->videoPosterMedia) ?: $heroImageUrl;
+        $registrationUrl = trim((string) $event?->registration_url);
+
+        if ($registrationUrl === '' || $registrationUrl === '#dang-ky') {
+            $registrationUrl = LocalizedUrl::route('bni.registrations.create');
+        }
         $articles = BniArticle::query()
             ->published()
             ->with(['chapter', 'coverMedia'])
@@ -101,7 +106,7 @@ class BniExperienceService
             ],
             'registration' => [
                 'label' => $event?->registration_label ?: 'Đăng ký ngay',
-                'url' => $event?->registration_url ?: '#dang-ky',
+                'url' => $registrationUrl,
             ],
             'chapters' => $chapters->map(fn ($chapter): array => [
                 'name' => $chapter->name,

@@ -36,6 +36,7 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('id="chapter-famous"', false)
             ->assertSee('Lịch trình sự kiện')
             ->assertSee('Đăng ký ngay')
+            ->assertSee(route('bni.registrations.create'), false)
             ->assertSee('Những hoạt động đặc biệt')
             ->assertSee('Thư viện ảnh');
     }
@@ -204,6 +205,35 @@ class BniExperienceRoutesTest extends TestCase
             'bni_event_id' => $event->id,
             'full_name' => 'Khách RSVP kiểm thử',
             'phone' => '0900000000',
+            'status' => 'pending',
+        ]);
+    }
+
+    public function test_the_handover_has_a_dedicated_registration_page_and_stores_bni_data(): void
+    {
+        $event = BniEvent::query()->where('slug', 'le-chuyen-giao-bni')->firstOrFail();
+        $chapter = $event->chapters()->where('is_active', true)->firstOrFail();
+
+        $this->get(route('bni.registrations.create'))
+            ->assertOk()
+            ->assertSee('id="bni-registration-main"', false)
+            ->assertSee('Đăng ký Lễ chuyển giao')
+            ->assertSee('name="bni_chapter_id"', false)
+            ->assertSee('action="'.route('bni.registrations.store').'"', false);
+
+        $this->post(route('bni.registrations.store'), [
+            'full_name' => 'Khách đăng ký BNI',
+            'phone' => '0912345678',
+            'email' => 'dangky-bni@example.test',
+            'bni_chapter_id' => $chapter->id,
+            'note' => 'Đăng ký trực tiếp từ trang BNI.',
+        ])->assertRedirect(route('bni.registrations.create'));
+
+        $this->assertDatabaseHas('bni_registrations', [
+            'bni_event_id' => $event->id,
+            'bni_chapter_id' => $chapter->id,
+            'full_name' => 'Khách đăng ký BNI',
+            'phone' => '0912345678',
             'status' => 'pending',
         ]);
     }

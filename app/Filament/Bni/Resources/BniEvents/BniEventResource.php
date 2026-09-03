@@ -175,9 +175,9 @@ class BniEventResource extends Resource
                                 ->columnSpanFull(),
                             TextInput::make('registration_url')
                                 ->label('Liên kết đăng ký')
-                                ->default('#dang-ky')
+                                ->default('/le-chuyen-giao/dang-ky')
                                 ->maxLength(2048)
-                                ->helperText('Có thể dùng URL biểu mẫu bên ngoài hoặc #dang-ky để cuộn xuống khu liên hệ.')
+                                ->helperText('Mặc định dùng /le-chuyen-giao/dang-ky. Chỉ nhập URL khác khi sự kiện dùng biểu mẫu bên ngoài.')
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),

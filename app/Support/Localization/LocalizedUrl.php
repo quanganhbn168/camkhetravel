@@ -100,6 +100,8 @@ class LocalizedUrl
             'pricing.index' => 'bang-gia',
             'about' => 'gioi-thieu',
             'bni.handover' => 'le-chuyen-giao',
+            'bni.registrations.create' => 'le-chuyen-giao/dang-ky',
+            'bni.registrations.store' => 'le-chuyen-giao/dang-ky',
             'bni.chapters.show' => 'le-chuyen-giao/chapter/'.($parameters['chapter'] ?? ''),
             'bni.pickleball' => 'le-chuyen-giao/pickleball',
             'bni.invitations.template' => 'le-chuyen-giao/thu-moi',

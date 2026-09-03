@@ -277,6 +277,6 @@
             </div>
         </section>
 
-        <section class="bni-contact-band" id="dang-ky" aria-labelledby="bni-contact-title"><div class="site-shell"><div><h2 id="bni-contact-title">Kết nối cùng ban tổ chức</h2><p>Anh/chị cần hỗ trợ hoặc đăng ký tham dự sự kiện? {{ $event?->venue ?: 'Thông tin địa điểm sẽ được cập nhật.' }}</p></div><div class="bni-contact-band__actions">@if ($event?->contact_phone)<a class="bni-button bni-button--red" href="tel:{{ preg_replace('/\s+/', '', $event->contact_phone) }}">{{ $event->contact_phone }}</a>@endif <a class="bni-button bni-button--dark" href="{{ LocalizedUrl::route('contact') }}">Gửi thông tin đăng ký</a></div></div></section>
+        <section class="bni-contact-band" id="dang-ky" aria-labelledby="bni-contact-title"><div class="site-shell"><div><h2 id="bni-contact-title">Đăng ký cùng ban tổ chức</h2><p>Anh/chị đăng ký tham dự {{ $event?->title ?: 'sự kiện BNI' }} trực tiếp trên hệ thống BNI.</p></div><div class="bni-contact-band__actions">@if ($event?->contact_phone)<a class="bni-button bni-button--red" href="tel:{{ preg_replace('/\s+/', '', $event->contact_phone) }}">{{ $event->contact_phone }}</a>@endif <a class="bni-button bni-button--dark" href="{{ LocalizedUrl::route('bni.registrations.create') }}">Mở trang đăng ký</a></div></div></section>
     </div>
 @endsection

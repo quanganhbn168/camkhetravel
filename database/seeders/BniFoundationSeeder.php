@@ -37,7 +37,7 @@ class BniFoundationSeeder extends Seeder
             'address' => 'Thông tin địa điểm sẽ được Ban tổ chức cập nhật',
             'contact_name' => 'Ban tổ chức BNI',
             'registration_label' => 'Đăng ký ngay',
-            'registration_url' => '#dang-ky',
+            'registration_url' => '/le-chuyen-giao/dang-ky',
             'status' => 'published',
             'is_featured' => true,
         ]);
