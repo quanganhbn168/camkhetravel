@@ -64,7 +64,6 @@ class BniEventResource extends Resource
                 Tab::make('Thông tin chung')->schema([
                     Section::make('Nội dung sự kiện')->icon('heroicon-o-document-text')->schema([
                         TextInput::make('title')->label('Tên sự kiện')->required()->maxLength(255)->columnSpanFull(),
-                        TextInput::make('slug')->label('Slug')->required()->maxLength(255)->columnSpanFull(),
                         Select::make('type')->label('Loại')->options(['handover' => 'Lễ chuyển giao', 'pickleball' => 'Pickleball'])->required()->live()->columnSpanFull(),
                         TextInput::make('kicker')->label('Dòng nhãn')->maxLength(255)->columnSpanFull(),
                         Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required()->columnSpanFull(),
@@ -195,7 +194,6 @@ class BniEventResource extends Resource
                                 ->schema([
                                     TextInput::make('name')->label('Tên chapter')->required()->maxLength(255)->columnSpanFull(),
                                     TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->columnSpanFull(),
-                                    TextInput::make('slug')->label('Slug')->required()->maxLength(255)->columnSpanFull(),
                                     Textarea::make('description')->label('Giới thiệu')->rows(3)->columnSpanFull(),
                                     SpatieMediaLibraryFileUpload::make('logo')
                                         ->label('Logo')

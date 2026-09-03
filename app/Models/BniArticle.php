@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesBniSlug;
 use App\Traits\HasBniMedia;
 use App\Traits\HasComments;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +14,7 @@ use Spatie\MediaLibrary\HasMedia;
 
 class BniArticle extends Model implements HasMedia
 {
+    use GeneratesBniSlug;
     use HasBniMedia;
     use HasComments;
 
@@ -63,6 +65,11 @@ class BniArticle extends Model implements HasMedia
     {
         return $query->where('status', 'published')
             ->where(fn (Builder $query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()));
+    }
+
+    protected function bniSlugSource(): string
+    {
+        return (string) $this->title;
     }
 
     protected function bniImageCollections(): array

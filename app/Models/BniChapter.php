@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesBniSlug;
 use App\Traits\HasBniMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +11,7 @@ use Spatie\MediaLibrary\HasMedia;
 
 class BniChapter extends Model implements HasMedia
 {
+    use GeneratesBniSlug;
     use HasBniMedia;
 
     protected $guarded = [];
@@ -39,6 +41,11 @@ class BniChapter extends Model implements HasMedia
     public function invitations(): HasMany
     {
         return $this->hasMany(BniInvitation::class);
+    }
+
+    protected function bniSlugSource(): string
+    {
+        return (string) $this->name;
     }
 
     protected function bniImageCollections(): array

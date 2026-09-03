@@ -27,7 +27,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class BniArticleResource extends Resource
 {
@@ -69,12 +68,7 @@ class BniArticleResource extends Resource
         return $schema->components([
             Group::make([
                 Section::make('Nội dung bài viết')->icon('heroicon-o-document-text')->schema([
-                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(function (?string $state, $get, $set): void {
-                        if (blank($get('slug')) && filled($state)) {
-                            $set('slug', Str::slug($state));
-                        }
-                    })->columnSpanFull(),
-                    TextInput::make('slug')->label('Slug')->required()->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh đại diện')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->columnSpanFull(),
                     Textarea::make('excerpt')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                     RichEditor::make('body')->label('Nội dung')->columnSpanFull(),

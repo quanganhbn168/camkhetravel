@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\GeneratesBniSlug;
 use App\Traits\HasBniMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,7 @@ use Spatie\MediaLibrary\HasMedia;
 
 class BniEvent extends Model implements HasMedia
 {
+    use GeneratesBniSlug;
     use HasBniMedia;
 
     protected $guarded = [];
@@ -67,6 +69,11 @@ class BniEvent extends Model implements HasMedia
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published');
+    }
+
+    protected function bniSlugSource(): string
+    {
+        return (string) $this->title;
     }
 
     protected function bniImageCollections(): array

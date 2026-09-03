@@ -20,7 +20,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class BniArticleCategoryResource extends Resource
 {
@@ -67,18 +66,6 @@ class BniArticleCategoryResource extends Resource
                         ->label('Tên danh mục')
                         ->required()
                         ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(function (?string $state, $get, $set): void {
-                            if (blank($get('slug')) && filled($state)) {
-                                $set('slug', Str::slug($state));
-                            }
-                        })
-                        ->columnSpanFull(),
-                    TextInput::make('slug')
-                        ->label('Slug')
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->maxLength(255)
                         ->columnSpanFull(),
                     TextInput::make('sort_order')
                         ->label('Thứ tự tab')
@@ -103,7 +90,6 @@ class BniArticleCategoryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->label('Danh mục')->searchable()->sortable(),
-                TextColumn::make('slug')->label('Slug')->copyable(),
                 TextColumn::make('articles_count')->counts('articles')->label('Số bài')->sortable(),
                 TextColumn::make('sort_order')->label('Thứ tự tab')->sortable(),
                 IconColumn::make('is_active')->label('Hiển thị')->boolean(),

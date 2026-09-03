@@ -20,6 +20,7 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString('extends CreateBniRecord', $source);
         $this->assertStringContainsString('extends EditBniRecord', $source);
         $this->assertStringContainsString('->slideOver()', $source);
+        $this->assertStringNotContainsString("TextInput::make('slug')", $source);
         $this->assertSame(100, BniMediaService::WEBP_QUALITY);
     }
 }
