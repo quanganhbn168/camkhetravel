@@ -104,9 +104,11 @@ class ManageSettings extends Page
             'page_intro' => $about->page_intro,
             'story_title' => $about->story_title,
             'story' => $about->story,
+            'story_image_media_id' => $about->story_image_media_id,
             'video_source' => $about->video_source,
             'video_youtube_url' => $about->video_youtube_url,
             'video_media_id' => $about->video_media_id,
+            'video_poster_media_id' => $about->video_poster_media_id,
             'history' => $about->history,
             'history_title' => $about->history_title,
             'history_description' => $about->history_description,
@@ -114,10 +116,17 @@ class ManageSettings extends Page
             'mission' => $about->mission,
             'vision' => $about->vision,
             'core_values' => $about->core_values,
+            'core_values_image_media_id' => $about->core_values_image_media_id,
             'principles_title' => $about->principles_title,
             'services_title' => $about->services_title,
             'services_link_label' => $about->services_link_label,
             'stats_title' => $about->stats_title,
+            'team_title' => $about->team_title,
+            'team_description' => $about->team_description,
+            'team_image_media_id' => $about->team_image_media_id,
+            'office_title' => $about->office_title,
+            'office_description' => $about->office_description,
+            'office_image_media_id' => $about->office_image_media_id,
             'cta_title' => $about->cta_title,
             'cta_button_label' => $about->cta_button_label,
             'color_primary' => $design->color_primary,
@@ -447,6 +456,43 @@ class ManageSettings extends Page
                 ->all())
                 ->contained(false)
                 ->columnSpanFull(),
+            Section::make('Hình ảnh riêng từng khu vực')
+                ->icon(Heroicon::OutlinedPhoto)
+                ->description('Mỗi khu vực dùng một ảnh riêng. Chỉ khi để trống, frontend mới dùng ảnh giới thiệu chung làm fallback.')
+                ->schema([
+                    CuratorPicker::make('story_image_media_id')
+                        ->label('Ảnh Câu chuyện THT Media')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*'])
+                        ->columnSpanFull(),
+                    CuratorPicker::make('video_poster_media_id')
+                        ->label('Ảnh bìa video giới thiệu')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*'])
+                        ->columnSpanFull(),
+                    CuratorPicker::make('core_values_image_media_id')
+                        ->label('Ảnh Giá trị cốt lõi')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*'])
+                        ->columnSpanFull(),
+                    CuratorPicker::make('team_image_media_id')
+                        ->label('Ảnh Đội ngũ nhân sự')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*'])
+                        ->columnSpanFull(),
+                    CuratorPicker::make('office_image_media_id')
+                        ->label('Ảnh Văn phòng THT Media')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['image/*'])
+                        ->columnSpanFull(),
+                ])
+                ->columns(1)
+                ->columnSpanFull(),
             Section::make('Video giới thiệu')
                 ->icon(Heroicon::OutlinedVideoCamera)
                 ->description('Chọn một nguồn hiển thị sau phần Câu chuyện của chúng tôi. Video tải lên được quản lý trong thư viện Curator.')
@@ -583,6 +629,32 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
+                Section::make('Đội ngũ nhân sự')
+                    ->icon(Heroicon::OutlinedUserGroup)
+                    ->schema([
+                        TextInput::make("team_title.{$locale}")
+                            ->label('Tiêu đề khối')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Textarea::make("team_description.{$locale}")
+                            ->label('Mô tả')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
+                Section::make('Văn phòng THT Media')
+                    ->icon(Heroicon::OutlinedBuildingOffice2)
+                    ->schema([
+                        TextInput::make("office_title.{$locale}")
+                            ->label('Tiêu đề khối')
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Textarea::make("office_description.{$locale}")
+                            ->label('Mô tả')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
                 Section::make('Kêu gọi liên hệ')
                     ->icon(Heroicon::OutlinedPhone)
                     ->description('Nếu để trống, khối kêu gọi liên hệ sẽ không hiển thị trên trang giới thiệu.')
@@ -722,7 +794,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveAbout(AboutSettings $about, array $data): void
     {
-        foreach (['page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'cta_title', 'cta_button_label'] as $key) {
+        foreach (['page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'team_title', 'team_description', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
             $about->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
         }
 
@@ -733,6 +805,10 @@ class ManageSettings extends Page
         $about->video_media_id = filled($data['video_media_id'] ?? null)
             ? (int) $data['video_media_id']
             : null;
+
+        foreach (['story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id', 'team_image_media_id', 'office_image_media_id'] as $key) {
+            $about->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
+        }
 
         $about->save();
     }

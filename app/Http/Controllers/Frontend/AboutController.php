@@ -45,6 +45,10 @@ class AboutController extends Controller
             'services_title' => $this->translated($this->settings->services_title),
             'services_link_label' => $this->translated($this->settings->services_link_label),
             'stats_title' => $this->translated($this->settings->stats_title),
+            'team_title' => $this->translated($this->settings->team_title),
+            'team_description' => $this->translated($this->settings->team_description),
+            'office_title' => $this->translated($this->settings->office_title),
+            'office_description' => $this->translated($this->settings->office_description),
             'cta_title' => $this->translated($this->settings->cta_title),
             'cta_button_label' => $this->translated($this->settings->cta_button_label),
         ];
@@ -54,13 +58,30 @@ class AboutController extends Controller
 
         abort_if(! $hasManagedContent, 404);
 
-        $managedImageUrl = $this->website->about_image_media_id
-            ? Media::query()->find($this->website->about_image_media_id)?->url
-            : null;
+        $mediaIds = collect([
+            $this->website->about_image_media_id,
+            $this->settings->story_image_media_id,
+            $this->settings->video_poster_media_id,
+            $this->settings->core_values_image_media_id,
+            $this->settings->team_image_media_id,
+            $this->settings->office_image_media_id,
+        ])->filter(fn (mixed $id): bool => is_numeric($id))
+            ->map(fn (mixed $id): int => (int) $id)
+            ->unique()
+            ->values();
+        $media = $mediaIds->isEmpty()
+            ? collect()
+            : Media::query()->whereIn('id', $mediaIds)->get()->keyBy('id');
+        $fallbackImageUrl = $this->sectionImageUrl($media, $this->website->about_image_media_id);
         $about = $managed;
         $about['title'] = $managed['title'] ?: $this->website->company_name;
-        $about['image_url'] = $managedImageUrl;
-        $about['video'] = $this->introVideo($managedImageUrl);
+        $about['image_url'] = $fallbackImageUrl;
+        $about['story_image_url'] = $this->sectionImageUrl($media, $this->settings->story_image_media_id, $fallbackImageUrl);
+        $about['core_values_image_url'] = $this->sectionImageUrl($media, $this->settings->core_values_image_media_id, $fallbackImageUrl);
+        $about['team_image_url'] = $this->sectionImageUrl($media, $this->settings->team_image_media_id, $fallbackImageUrl);
+        $about['office_image_url'] = $this->sectionImageUrl($media, $this->settings->office_image_media_id, $fallbackImageUrl);
+        $videoPosterUrl = $this->sectionImageUrl($media, $this->settings->video_poster_media_id, $fallbackImageUrl);
+        $about['video'] = $this->introVideo($videoPosterUrl);
         $services = Service::query()
             ->published()
             ->with(['curatorMedia', 'slugs'])
@@ -143,6 +164,16 @@ class AboutController extends Controller
             ['value' => (string) Service::query()->published()->count(), 'label' => 'dịch vụ đang cung cấp'],
             ['value' => (string) Post::query()->published()->count(), 'label' => 'bài viết chuyên môn'],
         ]);
+    }
+
+    /** @param Collection<int, Media> $media */
+    private function sectionImageUrl(Collection $media, mixed $mediaId, ?string $fallback = null): ?string
+    {
+        $item = is_numeric($mediaId) ? $media->get((int) $mediaId) : null;
+
+        return $item && str_starts_with((string) $item->type, 'image/')
+            ? CuratorMediaUrl::versioned($item)
+            : $fallback;
     }
 
     /** @return array{source: string, url: string, poster_url: ?string}|null */

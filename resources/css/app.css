@@ -265,10 +265,16 @@
     .about-page-stats { background: var(--site-color-ink); color: white; }
     .about-page-stats .about-page-section-heading { max-width: 54rem; margin-inline: auto; text-align: center; }
     .about-page-stats .display-title { color: white; }
-    .about-stats__grid { display: grid; gap: 1rem; margin-top: 2.75rem; }
-    .about-stat { padding-top: 1.35rem; }
+    .about-stats__grid { display: grid; justify-items: center; gap: 1rem; margin-top: 2.75rem; text-align: center; }
+    .about-stat { display: grid; width: 100%; justify-items: center; padding-top: 1.35rem; text-align: center; }
     .about-stat strong { display: block; color: var(--site-color-primary); font-family: var(--font-display); font-size: var(--site-font-size-stat); font-weight: 800; line-height: 1; letter-spacing: -0.045em; }
-    .about-stat span { display: block; max-width: 14rem; margin-top: 0.8rem; color: rgb(226 232 240); font-size: var(--site-font-size-body); line-height: 1.6; }
+    .about-stat span { display: block; max-width: 14rem; margin: 0.8rem auto 0; color: rgb(226 232 240); font-size: var(--site-font-size-body); line-height: 1.6; text-align: center; }
+    .about-page-team { background: white; }
+    .about-page-office { background: color-mix(in srgb, var(--site-color-surface) 58%, white); }
+    .about-showcase-media { width: 100%; overflow: hidden; margin-top: 2.75rem; border-radius: 2rem 0.75rem 2rem 0.75rem; background: var(--site-color-ink); box-shadow: 0 1.8rem 4rem color-mix(in srgb, var(--site-color-ink) 16%, transparent); }
+    .about-showcase-media--team { aspect-ratio: 3 / 2; }
+    .about-showcase-media--office { aspect-ratio: 16 / 7; }
+    .about-showcase-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .about-page-cta { background: var(--site-color-primary); color: white; }
     .about-page-cta__shell { display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start; justify-content: space-between; padding-block: clamp(2.75rem, 7vw, 5rem); }
     .about-page-cta h2 { max-width: 42rem; font-family: var(--font-display); font-size: var(--site-font-size-h2); line-height: 1.12; letter-spacing: -0.035em; }

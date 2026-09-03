@@ -16,11 +16,15 @@ class AboutSettings extends Settings
 
     public array $story;
 
+    public ?int $story_image_media_id = null;
+
     public string $video_source = '';
 
     public string $video_youtube_url = '';
 
     public ?int $video_media_id = null;
+
+    public ?int $video_poster_media_id = null;
 
     public array $history;
 
@@ -36,6 +40,8 @@ class AboutSettings extends Settings
 
     public array $core_values;
 
+    public ?int $core_values_image_media_id = null;
+
     public array $principles_title = [];
 
     public array $services_title = [];
@@ -43,6 +49,18 @@ class AboutSettings extends Settings
     public array $services_link_label = [];
 
     public array $stats_title = [];
+
+    public array $team_title = [];
+
+    public array $team_description = [];
+
+    public ?int $team_image_media_id = null;
+
+    public array $office_title = [];
+
+    public array $office_description = [];
+
+    public ?int $office_image_media_id = null;
 
     public array $cta_title = [];
 

@@ -27,8 +27,8 @@
         <section class="about-page-story section-space">
             <div class="site-shell about-page-story__shell">
                 <div class="about-page-story__media" data-aos="fade-right">
-                    @if ($about['image_url'])
-                        <img src="{{ $about['image_url'] }}" alt="{{ $about['story_title'] ?: $about['title'] }}" loading="lazy">
+                    @if ($about['story_image_url'])
+                        <img src="{{ $about['story_image_url'] }}" alt="{{ $about['story_title'] ?: $about['title'] }}" loading="lazy">
                     @else
                         <span class="image-placeholder">THT</span>
                     @endif
@@ -139,8 +139,8 @@
                     @if ($about['core_values'])
                         <article class="about-principle-values" data-aos="fade-up" data-aos-delay="160">
                             <div class="about-principle-values__media">
-                                @if ($about['image_url'])
-                                    <img src="{{ $about['image_url'] }}" alt="Giá trị cốt lõi của THT Media" loading="lazy">
+                                @if ($about['core_values_image_url'])
+                                    <img src="{{ $about['core_values_image_url'] }}" alt="Giá trị cốt lõi của THT Media" loading="lazy">
                                 @else
                                     <span class="image-placeholder">THT</span>
                                 @endif
@@ -250,6 +250,50 @@
                         </article>
                     @endforeach
                 </div>
+            </div>
+        </section>
+    @endif
+
+    @if ($about['team_title'] || $about['team_description'] || $about['team_image_url'])
+        <section class="about-page-showcase about-page-team section-space">
+            <div class="site-shell">
+                @if ($about['team_title'] || $about['team_description'])
+                    <header class="about-page-section-heading" data-aos="fade-up">
+                        @if ($about['team_title'])
+                            <h2 class="display-title">{{ $about['team_title'] }}</h2>
+                        @endif
+                        @if ($about['team_description'])
+                            <p class="about-page-section-heading__intro">{{ $about['team_description'] }}</p>
+                        @endif
+                    </header>
+                @endif
+                @if ($about['team_image_url'])
+                    <figure class="about-showcase-media about-showcase-media--team" data-aos="fade-up" data-aos-delay="100">
+                        <img src="{{ $about['team_image_url'] }}" alt="{{ $about['team_title'] ?: $about['title'] }}" loading="lazy">
+                    </figure>
+                @endif
+            </div>
+        </section>
+    @endif
+
+    @if ($about['office_title'] || $about['office_description'] || $about['office_image_url'])
+        <section class="about-page-showcase about-page-office section-space">
+            <div class="site-shell">
+                @if ($about['office_title'] || $about['office_description'])
+                    <header class="about-page-section-heading" data-aos="fade-up">
+                        @if ($about['office_title'])
+                            <h2 class="display-title">{{ $about['office_title'] }}</h2>
+                        @endif
+                        @if ($about['office_description'])
+                            <p class="about-page-section-heading__intro">{{ $about['office_description'] }}</p>
+                        @endif
+                    </header>
+                @endif
+                @if ($about['office_image_url'])
+                    <figure class="about-showcase-media about-showcase-media--office" data-aos="fade-up" data-aos-delay="100">
+                        <img src="{{ $about['office_image_url'] }}" alt="{{ $about['office_title'] ?: $about['title'] }}" loading="lazy">
+                    </figure>
+                @endif
             </div>
         </section>
     @endif
