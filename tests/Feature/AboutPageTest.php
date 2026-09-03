@@ -27,6 +27,20 @@ class AboutPageTest extends TestCase
         $this->assertSame('Xóa toàn bộ ảnh trong gallery?', $action->getModalHeading());
     }
 
+    public function test_quick_contact_actions_use_brand_roles_instead_of_neutral_ink(): void
+    {
+        $website = app(WebsiteSettings::class);
+        $website->hotline = '0375 433 678';
+        $website->zalo_url = 'https://zalo.me/0375433678';
+        $website->save();
+
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('floating-action floating-action--phone', false)
+            ->assertSee('floating-action floating-action--zalo', false)
+            ->assertDontSee('floating-action bg-ink', false);
+    }
+
     public function test_about_page_uses_the_requested_story_video_services_and_principles_order(): void
     {
         $settings = app(AboutSettings::class);

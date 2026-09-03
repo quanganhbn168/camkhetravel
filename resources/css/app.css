@@ -20,10 +20,10 @@
 :root {
     --site-color-primary: #f68e1e;
     --site-color-primary-hover: #db7815;
-    --site-color-ink: #1f2b25;
+    --site-color-ink: #111827;
     --site-color-midnight: #247138;
-    --site-color-surface: #f6faee;
-    --site-color-muted: #e5f0d4;
+    --site-color-surface: #f8fafc;
+    --site-color-muted: #e5e7eb;
     --site-color-green-light: #a4cf59;
     --site-color-green-dark: #247138;
     --site-color-bni: #cf2031;
@@ -55,10 +55,10 @@
     --font-display: Inter, 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
     --color-primary: var(--site-color-primary, #f68e1e);
     --color-primary-hover: var(--site-color-primary-hover, #db7815);
-    --color-ink: var(--site-color-ink, #1f2b25);
+    --color-ink: var(--site-color-ink, #111827);
     --color-midnight: var(--site-color-midnight, #247138);
-    --color-mist: var(--site-color-surface, #f6faee);
-    --color-cloud: var(--site-color-muted, #e5f0d4);
+    --color-mist: var(--site-color-surface, #f8fafc);
+    --color-cloud: var(--site-color-muted, #e5e7eb);
     --color-accent: var(--site-color-primary, #f68e1e);
     --color-leaf-light: var(--site-color-green-light, #a4cf59);
     --color-leaf-dark: var(--site-color-green-dark, #247138);
@@ -196,7 +196,7 @@
     .contact-page__map { min-height: clamp(20rem, 42vw, 31rem); overflow: hidden; border: 1px solid rgb(226 232 240); background: var(--site-color-surface); }
     .contact-page__map iframe { display: block; width: 100%; height: 100%; min-height: clamp(20rem, 42vw, 31rem); border: 0; }
     .contact-page__map-empty { display: grid; min-height: clamp(20rem, 42vw, 31rem); place-items: center; padding: 2rem; color: rgb(100 116 139); font-size: 0.875rem; line-height: 1.7; text-align: center; }
-    .about-page-hero { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(135deg, color-mix(in srgb, var(--site-color-green-light) 38%, white), white 68%); }
+    .about-page-hero { position: relative; isolation: isolate; overflow: hidden; background: linear-gradient(135deg, color-mix(in srgb, var(--site-color-primary) 12%, white), white 68%); }
     .about-page-hero::before { position: absolute; z-index: -1; top: -12rem; right: -8rem; width: 30rem; height: 30rem; border-radius: 9999px; background: color-mix(in srgb, var(--site-color-primary) 16%, transparent); content: ''; filter: blur(1px); }
     .about-page-hero__shell { display: grid; align-items: center; gap: 2.5rem; padding-block: clamp(4rem, 9vw, 8rem); }
     .about-page-hero__content { max-width: 42rem; }
@@ -234,7 +234,7 @@
     .about-principle-values__content { align-self: center; padding: clamp(2rem, 5vw, 4.5rem); }
     .about-principle-values__content h3 { margin-top: 1.5rem; color: var(--site-color-ink); font-family: var(--font-display); font-size: var(--site-font-size-h2); line-height: 1.12; }
     .about-principle-values__content .article-prose { margin-top: 1.25rem; font-size: var(--site-font-size-body); line-height: 1.75; }
-    .about-page-history { background: linear-gradient(180deg, white, color-mix(in srgb, var(--site-color-green-light) 22%, white)); }
+    .about-page-history { background: linear-gradient(180deg, white, color-mix(in srgb, var(--site-color-primary) 7%, white)); }
     .about-history__tabs { display: flex; margin-top: 3rem; overflow-x: auto; border-bottom: 1px solid rgb(203 213 225); scrollbar-width: thin; }
     .about-history__tab { position: relative; display: grid; min-width: 7rem; flex: 1 0 7rem; justify-items: center; gap: 0.7rem; border: 0; padding: 0 1rem 1rem; background: transparent; color: rgb(100 116 139); cursor: pointer; }
     .about-history__tab:hover, .about-history__tab.is-active { color: var(--site-color-primary); }
@@ -928,9 +928,11 @@
     .footer-social { @apply grid size-9 place-items-center rounded-full border border-white/15 text-slate-300 transition hover:border-white hover:bg-white hover:text-ink; }
     .footer-social svg { @apply size-4; }
     .footer-social img { @apply size-5 object-contain; }
-    .floating-action { @apply grid size-11 place-items-center rounded-full text-white transition hover:-translate-y-0.5 hover:brightness-110; box-shadow: 0 12px 28px color-mix(in srgb, var(--site-color-ink, #1f2b25) 22%, transparent); }
+    .floating-action { @apply grid size-11 place-items-center rounded-full text-white transition hover:-translate-y-0.5 hover:brightness-110; }
     .floating-action svg { @apply size-4; }
     .floating-action img { @apply size-6 object-contain; }
+    .floating-action--phone { background: var(--site-color-green-dark, #247138); box-shadow: 0 12px 28px color-mix(in srgb, var(--site-color-green-dark, #247138) 30%, transparent); }
+    .floating-action--zalo { background: var(--site-color-primary, #f68e1e); box-shadow: 0 12px 28px color-mix(in srgb, var(--site-color-primary, #f68e1e) 30%, transparent); }
     .scroll-top { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 30; display: grid; width: 2.75rem; height: 2.75rem; place-items: center; border-radius: 9999px; background: var(--site-color-primary, #f68e1e); color: white; box-shadow: 0 12px 28px color-mix(in srgb, var(--site-color-primary, #f68e1e) 35%, transparent); opacity: 0; pointer-events: none; transform: translateY(0.75rem); transition: opacity 180ms ease, transform 180ms ease, background-color 180ms ease; }
     .scroll-top:hover { background: var(--site-color-primary-hover, #db7815); }
     .scroll-top.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }

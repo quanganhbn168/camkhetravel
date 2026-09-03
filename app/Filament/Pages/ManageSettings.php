@@ -677,17 +677,18 @@ class ManageSettings extends Page
     private function designSchema(): array
     {
         return [
-            Section::make('Màu semantic')
+            Section::make('Bảng màu frontend')
                 ->icon(Heroicon::OutlinedSwatch)
+                ->description('Cam là màu chủ đạo; xanh THT dùng cho điều hướng và điểm nhấn riêng. Màu chữ, nền sáng và nền phụ giữ trung tính để không nhuộm xanh toàn trang.')
                 ->schema([
-                    ColorPicker::make('color_primary')->label('color-primary')->required(),
-                    ColorPicker::make('color_primary_hover')->label('color-primary-hover')->required(),
-                    ColorPicker::make('color_ink')->label('color-ink')->required(),
-                    ColorPicker::make('color_midnight')->label('color-midnight')->required(),
-                    ColorPicker::make('color_surface')->label('color-surface')->required(),
-                    ColorPicker::make('color_muted')->label('color-muted')->required(),
-                    ColorPicker::make('color_green_light')->label('color-green-light')->required(),
-                    ColorPicker::make('color_green_dark')->label('color-green-dark')->required(),
+                    ColorPicker::make('color_primary')->label('Cam chủ đạo')->required(),
+                    ColorPicker::make('color_primary_hover')->label('Cam khi hover')->required(),
+                    ColorPicker::make('color_ink')->label('Chữ / nền đậm trung tính')->required(),
+                    ColorPicker::make('color_midnight')->label('Xanh thanh điều hướng')->required(),
+                    ColorPicker::make('color_surface')->label('Nền sáng trung tính')->required(),
+                    ColorPicker::make('color_muted')->label('Nền phụ trung tính')->required(),
+                    ColorPicker::make('color_green_light')->label('Xanh THT sáng')->required(),
+                    ColorPicker::make('color_green_dark')->label('Xanh THT đậm')->required(),
                 ])
                 ->columns(4),
             Section::make('Gradient thương hiệu')
