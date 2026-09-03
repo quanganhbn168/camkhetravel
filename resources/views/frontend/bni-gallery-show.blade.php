@@ -8,6 +8,8 @@
 @section('main_class', 'bni-experience-main overflow-x-clip')
 
 @section('content')
+    @include('frontend.partials.bni-navigation')
+
     <section class="bni-gallery-detail-hero">
         <div class="site-shell">
             <a class="bni-back-link" href="{{ LocalizedUrl::route('bni.gallery.index') }}">← Trở lại thư viện ảnh</a>

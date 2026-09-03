@@ -8,6 +8,8 @@
 
 @section('content')
     <div class="bni-plan">
+        @include('frontend.partials.bni-navigation')
+
         @if (session('success'))
             <div class="bni-plan-flash" role="status">{{ session('success') }}</div>
         @endif

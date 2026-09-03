@@ -53,16 +53,29 @@ class BniEventSlideResource extends Resource
         return $schema->components([
             Section::make('Slide đầu trang')
                 ->icon('heroicon-o-photo')
-                ->description('Mỗi bản ghi là một ảnh toàn chiều ngang trong Swiper đầu trang Lễ chuyển giao; không chèn chữ hoặc nút lên ảnh.')
+                ->description('Mỗi bản ghi là một slide toàn chiều ngang. Có thể chỉ dùng ảnh, tải video lên hoặc gắn URL YouTube/Vimeo; ảnh luôn là cover dự phòng.')
                 ->schema([
                     SpatieMediaLibraryFileUpload::make('image')
-                        ->label('Ảnh slide')
+                        ->label('Ảnh slide / ảnh cover video')
                         ->collection('image')
                         ->conversion(BniMediaService::WEBP_CONVERSION)
                         ->disk('public')
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->required()
+                        ->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('video')
+                        ->label('Video tải lên (không bắt buộc)')
+                        ->collection('video')
+                        ->disk('public')
+                        ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                        ->helperText('Nếu có video tải lên, slide sẽ tự phát không tiếng. Video tải lên được ưu tiên trước URL bên dưới.')
+                        ->columnSpanFull(),
+                    TextInput::make('video_url')
+                        ->label('Hoặc URL YouTube/Vimeo')
+                        ->url()
+                        ->maxLength(2048)
+                        ->helperText('Để trống cả hai trường video nếu slide này chỉ hiển thị ảnh.')
                         ->columnSpanFull(),
                     TextInput::make('title')
                         ->label('Tên gợi nhớ')
@@ -83,6 +96,10 @@ class BniEventSlideResource extends Resource
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->label('Ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
                 TextColumn::make('title')->label('Tên gợi nhớ')->placeholder('Chưa đặt tên')->searchable()->wrap(),
+                TextColumn::make('content_type')
+                    ->label('Kiểu nội dung')
+                    ->getStateUsing(fn (BniEventSlide $record): string => $record->hasMedia('video') ? 'Video tải lên' : ($record->video_url ? 'YouTube / Vimeo' : 'Ảnh'))
+                    ->badge(),
                 ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->defaultSort('sort_order')

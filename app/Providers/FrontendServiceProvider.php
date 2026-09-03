@@ -182,9 +182,6 @@ class FrontendServiceProvider extends ServiceProvider
             $view->with([
                 'headerLogoUrl' => MediaUrl::versioned($media->get($website->logo_media_id)),
                 'headerNavigation' => $headerNavigation,
-                'bniHeaderChapters' => request()->routeIs('bni.*')
-                    ? BniChapter::query()->where('is_active', true)->orderBy('sort_order')->limit(4)->get(['name', 'short_name'])
-                    : collect(),
             ]);
         });
     }

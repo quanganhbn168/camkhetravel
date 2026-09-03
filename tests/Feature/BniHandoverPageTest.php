@@ -43,9 +43,9 @@ class BniHandoverPageTest extends TestCase
             ->assertSee('bni-logo-red.svg')
             ->assertSee('LỄ CHUYỂN GIAO')
             ->assertSee('bni-handover-header-brand')
-            ->assertSee('bni-handover-header-chapters')
+            ->assertDontSee('bni-handover-header-chapters')
             ->assertSee('bni-handover-page-nav')
-            ->assertSee('id="video-su-kien"', false)
+            ->assertSee('id="video-gioi-thieu"', false)
             ->assertSee('bni-overview__featured-media')
             ->assertSee('bni-chapter-video-list')
             ->assertSee('bni-chapter-widgets__grid')
@@ -53,7 +53,7 @@ class BniHandoverPageTest extends TestCase
             ->assertSee('bni-countdown__cta')
             ->assertSee('Đăng ký ngay')
             ->assertSee('Chưa gắn ảnh trong CMS BNI')
-            ->assertSee('Chưa gắn video hoặc ảnh poster trong CMS BNI')
+            ->assertSee('Chưa gắn video hoặc ảnh cover trong mục Video giới thiệu')
             ->assertSee('border-t border-white/15 bg-midnight')
             ->assertDontSee('bni-handover-chapter-nav')
             ->assertSee('KINHBAC')
@@ -65,6 +65,7 @@ class BniHandoverPageTest extends TestCase
         $overviewMediaStart = strpos($body, '<aside class="bni-overview__video"');
         $overviewMediaEnd = strpos($body, '</aside>', $overviewMediaStart);
         $chapterListStart = strpos($body, 'class="bni-chapter-video-list"');
+        $introVideoStart = strpos($body, 'id="video-gioi-thieu"');
 
         $this->assertSame(4, substr_count($body, 'class="bni-chapter-video-item"'));
         $this->assertSame(0, substr_count($body, 'class="bni-chapter-video-item__link glightbox"'));
@@ -73,6 +74,7 @@ class BniHandoverPageTest extends TestCase
         $this->assertSame(4, substr_count($body, '>Xem chi tiết <b'));
         $this->assertGreaterThan($overviewMediaStart, $chapterListStart);
         $this->assertLessThan($overviewMediaEnd, $chapterListStart);
+        $this->assertGreaterThan($overviewMediaEnd, $introVideoStart);
         $this->assertStringNotContainsString('bni-chapter-showcases', $body);
         $this->assertStringNotContainsString('bni-chapter-video-item__label', $body);
         $this->assertFileExists(resource_path('images/bni/bni-kv-milk-red.webp'));

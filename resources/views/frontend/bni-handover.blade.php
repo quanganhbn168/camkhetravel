@@ -11,40 +11,37 @@
     @php
         $eventPosterUrl = $eventVideo['poster_url'];
         $chapterMedia = $chapters;
+        $featuredChapter = $chapterMedia->first(fn (array $chapter): bool => filled($chapter['video_media_url']) || filled($chapter['video_external_url']) || filled($chapter['cover_url']));
+        $featuredChapterVideoUrl = $featuredChapter ? ($featuredChapter['video_media_url'] ?: $featuredChapter['video_external_url']) : null;
+        $featuredChapterPosterUrl = $featuredChapter['cover_url'] ?? null;
+        $featuredChapterLightboxUrl = $featuredChapterVideoUrl ?: $featuredChapterPosterUrl;
     @endphp
     <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: @js($newsInitialCategory), galleryTab: @js($galleryInitialGroup) }">
-        <nav class="bni-handover-page-nav" aria-label="Điều hướng Lễ chuyển giao">
-            <div class="site-shell bni-handover-page-nav__inner">
-                <a class="bni-handover-page-nav__brand" href="#tong-quan" aria-label="Về đầu trang Lễ chuyển giao">
-                    <img src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
-                    <span>Lễ chuyển giao</span>
-                </a>
-                <div class="bni-handover-page-nav__links">
-                    <a href="#su-kien">Sự kiện</a>
-                    <a href="#video-su-kien">Video</a>
-                    @foreach ($chapterMedia as $chapter)
-                        <a href="#chapter-{{ $chapter['slug'] }}">{{ $chapter['short_name'] }}</a>
-                    @endforeach
-                    <a href="#lich-trinh">Lịch trình</a>
-                    <a href="#tin-tuc-bni">Tin tức</a>
-                    <a href="#thu-vien-anh">Thư viện</a>
-                </div>
-                <a class="bni-button bni-button--red bni-handover-page-nav__cta" href="{{ $registration['url'] }}">{{ $registration['label'] }}</a>
-            </div>
-        </nav>
+        @include('frontend.partials.bni-navigation')
 
-        <section class="bni-event-slider" id="tong-quan" aria-label="Slide hình ảnh Lễ chuyển giao BNI">
+        <section class="bni-event-slider" id="tong-quan" aria-label="Trình chiếu Lễ chuyển giao BNI">
             @if ($heroSlides->isNotEmpty())
                 <div class="swiper bni-event-slider__swiper" data-bni-hero-swiper>
                     <div class="swiper-wrapper">
                         @foreach ($heroSlides as $slide)
                             <article class="swiper-slide bni-event-slide">
                                 <figure class="bni-event-slide__visual">
-                                    <img
-                                        src="{{ $slide['image_url'] ?: Vite::asset('resources/images/bni/bni-kv-milk-red.webp') }}"
-                                        alt="{{ $slide['alt_text'] }}"
-                                        @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif
-                                    >
+                                    @php
+                                        $slideImageUrl = $slide['image_url'] ?: Vite::asset('resources/images/bni/bni-kv-milk-red.webp');
+                                    @endphp
+                                    @if ($slide['video_media_url'])
+                                        <video class="bni-event-slide__video" autoplay muted loop playsinline preload="metadata" poster="{{ $slideImageUrl }}" aria-label="{{ $slide['alt_text'] }}">
+                                            <source src="{{ $slide['video_media_url'] }}">
+                                            Trình duyệt của bạn chưa hỗ trợ phát video.
+                                        </video>
+                                    @elseif ($slide['video_external_url'])
+                                        <a class="bni-event-slide__video-link glightbox" href="{{ $slide['video_external_url'] }}" data-type="video" data-gallery="bni-hero-videos" data-title="{{ $slide['alt_text'] }}" target="_blank" rel="noopener" aria-label="Phát video: {{ $slide['alt_text'] }}">
+                                            <img src="{{ $slideImageUrl }}" alt="{{ $slide['alt_text'] }}" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                                            <span aria-hidden="true">▶</span>
+                                        </a>
+                                    @else
+                                        <img src="{{ $slideImageUrl }}" alt="{{ $slide['alt_text'] }}" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                                    @endif
                                 </figure>
                             </article>
                         @endforeach
@@ -53,7 +50,7 @@
                 @if ($heroSlides->count() > 1)
                     <div class="site-shell bni-event-slider__controls" aria-label="Điều khiển slide">
                         <button type="button" data-bni-hero-swiper-prev aria-label="Slide trước">←</button>
-                        <span>{{ $heroSlides->count() }} hình ảnh</span>
+                        <span>{{ $heroSlides->count() }} slide</span>
                         <button type="button" data-bni-hero-swiper-next aria-label="Slide tiếp theo">→</button>
                     </div>
                 @endif
@@ -116,28 +113,20 @@
                         @endforelse
                     </div>
                 </div>
-                <aside class="bni-overview__video" id="video-su-kien" aria-label="Video chuyển giao">
+                <aside class="bni-overview__video" aria-label="Video và hình ảnh từ các chapter">
                     <div class="bni-overview__featured-media">
-                        @if ($eventVideo['media_url'])
-                            <div class="bni-video-frame">
-                                <video controls preload="metadata" poster="{{ $eventPosterUrl }}">
-                                    <source src="{{ $eventVideo['media_url'] }}">
-                                    Trình duyệt của bạn chưa hỗ trợ phát video.
-                                </video>
-                            </div>
-                        @elseif ($eventVideo['external_url'])
-                            <a class="bni-video-card glightbox" href="{{ $eventVideo['external_url'] }}" data-type="video" data-gallery="bni-handover-video" data-title="{{ $event?->title ?: 'Lễ chuyển giao BNI' }}" target="_blank" rel="noopener" aria-label="Xem video chuyển giao">
-                                <img src="{{ $eventPosterUrl }}" alt="" aria-hidden="true">
-                                <span class="bni-video-card__play" aria-hidden="true">▶</span>
-                                <span>Phát video</span>
+                        @if ($featuredChapterLightboxUrl)
+                            <a class="bni-video-card glightbox" href="{{ $featuredChapterLightboxUrl }}" data-type="{{ $featuredChapterVideoUrl ? 'video' : 'image' }}" data-gallery="bni-chapter-videos" data-title="{{ $featuredChapter['name'] }}" target="_blank" rel="noopener" aria-label="{{ $featuredChapterVideoUrl ? 'Xem video' : 'Xem hình ảnh' }} {{ $featuredChapter['name'] }}">
+                                @if ($featuredChapterPosterUrl)
+                                    <img src="{{ $featuredChapterPosterUrl }}" alt="{{ $featuredChapter['name'] }}">
+                                @else
+                                    <span class="bni-database-media-placeholder"><strong>{{ $featuredChapter['short_name'] }}</strong><small>Chapter chưa gắn ảnh cover</small></span>
+                                @endif
+                                @if ($featuredChapterVideoUrl)<span class="bni-video-card__play" aria-hidden="true">▶</span>@endif
+                                <span>{{ $featuredChapterVideoUrl ? 'Phát video' : 'Xem hình ảnh' }} {{ $featuredChapter['short_name'] }}</span>
                             </a>
-                        @elseif ($eventPosterUrl)
-                            <figure class="bni-video-card bni-video-card--poster">
-                                <img src="{{ $eventPosterUrl }}" alt="Hình ảnh {{ $event?->title ?: 'Lễ chuyển giao BNI' }}">
-                                <figcaption>Hình ảnh sự kiện</figcaption>
-                            </figure>
                         @else
-                            <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder"><span>Video sự kiện</span><small>Chưa gắn video hoặc ảnh poster trong CMS BNI</small></div>
+                            <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder"><span>Video Chapter</span><small>Chưa gắn video hoặc ảnh cover trong quản trị Chapter</small></div>
                         @endif
                     </div>
 
@@ -168,6 +157,26 @@
                         @endforeach
                     </div>
                 </aside>
+            </div>
+        </section>
+
+        <section class="bni-section bni-intro-video" id="video-gioi-thieu" aria-label="Video giới thiệu Lễ chuyển giao">
+            <div class="site-shell bni-intro-video__shell">
+                <h2 class="sr-only">Video giới thiệu Lễ chuyển giao</h2>
+                @if ($eventVideo['media_url'] || $eventVideo['external_url'])
+                    <a class="bni-video-card glightbox" href="{{ $eventVideo['media_url'] ?: $eventVideo['external_url'] }}" data-type="video" data-gallery="bni-handover-intro-video" data-title="{{ $event?->title ?: 'Lễ chuyển giao BNI' }}" target="_blank" rel="noopener" aria-label="Xem video giới thiệu Lễ chuyển giao">
+                        @if ($eventPosterUrl)<img src="{{ $eventPosterUrl }}" alt="Ảnh cover video giới thiệu {{ $event?->title ?: 'Lễ chuyển giao BNI' }}">@else<span class="bni-database-media-placeholder"><strong>Video giới thiệu</strong><small>Chưa gắn ảnh cover</small></span>@endif
+                        <span class="bni-video-card__play" aria-hidden="true">▶</span>
+                        <span>Phát video giới thiệu</span>
+                    </a>
+                @elseif ($eventPosterUrl)
+                    <figure class="bni-video-card bni-video-card--poster">
+                        <img src="{{ $eventPosterUrl }}" alt="Ảnh cover video giới thiệu {{ $event?->title ?: 'Lễ chuyển giao BNI' }}">
+                        <figcaption>Video giới thiệu đang được cập nhật</figcaption>
+                    </figure>
+                @else
+                    <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder"><span>Video giới thiệu</span><small>Chưa gắn video hoặc ảnh cover trong mục Video giới thiệu</small></div>
+                @endif
             </div>
         </section>
 
@@ -229,6 +238,7 @@
                     <div>
                         <h2 id="bni-news-title">Tin tức</h2>
                         <p class="bni-section-heading__description">Bài viết mới nhất được cập nhật theo từng chuyên mục.</p>
+                        <a class="bni-news__all-link" href="{{ LocalizedUrl::route('bni.articles.index') }}">Xem tất cả tin tức <span aria-hidden="true">→</span></a>
                     </div>
                     @if ($newsCategories->isNotEmpty())
                         <div class="bni-tab-list" role="tablist" aria-label="Danh mục tin BNI">

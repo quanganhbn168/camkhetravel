@@ -29,4 +29,9 @@ class BniEventSlide extends Model implements HasMedia
     {
         return ['image'];
     }
+
+    protected function bniVideoCollections(): array
+    {
+        return ['video'];
+    }
 }

@@ -9,6 +9,7 @@ use App\Models\BniChapter;
 use App\Models\BniContact;
 use App\Models\BniEvent;
 use App\Models\BniEventSlide;
+use App\Models\BniEventVideo;
 use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
 use App\Models\BniScheduleDay;
@@ -27,7 +28,7 @@ class BniExperienceRoutesTest extends TestCase
 
     public function test_the_bni_handover_experience_uses_the_shared_layout_main_and_public_sections(): void
     {
-        $this->get(route('bni.handover'))
+        $response = $this->get(route('bni.handover'))
             ->assertOk()
             ->assertSee('id="bni-handover-main"', false)
             ->assertSee('id="bni-handover-overview-title"', false)
@@ -41,7 +42,76 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Đăng ký ngay')
             ->assertSee(route('bni.registrations.create'), false)
             ->assertSee('Những hoạt động đặc biệt')
-            ->assertSee('Thư viện ảnh');
+            ->assertSee('Thư viện ảnh')
+            ->assertSee('href="'.route('bni.articles.index').'"', false);
+
+        $body = $response->getContent();
+        $navStart = strpos($body, '<nav class="bni-handover-page-nav"');
+        $navEnd = strpos($body, '</nav>', $navStart);
+        $navigation = substr($body, $navStart, $navEnd - $navStart);
+
+        $this->assertStringContainsString('Video giới thiệu', $navigation);
+        $this->assertStringContainsString(route('bni.articles.index'), $navigation);
+        $this->assertStringNotContainsString('KINHBAC', $navigation);
+        $this->assertStringNotContainsString('KBG', $navigation);
+        $this->assertStringNotContainsString('IMPACT', $navigation);
+        $this->assertStringNotContainsString('FAMOUS', $navigation);
+    }
+
+    public function test_bni_news_registration_and_gallery_pages_share_the_handover_navigation(): void
+    {
+        $article = BniArticle::query()->published()->firstOrFail();
+
+        foreach ([
+            route('bni.articles.index'),
+            route('bni.articles.show', ['article' => $article]),
+            route('bni.registrations.create'),
+            route('bni.gallery.index'),
+        ] as $url) {
+            $this->get($url)
+                ->assertOk()
+                ->assertSee('class="bni-handover-page-nav"', false)
+                ->assertSee('href="'.route('bni.articles.index').'"', false)
+                ->assertSee('href="'.route('bni.gallery.index').'"', false)
+                ->assertSee('href="'.route('bni.registrations.create').'"', false);
+        }
+    }
+
+    public function test_bni_news_index_only_lists_published_handover_news_and_filters_by_category(): void
+    {
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $category = BniArticleCategory::query()->create([
+            'name' => 'Danh mục kiểm thử',
+            'slug' => 'danh-muc-kiem-thu-'.str()->random(8),
+            'is_active' => true,
+            'sort_order' => 99,
+        ]);
+        $publishedArticle = BniArticle::query()->create([
+            'bni_event_id' => $event->id,
+            'type' => 'event',
+            'title' => 'Tin Lễ chuyển giao hiển thị',
+            'slug' => 'tin-le-chuyen-giao-hien-thi-'.str()->random(8),
+            'body' => '<p>Nội dung kiểm thử.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $draftArticle = BniArticle::query()->create([
+            'bni_event_id' => $event->id,
+            'type' => 'event',
+            'title' => 'Tin nháp không được hiển thị',
+            'slug' => 'tin-nhap-khong-hien-thi-'.str()->random(8),
+            'body' => '<p>Nội dung nháp.</p>',
+            'status' => 'draft',
+        ]);
+        $publishedArticle->categories()->attach($category);
+        $draftArticle->categories()->attach($category);
+
+        $this->get(route('bni.articles.index', ['danh-muc' => $category->slug]))
+            ->assertOk()
+            ->assertSee('id="bni-articles-main"', false)
+            ->assertSee('Tin tức Lễ chuyển giao BNI')
+            ->assertSee($publishedArticle->title)
+            ->assertDontSee($draftArticle->title);
     }
 
     public function test_each_active_chapter_has_a_database_backed_public_detail_page(): void
@@ -169,6 +239,53 @@ class BniExperienceRoutesTest extends TestCase
         $this->assertStringNotContainsString('<h1', $slider);
         $this->assertStringNotContainsString('bni-experience-kicker', $slider);
         $this->assertStringNotContainsString('overlay', strtolower($slider));
+    }
+
+    public function test_a_handover_slide_can_render_an_external_video_with_its_image_as_poster(): void
+    {
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $event->slides()->update(['is_active' => false]);
+        $slide = BniEventSlide::query()->create([
+            'bni_event_id' => $event->id,
+            'alt_text' => 'Video đầu trang Lễ chuyển giao',
+            'video_url' => 'https://www.youtube.com/watch?v=video-dau-trang',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+        $image = $slide->addMedia(UploadedFile::fake()->image('video-cover.jpg', 1600, 900))
+            ->toMediaCollection('image', 'public');
+
+        $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('class="bni-event-slide__video-link glightbox"', false)
+            ->assertSee('href="https://www.youtube.com/watch?v=video-dau-trang"', false)
+            ->assertSee('src="'.$image->getUrl('webp'), false)
+            ->assertSee('Phát video: Video đầu trang Lễ chuyển giao');
+    }
+
+    public function test_overview_media_comes_from_chapters_while_the_intro_video_keeps_its_own_section(): void
+    {
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $chapter = $event->chapters()->where('is_active', true)->orderBy('sort_order')->firstOrFail();
+        $chapter->update(['video_url' => 'https://www.youtube.com/watch?v=chapter-video']);
+        BniEventVideo::query()->updateOrCreate(
+            ['bni_event_id' => $event->id],
+            ['external_url' => 'https://www.youtube.com/watch?v=intro-video'],
+        );
+
+        $body = $this->get(route('bni.handover'))->assertOk()->getContent();
+        $overviewStart = strpos($body, '<aside class="bni-overview__video"');
+        $overviewEnd = strpos($body, '</aside>', $overviewStart);
+        $overview = substr($body, $overviewStart, $overviewEnd - $overviewStart);
+        $introStart = strpos($body, '<section class="bni-section bni-intro-video"');
+        $introEnd = strpos($body, '</section>', $introStart);
+        $intro = substr($body, $introStart, $introEnd - $introStart);
+
+        $this->assertStringContainsString('chapter-video', $overview);
+        $this->assertStringNotContainsString('intro-video', $overview);
+        $this->assertStringContainsString('intro-video', $intro);
+        $this->assertStringNotContainsString('chapter-video', $intro);
     }
 
     public function test_a_new_handover_slide_is_bound_without_an_event_field_in_the_admin_form(): void

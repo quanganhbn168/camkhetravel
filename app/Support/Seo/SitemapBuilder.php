@@ -39,6 +39,8 @@ class SitemapBuilder
             ['posts.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.8],
             ['about', Url::CHANGE_FREQUENCY_MONTHLY, 0.6],
             ['bni.handover', Url::CHANGE_FREQUENCY_MONTHLY, 0.5],
+            ['bni.articles.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.6],
+            ['bni.gallery.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.5],
             ['bni.pickleball', Url::CHANGE_FREQUENCY_WEEKLY, 0.5],
             ['contact', Url::CHANGE_FREQUENCY_MONTHLY, 0.5],
         ] as [$route, $frequency, $priority]) {
@@ -128,5 +130,4 @@ class SitemapBuilder
 
         return $scheme.'://'.$host.$port.$path.$query;
     }
-
 }

@@ -25,10 +25,17 @@ class BniExperienceService
             ->where('is_active', true)
             ->map(function ($slide) use ($event): array {
                 $slideMedia = $slide->bniFirstMedia('image');
+                $externalVideoUrl = trim((string) $slide->video_url);
+
+                if ($externalVideoUrl !== '' && ! Str::startsWith($externalVideoUrl, ['http://', 'https://'])) {
+                    $externalVideoUrl = '';
+                }
 
                 return [
                     'image_url' => $slide->bniMediaUrl('image'),
                     'alt_text' => $slide->alt_text ?: $slideMedia?->getCustomProperty('alt') ?: $slideMedia?->name ?: $event?->title,
+                    'video_media_url' => $slide->bniMediaUrl('video', false),
+                    'video_external_url' => $externalVideoUrl ?: null,
                 ];
             })
             ->values() ?? collect();
@@ -37,6 +44,8 @@ class BniExperienceService
             $heroSlides = collect([[
                 'image_url' => $heroImageUrl,
                 'alt_text' => $event?->bniFirstMedia('hero')?->getCustomProperty('alt') ?: $event?->bniFirstMedia('hero')?->name ?: $event?->title ?: 'Key visual Lễ chuyển giao BNI',
+                'video_media_url' => null,
+                'video_external_url' => null,
             ]]);
         }
 

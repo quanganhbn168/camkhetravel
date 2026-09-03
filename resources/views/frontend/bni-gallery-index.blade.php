@@ -6,6 +6,8 @@
 @section('main_class', 'bni-experience-main overflow-x-clip')
 
 @section('content')
+    @include('frontend.partials.bni-navigation')
+
     <section class="bni-gallery-hero">
         <div class="site-shell bni-gallery-hero__content">
             <a class="bni-back-link" href="{{ LocalizedUrl::route('bni.handover') }}">← Website sự kiện BNI</a>

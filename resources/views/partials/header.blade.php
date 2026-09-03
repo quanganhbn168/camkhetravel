@@ -22,11 +22,6 @@
                 @if (request()->routeIs('bni.handover'))
                     <span class="bni-handover-header-brand hidden xl:grid">
                         <img class="bni-handover-header-logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
-                        <span class="bni-handover-header-chapters" aria-label="Các chapter BNI">
-                            @foreach ($bniHeaderChapters as $chapter)
-                                <span>{{ $chapter->short_name ?: $chapter->name }}</span>
-                            @endforeach
-                        </span>
                     </span>
                 @endif
             </a>
