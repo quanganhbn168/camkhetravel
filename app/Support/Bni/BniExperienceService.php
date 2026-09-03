@@ -21,7 +21,6 @@ class BniExperienceService
         $heroImageUrl = MediaUrl::versioned($event?->heroMedia);
         $heroSlides = $event?->slides
             ->where('is_active', true)
-            ->filter(fn ($slide): bool => filled(MediaUrl::versioned($slide->media)))
             ->map(function ($slide) use ($event): array {
                 $buttonUrl = trim((string) $slide->button_url);
 
@@ -41,14 +40,14 @@ class BniExperienceService
             })
             ->values() ?? collect();
 
-        if ($heroSlides->isEmpty() && $heroImageUrl) {
+        if ($heroSlides->isEmpty()) {
             $heroSlides = collect([[
                 'image_url' => $heroImageUrl,
                 'title' => null,
                 'description' => null,
                 'button_label' => null,
                 'button_url' => null,
-                'alt_text' => $event?->heroMedia?->alt ?: $event?->heroMedia?->title ?: $event?->title,
+                'alt_text' => $event?->heroMedia?->alt ?: $event?->heroMedia?->title ?: $event?->title ?: 'Key visual Lễ chuyển giao BNI',
                 'has_content' => false,
             ]]);
         }

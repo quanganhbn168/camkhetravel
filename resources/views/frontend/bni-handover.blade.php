@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @use(App\Support\Localization\LocalizedUrl)
+@use(Illuminate\Support\Facades\Vite)
 
 @section('body_class', 'bni-experience-page')
 @section('main_id', 'bni-handover-main')
@@ -40,7 +41,7 @@
                             <article class="swiper-slide bni-event-slide{{ $slide['has_content'] ? '' : ' bni-event-slide--image-only' }}">
                                 <figure class="bni-event-slide__visual">
                                     <img
-                                        src="{{ $slide['image_url'] }}"
+                                        src="{{ $slide['image_url'] ?: Vite::asset('resources/images/bni/bni-kv-milk-red.webp') }}"
                                         alt="{{ $slide['alt_text'] }}"
                                         @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif
                                     >

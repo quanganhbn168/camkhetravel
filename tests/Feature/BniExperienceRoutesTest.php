@@ -160,6 +160,26 @@ class BniExperienceRoutesTest extends TestCase
         $this->assertStringNotContainsString('overlay', strtolower($slider));
     }
 
+    public function test_handover_slider_uses_the_bni_key_visual_when_no_slide_image_exists(): void
+    {
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $event->update(['hero_media_id' => null]);
+        $event->slides()->update([
+            'media_id' => null,
+            'title' => null,
+            'description' => null,
+            'button_label' => null,
+            'button_url' => null,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('data-bni-hero-swiper', false)
+            ->assertSee('bni-event-slide--image-only', false)
+            ->assertSee('bni-kv-milk-red', false);
+    }
+
     public function test_the_handover_countdown_uses_the_configured_first_of_october_start(): void
     {
         $event = BniEvent::query()->where('slug', 'le-chuyen-giao-bni')->firstOrFail();
