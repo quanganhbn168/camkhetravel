@@ -75,7 +75,9 @@ class BniHandoverPageTest extends TestCase
         $this->assertIsString($css);
         $this->assertStringContainsString('--site-color-bni-white: #fff8f1;', $css);
         $this->assertStringContainsString("url('../images/bni/bni-kv-milk-red.webp')", $css);
-        $this->assertStringContainsString('body.bni-app-shell > .relative.z-40', $css);
+        $this->assertStringNotContainsString('body.bni-app-shell > .relative.z-40', $css);
+        $this->assertStringContainsString("url('../images/bni/handover-city-network.webp')", $css);
+        $this->assertStringContainsString("url('../images/bni/handover-network-wave.webp')", $css);
         $this->assertStringNotContainsString('background: var(--bni-black)', $css);
         $this->assertStringNotContainsString('color-mix(in srgb, var(--bni-black)', $css);
     }

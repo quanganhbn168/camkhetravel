@@ -358,7 +358,7 @@
     .bni-chapter-widget__content a { display: inline-flex; align-items: center; gap: 0.45rem; margin-top: auto; padding-top: 1.1rem; color: var(--bni-red); font-size: 0.7rem; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; }
     .bni-chapter-widget__content a b { transition: transform 180ms ease; }
     .bni-chapter-widget__content a:hover b, .bni-chapter-widget__content a:focus-visible b { transform: translate(0.15rem, -0.15rem); }
-    .bni-handover-overview-section { background-color: var(--bni-white); background-image: linear-gradient(90deg, color-mix(in srgb, var(--bni-white) 99%, transparent) 0%, color-mix(in srgb, var(--bni-white) 94%, transparent) 48%, color-mix(in srgb, var(--bni-white) 70%, transparent) 100%), url('../images/bni/bni-kv-milk-red.webp'); background-repeat: no-repeat; background-position: center, center; background-size: cover, cover; }
+    .bni-handover-overview-section { background-color: color-mix(in srgb, var(--bni-red) 5%, var(--bni-white)); background-image: linear-gradient(90deg, color-mix(in srgb, var(--bni-white) 98%, transparent) 0%, color-mix(in srgb, var(--bni-white) 92%, transparent) 42%, color-mix(in srgb, var(--bni-white) 72%, transparent) 100%), url('../images/bni/handover-city-network.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-repeat: no-repeat; background-position: center, right bottom, center; background-size: cover, min(78rem, 100vw) auto, cover; }
     .bni-section { padding: clamp(3.5rem, 6vw, 5.5rem) 0; }
     .bni-section-heading { display: grid; max-width: 44rem; gap: 0.8rem; margin-bottom: 2.5rem; }
     .bni-section-heading--center { margin-inline: auto; text-align: center; }
@@ -408,7 +408,7 @@
     .bni-chapter-widget__visual > .bni-database-media-placeholder { min-height: 100%; }
     .bni-video-card.bni-database-media-placeholder { margin: 0; }
     .bni-video-card.bni-database-media-placeholder::after { opacity: 0.08; }
-    .bni-schedule { background-color: var(--bni-white); background-image: linear-gradient(90deg, color-mix(in srgb, var(--bni-white) 99%, transparent) 0%, color-mix(in srgb, var(--bni-white) 93%, transparent) 50%, color-mix(in srgb, var(--bni-white) 66%, transparent) 100%), url('../images/bni/bni-kv-milk-red.webp'); background-repeat: no-repeat; background-position: center, center bottom; background-size: cover, cover; }
+    .bni-schedule { background-color: color-mix(in srgb, var(--bni-red) 5%, var(--bni-white)); background-image: linear-gradient(90deg, color-mix(in srgb, var(--bni-white) 98%, transparent) 0%, color-mix(in srgb, var(--bni-white) 92%, transparent) 42%, color-mix(in srgb, var(--bni-white) 72%, transparent) 100%), url('../images/bni/handover-network-wave.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-repeat: no-repeat; background-position: center, right bottom, center; background-size: cover, min(84rem, 108vw) auto, cover; }
     .bni-schedule__layout { display: grid; gap: 1.5rem; }
     .bni-schedule__main { min-width: 0; border: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); border-radius: var(--bni-radius-lg); background: var(--bni-white); padding: 1.25rem; box-shadow: var(--bni-shadow); }
     .bni-tab-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -1090,19 +1090,10 @@
 
 /* BNI mobile app shell */
 .bni-mobile-bar, .bni-pwa-install { display: none; }
-body.bni-app-shell > .relative.z-40, body.bni-app-shell > footer, body.bni-app-shell > div[aria-label='Liên hệ nhanh'], body.bni-app-shell > .scroll-top { display: none; }
-
 @media (max-width: 767px) {
     body.bni-app-shell {
         overflow-x: hidden;
         padding-bottom: calc(5.8rem + env(safe-area-inset-bottom));
-    }
-
-    body.bni-app-shell > .relative.z-40,
-    body.bni-app-shell > footer,
-    body.bni-app-shell > div[aria-label="Liên hệ nhanh"],
-    body.bni-app-shell > .scroll-top {
-        display: none;
     }
 
     .bni-mobile-bar {
@@ -1209,8 +1200,8 @@ body.bni-app-shell > .relative.z-40, body.bni-app-shell > footer, body.bni-app-s
     .bni-chapter-widget__visual { aspect-ratio: 16 / 7; }
     .bni-chapter-widget__content { padding: 1rem; }
     .bni-chapter-widget__content h3 { font-size: 1.1rem; }
-    .bni-handover-overview-section { background-image: linear-gradient(180deg, color-mix(in srgb, var(--bni-white) 98%, transparent), color-mix(in srgb, var(--bni-white) 76%, transparent)), url('../images/bni/bni-kv-milk-red.webp'); background-position: center, 72% bottom; background-size: cover, auto 100%; }
-    .bni-schedule { background-image: linear-gradient(180deg, color-mix(in srgb, var(--bni-white) 98%, transparent), color-mix(in srgb, var(--bni-white) 72%, transparent)), url('../images/bni/bni-kv-milk-red.webp'); background-position: center, 72% bottom; background-size: cover, auto 100%; }
+    .bni-handover-overview-section { background-image: linear-gradient(180deg, color-mix(in srgb, var(--bni-white) 97%, transparent), color-mix(in srgb, var(--bni-white) 88%, transparent)), url('../images/bni/handover-city-network.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-position: center, 70% bottom, center; background-size: cover, 170% auto, cover; }
+    .bni-schedule { background-image: linear-gradient(180deg, color-mix(in srgb, var(--bni-white) 97%, transparent), color-mix(in srgb, var(--bni-white) 88%, transparent)), url('../images/bni/handover-network-wave.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-position: center, 70% bottom, center; background-size: cover, 180% auto, cover; }
     .bni-overview { gap: 1.75rem; }
     .bni-purpose-grid { grid-template-columns: 1fr; gap: 0.6rem; margin-top: 1.5rem; }
     .bni-purpose-card { padding: 1rem; }
