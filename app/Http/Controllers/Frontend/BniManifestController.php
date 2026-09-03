@@ -25,7 +25,7 @@ final class BniManifestController
             'scope' => $scope,
             'display' => 'standalone',
             'orientation' => 'portrait-primary',
-            'background_color' => '#ffffff',
+            'background_color' => '#fff8f1',
             'theme_color' => '#cf2031',
             'icons' => [$icon(192), $icon(512)],
             'shortcuts' => [

@@ -34,6 +34,8 @@ class BniPwaTest extends TestCase
         $this->assertSame('/le-chuyen-giao', $manifest['id']);
         $this->assertSame('/le-chuyen-giao', $manifest['scope']);
         $this->assertSame('BNI', $manifest['short_name']);
+        $this->assertSame('#fff8f1', $manifest['background_color']);
+        $this->assertSame('#cf2031', $manifest['theme_color']);
         $this->assertFileExists(public_path('bni-icon-192x192.png'));
         $this->assertFileExists(public_path('bni-icon-512x512.png'));
         $this->assertStringContainsString("const CACHE_NAME = 'tht-bni-v2';", file_get_contents(public_path('bni-sw.js')));

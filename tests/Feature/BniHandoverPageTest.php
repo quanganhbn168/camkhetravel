@@ -65,9 +65,19 @@ class BniHandoverPageTest extends TestCase
         $this->assertLessThan($overviewMediaEnd, $chapterListStart);
         $this->assertStringNotContainsString('bni-chapter-showcases', $body);
         $this->assertStringNotContainsString('bni-chapter-video-item__label', $body);
-        $this->assertFileExists(resource_path('images/bni/handover-network-wave.webp'));
-        $this->assertFileExists(resource_path('images/bni/handover-city-network.webp'));
-        $this->assertFileExists(resource_path('images/bni/registration-organizer-background.webp'));
+        $this->assertFileExists(resource_path('images/bni/bni-kv-milk-red.webp'));
+    }
+
+    public function test_the_bni_frontend_palette_is_limited_to_milk_white_red_and_black_text(): void
+    {
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertIsString($css);
+        $this->assertStringContainsString('--site-color-bni-white: #fff8f1;', $css);
+        $this->assertStringContainsString("url('../images/bni/bni-kv-milk-red.webp')", $css);
+        $this->assertStringContainsString('body.bni-app-shell > .relative.z-40', $css);
+        $this->assertStringNotContainsString('background: var(--bni-black)', $css);
+        $this->assertStringNotContainsString('color-mix(in srgb, var(--bni-black)', $css);
     }
 
     public function test_an_authenticated_user_does_not_see_a_logout_button_in_the_handover_content(): void

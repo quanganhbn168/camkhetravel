@@ -37,7 +37,7 @@
     @endunless
 
     <main id="@yield('main_id', 'site-main')" class="@yield('main_class', 'overflow-x-clip')">
-        @if (session('success'))
+        @if (session('success') && ! $isBniExperience)
             <div class="fixed top-24 right-4 z-50 max-w-md rounded-2xl bg-emerald-700 px-5 py-4 text-sm font-medium text-white shadow-xl" role="status">{{ session('success') }}</div>
         @endif
 
