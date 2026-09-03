@@ -428,6 +428,28 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Mẫu thư mời BNI');
     }
 
+    public function test_the_invitation_table_prioritizes_a_single_copy_link_action(): void
+    {
+        Role::findOrCreate('bni_admin', 'web');
+        $user = User::factory()->create();
+        $user->assignRole('bni_admin');
+        $event = BniEvent::query()->firstOrCreate(
+            ['slug' => 'copy-link-test-event'],
+            ['title' => 'Sự kiện kiểm thử sao chép link'],
+        );
+        BniInvitation::query()->create([
+            'bni_event_id' => $event->id,
+            'guest_name' => 'Khách mời kiểm thử thao tác nhanh',
+        ]);
+
+        $this->actingAs($user)
+            ->get('/bni-admin/bni-invitations')
+            ->assertOk()
+            ->assertSee('Sao chép link')
+            ->assertSee('Thao tác khác')
+            ->assertSee('window.navigator.clipboard.writeText', false);
+    }
+
     public function test_a_chapter_manager_is_limited_to_chapter_workflows(): void
     {
         Role::findOrCreate('bni_chapter_manager', 'web');

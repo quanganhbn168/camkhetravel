@@ -8,6 +8,7 @@ use App\Support\Bni\BniPanelAccess;
 use App\Support\Localization\LocalizedUrl;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -20,6 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Js;
 
 class BniInvitationResource extends Resource
 {
@@ -81,28 +83,44 @@ class BniInvitationResource extends Resource
     {
         return $table->columns([
             TextColumn::make('guest_name')->label('Khách mời')->formatStateUsing(fn (?string $state): string => filled($state) ? $state : 'Anh/Chị chủ doanh nghiệp')->searchable()->sortable(),
-            TextColumn::make('invitation_code')->label('Mã thư mời')->copyable()->copyMessage('Đã sao chép mã thư mời')->searchable(),
+            TextColumn::make('invitation_code')->label('Mã thư mời')->searchable(),
             TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
             TextColumn::make('company_name')->label('Doanh nghiệp')->searchable()->toggleable(),
             TextColumn::make('phone')->label('Số điện thoại')->toggleable(),
-            TextColumn::make('public_url')
-                ->label('Liên kết thư mời')
-                ->getStateUsing(fn (BniInvitation $record): string => $record->publicUrl())
-                ->copyable()
-                ->copyMessage('Đã sao chép liên kết thư mời')
-                ->url(fn (BniInvitation $record): string => $record->publicUrl(), shouldOpenInNewTab: true)
-                ->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('rsvp_status')->label('RSVP')->badge()->formatStateUsing(fn (string $state): string => BniInvitation::rsvpOptions()[$state] ?? $state),
             TextColumn::make('responded_at')->label('Phản hồi lúc')->dateTime('d/m/Y H:i')->toggleable(),
         ])->filters([
             SelectFilter::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions()),
         ])->defaultSort('created_at', 'desc')->recordActions([
-            Action::make('preview')
-                ->label('Xem thư mời')
-                ->icon('heroicon-o-arrow-top-right-on-square')
-                ->url(fn (BniInvitation $record): string => LocalizedUrl::route('bni.invitations.show', ['invitation' => $record]), true),
-            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareInvitationData($data)),
-            DeleteAction::make(),
+            Action::make('copy_link')
+                ->label('Sao chép link')
+                ->icon('heroicon-o-clipboard-document')
+                ->color('primary')
+                ->button()
+                ->alpineClickHandler(function (BniInvitation $record): string {
+                    $url = Js::from($record->publicUrl());
+                    $message = Js::from('Đã sao chép link thư mời');
+
+                    return <<<JS
+                        window.navigator.clipboard.writeText({$url})
+                        \$tooltip({$message}, {
+                            theme: \$store.theme,
+                            timeout: 2000,
+                        })
+                        JS;
+                }),
+            ActionGroup::make([
+                Action::make('preview')
+                    ->label('Xem thư mời')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->url(fn (BniInvitation $record): string => LocalizedUrl::route('bni.invitations.show', ['invitation' => $record]), true),
+                EditAction::make()
+                    ->label('Sửa thông tin')
+                    ->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareInvitationData($data)),
+                DeleteAction::make()->label('Xóa thư mời'),
+            ])
+                ->label('Thao tác khác')
+                ->tooltip('Thao tác khác'),
         ]);
     }
 
