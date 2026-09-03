@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Bni\Resources\BniEventSlides\BniEventSlideResource;
 use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
@@ -163,6 +164,22 @@ class BniExperienceRoutesTest extends TestCase
         $this->assertStringNotContainsString('<h1', $slider);
         $this->assertStringNotContainsString('bni-experience-kicker', $slider);
         $this->assertStringNotContainsString('overlay', strtolower($slider));
+    }
+
+    public function test_a_new_handover_slide_is_bound_without_an_event_field_in_the_admin_form(): void
+    {
+        $event = BniEvent::query()
+            ->published()
+            ->where('type', 'handover')
+            ->orderByDesc('is_featured')
+            ->orderByDesc('starts_at')
+            ->firstOrFail();
+
+        $data = BniEventSlideResource::prepareCreateData([
+            'title' => 'Slide tự động thuộc trang Lễ chuyển giao',
+        ]);
+
+        $this->assertSame($event->getKey(), $data['bni_event_id']);
     }
 
     public function test_handover_slider_uses_the_bni_key_visual_when_no_slide_image_exists(): void

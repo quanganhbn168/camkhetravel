@@ -46,9 +46,14 @@ class BniAdminArchitectureTest extends TestCase
 
         $invitationSettings = File::get(app_path('Filament/Bni/Pages/ManageBniInvitationSettings.php'));
         $galleryResource = File::get(app_path('Filament/Bni/Resources/BniGalleryItems/BniGalleryItemResource.php'));
+        $slideResource = File::get(app_path('Filament/Bni/Resources/BniEventSlides/BniEventSlideResource.php'));
 
         $this->assertStringNotContainsString("TextInput::make('schedule_title')", $invitationSettings);
         $this->assertStringContainsString('Stack::make', $galleryResource);
         $this->assertStringContainsString('->contentGrid([', $galleryResource);
+        $this->assertStringNotContainsString("Select::make('bni_event_id')", $slideResource);
+        $this->assertStringNotContainsString("TextColumn::make('event.title')", $slideResource);
+        $this->assertStringNotContainsString("SelectFilter::make('bni_event_id')", $slideResource);
+        $this->assertStringContainsString('$data[\'bni_event_id\'] = $event->getKey();', $slideResource);
     }
 }
