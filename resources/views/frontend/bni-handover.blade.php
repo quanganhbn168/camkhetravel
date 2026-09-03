@@ -38,7 +38,7 @@
                 <div class="swiper bni-event-slider__swiper" data-bni-hero-swiper>
                     <div class="swiper-wrapper">
                         @foreach ($heroSlides as $slide)
-                            <article class="swiper-slide bni-event-slide{{ $slide['has_content'] ? '' : ' bni-event-slide--image-only' }}">
+                            <article class="swiper-slide bni-event-slide">
                                 <figure class="bni-event-slide__visual">
                                     <img
                                         src="{{ $slide['image_url'] ?: Vite::asset('resources/images/bni/bni-kv-milk-red.webp') }}"
@@ -46,19 +46,6 @@
                                         @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif
                                     >
                                 </figure>
-                                @if ($slide['has_content'])
-                                    <div class="bni-event-slide__content">
-                                        @if ($slide['title'])
-                                            <h2>{{ $slide['title'] }}</h2>
-                                        @endif
-                                        @if ($slide['description'])
-                                            <p>{{ $slide['description'] }}</p>
-                                        @endif
-                                        @if ($slide['button_label'] && $slide['button_url'])
-                                            <a class="bni-button bni-button--red" href="{{ $slide['button_url'] }}">{{ $slide['button_label'] }}</a>
-                                        @endif
-                                    </div>
-                                @endif
                             </article>
                         @endforeach
                     </div>

@@ -52,6 +52,9 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString('Stack::make', $galleryResource);
         $this->assertStringContainsString('->contentGrid([', $galleryResource);
         $this->assertStringNotContainsString("Select::make('bni_event_id')", $slideResource);
+        $this->assertStringNotContainsString("Textarea::make('description')", $slideResource);
+        $this->assertStringNotContainsString("TextInput::make('button_label')", $slideResource);
+        $this->assertStringNotContainsString("TextInput::make('button_url')", $slideResource);
         $this->assertStringNotContainsString("TextColumn::make('event.title')", $slideResource);
         $this->assertStringNotContainsString("SelectFilter::make('bni_event_id')", $slideResource);
         $this->assertStringContainsString('$data[\'bni_event_id\'] = $event->getKey();', $slideResource);

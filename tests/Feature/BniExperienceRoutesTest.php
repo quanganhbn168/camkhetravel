@@ -151,8 +151,10 @@ class BniExperienceRoutesTest extends TestCase
         $response = $this->get(route('bni.handover'))
             ->assertOk()
             ->assertSee('data-bni-hero-swiper', false)
-            ->assertSee('Nội dung slide lấy từ database')
-            ->assertSee('bni-event-slide--image-only', false)
+            ->assertSee('data-bni-hero-swiper-prev', false)
+            ->assertSee('data-bni-hero-swiper-next', false)
+            ->assertDontSee('Nội dung slide lấy từ database')
+            ->assertDontSee('Phần chữ nằm riêng, không phủ lên ảnh.')
             ->assertSee($optimizedMedia->getUrl('webp'), false);
 
         $body = $response->getContent();
@@ -160,7 +162,10 @@ class BniExperienceRoutesTest extends TestCase
         $sliderEnd = strpos($body, '</section>', $sliderStart);
         $slider = substr($body, $sliderStart, $sliderEnd - $sliderStart);
 
-        $this->assertStringContainsString('<h2>Nội dung slide lấy từ database</h2>', $slider);
+        $this->assertStringContainsString('class="swiper-slide bni-event-slide"', $slider);
+        $this->assertStringNotContainsString('bni-event-slide__content', $slider);
+        $this->assertStringNotContainsString('Xem lịch trình', $slider);
+        $this->assertStringNotContainsString('<h2', $slider);
         $this->assertStringNotContainsString('<h1', $slider);
         $this->assertStringNotContainsString('bni-experience-kicker', $slider);
         $this->assertStringNotContainsString('overlay', strtolower($slider));
@@ -200,7 +205,7 @@ class BniExperienceRoutesTest extends TestCase
         $this->get(route('bni.handover'))
             ->assertOk()
             ->assertSee('data-bni-hero-swiper', false)
-            ->assertSee('bni-event-slide--image-only', false)
+            ->assertSee('class="swiper-slide bni-event-slide"', false)
             ->assertSee('bni-kv-milk-red', false);
     }
 

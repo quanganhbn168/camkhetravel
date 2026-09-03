@@ -334,15 +334,9 @@
     .bni-pickleball-hero > img, .bni-article__header > img { position: absolute; z-index: -20; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.22; filter: grayscale(1) sepia(1) saturate(18) hue-rotate(315deg) contrast(1.08); }
     .bni-event-slider { overflow: hidden; border-bottom: 1px solid color-mix(in srgb, var(--bni-red) 14%, var(--bni-white)); background: color-mix(in srgb, var(--bni-red) 4%, var(--bni-white)); }
     .bni-event-slider__swiper { width: 100%; }
-    .swiper-slide.bni-event-slide { display: grid !important; height: auto; background: var(--bni-white); }
-    .bni-event-slide__visual { min-width: 0; margin: 0; aspect-ratio: 16 / 9; background: color-mix(in srgb, var(--bni-red) 7%, var(--bni-white)); }
-    .bni-event-slide__visual img { display: block; width: 100%; height: 100%; object-fit: contain; }
-    .bni-event-slide__content { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1rem; padding: clamp(1.5rem, 5vw, 4rem); background: var(--bni-white); color: var(--bni-black); }
-    .bni-event-slide__content h2 { margin: 0; font-family: var(--font-display); font-size: clamp(1.65rem, 3.2vw, 3rem); font-weight: 850; line-height: 1.08; letter-spacing: -0.035em; }
-    .bni-event-slide__content p { margin: 0; color: var(--bni-black); font-size: clamp(0.95rem, 1.3vw, 1.08rem); line-height: 1.75; }
-    .bni-event-slide__content .bni-button { margin-top: 0.35rem; }
-    .bni-event-slide--image-only .bni-event-slide__visual { aspect-ratio: auto; }
-    .bni-event-slide--image-only .bni-event-slide__visual img { height: auto; }
+    .swiper-slide.bni-event-slide { display: block !important; height: auto; background: var(--bni-white); }
+    .bni-event-slide__visual { min-width: 0; margin: 0; background: color-mix(in srgb, var(--bni-red) 7%, var(--bni-white)); }
+    .bni-event-slide__visual img { display: block; width: 100%; height: auto; }
     .bni-event-slider__controls { display: flex; min-height: 3.75rem; align-items: center; justify-content: flex-end; gap: 0.75rem; }
     .bni-event-slider__controls button { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid color-mix(in srgb, var(--bni-red) 24%, var(--bni-white)); border-radius: 9999px; background: var(--bni-white); color: var(--bni-red); font-size: 1rem; transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease; }
     .bni-event-slider__controls button:hover, .bni-event-slider__controls button:focus-visible { border-color: var(--bni-red); background: var(--bni-red); color: var(--bni-white); }
@@ -855,8 +849,6 @@
         .bni-chapter-card + .bni-chapter-card { border-left: 1px solid color-mix(in srgb, var(--bni-red) 16%, var(--bni-white)); }
         .bni-chapter-card:nth-child(n + 3) { border-top: 0; }
         .bni-chapter-widgets__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .bni-event-slide:not(.bni-event-slide--image-only) { grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr); }
-        .bni-event-slide:not(.bni-event-slide--image-only) .bni-event-slide__visual { min-height: clamp(28rem, 52vw, 44rem); aspect-ratio: auto; }
         .bni-overview { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: stretch; }
         .bni-overview__content { display: grid; height: 100%; align-content: start; }
         .bni-purpose-grid { grid-auto-rows: minmax(0, 1fr); }
@@ -1251,8 +1243,6 @@ body.bni-app-shell :is(.floating-action--zalo, .footer-social--zalo) img { filte
     .bni-section-heading, .bni-news__heading { gap: 1rem; margin-bottom: 1.65rem; }
     .bni-section-heading h2, .bni-overview h1, .bni-pickleball-register h2, .bni-contact-band h2, .bni-invitation h2, .bni-reactions h2, .bni-member-comments h2 { font-size: clamp(1.55rem, 8vw, 2.2rem); }
     .bni-section-heading__description, .bni-rich-copy, .bni-invitation-rich-copy { font-size: 0.94rem; line-height: 1.75; }
-    .bni-event-slide:not(.bni-event-slide--image-only) .bni-event-slide__visual { aspect-ratio: 16 / 10; }
-    .bni-event-slide__content { gap: 0.8rem; padding: 1.35rem 1rem 1.5rem; }
     .bni-event-slider__controls { min-height: 3.5rem; padding-inline: 1rem; }
     .bni-pickleball-hero__content { gap: 1.15rem; }
     .bni-pickleball-hero h1, .bni-article h1 { font-size: clamp(2.15rem, 10.5vw, 3.3rem); line-height: 1.03; }

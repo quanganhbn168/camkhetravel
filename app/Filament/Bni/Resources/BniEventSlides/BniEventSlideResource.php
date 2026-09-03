@@ -13,7 +13,6 @@ use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -54,7 +53,7 @@ class BniEventSlideResource extends Resource
         return $schema->components([
             Section::make('Slide đầu trang')
                 ->icon('heroicon-o-photo')
-                ->description('Mỗi bản ghi là một slide hiển thị ở đầu trang Lễ chuyển giao. Ảnh là bắt buộc; phần chữ và nút có thể để trống.')
+                ->description('Mỗi bản ghi là một ảnh toàn chiều ngang trong Swiper đầu trang Lễ chuyển giao; không chèn chữ hoặc nút lên ảnh.')
                 ->schema([
                     SpatieMediaLibraryFileUpload::make('image')
                         ->label('Ảnh slide')
@@ -65,13 +64,10 @@ class BniEventSlideResource extends Resource
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->required()
                         ->columnSpanFull(),
-                    TextInput::make('title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
-                    TextInput::make('button_label')->label('Nhãn nút')->maxLength(255)->columnSpanFull(),
-                    TextInput::make('button_url')
-                        ->label('Liên kết nút')
-                        ->maxLength(2048)
-                        ->helperText('Có thể dùng liên kết nội bộ như #lich-trinh hoặc URL đầy đủ.')
+                    TextInput::make('title')
+                        ->label('Tên gợi nhớ')
+                        ->helperText('Chỉ dùng để nhận biết trong quản trị, không hiển thị trên ảnh slide.')
+                        ->maxLength(255)
                         ->columnSpanFull(),
                     TextInput::make('alt_text')->label('Mô tả ảnh')->maxLength(255)->columnSpanFull(),
                     Toggle::make('is_active')->label('Hiển thị')->default(true)->columnSpanFull(),
@@ -86,7 +82,7 @@ class BniEventSlideResource extends Resource
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->label('Ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
-                TextColumn::make('title')->label('Tiêu đề')->placeholder('Slide chỉ có ảnh')->searchable()->wrap(),
+                TextColumn::make('title')->label('Tên gợi nhớ')->placeholder('Chưa đặt tên')->searchable()->wrap(),
                 ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->defaultSort('sort_order')
