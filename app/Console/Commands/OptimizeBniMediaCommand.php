@@ -8,56 +8,38 @@ use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniEventSlide;
 use App\Models\BniGalleryItem;
-use App\Support\Bni\BniMediaOptimizer;
+use App\Support\Bni\BniMediaService;
 use Illuminate\Console\Command;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class OptimizeBniMediaCommand extends Command
 {
     protected $signature = 'bni:optimize-media';
 
-    protected $description = 'Chuẩn hóa ảnh raster của slide, tin tức, chapter, hoạt động và thư viện BNI sang WebP';
+    protected $description = 'Tạo lại bản WebP chất lượng cao cho toàn bộ ảnh thuộc hệ thống BNI';
 
-    public function handle(BniMediaOptimizer $optimizer): int
+    public function handle(BniMediaService $mediaService): int
     {
         $converted = 0;
+        $modelTypes = collect([
+            BniEvent::class,
+            BniEventSlide::class,
+            BniChapter::class,
+            BniActivity::class,
+            BniArticle::class,
+            BniGalleryItem::class,
+        ])->map(fn (string $modelClass): string => (new $modelClass)->getMorphClass());
 
-        $targets = [
-            BniEvent::class => ['video_poster_media_id'],
-            BniEventSlide::class => ['media_id'],
-            BniChapter::class => ['logo_media_id', 'cover_media_id'],
-            BniActivity::class => ['media_id'],
-            BniArticle::class => ['cover_media_id'],
-            BniGalleryItem::class => ['media_id'],
-        ];
-
-        foreach ($targets as $modelClass => $attributes) {
-            $modelClass::query()->chunkById(100, function ($models) use ($attributes, $optimizer, &$converted): void {
-                foreach ($models as $model) {
-                    foreach ($attributes as $attribute) {
-                        $sourceId = (int) $model->getAttribute($attribute);
-
-                        if ($sourceId < 1) {
-                            continue;
-                        }
-
-                        $optimizedId = $optimizer->optimize($sourceId);
-
-                        if ($optimizedId === $sourceId) {
-                            continue;
-                        }
-
-                        $model->setAttribute($attribute, $optimizedId);
-                        $converted++;
-                    }
-
-                    if ($model->isDirty()) {
-                        $model->save();
-                    }
+        Media::query()
+            ->whereIn('model_type', $modelTypes)
+            ->orderBy('id')
+            ->chunkById(100, function ($mediaItems) use ($mediaService, &$converted): void {
+                foreach ($mediaItems as $media) {
+                    $converted += (int) $mediaService->regenerateWebp($media);
                 }
             });
-        }
 
-        $this->info("Đã chuẩn hóa {$converted} liên kết ảnh BNI sang WebP. Ảnh SVG/GIF/video và banner dùng chung với thư mời được giữ nguyên.");
+        $this->info("Đã tạo lại {$converted} bản WebP BNI ở chất lượng ".BniMediaService::WEBP_QUALITY.'. Ảnh gốc vẫn được giữ nguyên.');
 
         return self::SUCCESS;
     }

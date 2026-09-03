@@ -2,14 +2,17 @@
 
 namespace App\Filament\Bni\Resources\BniChapters;
 
-use App\Filament\Bni\Resources\BniChapters\Pages\ManageBniChapters;
+use App\Filament\Bni\Resources\BniChapters\Pages\CreateBniChapter;
+use App\Filament\Bni\Resources\BniChapters\Pages\EditBniChapter;
+use App\Filament\Bni\Resources\BniChapters\Pages\ListBniChapters;
 use App\Models\BniChapter;
+use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -19,6 +22,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class BniChapterResource extends Resource
 {
@@ -40,6 +44,16 @@ class BniChapterResource extends Resource
         return BniPanelAccess::canManageChapterContent();
     }
 
+    public static function canCreate(): bool
+    {
+        return BniPanelAccess::canManageEverything();
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return BniPanelAccess::canManageEverything();
+    }
+
     public static function getEloquentQuery(): Builder
     {
         return BniPanelAccess::scopeChapter(parent::getEloquentQuery(), 'id');
@@ -54,9 +68,9 @@ class BniChapterResource extends Resource
                 TextInput::make('slug')->label('Slug')->required()->maxLength(255)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 Select::make('bni_event_id')->label('Thuộc sự kiện')->relationship('event', 'title')->searchable()->preload()->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                CuratorPicker::make('logo_media_id')->label('Logo')->relationship('logoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                CuratorPicker::make('cover_media_id')->label('Ảnh cover')->relationship('coverMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                CuratorPicker::make('video_media_id')->label('Video chapter')->relationship('videoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('logo')->label('Logo')->collection('logo')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh cover')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('video')->label('Video chapter')->collection('video')->disk('public')->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
                 TextInput::make('video_url')->label('Hoặc URL video ngoài')->url()->maxLength(2048)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 Textarea::make('description')->label('Giới thiệu')->rows(3)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 TextInput::make('contact_name')->label('Đầu mối liên hệ trên thư mời')->helperText('Dữ liệu riêng của chapter; đây là người khách mời liên hệ khi cần hỗ trợ.')->columnSpanFull(),
@@ -76,12 +90,16 @@ class BniChapterResource extends Resource
             TextColumn::make('is_active')->label('Hiển thị')->badge()->formatStateUsing(fn (bool $state): string => $state ? 'Có' : 'Ẩn'),
         ])->defaultSort('sort_order')->recordActions([
             EditAction::make(),
-            DeleteAction::make()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
+            DeleteAction::make()->slideOver()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
         ]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniChapters::route('/')];
+        return [
+            'index' => ListBniChapters::route('/'),
+            'create' => CreateBniChapter::route('/create'),
+            'edit' => EditBniChapter::route('/{record}/edit'),
+        ];
     }
 }

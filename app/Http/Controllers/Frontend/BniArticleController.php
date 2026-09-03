@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\BniArticle;
 use App\Support\Localization\LocalizedUrl;
-use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\View\View;
 
@@ -20,14 +19,14 @@ class BniArticleController extends Controller
         $article->load([
             'chapter',
             'categories',
-            'coverMedia',
+            'media',
             'approvedComments' => fn ($query) => $query->with('user')->latest('approved_at'),
             'reactions',
         ]);
 
         return view('frontend.bni-article', [
             'article' => $article,
-            'imageUrl' => MediaUrl::versioned($article->coverMedia),
+            'imageUrl' => $article->bniMediaUrl('cover'),
             'reactionCounts' => $article->reactions->countBy('reaction'),
             'seo' => $this->seo->listing(
                 $article->title.' | BNI',

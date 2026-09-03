@@ -2,16 +2,19 @@
 
 namespace App\Filament\Bni\Resources\BniArticles;
 
-use App\Filament\Bni\Resources\BniArticles\Pages\ManageBniArticles;
+use App\Filament\Bni\Resources\BniArticles\Pages\CreateBniArticle;
+use App\Filament\Bni\Resources\BniArticles\Pages\EditBniArticle;
+use App\Filament\Bni\Resources\BniArticles\Pages\ListBniArticles;
 use App\Models\BniArticle;
+use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -63,7 +66,7 @@ class BniArticleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->columns(['lg' => 3])->components([
+        return $schema->components([
             Group::make([
                 Section::make('Nội dung bài viết')->icon('heroicon-o-document-text')->schema([
                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->live(onBlur: true)->afterStateUpdated(function (?string $state, $get, $set): void {
@@ -72,11 +75,11 @@ class BniArticleResource extends Resource
                         }
                     })->columnSpanFull(),
                     TextInput::make('slug')->label('Slug')->required()->maxLength(255)->columnSpanFull(),
-                    CuratorPicker::make('cover_media_id')->label('Ảnh đại diện')->relationship('coverMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh đại diện')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->columnSpanFull(),
                     Textarea::make('excerpt')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                     RichEditor::make('body')->label('Nội dung')->columnSpanFull(),
                 ])->columns(2),
-            ])->columnSpan(['lg' => 2]),
+            ])->columnSpanFull(),
             Section::make('Phân loại & xuất bản')->icon('heroicon-o-cog-6-tooth')->schema([
                 Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopeArticleEvents($query))->searchable()->preload()->columnSpanFull(),
                 Select::make('type')->label('Khu vực sử dụng')->options(['event' => 'Lễ chuyển giao', 'chapter' => 'Trang chapter', 'pickleball' => 'Pickleball'])->required()->default('event')->columnSpanFull(),
@@ -95,7 +98,7 @@ class BniArticleResource extends Resource
                 Select::make('bni_chapter_id')->label('Chapter')->relationship('chapter', 'name')->searchable()->preload()->visible(fn (): bool => BniPanelAccess::canManageEverything())->columnSpanFull(),
                 Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required()->default('draft')->columnSpanFull(),
                 Toggle::make('is_featured')->label('Tin nổi bật')->columnSpanFull(),
-            ])->columnSpan(['lg' => 1]),
+            ])->columnSpanFull(),
         ]);
     }
 
@@ -113,14 +116,18 @@ class BniArticleResource extends Resource
             SelectFilter::make('type')->label('Khu vực')->options(['event' => 'Lễ chuyển giao', 'chapter' => 'Trang chapter', 'pickleball' => 'Pickleball']),
             SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản']),
         ])->defaultSort('published_at', 'desc')->recordActions([
-            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareArticleData($data)),
-            DeleteAction::make(),
+            EditAction::make(),
+            DeleteAction::make()->slideOver(),
         ]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniArticles::route('/')];
+        return [
+            'index' => ListBniArticles::route('/'),
+            'create' => CreateBniArticle::route('/create'),
+            'edit' => EditBniArticle::route('/{record}/edit'),
+        ];
     }
 
     private static function canManageRecord(Model $record): bool

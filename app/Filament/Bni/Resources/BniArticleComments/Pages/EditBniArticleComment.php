@@ -3,9 +3,9 @@
 namespace App\Filament\Bni\Resources\BniArticleComments\Pages;
 
 use App\Filament\Bni\Resources\BniArticleComments\BniArticleCommentResource;
-use Filament\Resources\Pages\ManageRecords;
+use App\Filament\Bni\Resources\Pages\EditBniRecord;
 
-class ManageBniArticleComments extends ManageRecords
+class EditBniArticleComment extends EditBniRecord
 {
     protected static string $resource = BniArticleCommentResource::class;
 }

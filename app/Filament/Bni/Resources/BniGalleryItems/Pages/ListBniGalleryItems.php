@@ -3,20 +3,23 @@
 namespace App\Filament\Bni\Resources\BniGalleryItems\Pages;
 
 use App\Filament\Bni\Resources\BniGalleryItems\BniGalleryItemResource;
+use App\Filament\Bni\Resources\Pages\ListBniRecords;
 use App\Models\BniActivity;
 use App\Models\BniGalleryItem;
+use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRecords;
 use Filament\Schemas\Components\Section;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Throwable;
 
-class ManageBniGalleryItems extends ManageRecords
+class ListBniGalleryItems extends ListBniRecords
 {
     protected static string $resource = BniGalleryItemResource::class;
 
@@ -27,10 +30,11 @@ class ManageBniGalleryItems extends ManageRecords
                 ->label('Tải nhiều ảnh')
                 ->icon('heroicon-o-cloud-arrow-up')
                 ->color('primary')
+                ->slideOver()
                 ->schema([
                     Section::make('Bộ ảnh sự kiện')
                         ->icon('heroicon-o-photo')
-                        ->description('Chọn nhiều ảnh theo dạng lưới. Có thể dùng nút Xóa tất cả trước khi lưu.')
+                        ->description('Chọn tối đa 40 ảnh. Ảnh gốc được giữ nguyên và hệ thống tự tạo WebP chất lượng cao để hiển thị.')
                         ->schema([
                             TextInput::make('title')->label('Tiêu đề chung')->maxLength(255)->columnSpanFull(),
                             Select::make('bni_event_id')
@@ -51,25 +55,24 @@ class ManageBniGalleryItems extends ManageRecords
                                     ->orderBy('title')
                                     ->pluck('title', 'id')
                                     ->all())
-                                ->helperText('Muốn có album mới, thêm một hoạt động trong mục Sự kiện rồi chọn tại đây.')
                                 ->required()
                                 ->searchable()
                                 ->columnSpanFull(),
-                            CuratorPicker::make('media_ids')
+                            FileUpload::make('images')
                                 ->label('Hình ảnh')
                                 ->multiple()
-                                ->maxItems(40)
-                                ->listDisplay(false)
-                                ->disk('public')
-                                ->constrained()
-                                ->acceptedFileTypes(['image/*'])
+                                ->maxFiles(40)
+                                ->image()
+                                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                                ->storeFiles(false)
                                 ->required()
                                 ->columnSpanFull(),
                             Toggle::make('is_active')->label('Hiển thị ngay')->default(true)->columnSpanFull(),
                         ])
-                        ->columns(2),
+                        ->columns(2)
+                        ->columnSpanFull(),
                 ])
-                ->action(function (array $data): void {
+                ->action(function (array $data, BniMediaService $mediaService): void {
                     $base = BniGalleryItemResource::prepareCreateData([
                         'bni_event_id' => $data['bni_event_id'],
                         'bni_activity_id' => $data['bni_activity_id'],
@@ -78,21 +81,26 @@ class ManageBniGalleryItems extends ManageRecords
                         'is_active' => $data['is_active'] ?? true,
                     ]);
 
-                    foreach (array_values($data['media_ids'] ?? []) as $position => $mediaId) {
-                        BniGalleryItem::query()->create($base + [
-                            'media_id' => $mediaId,
-                            'sort_order' => $position + 1,
-                        ]);
+                    $createdItems = collect();
+
+                    try {
+                        collect($data['images'] ?? [])->values()->each(function (TemporaryUploadedFile $upload, int $position) use ($base, $mediaService, $createdItems): void {
+                            $item = BniGalleryItem::query()->create($base + ['sort_order' => $position + 1]);
+                            $createdItems->push($item);
+                            $mediaService->attachUpload($item, $upload, 'image', $base['title'] ?? null);
+                        });
+                    } catch (Throwable $exception) {
+                        $createdItems->each->delete();
+
+                        throw $exception;
                     }
 
                     Notification::make()
-                        ->title('Đã thêm '.count($data['media_ids'] ?? []).' ảnh vào thư viện BNI')
+                        ->title('Đã thêm '.count($data['images'] ?? []).' ảnh vào thư viện BNI')
                         ->success()
                         ->send();
                 }),
-            CreateAction::make()
-                ->label('Thêm một ảnh')
-                ->mutateDataUsing(fn (array $data): array => BniGalleryItemResource::prepareCreateData($data)),
+            CreateAction::make()->label('Thêm một ảnh'),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Bni\Resources\BniInvitations\Pages;
 
 use App\Filament\Bni\Resources\BniInvitations\BniInvitationResource;
+use App\Filament\Bni\Resources\Pages\ListBniRecords;
 use App\Models\BniChapter;
 use App\Support\Bni\BniInvitationBulkCreator;
 use App\Support\Bni\BniPanelAccess;
@@ -11,9 +12,8 @@ use Filament\Actions\CreateAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRecords;
 
-class ManageBniInvitations extends ManageRecords
+class ListBniInvitations extends ListBniRecords
 {
     protected static string $resource = BniInvitationResource::class;
 
@@ -23,9 +23,9 @@ class ManageBniInvitations extends ManageRecords
             Action::make('bulkCreateGuests')
                 ->label('Dán danh sách khách mời')
                 ->icon('heroicon-o-clipboard-document-list')
+                ->slideOver()
                 ->modalHeading('Nhập hàng loạt khách mời')
                 ->modalSubmitActionLabel('Tạo danh sách')
-                ->modalWidth('2xl')
                 ->schema([
                     Select::make('bni_chapter_id')
                         ->label('Chapter nhận danh sách')
@@ -60,9 +60,7 @@ class ManageBniInvitations extends ManageRecords
                         ->send();
                 })
                 ->successNotification(null),
-            CreateAction::make()
-                ->label('Thêm khách mời')
-                ->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareInvitationData($data)),
+            CreateAction::make()->label('Thêm khách mời'),
         ];
     }
 

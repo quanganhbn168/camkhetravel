@@ -2,7 +2,9 @@
 
 namespace App\Filament\Bni\Resources\BniArticleCategories;
 
-use App\Filament\Bni\Resources\BniArticleCategories\Pages\ManageBniArticleCategories;
+use App\Filament\Bni\Resources\BniArticleCategories\Pages\CreateBniArticleCategory;
+use App\Filament\Bni\Resources\BniArticleCategories\Pages\EditBniArticleCategory;
+use App\Filament\Bni\Resources\BniArticleCategories\Pages\ListBniArticleCategories;
 use App\Models\BniArticleCategory;
 use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
@@ -81,7 +83,8 @@ class BniArticleCategoryResource extends Resource
                     TextInput::make('sort_order')
                         ->label('Thứ tự tab')
                         ->numeric()
-                        ->default(fn (): int => ((int) BniArticleCategory::query()->max('sort_order')) + 1),
+                        ->default(fn (): int => ((int) BniArticleCategory::query()->max('sort_order')) + 1)
+                        ->columnSpanFull(),
                     Textarea::make('description')
                         ->label('Mô tả')
                         ->rows(3)
@@ -108,12 +111,16 @@ class BniArticleCategoryResource extends Resource
             ->defaultSort('sort_order')
             ->recordActions([
                 EditAction::make()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
-                DeleteAction::make()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
+                DeleteAction::make()->slideOver()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
             ]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniArticleCategories::route('/')];
+        return [
+            'index' => ListBniArticleCategories::route('/'),
+            'create' => CreateBniArticleCategory::route('/create'),
+            'edit' => EditBniArticleCategory::route('/{record}/edit'),
+        ];
     }
 }

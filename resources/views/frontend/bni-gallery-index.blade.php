@@ -1,8 +1,6 @@
 @extends('layouts.master')
 
 @use(App\Support\Localization\LocalizedUrl)
-@use(App\Support\Media\MediaUrl)
-
 @section('body_class', 'bni-experience-page bni-gallery-page')
 @section('main_id', 'bni-gallery-main')
 @section('main_class', 'bni-experience-main overflow-x-clip')
@@ -45,7 +43,7 @@
 
             <div class="bni-community-gallery-grid">
                 @forelse ($galleryItems as $galleryItem)
-                    @php($imageUrl = MediaUrl::versioned($galleryItem->media))
+                    @php($imageUrl = $galleryItem->bniMediaUrl('image'))
                     @if ($imageUrl)
                         <article class="bni-community-gallery-card">
                             <a class="bni-community-gallery-card__image" href="{{ LocalizedUrl::route('bni.gallery.show', ['galleryItem' => $galleryItem]) }}">

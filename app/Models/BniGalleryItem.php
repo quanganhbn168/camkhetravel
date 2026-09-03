@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Traits\ConvertsBniMediaToWebp;
+use App\Traits\HasBniMedia;
 use App\Traits\HasComments;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
 
-class BniGalleryItem extends Model
+class BniGalleryItem extends Model implements HasMedia
 {
-    use ConvertsBniMediaToWebp;
+    use HasBniMedia;
     use HasComments;
 
     public const STATUS_PENDING = 'pending';
@@ -52,21 +52,6 @@ class BniGalleryItem extends Model
             $item->comments()->delete();
         });
 
-        static::deleted(function (self $item): void {
-            if ($item->source !== self::SOURCE_GUEST) {
-                return;
-            }
-
-            $media = $item->media;
-
-            if (! $media || ! str_starts_with((string) $media->path, 'media/bni/community/')) {
-                return;
-            }
-
-            if (! self::query()->where('media_id', $media->id)->exists()) {
-                $media->delete();
-            }
-        });
     }
 
     public function event(): BelongsTo
@@ -82,11 +67,6 @@ class BniGalleryItem extends Model
     public function chapter(): BelongsTo
     {
         return $this->belongsTo(BniChapter::class, 'bni_chapter_id');
-    }
-
-    public function media(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'media_id');
     }
 
     public function uploadedBy(): BelongsTo
@@ -148,8 +128,8 @@ class BniGalleryItem extends Model
         ];
     }
 
-    protected function bniWebpMediaAttributes(): array
+    protected function bniImageCollections(): array
     {
-        return ['media_id'];
+        return ['image'];
     }
 }

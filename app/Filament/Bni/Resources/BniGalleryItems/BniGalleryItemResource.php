@@ -2,22 +2,25 @@
 
 namespace App\Filament\Bni\Resources\BniGalleryItems;
 
-use App\Filament\Bni\Resources\BniGalleryItems\Pages\ManageBniGalleryItems;
+use App\Filament\Bni\Resources\BniGalleryItems\Pages\CreateBniGalleryItem;
+use App\Filament\Bni\Resources\BniGalleryItems\Pages\EditBniGalleryItem;
+use App\Filament\Bni\Resources\BniGalleryItems\Pages\ListBniGalleryItems;
 use App\Models\BniActivity;
 use App\Models\BniGalleryItem;
+use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Awcodes\Curator\Components\Tables\CuratorColumn;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -79,7 +82,7 @@ class BniGalleryItemResource extends Resource
                     ->columnSpanFull(),
                 TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->columnSpanFull(),
                 TextInput::make('caption')->label('Chú thích')->maxLength(255)->columnSpanFull(),
-                CuratorPicker::make('media_id')->label('Hình ảnh')->relationship('media', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->required()->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('image')->label('Hình ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->required()->columnSpanFull(),
                 Select::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions())->default(BniGalleryItem::SOURCE_ADMIN)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 Select::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions())->required()->default(BniGalleryItem::STATUS_APPROVED)->columnSpanFull(),
                 Toggle::make('is_active')->label('Hiển thị')->default(true)->columnSpanFull(),
@@ -90,7 +93,7 @@ class BniGalleryItemResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            CuratorColumn::make('media')->label('Ảnh')->square(),
+            SpatieMediaLibraryImageColumn::make('image')->label('Ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
             TextColumn::make('title')->label('Tiêu đề')->searchable()->wrap(),
             TextColumn::make('activity.title')->label('Hoạt động / album')->badge()->placeholder('Chưa phân loại'),
             TextColumn::make('event.title')->label('Sự kiện tổ chức')->toggleable(),
@@ -113,10 +116,11 @@ class BniGalleryItemResource extends Resource
                 ->color('danger')
                 ->visible(fn (BniGalleryItem $record): bool => $record->source === BniGalleryItem::SOURCE_GUEST)
                 ->requiresConfirmation()
+                ->slideOver()
                 ->modalHeading('Từ chối ảnh và xóa file?')
                 ->modalDescription('Ảnh, file gốc và các bình luận liên quan sẽ bị xóa khỏi hệ thống.')
                 ->action(fn (BniGalleryItem $record) => $record->delete()),
-            DeleteAction::make(),
+            DeleteAction::make()->slideOver(),
         ]);
     }
 
@@ -146,6 +150,10 @@ class BniGalleryItemResource extends Resource
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniGalleryItems::route('/')];
+        return [
+            'index' => ListBniGalleryItems::route('/'),
+            'create' => CreateBniGalleryItem::route('/create'),
+            'edit' => EditBniGalleryItem::route('/{record}/edit'),
+        ];
     }
 }

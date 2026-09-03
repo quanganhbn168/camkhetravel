@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\BniEvent;
 use App\Models\BniRegistration;
 use App\Support\Localization\LocalizedUrl;
-use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +22,7 @@ class BniRegistrationController extends Controller
 
         return view('frontend.bni-registration', [
             'event' => $event,
-            'heroImageUrl' => MediaUrl::versioned($event->heroMedia),
+            'heroImageUrl' => $event->bniMediaUrl('hero'),
             'chapters' => $event->chapters
                 ->where('is_active', true)
                 ->sortBy('sort_order')
@@ -76,7 +75,7 @@ class BniRegistrationController extends Controller
         return BniEvent::query()
             ->published()
             ->where('type', 'handover')
-            ->with(['heroMedia', 'chapters'])
+            ->with(['media', 'chapters'])
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
             ->firstOrFail();

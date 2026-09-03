@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\BniActivity;
 use App\Models\BniArticle;
 use App\Models\BniChapter;
+use App\Models\BniEvent;
+use App\Models\BniEventSlide;
 use App\Models\BniGalleryItem;
 use App\Models\HeroSlide;
 use App\Models\LandingPage;
@@ -56,6 +59,10 @@ class FrontendServiceProvider extends ServiceProvider
             'service-category' => ServiceCategory::class,
             'landing-page' => LandingPage::class,
             'bni-article' => BniArticle::class,
+            'bni-activity' => BniActivity::class,
+            'bni-chapter' => BniChapter::class,
+            'bni-event' => BniEvent::class,
+            'bni-event-slide' => BniEventSlide::class,
             'bni-gallery-item' => BniGalleryItem::class,
             'user' => User::class,
         ]);

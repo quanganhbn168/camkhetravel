@@ -2,7 +2,8 @@
 
 namespace App\Filament\Bni\Resources\BniGalleryComments;
 
-use App\Filament\Bni\Resources\BniGalleryComments\Pages\ManageBniGalleryComments;
+use App\Filament\Bni\Resources\BniGalleryComments\Pages\EditBniGalleryComment;
+use App\Filament\Bni\Resources\BniGalleryComments\Pages\ListBniGalleryComments;
 use App\Models\BniGalleryItem;
 use App\Models\Comment;
 use App\Support\Bni\BniPanelAccess;
@@ -111,12 +112,15 @@ class BniGalleryCommentResource extends Resource
                     ->visible(fn (Comment $record): bool => $record->status !== Comment::STATUS_APPROVED)
                     ->action(fn (Comment $record) => $record->approve()),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()->slideOver(),
             ]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniGalleryComments::route('/')];
+        return [
+            'index' => ListBniGalleryComments::route('/'),
+            'edit' => EditBniGalleryComment::route('/{record}/edit'),
+        ];
     }
 }

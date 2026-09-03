@@ -10,11 +10,13 @@ use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
 use App\Models\Comment;
 use App\Models\User;
-use Awcodes\Curator\Models\Media;
+use App\Support\Bni\BniMediaService;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -92,9 +94,10 @@ class BniCompletionTest extends TestCase
         ]);
         $this->assertSame($mediaCount + 2, Media::query()->count());
         $storedMedia = Media::query()->latest('id')->firstOrFail();
-        $this->assertContains($storedMedia->ext, ['webp', 'png']);
-        $this->assertLessThanOrEqual(2400, max($storedMedia->width, $storedMedia->height));
-        Storage::disk('public')->assertExists($storedMedia->path);
+        $this->assertSame('image/png', $storedMedia->mime_type);
+        $this->assertTrue($storedMedia->hasGeneratedConversion('webp'));
+        Storage::disk('public')->assertExists($storedMedia->getPathRelativeToRoot());
+        Storage::disk('public')->assertExists($storedMedia->getPathRelativeToRoot('webp'));
     }
 
     public function test_gallery_uses_database_managed_activities_without_public_chapter_grouping(): void
@@ -190,6 +193,38 @@ class BniCompletionTest extends TestCase
 
         $this->assertSame($galleryCount, BniGalleryItem::query()->count());
         $this->assertSame([], Storage::disk('public')->allFiles());
+    }
+
+    public function test_legacy_bni_curator_image_is_copied_to_spatie_and_gets_a_high_quality_webp(): void
+    {
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $path = UploadedFile::fake()->image('legacy-bni.jpg', 1800, 1200)
+            ->storeAs('media/bni/legacy', 'legacy-bni.jpg', 'public');
+        $legacyId = DB::table('curator')->insertGetId([
+            'disk' => 'public',
+            'directory' => 'media/bni/legacy',
+            'visibility' => 'public',
+            'name' => 'legacy-bni',
+            'path' => $path,
+            'width' => 1800,
+            'height' => 1200,
+            'size' => Storage::disk('public')->size($path),
+            'type' => 'image/jpeg',
+            'ext' => 'jpg',
+            'alt' => 'Ảnh BNI cũ',
+            'title' => 'Ảnh BNI cũ',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $media = app(BniMediaService::class)->importLegacyCuratorMedia($event, $legacyId, 'hero');
+
+        $this->assertNotNull($media);
+        $this->assertSame($legacyId, $media->getCustomProperty('legacy_curator_id'));
+        $this->assertTrue($media->hasGeneratedConversion(BniMediaService::WEBP_CONVERSION));
+        Storage::disk('public')->assertExists($path);
+        Storage::disk('public')->assertExists($media->getPathRelativeToRoot(BniMediaService::WEBP_CONVERSION));
     }
 
     public function test_only_approved_photos_and_comments_are_public(): void
@@ -294,19 +329,6 @@ class BniCompletionTest extends TestCase
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
         $activity = $event->activities()->where('is_active', true)->firstOrFail();
-        $path = 'media/bni/community/tests/guest-upload.webp';
-        Storage::disk('public')->put($path, 'guest-image');
-        $media = Media::query()->create([
-            'disk' => 'public',
-            'directory' => 'media/bni/community/tests',
-            'visibility' => 'public',
-            'name' => 'guest-upload',
-            'path' => $path,
-            'size' => 11,
-            'type' => 'image/webp',
-            'ext' => 'webp',
-            'title' => 'Ảnh khách cần xóa',
-        ]);
         $galleryItem = BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
             'bni_activity_id' => $activity->id,
@@ -314,9 +336,13 @@ class BniCompletionTest extends TestCase
             'title' => 'Ảnh khách cần xóa',
             'source' => BniGalleryItem::SOURCE_GUEST,
             'status' => BniGalleryItem::STATUS_PENDING,
-            'media_id' => $media->id,
             'is_active' => true,
         ]);
+        $media = $galleryItem->addMedia(UploadedFile::fake()->image('guest-upload.png', 800, 800))
+            ->usingName('Ảnh khách cần xóa')
+            ->toMediaCollection('image', 'public');
+        $path = $media->getPathRelativeToRoot();
+        $conversionPath = $media->getPathRelativeToRoot('webp');
         $comment = $galleryItem->comments()->create([
             'author_name' => 'Người bình luận',
             'body' => 'Bình luận cần xóa cùng ảnh.',
@@ -327,8 +353,9 @@ class BniCompletionTest extends TestCase
 
         $this->assertDatabaseMissing('bni_gallery_items', ['id' => $galleryItem->id]);
         $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
-        $this->assertDatabaseMissing('curator', ['id' => $media->id]);
+        $this->assertDatabaseMissing('media', ['id' => $media->id]);
         Storage::disk('public')->assertMissing($path);
+        Storage::disk('public')->assertMissing($conversionPath);
     }
 
     public function test_bni_manifest_includes_gallery_and_pickleball_shortcuts(): void
@@ -342,29 +369,19 @@ class BniCompletionTest extends TestCase
     private function makeGalleryItem(BniEvent $event, string $title, string $status, ?BniActivity $activity = null): BniGalleryItem
     {
         $activity ??= $event->activities()->where('is_active', true)->firstOrFail();
-        $path = 'media/bni/tests/'.str()->uuid().'.jpg';
-        Storage::disk('public')->put($path, 'fake-image-content');
-        $media = Media::query()->create([
-            'disk' => 'public',
-            'directory' => 'media/bni/tests',
-            'visibility' => 'public',
-            'name' => pathinfo($path, PATHINFO_FILENAME),
-            'path' => $path,
-            'size' => Storage::disk('public')->size($path),
-            'type' => 'image/jpeg',
-            'ext' => 'jpg',
-            'title' => $title,
-        ]);
-
-        return BniGalleryItem::query()->create([
+        $item = BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
             'bni_activity_id' => $activity->id,
             'group' => $activity->type,
             'title' => $title,
             'source' => BniGalleryItem::SOURCE_ADMIN,
             'status' => $status,
-            'media_id' => $media->id,
             'is_active' => true,
         ]);
+        $item->addMedia(UploadedFile::fake()->image(str()->uuid().'.jpg', 900, 600))
+            ->usingName($title)
+            ->toMediaCollection('image', 'public');
+
+        return $item;
     }
 }

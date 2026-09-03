@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use App\Traits\ConvertsBniMediaToWebp;
+use App\Traits\HasBniMedia;
 use App\Traits\HasComments;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\MediaLibrary\HasMedia;
 
-class BniArticle extends Model
+class BniArticle extends Model implements HasMedia
 {
-    use ConvertsBniMediaToWebp;
+    use HasBniMedia;
     use HasComments;
 
     protected $guarded = [];
@@ -46,11 +46,6 @@ class BniArticle extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function coverMedia(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'cover_media_id');
-    }
-
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -70,8 +65,8 @@ class BniArticle extends Model
             ->where(fn (Builder $query) => $query->whereNull('published_at')->orWhere('published_at', '<=', now()));
     }
 
-    protected function bniWebpMediaAttributes(): array
+    protected function bniImageCollections(): array
     {
-        return ['cover_media_id'];
+        return ['cover'];
     }
 }

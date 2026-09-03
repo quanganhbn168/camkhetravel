@@ -2,7 +2,9 @@
 
 namespace App\Filament\Bni\Resources\BniMembers;
 
-use App\Filament\Bni\Resources\BniMembers\Pages\ManageBniMembers;
+use App\Filament\Bni\Resources\BniMembers\Pages\CreateBniMember;
+use App\Filament\Bni\Resources\BniMembers\Pages\EditBniMember;
+use App\Filament\Bni\Resources\BniMembers\Pages\ListBniMembers;
 use App\Models\User;
 use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
@@ -62,11 +64,15 @@ class BniMemberResource extends Resource
             TextColumn::make('email')->label('Email')->searchable(),
             TextColumn::make('bniChapter.short_name')->label('Chapter')->badge(),
             TextColumn::make('roles.name')->label('Vai trò')->badge()->separator(', '),
-        ])->defaultSort('name')->recordActions([EditAction::make(), DeleteAction::make()]);
+        ])->defaultSort('name')->recordActions([EditAction::make(), DeleteAction::make()->slideOver()]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniMembers::route('/')];
+        return [
+            'index' => ListBniMembers::route('/'),
+            'create' => CreateBniMember::route('/create'),
+            'edit' => EditBniMember::route('/{record}/edit'),
+        ];
     }
 }

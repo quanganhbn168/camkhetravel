@@ -2,7 +2,8 @@
 
 namespace App\Filament\Bni\Resources\BniArticleComments;
 
-use App\Filament\Bni\Resources\BniArticleComments\Pages\ManageBniArticleComments;
+use App\Filament\Bni\Resources\BniArticleComments\Pages\EditBniArticleComment;
+use App\Filament\Bni\Resources\BniArticleComments\Pages\ListBniArticleComments;
 use App\Models\BniArticle;
 use App\Models\Comment;
 use App\Support\Bni\BniPanelAccess;
@@ -111,12 +112,15 @@ class BniArticleCommentResource extends Resource
                     ->visible(fn (Comment $record): bool => $record->status !== Comment::STATUS_APPROVED)
                     ->action(fn (Comment $record) => $record->approve()),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()->slideOver(),
             ]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniArticleComments::route('/')];
+        return [
+            'index' => ListBniArticleComments::route('/'),
+            'edit' => EditBniArticleComment::route('/{record}/edit'),
+        ];
     }
 }

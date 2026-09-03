@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\ConvertsBniMediaToWebp;
-use Awcodes\Curator\Models\Media;
+use App\Traits\HasBniMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
 
-class BniEventSlide extends Model
+class BniEventSlide extends Model implements HasMedia
 {
-    use ConvertsBniMediaToWebp;
+    use HasBniMedia;
 
     protected $guarded = [];
 
@@ -25,13 +25,8 @@ class BniEventSlide extends Model
         return $this->belongsTo(BniEvent::class, 'bni_event_id');
     }
 
-    public function media(): BelongsTo
+    protected function bniImageCollections(): array
     {
-        return $this->belongsTo(Media::class, 'media_id');
-    }
-
-    protected function bniWebpMediaAttributes(): array
-    {
-        return ['media_id'];
+        return ['image'];
     }
 }

@@ -8,7 +8,6 @@ use App\Models\BniInvitation;
 use App\Models\BniRegistration;
 use App\Support\Bni\BniInvitationContent;
 use App\Support\Localization\LocalizedUrl;
-use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,7 +28,7 @@ class BniInvitationController extends Controller
             'invitation' => null,
             'event' => $event,
             'chapter' => null,
-            'heroImageUrl' => MediaUrl::versioned($event->heroMedia),
+            'heroImageUrl' => $event->bniMediaUrl('hero'),
             'directionsUrl' => $event->directions_url,
             'guestName' => $invitationContent['default_guest_name'],
             'invitationContent' => $invitationContent,
@@ -47,14 +46,14 @@ class BniInvitationController extends Controller
 
     public function show(BniInvitation $invitation): View
     {
-        $invitation->load(['event.heroMedia', 'event.scheduleItems', 'chapter']);
+        $invitation->load(['event.media', 'event.scheduleItems', 'chapter']);
         abort_unless($invitation->event, 404);
 
         $event = $invitation->event;
         $chapter = $invitation->chapter;
         $invitationContent = BniInvitationContent::resolve($chapter);
         $guestName = $invitation->displayGuestName((string) $invitationContent['default_guest_name']);
-        $heroImageUrl = MediaUrl::versioned($event->heroMedia);
+        $heroImageUrl = $event->bniMediaUrl('hero');
 
         return view('frontend.bni-invitation', [
             'invitation' => $invitation,
@@ -104,7 +103,7 @@ class BniInvitationController extends Controller
         return BniEvent::query()
             ->published()
             ->where('type', 'handover')
-            ->with(['heroMedia', 'scheduleItems'])
+            ->with(['media', 'scheduleItems'])
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
             ->firstOrFail();
@@ -116,7 +115,7 @@ class BniInvitationController extends Controller
         return BniEvent::query()
             ->published()
             ->where('is_featured', true)
-            ->with('heroMedia')
+            ->with('media')
             ->orderByDesc('starts_at')
             ->get()
             ->map(fn (BniEvent $event): array => [
@@ -128,7 +127,7 @@ class BniInvitationController extends Controller
                 },
                 'date' => $event->starts_at?->translatedFormat('d/m/Y'),
                 'venue' => $event->venue,
-                'image_url' => MediaUrl::versioned($event->heroMedia),
+                'image_url' => $event->bniMediaUrl('hero'),
                 'url' => match ($event->type) {
                     'handover' => LocalizedUrl::route('bni.handover'),
                     'pickleball' => LocalizedUrl::route('bni.pickleball'),

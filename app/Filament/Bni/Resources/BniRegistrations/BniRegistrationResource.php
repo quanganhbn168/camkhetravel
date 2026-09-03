@@ -2,7 +2,9 @@
 
 namespace App\Filament\Bni\Resources\BniRegistrations;
 
-use App\Filament\Bni\Resources\BniRegistrations\Pages\ManageBniRegistrations;
+use App\Filament\Bni\Resources\BniRegistrations\Pages\CreateBniRegistration;
+use App\Filament\Bni\Resources\BniRegistrations\Pages\EditBniRegistration;
+use App\Filament\Bni\Resources\BniRegistrations\Pages\ListBniRegistrations;
 use App\Models\BniRegistration;
 use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
@@ -76,13 +78,17 @@ class BniRegistrationResource extends Resource
         ])->filters([
             SelectFilter::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions()),
         ])->defaultSort('created_at', 'desc')->recordActions([
-            EditAction::make()->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareRegistrationData($data)),
-            DeleteAction::make(),
+            EditAction::make(),
+            DeleteAction::make()->slideOver(),
         ]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniRegistrations::route('/')];
+        return [
+            'index' => ListBniRegistrations::route('/'),
+            'create' => CreateBniRegistration::route('/create'),
+            'edit' => EditBniRegistration::route('/{record}/edit'),
+        ];
     }
 }

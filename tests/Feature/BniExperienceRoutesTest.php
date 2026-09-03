@@ -12,7 +12,6 @@ use App\Models\BniInvitation;
 use App\Models\BniScheduleItem;
 use App\Models\User;
 use App\Settings\BniInvitationSettings;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -102,25 +101,8 @@ class BniExperienceRoutesTest extends TestCase
     {
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
-        $upload = UploadedFile::fake()->image('handover-slide.jpg', 2600, 1300);
-        $path = $upload->storeAs('media/bni/tests', 'handover-slide.jpg', 'public');
-        $sourceMedia = Media::query()->create([
-            'disk' => 'public',
-            'directory' => 'media/bni/tests',
-            'visibility' => 'public',
-            'name' => 'handover-slide',
-            'path' => $path,
-            'width' => 2600,
-            'height' => 1300,
-            'size' => Storage::disk('public')->size($path),
-            'type' => 'image/jpeg',
-            'ext' => 'jpg',
-            'title' => 'Ảnh slide kiểm thử',
-        ]);
-
         $textSlide = BniEventSlide::query()->create([
             'bni_event_id' => $event->id,
-            'media_id' => $sourceMedia->id,
             'title' => 'Nội dung slide lấy từ database',
             'description' => 'Phần chữ nằm riêng, không phủ lên ảnh.',
             'button_label' => 'Xem lịch trình',
@@ -129,26 +111,30 @@ class BniExperienceRoutesTest extends TestCase
             'is_active' => true,
             'sort_order' => 1,
         ])->refresh();
-        $optimizedMedia = $textSlide->media()->firstOrFail();
+        $optimizedMedia = $textSlide->addMedia(UploadedFile::fake()->image('handover-slide.jpg', 2600, 1300))
+            ->usingName('Ảnh slide kiểm thử')
+            ->toMediaCollection('image', 'public');
 
-        BniEventSlide::query()->create([
+        $imageOnlySlide = BniEventSlide::query()->create([
             'bni_event_id' => $event->id,
-            'media_id' => $optimizedMedia->id,
             'is_active' => true,
             'sort_order' => 2,
         ]);
+        $imageOnlySlide->addMedia(UploadedFile::fake()->image('handover-slide-only.jpg', 1600, 900))
+            ->toMediaCollection('image', 'public');
 
-        $this->assertSame('webp', $optimizedMedia->ext);
-        $this->assertSame('image/webp', $optimizedMedia->type);
-        $this->assertLessThanOrEqual(2400, max($optimizedMedia->width, $optimizedMedia->height));
-        Storage::disk('public')->assertExists($optimizedMedia->path);
+        $this->assertSame('jpg', $optimizedMedia->extension);
+        $this->assertSame('image/jpeg', $optimizedMedia->mime_type);
+        $this->assertTrue($optimizedMedia->hasGeneratedConversion('webp'));
+        $this->assertSame([2600, 1300], array_slice(getimagesize($optimizedMedia->getPath()), 0, 2));
+        Storage::disk('public')->assertExists($optimizedMedia->getPathRelativeToRoot('webp'));
 
         $response = $this->get(route('bni.handover'))
             ->assertOk()
             ->assertSee('data-bni-hero-swiper', false)
             ->assertSee('Nội dung slide lấy từ database')
             ->assertSee('bni-event-slide--image-only', false)
-            ->assertSee($optimizedMedia->path, false);
+            ->assertSee($optimizedMedia->getUrl('webp'), false);
 
         $body = $response->getContent();
         $sliderStart = strpos($body, '<section class="bni-event-slider"');
@@ -164,15 +150,17 @@ class BniExperienceRoutesTest extends TestCase
     public function test_handover_slider_uses_the_bni_key_visual_when_no_slide_image_exists(): void
     {
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
-        $event->update(['hero_media_id' => null]);
-        $event->slides()->update([
-            'media_id' => null,
-            'title' => null,
-            'description' => null,
-            'button_label' => null,
-            'button_url' => null,
-            'is_active' => true,
-        ]);
+        $event->clearMediaCollection('hero');
+        $event->slides->each(function (BniEventSlide $slide): void {
+            $slide->clearMediaCollection('image');
+            $slide->update([
+                'title' => null,
+                'description' => null,
+                'button_label' => null,
+                'button_url' => null,
+                'is_active' => true,
+            ]);
+        });
 
         $this->get(route('bni.handover'))
             ->assertOk()
@@ -329,19 +317,6 @@ class BniExperienceRoutesTest extends TestCase
             'published_at' => now(),
         ]);
 
-        $path = 'media/bni/tests/database-gallery.jpg';
-        Storage::disk('public')->put($path, 'fake-image-content');
-        $media = Media::query()->create([
-            'disk' => 'public',
-            'directory' => 'media/bni/tests',
-            'visibility' => 'public',
-            'name' => 'database-gallery',
-            'path' => $path,
-            'size' => Storage::disk('public')->size($path),
-            'type' => 'image/jpeg',
-            'ext' => 'jpg',
-            'title' => 'Ảnh BNI từ database',
-        ]);
         BniArticleCategory::query()->update(['is_active' => false]);
         $category = BniArticleCategory::query()->create([
             'name' => 'Danh mục BNI kiểm thử',
@@ -358,7 +333,6 @@ class BniExperienceRoutesTest extends TestCase
         $article = BniArticle::query()->create([
             'bni_event_id' => $event->id,
             'type' => 'event',
-            'cover_media_id' => $media->id,
             'title' => 'Bài viết lấy từ danh mục tin BNI',
             'slug' => 'bai-viet-danh-muc-bni-'.str()->random(8),
             'excerpt' => 'Nội dung kiểm thử nguồn BniArticle và BniArticleCategory.',
@@ -367,6 +341,9 @@ class BniExperienceRoutesTest extends TestCase
             'is_featured' => true,
             'published_at' => now(),
         ]);
+        $article->addMedia(UploadedFile::fake()->image('article-cover.jpg', 1200, 800))
+            ->usingName('Ảnh bài viết BNI từ database')
+            ->toMediaCollection('cover', 'public');
         $article->categories()->attach($category);
         $gallery = BniGalleryItem::query()->create([
             'bni_event_id' => $event->id,
@@ -375,10 +352,13 @@ class BniExperienceRoutesTest extends TestCase
             'title' => 'Ảnh BNI lấy trực tiếp từ database',
             'source' => BniGalleryItem::SOURCE_ADMIN,
             'status' => BniGalleryItem::STATUS_APPROVED,
-            'media_id' => $media->id,
             'is_active' => true,
             'approved_at' => now(),
         ]);
+        $galleryMedia = $gallery->addMedia(UploadedFile::fake()->image('database-gallery.jpg', 1200, 800))
+            ->usingName('Ảnh BNI từ database')
+            ->toMediaCollection('image', 'public');
+        $path = $galleryMedia->getUrl('webp');
 
         $this->get(route('bni.handover'))
             ->assertOk()
@@ -428,6 +408,40 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Mẫu thư mời BNI');
     }
 
+    public function test_bni_crud_uses_dedicated_create_and_edit_pages(): void
+    {
+        Role::findOrCreate('bni_admin', 'web');
+        $user = User::factory()->create();
+        $user->assignRole('bni_admin');
+        $event = BniEvent::query()->firstOrFail();
+        $chapter = BniChapter::query()->firstOrFail();
+        $invitation = BniInvitation::query()->firstOrCreate(
+            ['slug' => 'bni-admin-full-page-test'],
+            [
+                'bni_event_id' => $event->id,
+                'bni_chapter_id' => $chapter->id,
+                'guest_name' => 'Khách kiểm thử trang quản trị',
+            ],
+        );
+
+        foreach ([
+            '/bni-admin/bni-events/create',
+            "/bni-admin/bni-events/{$event->id}/edit",
+            '/bni-admin/bni-chapters/create',
+            "/bni-admin/bni-chapters/{$chapter->slug}/edit",
+            '/bni-admin/bni-articles/create',
+            '/bni-admin/bni-gallery-items/create',
+            '/bni-admin/bni-invitations/create',
+            "/bni-admin/bni-invitations/{$invitation->invitation_code}/edit",
+            '/bni-admin/bni-registrations/create',
+            '/bni-admin/bni-members/create',
+        ] as $url) {
+            $response = $this->actingAs($user)->get($url);
+
+            $this->assertSame(200, $response->status(), $url);
+        }
+    }
+
     public function test_the_invitation_table_prioritizes_a_single_copy_link_action(): void
     {
         Role::findOrCreate('bni_admin', 'web');
@@ -466,6 +480,9 @@ class BniExperienceRoutesTest extends TestCase
         $this->actingAs($user)->get('/bni-admin/bni-invitations')->assertOk();
         $this->actingAs($user)->get('/bni-admin/bni-registrations')->assertOk();
         $this->actingAs($user)->get('/bni-admin/bni-article-comments')->assertOk();
+        $this->actingAs($user)->get('/bni-admin/bni-articles/create')->assertOk();
+        $this->actingAs($user)->get('/bni-admin/bni-invitations/create')->assertOk();
+        $this->actingAs($user)->get('/bni-admin/bni-chapters/create')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-events')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-members')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/manage-bni-invitation-settings')->assertForbidden();

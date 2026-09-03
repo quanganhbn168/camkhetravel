@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use App\Traits\ConvertsBniMediaToWebp;
-use Awcodes\Curator\Models\Media;
+use App\Traits\HasBniMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
 
-class BniChapter extends Model
+class BniChapter extends Model implements HasMedia
 {
-    use ConvertsBniMediaToWebp;
+    use HasBniMedia;
 
     protected $guarded = [];
 
@@ -31,21 +31,6 @@ class BniChapter extends Model
         return $this->belongsTo(BniEvent::class, 'bni_event_id');
     }
 
-    public function logoMedia(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'logo_media_id');
-    }
-
-    public function coverMedia(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'cover_media_id');
-    }
-
-    public function videoMedia(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'video_media_id');
-    }
-
     public function articles(): HasMany
     {
         return $this->hasMany(BniArticle::class);
@@ -56,8 +41,13 @@ class BniChapter extends Model
         return $this->hasMany(BniInvitation::class);
     }
 
-    protected function bniWebpMediaAttributes(): array
+    protected function bniImageCollections(): array
     {
-        return ['logo_media_id', 'cover_media_id'];
+        return ['logo', 'cover'];
+    }
+
+    protected function bniVideoCollections(): array
+    {
+        return ['video'];
     }
 }

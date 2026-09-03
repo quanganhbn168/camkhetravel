@@ -3,10 +3,10 @@
 namespace App\Filament\Bni\Resources\BniMembers\Pages;
 
 use App\Filament\Bni\Resources\BniMembers\BniMemberResource;
+use App\Filament\Bni\Resources\Pages\ListBniRecords;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ManageRecords;
 
-class ManageBniMembers extends ManageRecords
+class ListBniMembers extends ListBniRecords
 {
     protected static string $resource = BniMemberResource::class;
 

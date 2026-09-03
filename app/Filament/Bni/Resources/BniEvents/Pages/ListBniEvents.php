@@ -3,10 +3,10 @@
 namespace App\Filament\Bni\Resources\BniEvents\Pages;
 
 use App\Filament\Bni\Resources\BniEvents\BniEventResource;
+use App\Filament\Bni\Resources\Pages\ListBniRecords;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ManageRecords;
 
-class ManageBniEvents extends ManageRecords
+class ListBniEvents extends ListBniRecords
 {
     protected static string $resource = BniEventResource::class;
 

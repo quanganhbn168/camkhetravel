@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\BniChapter;
 use App\Support\Bni\BniExperienceService;
-use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\View\View;
 
@@ -26,7 +25,7 @@ class BniChapterController extends Controller
         return view('frontend.bni-chapter', $this->experience->chapter($chapter) + [
             'seo' => $this->seo->bniChapter(
                 $chapter,
-                MediaUrl::versioned($chapter->coverMedia) ?: MediaUrl::versioned($chapter->logoMedia),
+                $chapter->bniMediaUrl('cover') ?: $chapter->bniMediaUrl('logo'),
             ),
         ]);
     }

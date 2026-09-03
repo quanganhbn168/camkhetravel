@@ -2,7 +2,9 @@
 
 namespace App\Filament\Bni\Resources\BniInvitations;
 
-use App\Filament\Bni\Resources\BniInvitations\Pages\ManageBniInvitations;
+use App\Filament\Bni\Resources\BniInvitations\Pages\CreateBniInvitation;
+use App\Filament\Bni\Resources\BniInvitations\Pages\EditBniInvitation;
+use App\Filament\Bni\Resources\BniInvitations\Pages\ListBniInvitations;
 use App\Models\BniInvitation;
 use App\Support\Bni\BniPanelAccess;
 use App\Support\Localization\LocalizedUrl;
@@ -114,10 +116,8 @@ class BniInvitationResource extends Resource
                     ->label('Xem thư mời')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->url(fn (BniInvitation $record): string => LocalizedUrl::route('bni.invitations.show', ['invitation' => $record]), true),
-                EditAction::make()
-                    ->label('Sửa thông tin')
-                    ->mutateDataUsing(fn (array $data): array => BniPanelAccess::prepareInvitationData($data)),
-                DeleteAction::make()->label('Xóa thư mời'),
+                EditAction::make()->label('Sửa thông tin'),
+                DeleteAction::make()->label('Xóa thư mời')->slideOver(),
             ])
                 ->label('Thao tác khác')
                 ->tooltip('Thao tác khác'),
@@ -126,6 +126,10 @@ class BniInvitationResource extends Resource
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniInvitations::route('/')];
+        return [
+            'index' => ListBniInvitations::route('/'),
+            'create' => CreateBniInvitation::route('/create'),
+            'edit' => EditBniInvitation::route('/{record}/edit'),
+        ];
     }
 }

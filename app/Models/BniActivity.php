@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use App\Traits\ConvertsBniMediaToWebp;
-use Awcodes\Curator\Models\Media;
+use App\Traits\HasBniMedia;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
 
-class BniActivity extends Model
+class BniActivity extends Model implements HasMedia
 {
-    use ConvertsBniMediaToWebp;
+    use HasBniMedia;
 
     protected $guarded = [];
 
@@ -24,18 +24,13 @@ class BniActivity extends Model
         return $this->belongsTo(BniEvent::class, 'bni_event_id');
     }
 
-    public function media(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, 'media_id');
-    }
-
     public function galleryItems(): HasMany
     {
         return $this->hasMany(BniGalleryItem::class)->orderBy('sort_order');
     }
 
-    protected function bniWebpMediaAttributes(): array
+    protected function bniImageCollections(): array
     {
-        return ['media_id'];
+        return ['image'];
     }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Filament\Bni\Resources\BniEvents;
 
-use App\Filament\Bni\Resources\BniEvents\Pages\ManageBniEvents;
+use App\Filament\Bni\Resources\BniEvents\Pages\CreateBniEvent;
+use App\Filament\Bni\Resources\BniEvents\Pages\EditBniEvent;
+use App\Filament\Bni\Resources\BniEvents\Pages\ListBniEvents;
 use App\Models\BniEvent;
+use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -13,6 +15,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -65,7 +68,7 @@ class BniEventResource extends Resource
                         Select::make('type')->label('Loại')->options(['handover' => 'Lễ chuyển giao', 'pickleball' => 'Pickleball'])->required()->live()->columnSpanFull(),
                         TextInput::make('kicker')->label('Dòng nhãn')->maxLength(255)->columnSpanFull(),
                         Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản'])->required()->columnSpanFull(),
-                        CuratorPicker::make('hero_media_id')->label('Ảnh banner')->relationship('heroMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                        SpatieMediaLibraryFileUpload::make('hero')->label('Ảnh banner')->collection('hero')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->columnSpanFull(),
                         Textarea::make('summary')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                         RichEditor::make('content')->label('Nội dung')->columnSpanFull(),
                     ])->columns(2),
@@ -92,12 +95,13 @@ class BniEventResource extends Resource
                                     ->relationship('slides')
                                     ->label('Danh sách slide')
                                     ->schema([
-                                        CuratorPicker::make('media_id')
+                                        SpatieMediaLibraryFileUpload::make('image')
                                             ->label('Ảnh slide')
-                                            ->relationship('media', 'id')
+                                            ->collection('image')
+                                            ->conversion(BniMediaService::WEBP_CONVERSION)
                                             ->disk('public')
-                                            ->constrained()
-                                            ->acceptedFileTypes(['image/*'])
+                                            ->image()
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                             ->required()
                                             ->columnSpanFull(),
                                         TextInput::make('title')
@@ -146,19 +150,19 @@ class BniEventResource extends Resource
                         ->icon('heroicon-o-video-camera')
                         ->description('Ảnh poster luôn được dùng làm hình mặc định; khi có video, người xem có thể phát trực tiếp trên trang Lễ chuyển giao.')
                         ->schema([
-                            CuratorPicker::make('video_poster_media_id')
+                            SpatieMediaLibraryFileUpload::make('video_poster')
                                 ->label('Ảnh mặc định / poster video')
-                                ->relationship('videoPosterMedia', 'id')
+                                ->collection('video_poster')
+                                ->conversion(BniMediaService::WEBP_CONVERSION)
                                 ->disk('public')
-                                ->constrained()
-                                ->acceptedFileTypes(['image/*'])
+                                ->image()
+                                ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                 ->helperText('Nếu bỏ trống, hệ thống dùng ảnh banner của sự kiện.')
                                 ->columnSpanFull(),
-                            CuratorPicker::make('video_media_id')
+                            SpatieMediaLibraryFileUpload::make('video')
                                 ->label('Video tải lên')
-                                ->relationship('videoMedia', 'id')
+                                ->collection('video')
                                 ->disk('public')
-                                ->constrained()
                                 ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
                                 ->helperText('Ưu tiên video tải lên. Nên dùng MP4/WebM tối ưu cho website.')
                                 ->columnSpanFull(),
@@ -193,25 +197,26 @@ class BniEventResource extends Resource
                                     TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->columnSpanFull(),
                                     TextInput::make('slug')->label('Slug')->required()->maxLength(255)->columnSpanFull(),
                                     Textarea::make('description')->label('Giới thiệu')->rows(3)->columnSpanFull(),
-                                    CuratorPicker::make('logo_media_id')
+                                    SpatieMediaLibraryFileUpload::make('logo')
                                         ->label('Logo')
-                                        ->relationship('logoMedia', 'id')
+                                        ->collection('logo')
+                                        ->conversion(BniMediaService::WEBP_CONVERSION)
                                         ->disk('public')
-                                        ->constrained()
-                                        ->acceptedFileTypes(['image/*'])
+                                        ->image()
+                                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                         ->columnSpanFull(),
-                                    CuratorPicker::make('cover_media_id')
+                                    SpatieMediaLibraryFileUpload::make('cover')
                                         ->label('Ảnh mặc định / poster video')
-                                        ->relationship('coverMedia', 'id')
+                                        ->collection('cover')
+                                        ->conversion(BniMediaService::WEBP_CONVERSION)
                                         ->disk('public')
-                                        ->constrained()
-                                        ->acceptedFileTypes(['image/*'])
+                                        ->image()
+                                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                                         ->columnSpanFull(),
-                                    CuratorPicker::make('video_media_id')
+                                    SpatieMediaLibraryFileUpload::make('video')
                                         ->label('Video chapter tải lên')
-                                        ->relationship('videoMedia', 'id')
+                                        ->collection('video')
                                         ->disk('public')
-                                        ->constrained()
                                         ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
                                         ->columnSpanFull(),
                                     TextInput::make('video_url')
@@ -342,7 +347,7 @@ class BniEventResource extends Resource
                                         ->required()
                                         ->columnSpanFull(),
                                     Textarea::make('description')->label('Mô tả')->rows(2)->columnSpanFull(),
-                                    CuratorPicker::make('media_id')->label('Hình ảnh')->relationship('media', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                                    SpatieMediaLibraryFileUpload::make('image')->label('Hình ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->columnSpanFull(),
                                     TextInput::make('link_url')->label('Liên kết')->url()->maxLength(2048)->columnSpanFull(),
                                     Toggle::make('is_active')->label('Hiển thị')->default(true)->columnSpanFull(),
                                 ])
@@ -366,11 +371,15 @@ class BniEventResource extends Resource
             TextColumn::make('type')->label('Loại')->badge()->formatStateUsing(fn (string $state): string => $state === 'pickleball' ? 'Pickleball' : 'Lễ chuyển giao'),
             TextColumn::make('starts_at')->label('Bắt đầu')->dateTime('d/m/Y H:i')->sortable(),
             TextColumn::make('status')->label('Trạng thái')->badge(),
-        ])->recordActions([EditAction::make(), DeleteAction::make()]);
+        ])->recordActions([EditAction::make(), DeleteAction::make()->slideOver()]);
     }
 
     public static function getPages(): array
     {
-        return ['index' => ManageBniEvents::route('/')];
+        return [
+            'index' => ListBniEvents::route('/'),
+            'create' => CreateBniEvent::route('/create'),
+            'edit' => EditBniEvent::route('/{record}/edit'),
+        ];
     }
 }

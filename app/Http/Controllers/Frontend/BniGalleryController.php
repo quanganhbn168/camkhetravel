@@ -8,16 +8,12 @@ use App\Models\BniActivity;
 use App\Models\BniChapter;
 use App\Models\BniGalleryItem;
 use App\Models\Comment;
-use App\Support\Bni\BniGalleryImageProcessor;
+use App\Support\Bni\BniMediaService;
 use App\Support\Localization\LocalizedUrl;
-use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -28,7 +24,7 @@ class BniGalleryController extends Controller
 {
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
-        private readonly BniGalleryImageProcessor $imageProcessor,
+        private readonly BniMediaService $media,
     ) {}
 
     public function index(Request $request): View
@@ -69,7 +65,7 @@ class BniGalleryController extends Controller
             'uploadedBy',
             'approvedComments' => fn ($query) => $query->with('user')->latest('approved_at'),
         ]);
-        $imageUrl = MediaUrl::versioned($galleryItem->media);
+        $imageUrl = $galleryItem->bniMediaUrl('image');
         abort_unless($imageUrl, 404);
 
         return view('frontend.bni-gallery-show', [
@@ -115,50 +111,47 @@ class BniGalleryController extends Controller
             ->where('is_active', true)
             ->whereKey($request->user()?->bni_chapter_id ?? 0)
             ->value('id');
-        $storedPaths = [];
+        $createdItems = collect();
 
         try {
-            DB::transaction(function () use ($request, $data, $activity, $event, $chapterId, &$storedPaths): void {
-                foreach ($request->file('images', []) as $position => $image) {
-                    $processed = $this->imageProcessor->store($image);
-                    $storedPaths[] = $processed['path'];
-                    $media = Media::query()->create([
-                        'disk' => 'public',
-                        'directory' => $processed['directory'],
-                        'visibility' => 'public',
-                        'name' => $processed['name'],
-                        'path' => $processed['path'],
-                        'width' => $processed['width'],
-                        'height' => $processed['height'],
-                        'size' => $processed['size'],
-                        'type' => $processed['type'],
-                        'ext' => $processed['ext'],
-                        'alt' => trim(strip_tags((string) ($data['title'] ?: 'Khoảnh khắc sự kiện BNI'))),
-                        'title' => trim(strip_tags((string) ($data['title'] ?: pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME)))),
-                        'caption' => filled($data['caption'] ?? null) ? trim(strip_tags($data['caption'])) : null,
-                    ]);
+            foreach ($request->file('images', []) as $position => $image) {
+                $title = filled($data['title'] ?? null)
+                    ? trim(strip_tags($data['title']))
+                    : null;
+                $caption = filled($data['caption'] ?? null)
+                    ? trim(strip_tags($data['caption']))
+                    : null;
+                $item = BniGalleryItem::query()->create([
+                    'bni_event_id' => $event->id,
+                    'bni_activity_id' => $activity->id,
+                    'bni_chapter_id' => $chapterId,
+                    'uploaded_by_user_id' => $request->user()?->id,
+                    'group' => $activity->type,
+                    'title' => $title,
+                    'caption' => $caption,
+                    'uploader_name' => trim(strip_tags($data['uploader_name'])),
+                    'uploader_email' => $data['uploader_email'] ?? null,
+                    'uploader_phone' => trim(strip_tags($data['uploader_phone'])),
+                    'source' => BniGalleryItem::SOURCE_GUEST,
+                    'status' => BniGalleryItem::STATUS_PENDING,
+                    'sort_order' => $position + 1,
+                    'is_active' => true,
+                ]);
+                $createdItems->push($item);
 
-                    BniGalleryItem::query()->create([
-                        'bni_event_id' => $event->id,
-                        'bni_activity_id' => $activity->id,
-                        'bni_chapter_id' => $chapterId,
-                        'uploaded_by_user_id' => $request->user()?->id,
-                        'group' => $activity->type,
-                        'title' => filled($data['title'] ?? null) ? trim(strip_tags($data['title'])) : null,
-                        'caption' => filled($data['caption'] ?? null) ? trim(strip_tags($data['caption'])) : null,
-                        'uploader_name' => trim(strip_tags($data['uploader_name'])),
-                        'uploader_email' => $data['uploader_email'] ?? null,
-                        'uploader_phone' => trim(strip_tags($data['uploader_phone'])),
-                        'source' => BniGalleryItem::SOURCE_GUEST,
-                        'status' => BniGalleryItem::STATUS_PENDING,
-                        'media_id' => $media->id,
-                        'sort_order' => $position + 1,
-                        'is_active' => true,
-                    ]);
-                }
-            });
+                $this->media->attachUpload(
+                    $item,
+                    $image,
+                    'image',
+                    $title ?: pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME),
+                    array_filter([
+                        'alt' => $title ?: 'Khoảnh khắc sự kiện BNI',
+                        'caption' => $caption,
+                    ]),
+                );
+            }
         } catch (Throwable $exception) {
-            Storage::disk('public')->delete($storedPaths);
+            $createdItems->each->delete();
 
             report($exception);
 
@@ -167,7 +160,7 @@ class BniGalleryController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Đã nhận '.count($storedPaths).' hình ảnh. Ban tổ chức sẽ duyệt trước khi hiển thị công khai.');
+        return back()->with('success', 'Đã nhận '.$createdItems->count().' hình ảnh. Ban tổ chức sẽ duyệt trước khi hiển thị công khai.');
     }
 
     public function comment(StoreCommentRequest $request, BniGalleryItem $galleryItem): RedirectResponse
