@@ -67,6 +67,7 @@ class BniHandoverPageTest extends TestCase
         $this->assertStringNotContainsString('bni-chapter-video-item__label', $body);
         $this->assertFileExists(resource_path('images/bni/handover-network-wave.webp'));
         $this->assertFileExists(resource_path('images/bni/handover-city-network.webp'));
+        $this->assertFileExists(resource_path('images/bni/registration-organizer-background.webp'));
     }
 
     public function test_an_authenticated_user_does_not_see_a_logout_button_in_the_handover_content(): void

@@ -517,7 +517,7 @@
     .bni-gallery-detail__meta p { margin: 1rem 0 0; color: var(--bni-red); font-size: 0.62rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
     .bni-gallery-detail__meta strong { color: var(--bni-black); font-size: 0.88rem; line-height: 1.5; }
     .bni-gallery-detail__meta .bni-button { margin-top: 1.5rem; }
-    .bni-contact-band { padding: 3rem 0; background: var(--bni-red); color: var(--bni-white); box-shadow: inset 0 0.9rem 1.8rem color-mix(in srgb, var(--bni-black) 12%, transparent); }
+    .bni-contact-band { padding: 3rem 0; background-color: var(--bni-red); background-image: linear-gradient(90deg, color-mix(in srgb, var(--bni-black) 42%, transparent), color-mix(in srgb, var(--bni-black) 12%, transparent)), url('../images/bni/registration-organizer-background.webp'); background-repeat: no-repeat; background-position: center, center; background-size: cover; color: var(--bni-white); box-shadow: inset 0 0.9rem 1.8rem color-mix(in srgb, var(--bni-black) 12%, transparent); }
     .bni-contact-band .site-shell { display: flex; flex-direction: column; gap: 1.5rem; justify-content: space-between; }
     .bni-contact-band h2 { max-width: 36rem; margin-top: 0; font-size: clamp(1.55rem, 2.8vw, 2.35rem); }
     .bni-contact-band p:not(.bni-experience-kicker) { margin: 0.7rem 0 0; color: var(--bni-white); font-size: 0.9rem; }
@@ -1255,7 +1255,7 @@
     .bni-gallery-detail__meta { position: static; border: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); border-top: 3px solid var(--bni-red); border-radius: 1rem; padding: 1rem; }
     .bni-gallery-detail__image { border-radius: 1rem; }
     .bni-gallery-detail__image figcaption { padding: 0.85rem; font-size: 0.8rem; }
-    .bni-contact-band { padding-block: 2.5rem; }
+    .bni-contact-band { padding-block: 2.5rem; background-position: center, 70% center; }
     .bni-contact-band h2 { font-size: 1.7rem; }
     .bni-contact-band p:not(.bni-experience-kicker) { font-size: 0.82rem; line-height: 1.6; }
     .bni-pickleball-hero { min-height: min(38rem, 78svh); padding: 3rem 0 4.5rem; }
