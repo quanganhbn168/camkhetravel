@@ -62,6 +62,8 @@ class AboutSettings extends Settings
 
     public ?int $office_image_media_id = null;
 
+    public array $office_gallery = [];
+
     public array $cta_title = [];
 
     public array $cta_button_label = [];

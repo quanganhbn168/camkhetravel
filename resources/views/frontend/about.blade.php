@@ -254,7 +254,7 @@
         </section>
     @endif
 
-    @if ($about['team_title'] || $about['team_description'] || $about['team_image_url'])
+    @if ($about['team_title'] || $about['team_description'] || $about['team_image_url'] || $departments->isNotEmpty())
         <section class="about-page-showcase about-page-team section-space">
             <div class="site-shell">
                 @if ($about['team_title'] || $about['team_description'])
@@ -272,11 +272,46 @@
                         <img src="{{ $about['team_image_url'] }}" alt="{{ $about['team_title'] ?: $about['title'] }}" loading="lazy">
                     </figure>
                 @endif
+
+                @if ($departments->isNotEmpty())
+                    <div class="about-departments">
+                        @foreach ($departments as $department)
+                            <section class="about-department" aria-labelledby="about-department-{{ $department->id }}" data-aos="fade-up">
+                                <header class="about-department__heading">
+                                    <h3 id="about-department-{{ $department->id }}">{{ $department->name }}</h3>
+                                    @if ($department->description)
+                                        <p>{{ $department->description }}</p>
+                                    @endif
+                                </header>
+
+                                <div class="about-team-members">
+                                    @foreach ($department->members as $member)
+                                        <article class="about-team-member" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 4) * 60 }}">
+                                            <div class="about-team-member__media">
+                                                @if ($member->image_url)
+                                                    <img src="{{ $member->image_url }}" alt="{{ $member->name }}" loading="lazy">
+                                                @else
+                                                    <span class="image-placeholder">THT</span>
+                                                @endif
+                                            </div>
+                                            <div class="about-team-member__content">
+                                                <h4>{{ $member->name }}</h4>
+                                                @if ($member->position)
+                                                    <p>{{ $member->position }}</p>
+                                                @endif
+                                            </div>
+                                        </article>
+                                    @endforeach
+                                </div>
+                            </section>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </section>
     @endif
 
-    @if ($about['office_title'] || $about['office_description'] || $about['office_image_url'])
+    @if ($about['office_title'] || $about['office_description'] || $about['office_gallery']->isNotEmpty())
         <section class="about-page-showcase about-page-office section-space">
             <div class="site-shell">
                 @if ($about['office_title'] || $about['office_description'])
@@ -289,10 +324,27 @@
                         @endif
                     </header>
                 @endif
-                @if ($about['office_image_url'])
-                    <figure class="about-showcase-media about-showcase-media--office" data-aos="fade-up" data-aos-delay="100">
-                        <img src="{{ $about['office_image_url'] }}" alt="{{ $about['office_title'] ?: $about['title'] }}" loading="lazy">
-                    </figure>
+                @if ($about['office_gallery']->isNotEmpty())
+                    <div @class([
+                        'about-office-gallery',
+                        'about-office-gallery--featured' => $about['office_gallery']->count() >= 4,
+                    ])>
+                        @foreach ($about['office_gallery'] as $image)
+                            <a
+                                class="about-office-gallery__item glightbox"
+                                href="{{ $image['url'] }}"
+                                data-type="image"
+                                data-gallery="about-office-gallery"
+                                data-title="{{ $image['alt'] }}"
+                                aria-label="Mở {{ $image['alt'] }}"
+                                data-aos="fade-up"
+                                data-aos-delay="{{ ($loop->index % 3) * 70 }}"
+                            >
+                                <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}" loading="lazy">
+                                <span aria-hidden="true">↗</span>
+                            </a>
+                        @endforeach
+                    </div>
                 @endif
             </div>
         </section>

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Forms\Components\GalleryPicker;
 use App\Models\Language;
 use App\Models\Menu;
 use App\Settings\AboutSettings;
@@ -126,7 +127,7 @@ class ManageSettings extends Page
             'team_image_media_id' => $about->team_image_media_id,
             'office_title' => $about->office_title,
             'office_description' => $about->office_description,
-            'office_image_media_id' => $about->office_image_media_id,
+            'office_gallery' => $about->office_gallery,
             'cta_title' => $about->cta_title,
             'cta_button_label' => $about->cta_button_label,
             'color_primary' => $design->color_primary,
@@ -453,12 +454,12 @@ class ManageSettings extends Page
                 ->tabs(app(LanguageCatalog::class)->active()
                     ->map(fn (Language $language): Tab => $this->aboutLanguageTab($language))
                     ->values()
-                ->all())
+                    ->all())
                 ->contained(false)
                 ->columnSpanFull(),
             Section::make('Hình ảnh riêng từng khu vực')
                 ->icon(Heroicon::OutlinedPhoto)
-                ->description('Mỗi khu vực dùng một ảnh riêng. Chỉ khi để trống, frontend mới dùng ảnh giới thiệu chung làm fallback.')
+                ->description('Mỗi khu vực dùng media riêng. Chỉ khi để trống, frontend mới dùng ảnh giới thiệu chung làm fallback.')
                 ->schema([
                     CuratorPicker::make('story_image_media_id')
                         ->label('Ảnh Câu chuyện THT Media')
@@ -484,11 +485,13 @@ class ManageSettings extends Page
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
                         ->columnSpanFull(),
-                    CuratorPicker::make('office_image_media_id')
-                        ->label('Ảnh Văn phòng THT Media')
+                    GalleryPicker::make('office_gallery')
+                        ->label('Gallery Văn phòng THT Media')
+                        ->multiple()
                         ->disk('public')
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
+                        ->helperText('Chọn nhiều ảnh và kéo thả để đổi thứ tự. Nút “Xóa tất cả” luôn yêu cầu xác nhận.')
                         ->columnSpanFull(),
                 ])
                 ->columns(1)
@@ -806,9 +809,17 @@ class ManageSettings extends Page
             ? (int) $data['video_media_id']
             : null;
 
-        foreach (['story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id', 'team_image_media_id', 'office_image_media_id'] as $key) {
+        foreach (['story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id', 'team_image_media_id'] as $key) {
             $about->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
+
+        $about->office_gallery = collect($data['office_gallery'] ?? [])
+            ->filter(fn (mixed $mediaId): bool => is_numeric($mediaId))
+            ->map(fn (mixed $mediaId): int => (int) $mediaId)
+            ->unique()
+            ->values()
+            ->all();
+        $about->office_image_media_id = $about->office_gallery[0] ?? null;
 
         $about->save();
     }
