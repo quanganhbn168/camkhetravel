@@ -199,7 +199,7 @@
                         @forelse ($scheduleDays as $day)
                             <div class="bni-schedule-list" x-show="scheduleDay === {{ $day['number'] }}" x-transition.opacity>
                                 @foreach ($day['items'] as $item)
-                                    <article class="bni-schedule-item"><time>{{ $item['time'] ?: 'Đang cập nhật' }}</time><div><h3>{{ $item['title'] }}</h3>@if ($item['description'])<p>{{ $item['description'] }}</p>@endif @if ($item['location'])<span>{{ $item['location'] }}</span>@endif</div></article>
+                                    <article class="bni-schedule-item"><time>{{ $item['time'] ?: 'Đang cập nhật' }}</time><div><h3>{{ $item['title'] }}</h3>@if ($item['description'])<p>{{ $item['description'] }}</p>@endif</div></article>
                                 @endforeach
                             </div>
                         @empty

@@ -7,6 +7,7 @@ use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniEventSlide;
+use App\Models\BniEventVideo;
 use App\Models\BniGalleryItem;
 use App\Support\Bni\BniMediaService;
 use Illuminate\Console\Command;
@@ -24,6 +25,7 @@ class OptimizeBniMediaCommand extends Command
         $modelTypes = collect([
             BniEvent::class,
             BniEventSlide::class,
+            BniEventVideo::class,
             BniChapter::class,
             BniActivity::class,
             BniArticle::class,

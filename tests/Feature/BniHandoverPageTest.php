@@ -6,6 +6,7 @@ use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class BniHandoverPageTest extends TestCase
@@ -14,6 +15,15 @@ class BniHandoverPageTest extends TestCase
 
     public function test_the_bni_handover_page_uses_the_fixed_bni_identity(): void
     {
+        $eventIds = BniEvent::query()->where('type', 'handover')->pluck('id');
+        $videoIds = DB::table('bni_event_videos')->whereIn('bni_event_id', $eventIds)->pluck('id');
+        $chapterIds = BniChapter::query()->pluck('id');
+
+        DB::table('media')->whereIn('model_type', ['bni-event', BniEvent::class])->whereIn('model_id', $eventIds)->delete();
+        DB::table('media')->whereIn('model_type', ['bni-event-video', 'App\\Models\\BniEventVideo'])->whereIn('model_id', $videoIds)->delete();
+        DB::table('media')->whereIn('model_type', ['bni-chapter', BniChapter::class])->whereIn('model_id', $chapterIds)->delete();
+        DB::table('bni_event_videos')->whereIn('id', $videoIds)->update(['external_url' => null]);
+
         BniEvent::query()->where('type', 'handover')->update([
             'hero_media_id' => null,
             'video_media_id' => null,

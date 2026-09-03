@@ -7,6 +7,7 @@ use App\Models\BniArticle;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniEventSlide;
+use App\Models\BniEventVideo;
 use App\Models\BniGalleryItem;
 use App\Models\HeroSlide;
 use App\Models\LandingPage;
@@ -63,6 +64,7 @@ class FrontendServiceProvider extends ServiceProvider
             'bni-chapter' => BniChapter::class,
             'bni-event' => BniEvent::class,
             'bni-event-slide' => BniEventSlide::class,
+            'bni-event-video' => BniEventVideo::class,
             'bni-gallery-item' => BniGalleryItem::class,
             'user' => User::class,
         ]);

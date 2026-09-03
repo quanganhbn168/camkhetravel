@@ -29,7 +29,7 @@ class BniArticleCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Danh mục tin BNI';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 11;
 
     public static function getNavigationGroup(): ?string
     {
@@ -81,7 +81,8 @@ class BniArticleCategoryResource extends Resource
                         ->default(true)
                         ->columnSpanFull(),
                 ])
-                ->columns(2),
+                ->columns(2)
+                ->columnSpanFull(),
         ]);
     }
 

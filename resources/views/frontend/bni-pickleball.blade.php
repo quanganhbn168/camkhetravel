@@ -84,7 +84,7 @@
 
         <section class="bni-section bni-schedule" id="lich-trinh" aria-labelledby="pickleball-schedule-title">
             <div class="site-shell">
-                <div class="bni-section-heading"><h2 id="pickleball-schedule-title">Lịch thi đấu & kết quả</h2></div>
+                <div class="bni-section-heading"><h2 id="pickleball-schedule-title">Lịch thi đấu</h2></div>
                 <div class="bni-schedule__layout">
                     <div class="bni-schedule__main">
                         <div class="bni-tab-list">
@@ -93,14 +93,14 @@
                         @forelse ($scheduleDays as $day)
                             <div class="bni-schedule-list" x-show="scheduleDay === {{ $day['number'] }}">
                                 @foreach ($day['items'] as $item)
-                                    <article class="bni-schedule-item"><time>{{ $item['time'] ?: 'Đang cập nhật' }}</time><div>@if ($item['stage'])<p>{{ $item['stage'] }}</p>@endif<h3>{{ $item['title'] }}</h3>@if ($item['description'])<span>{{ $item['description'] }}</span>@endif @if ($item['result'])<strong>Kết quả: {{ $item['result'] }}</strong>@endif</div></article>
+                                    <article class="bni-schedule-item"><time>{{ $item['time'] ?: 'Đang cập nhật' }}</time><div><h3>{{ $item['title'] }}</h3>@if ($item['description'])<span>{{ $item['description'] }}</span>@endif</div></article>
                                 @endforeach
                             </div>
                         @empty
-                            <div class="bni-schedule-list"><p class="bni-empty-copy">Lịch và kết quả sẽ được cập nhật từ panel BNI.</p></div>
+                            <div class="bni-schedule-list"><p class="bni-empty-copy">Lịch thi đấu sẽ được cập nhật từ panel BNI.</p></div>
                         @endforelse
                     </div>
-                    <aside class="bni-schedule__aside"><img src="{{ asset('bni-logo-red.svg') }}" alt="BNI"><div><h3>Kết quả trực tiếp</h3><p>Ban tổ chức cập nhật bảng đấu và kết quả tại đây.</p></div></aside>
+                    <aside class="bni-schedule__aside"><img src="{{ asset('bni-logo-red.svg') }}" alt="BNI"><div><h3>Lịch theo từng ngày</h3><p>Chọn ngày để xem đầy đủ các khung giờ và nội dung thi đấu.</p></div></aside>
                 </div>
             </div>
         </section>

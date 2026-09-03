@@ -85,7 +85,8 @@ class BniGalleryCommentResource extends Resource
                     Select::make('status')->label('Trạng thái')->options(Comment::statusOptions())->required()->columnSpanFull(),
                     Textarea::make('body')->label('Nội dung')->required()->rows(5)->columnSpanFull(),
                 ])
-                ->columns(2),
+                ->columns(2)
+                ->columnSpanFull(),
         ]);
     }
 

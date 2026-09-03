@@ -17,6 +17,7 @@ class BniExperienceService
     public function handover(): array
     {
         $event = $this->event('handover');
+        $video = $event?->video;
         $chapters = $event?->chapters->where('is_active', true)->values() ?? collect();
         $heroImageUrl = $event?->bniMediaUrl('hero');
         $heroSlides = $event?->slides
@@ -54,8 +55,8 @@ class BniExperienceService
             ]]);
         }
 
-        $videoPosterUrl = $event?->bniMediaUrl('video_poster') ?: $heroImageUrl;
-        $registrationUrl = trim((string) $event?->registration_url);
+        $videoPosterUrl = $video?->bniMediaUrl('poster') ?: $heroImageUrl;
+        $registrationUrl = trim((string) $video?->registration_url);
 
         if ($registrationUrl === '' || $registrationUrl === '#dang-ky') {
             $registrationUrl = LocalizedUrl::route('bni.registrations.create');
@@ -93,12 +94,12 @@ class BniExperienceService
             'heroImageUrl' => $heroImageUrl,
             'heroSlides' => $heroSlides,
             'eventVideo' => [
-                'media_url' => $event?->bniMediaUrl('video', false),
-                'external_url' => $event?->video_url,
+                'media_url' => $video?->bniMediaUrl('video', false),
+                'external_url' => $video?->external_url,
                 'poster_url' => $videoPosterUrl,
             ],
             'registration' => [
-                'label' => $event?->registration_label ?: 'Đăng ký ngay',
+                'label' => $video?->registration_label ?: 'Đăng ký ngay',
                 'url' => $registrationUrl,
             ],
             'chapters' => $chapters->map(fn ($chapter): array => [
@@ -211,7 +212,7 @@ class BniExperienceService
     public function pickleball(): array
     {
         $event = $this->event('pickleball');
-        $settings = $event?->settings ?? [];
+        $landing = $event?->landing;
         $articles = BniArticle::query()
             ->published()
             ->with(['chapter', 'media'])
@@ -232,14 +233,19 @@ class BniExperienceService
                 ->orderBy('sort_order')
                 ->get(['id', 'name', 'short_name']),
             'pickleballContent' => [
-                'countdown_label' => $settings['countdown_label'] ?? 'Đếm ngược đến giải đấu',
-                'prizes_title' => $settings['prizes_title'] ?? 'Cơ cấu giải thưởng',
-                'prizes_description' => $settings['prizes_description'] ?? null,
-                'prizes' => collect($settings['prizes'] ?? [])->filter(fn ($prize): bool => is_array($prize) && filled($prize['title'] ?? null))->values(),
-                'rules_title' => $settings['rules_title'] ?? 'Thể lệ giải đấu',
-                'rules' => $settings['rules'] ?? null,
-                'registration_title' => $settings['registration_title'] ?? 'Đăng ký tham gia',
-                'registration_description' => $settings['registration_description'] ?? 'Đăng ký để Ban tổ chức sắp xếp bảng đấu, thông tin check-in và hỗ trợ phù hợp.',
+                'countdown_label' => $landing?->countdown_label ?: 'Đếm ngược đến giải đấu',
+                'prizes_title' => $landing?->prizes_title ?: 'Cơ cấu giải thưởng',
+                'prizes_description' => $landing?->prizes_description,
+                'prizes' => $landing?->prizes->map(fn ($prize): array => [
+                    'title' => $prize->title,
+                    'value' => $prize->value,
+                    'description' => $prize->description,
+                    'highlight' => $prize->highlight,
+                ])->values() ?? collect(),
+                'rules_title' => $landing?->rules_title ?: 'Thể lệ giải đấu',
+                'rules' => $landing?->rules,
+                'registration_title' => $landing?->registration_title ?: 'Đăng ký tham gia',
+                'registration_description' => $landing?->registration_description ?: 'Đăng ký để Ban tổ chức sắp xếp bảng đấu, thông tin check-in và hỗ trợ phù hợp.',
             ],
         ];
     }
@@ -251,10 +257,12 @@ class BniExperienceService
             ->where('type', $type)
             ->with([
                 'media',
+                'video.media',
+                'landing.prizes',
                 'slides.media',
                 'chapters.media',
                 'purposes',
-                'scheduleItems',
+                'scheduleDays.items',
                 'activities.media',
             ])
             ->orderByDesc('is_featured')
@@ -309,24 +317,26 @@ class BniExperienceService
     }
 
     /** @return Collection<int, array{number: int, label: string, items: Collection<int, array<string, mixed>>}> */
-    private function scheduleDays(?BniEvent $event): Collection
+    public function scheduleDays(?BniEvent $event): Collection
     {
         if (! $event) {
             return collect();
         }
 
-        return $event->scheduleItems
-            ->groupBy('day_number')
-            ->map(fn (Collection $items, int|string $day): array => [
-                'number' => (int) $day,
-                'label' => 'Ngày '.(int) $day,
-                'items' => $items->map(fn ($item): array => [
+        return $event->scheduleDays
+            ->where('is_active', true)
+            ->values()
+            ->map(fn ($day, int $index): array => [
+                'number' => $index + 1,
+                'label' => collect([
+                    $day->title,
+                    $day->event_date?->format('d/m/Y'),
+                ])->filter()->implode(' · ') ?: 'Ngày '.($index + 1),
+                'description' => $day->description,
+                'items' => $day->items->map(fn ($item): array => [
                     'time' => collect([$item->starts_at ? substr((string) $item->starts_at, 0, 5) : null, $item->ends_at ? substr((string) $item->ends_at, 0, 5) : null])->filter()->implode(' – '),
                     'title' => $item->title,
-                    'stage' => $item->stage,
                     'description' => $item->description,
-                    'result' => $item->result,
-                    'location' => $item->location,
                 ]),
             ])
             ->values();

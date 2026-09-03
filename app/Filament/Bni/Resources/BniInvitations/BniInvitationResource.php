@@ -77,7 +77,7 @@ class BniInvitationResource extends Resource
                 TextInput::make('guest_count')->label('Số người tham dự')->numeric()->minValue(1)->default(1)->columnSpanFull(),
                 Select::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions())->required()->default(BniInvitation::RSVP_PENDING)->columnSpanFull(),
                 Textarea::make('rsvp_note')->label('Ghi chú RSVP')->rows(3)->columnSpanFull(),
-            ])->columns(2),
+            ])->columns(2)->columnSpanFull(),
         ]);
     }
 

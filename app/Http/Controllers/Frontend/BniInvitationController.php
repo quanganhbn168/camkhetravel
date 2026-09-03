@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BniEvent;
 use App\Models\BniInvitation;
 use App\Models\BniRegistration;
+use App\Support\Bni\BniExperienceService;
 use App\Support\Bni\BniInvitationContent;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -16,7 +17,10 @@ use Illuminate\View\View;
 
 class BniInvitationController extends Controller
 {
-    public function __construct(private readonly FrontendSeoBuilder $seo) {}
+    public function __construct(
+        private readonly FrontendSeoBuilder $seo,
+        private readonly BniExperienceService $experience,
+    ) {}
 
     public function template(): View
     {
@@ -32,7 +36,7 @@ class BniInvitationController extends Controller
             'directionsUrl' => $event->directions_url,
             'guestName' => $invitationContent['default_guest_name'],
             'invitationContent' => $invitationContent,
-            'scheduleDays' => $event->scheduleItems->groupBy('day_number')->sortKeys(),
+            'scheduleDays' => $this->experience->scheduleDays($event),
             'featuredEvents' => $this->featuredEventCards(),
             'isInvitationTemplate' => true,
             'seo' => $this->seo->listing(
@@ -46,7 +50,7 @@ class BniInvitationController extends Controller
 
     public function show(BniInvitation $invitation): View
     {
-        $invitation->load(['event.media', 'event.scheduleItems', 'chapter']);
+        $invitation->load(['event.media', 'event.scheduleDays.items', 'chapter']);
         abort_unless($invitation->event, 404);
 
         $event = $invitation->event;
@@ -63,7 +67,7 @@ class BniInvitationController extends Controller
             'directionsUrl' => $event->directions_url,
             'guestName' => $guestName,
             'invitationContent' => $invitationContent,
-            'scheduleDays' => $event->scheduleItems->groupBy('day_number')->sortKeys(),
+            'scheduleDays' => $this->experience->scheduleDays($event),
             'featuredEvents' => $this->featuredEventCards(),
             'isInvitationTemplate' => false,
             'seo' => $this->seo->invitation($invitation, $guestName, $invitationContent, $heroImageUrl),
@@ -103,7 +107,7 @@ class BniInvitationController extends Controller
         return BniEvent::query()
             ->published()
             ->where('type', 'handover')
-            ->with(['media', 'scheduleItems'])
+            ->with(['media', 'scheduleDays.items'])
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
             ->firstOrFail();

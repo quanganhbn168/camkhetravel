@@ -32,7 +32,7 @@ class BniChapterResource extends Resource
 
     protected static ?string $navigationLabel = 'Chapter';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
 
     public static function getNavigationGroup(): ?string
     {
@@ -76,7 +76,7 @@ class BniChapterResource extends Resource
                 TextInput::make('contact_email')->label('Email liên hệ trên thư mời')->email()->columnSpanFull(),
                 TextInput::make('contact_phone')->label('Số điện thoại liên hệ trên thư mời')->tel()->columnSpanFull(),
                 Toggle::make('is_active')->label('Hiển thị')->default(true)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-            ])->columns(2),
+            ])->columns(2)->columnSpanFull(),
         ]);
     }
 

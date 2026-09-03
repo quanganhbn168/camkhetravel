@@ -7,7 +7,10 @@ use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
+use App\Models\BniEventLanding;
+use App\Models\BniEventVideo;
 use App\Models\BniPurpose;
+use App\Models\BniScheduleDay;
 use App\Models\BniScheduleItem;
 use App\Models\User;
 use Carbon\Carbon;
@@ -37,8 +40,6 @@ class BniFoundationSeeder extends Seeder
             'venue' => 'Địa điểm sự kiện',
             'address' => 'Thông tin địa điểm sẽ được Ban tổ chức cập nhật',
             'contact_name' => 'Ban tổ chức BNI',
-            'registration_label' => 'Đăng ký ngay',
-            'registration_url' => '/le-chuyen-giao/dang-ky',
             'status' => 'published',
             'is_featured' => true,
         ]);
@@ -47,6 +48,11 @@ class BniFoundationSeeder extends Seeder
             $handover->ends_at = Carbon::create(2026, 10, 1, 21, 0, 0, config('app.timezone'));
         }
         $handover->save();
+
+        BniEventVideo::query()->updateOrCreate(['bni_event_id' => $handover->id], [
+            'registration_label' => 'Đăng ký ngay',
+            'registration_url' => '/le-chuyen-giao/dang-ky',
+        ]);
 
         $chapters = collect([
             ['name' => 'KINHBAC', 'slug' => 'kinhbac', 'description' => 'Kết nối doanh nhân Bắc Ninh bằng tinh thần cho đi để nhận lại.'],
@@ -72,21 +78,17 @@ class BniFoundationSeeder extends Seeder
             ]);
         }
 
-        foreach ([
-            [1, '08:00', '09:00', 'Đón tiếp & kết nối', 'Check-in, giao lưu giữa các chapter.', 'Sảnh đón'],
-            [1, '09:00', '11:30', 'Lễ chuyển giao Ban Điều hành', 'Nghi thức chuyển giao, tri ân và chia sẻ định hướng.', 'Hội trường chính'],
-            [1, '18:00', '21:00', 'Gala dinner & sinh nhật', 'Đêm giao lưu, vinh danh và chúc mừng sinh nhật hội viên.', 'Không gian gala'],
-            [2, '07:30', '11:30', 'Hoạt động kết nối chapter', 'Các hoạt động gắn kết và phiên chia sẻ kinh nghiệm.', 'Khu vực hoạt động'],
-            [2, '13:30', '16:30', 'BNI Pickleball', 'Giải đấu giao hữu và kết nối cộng đồng.', 'Sân thi đấu'],
-        ] as $index => [$day, $start, $end, $title, $description, $location]) {
-            BniScheduleItem::query()->updateOrCreate(['bni_event_id' => $handover->id, 'day_number' => $day, 'title' => $title], [
-                'starts_at' => $start,
-                'ends_at' => $end,
-                'description' => $description,
-                'location' => $location,
-                'sort_order' => $index + 1,
-            ]);
-        }
+        $this->syncSchedule($handover, [
+            1 => [
+                ['08:00', '09:00', 'Đón tiếp & kết nối', 'Check-in, giao lưu giữa các chapter.'],
+                ['09:00', '11:30', 'Lễ chuyển giao Ban Điều hành', 'Nghi thức chuyển giao, tri ân và chia sẻ định hướng.'],
+                ['18:00', '21:00', 'Gala dinner & sinh nhật', 'Đêm giao lưu, vinh danh và chúc mừng sinh nhật hội viên.'],
+            ],
+            2 => [
+                ['07:30', '11:30', 'Hoạt động kết nối chapter', 'Các hoạt động gắn kết và phiên chia sẻ kinh nghiệm.'],
+                ['13:30', '16:30', 'BNI Pickleball', 'Giải đấu giao hữu và kết nối cộng đồng.'],
+            ],
+        ]);
 
         if (! $handover->activities()->exists()) {
             foreach ([
@@ -123,19 +125,21 @@ class BniFoundationSeeder extends Seeder
         }
         $pickleball->save();
 
-        foreach ([
-            [1, '13:30', '14:00', 'Check-in vận động viên', 'Xác nhận danh sách và phổ biến điều lệ.', 'Khu check-in'],
-            [1, '14:00', '17:00', 'Vòng bảng', 'Thi đấu theo bảng đấu đã công bố.', 'Sân thi đấu'],
-            [1, '17:00', '18:00', 'Chung kết & trao giải', 'Tổng kết và vinh danh các đội thi đấu.', 'Sân trung tâm'],
-        ] as $index => [$day, $start, $end, $title, $description, $location]) {
-            BniScheduleItem::query()->updateOrCreate(['bni_event_id' => $pickleball->id, 'day_number' => $day, 'title' => $title], [
-                'starts_at' => $start,
-                'ends_at' => $end,
-                'description' => $description,
-                'location' => $location,
-                'sort_order' => $index + 1,
-            ]);
-        }
+        BniEventLanding::query()->updateOrCreate(['bni_event_id' => $pickleball->id], [
+            'countdown_label' => 'Đếm ngược đến giải đấu',
+            'prizes_title' => 'Cơ cấu giải thưởng',
+            'rules_title' => 'Thể lệ giải đấu',
+            'registration_title' => 'Đăng ký tham gia',
+            'registration_description' => 'Đăng ký để Ban tổ chức sắp xếp bảng đấu, thông tin check-in và hỗ trợ phù hợp.',
+        ]);
+
+        $this->syncSchedule($pickleball, [
+            1 => [
+                ['13:30', '14:00', 'Check-in vận động viên', 'Xác nhận danh sách và phổ biến điều lệ.'],
+                ['14:00', '17:00', 'Vòng bảng', 'Thi đấu theo bảng đấu đã công bố.'],
+                ['17:00', '18:00', 'Chung kết & trao giải', 'Tổng kết và vinh danh các đội thi đấu.'],
+            ],
+        ]);
 
         $articleCategories = collect([
             'event' => ['name' => 'Tin sự kiện', 'slug' => 'tin-su-kien', 'sort_order' => 1],
@@ -164,6 +168,34 @@ class BniFoundationSeeder extends Seeder
                 'published_at' => now()->subDays(4 - $index),
             ]);
             $article->categories()->syncWithoutDetaching([$articleCategories[$type]->id]);
+        }
+    }
+
+    /** @param array<int, array<int, array{string, string, string, string}>> $schedule */
+    private function syncSchedule(BniEvent $event, array $schedule): void
+    {
+        foreach ($schedule as $dayNumber => $items) {
+            $eventDate = $event->starts_at?->copy()->startOfDay()->addDays($dayNumber - 1);
+            $day = BniScheduleDay::query()->updateOrCreate([
+                'bni_event_id' => $event->id,
+                'event_date' => $eventDate?->toDateString(),
+            ], [
+                'title' => 'Ngày '.$dayNumber,
+                'is_active' => true,
+                'sort_order' => $dayNumber,
+            ]);
+
+            foreach ($items as $index => [$start, $end, $title, $description]) {
+                BniScheduleItem::query()->updateOrCreate([
+                    'bni_schedule_day_id' => $day->id,
+                    'title' => $title,
+                ], [
+                    'starts_at' => $start,
+                    'ends_at' => $end,
+                    'description' => $description,
+                    'sort_order' => $index + 1,
+                ]);
+            }
         }
     }
 }

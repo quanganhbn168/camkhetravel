@@ -9,6 +9,7 @@ use App\Models\BniEvent;
 use App\Models\BniEventSlide;
 use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
+use App\Models\BniScheduleDay;
 use App\Models\BniScheduleItem;
 use App\Models\User;
 use App\Settings\BniInvitationSettings;
@@ -255,7 +256,6 @@ class BniExperienceRoutesTest extends TestCase
             'slug' => 'le-chuyen-giao-kem-thu',
             'starts_at' => '2026-10-01 08:00:00',
             'venue' => 'Trung tâm hội nghị',
-            'settings' => ['invitation' => ['content' => '<p>Không được lấy từ sự kiện.</p>']],
         ]);
         $settings = app(BniInvitationSettings::class);
         $settings->content = '<p>Nội dung chung toàn hệ thống.</p>';
@@ -269,8 +269,14 @@ class BniExperienceRoutesTest extends TestCase
             'contact_name' => 'Người phụ trách chapter',
             'contact_phone' => '0900000000',
         ]);
-        BniScheduleItem::query()->create([
+        $scheduleDay = BniScheduleDay::query()->create([
             'bni_event_id' => $event->id,
+            'event_date' => '2026-10-01',
+            'title' => 'Ngày đón khách',
+            'is_active' => true,
+        ]);
+        BniScheduleItem::query()->create([
+            'bni_schedule_day_id' => $scheduleDay->id,
             'title' => 'Đón tiếp khách mời',
             'starts_at' => '08:00',
             'ends_at' => '09:00',
@@ -290,7 +296,6 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('LỄ CHUYỂN GIAO')
             ->assertSee('Anh/Chị chủ doanh nghiệp')
             ->assertSee('Nội dung chung toàn hệ thống.')
-            ->assertDontSee('Không được lấy từ sự kiện.')
             ->assertSee('Lịch trình sự kiện')
             ->assertSee('Đón tiếp khách mời')
             ->assertSee('Dress code chung toàn hệ thống.')
@@ -380,7 +385,8 @@ class BniExperienceRoutesTest extends TestCase
         $this->get(route('bni.pickleball'))
             ->assertOk()
             ->assertSee('id="bni-pickleball-main"', false)
-            ->assertSeeText('Lịch thi đấu & kết quả')
+            ->assertSeeText('Lịch thi đấu')
+            ->assertDontSeeText('Kết quả trực tiếp')
             ->assertSee('Đăng ký tham gia');
 
         $this->get('/bni-admin/login')->assertOk();
@@ -427,8 +433,14 @@ class BniExperienceRoutesTest extends TestCase
         foreach ([
             '/bni-admin/bni-events/create',
             "/bni-admin/bni-events/{$event->id}/edit",
+            '/bni-admin/bni-event-slides/create',
+            '/bni-admin/bni-event-videos/create',
             '/bni-admin/bni-chapters/create',
             "/bni-admin/bni-chapters/{$chapter->slug}/edit",
+            '/bni-admin/bni-purposes/create',
+            '/bni-admin/bni-schedule-days/create',
+            '/bni-admin/bni-event-landings/create',
+            '/bni-admin/bni-activities/create',
             '/bni-admin/bni-articles/create',
             '/bni-admin/bni-gallery-items/create',
             '/bni-admin/bni-invitations/create',
@@ -484,6 +496,12 @@ class BniExperienceRoutesTest extends TestCase
         $this->actingAs($user)->get('/bni-admin/bni-invitations/create')->assertOk();
         $this->actingAs($user)->get('/bni-admin/bni-chapters/create')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-events')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-event-slides')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-event-videos')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-purposes')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-schedule-days')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-event-landings')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-activities')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-members')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/manage-bni-invitation-settings')->assertForbidden();
     }

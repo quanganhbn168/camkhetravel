@@ -9,8 +9,8 @@ class BniScheduleItem extends Model
 {
     protected $guarded = [];
 
-    public function event(): BelongsTo
+    public function day(): BelongsTo
     {
-        return $this->belongsTo(BniEvent::class, 'bni_event_id');
+        return $this->belongsTo(BniScheduleDay::class, 'bni_schedule_day_id');
     }
 }

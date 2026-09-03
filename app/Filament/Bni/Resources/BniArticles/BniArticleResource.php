@@ -36,7 +36,7 @@ class BniArticleResource extends Resource
 
     protected static ?string $navigationLabel = 'Tin tức BNI';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 12;
 
     public static function getNavigationGroup(): ?string
     {
@@ -72,7 +72,7 @@ class BniArticleResource extends Resource
                     SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh đại diện')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->columnSpanFull(),
                     Textarea::make('excerpt')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                     RichEditor::make('body')->label('Nội dung')->columnSpanFull(),
-                ])->columns(2),
+                ])->columns(2)->columnSpanFull(),
             ])->columnSpanFull(),
             Section::make('Phân loại & xuất bản')->icon('heroicon-o-cog-6-tooth')->schema([
                 Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => BniPanelAccess::scopeArticleEvents($query))->searchable()->preload()->columnSpanFull(),

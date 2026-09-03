@@ -7,6 +7,7 @@ use App\Filament\Bni\Resources\BniGalleryItems\BniGalleryItemResource;
 use App\Models\BniActivity;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
+use App\Models\BniEventLanding;
 use App\Models\BniGalleryItem;
 use App\Models\Comment;
 use App\Models\User;
@@ -27,21 +28,20 @@ class BniCompletionTest extends TestCase
     public function test_pickleball_landing_renders_managed_prizes_rules_countdown_and_rsvp(): void
     {
         $event = BniEvent::query()->published()->where('type', 'pickleball')->firstOrFail();
-        $event->update([
-            'settings' => [
-                'countdown_label' => 'Đếm ngược kiểm thử',
-                'prizes_title' => 'Giải thưởng kiểm thử',
-                'prizes' => [[
-                    'title' => 'Hạng mục vô địch kiểm thử',
-                    'value' => 'Phần thưởng do Ban tổ chức xác nhận',
-                    'description' => 'Nội dung quản trị được hiển thị.',
-                    'highlight' => true,
-                ]],
-                'rules_title' => 'Thể lệ kiểm thử',
-                'rules' => '<p>Nội dung thể lệ lấy từ quản trị BNI.</p>',
-                'registration_title' => 'RSVP Pickleball kiểm thử',
-                'registration_description' => 'Mô tả đăng ký do Ban tổ chức quản lý.',
-            ],
+        $landing = BniEventLanding::query()->updateOrCreate(['bni_event_id' => $event->id], [
+            'countdown_label' => 'Đếm ngược kiểm thử',
+            'prizes_title' => 'Giải thưởng kiểm thử',
+            'rules_title' => 'Thể lệ kiểm thử',
+            'rules' => '<p>Nội dung thể lệ lấy từ quản trị BNI.</p>',
+            'registration_title' => 'RSVP Pickleball kiểm thử',
+            'registration_description' => 'Mô tả đăng ký do Ban tổ chức quản lý.',
+        ]);
+        $landing->prizes()->delete();
+        $landing->prizes()->create([
+            'title' => 'Hạng mục vô địch kiểm thử',
+            'value' => 'Phần thưởng do Ban tổ chức xác nhận',
+            'description' => 'Nội dung quản trị được hiển thị.',
+            'highlight' => true,
         ]);
 
         $this->get(route('bni.pickleball'))

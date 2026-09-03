@@ -7,6 +7,7 @@ use App\Traits\HasBniMedia;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\MediaLibrary\HasMedia;
 
 class BniEvent extends Model implements HasMedia
@@ -22,7 +23,6 @@ class BniEvent extends Model implements HasMedia
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
             'is_featured' => 'boolean',
-            'settings' => 'array',
         ];
     }
 
@@ -41,9 +41,19 @@ class BniEvent extends Model implements HasMedia
         return $this->hasMany(BniPurpose::class)->orderBy('sort_order');
     }
 
-    public function scheduleItems(): HasMany
+    public function scheduleDays(): HasMany
     {
-        return $this->hasMany(BniScheduleItem::class)->orderBy('day_number')->orderBy('sort_order');
+        return $this->hasMany(BniScheduleDay::class)->orderBy('sort_order')->orderBy('event_date');
+    }
+
+    public function video(): HasOne
+    {
+        return $this->hasOne(BniEventVideo::class);
+    }
+
+    public function landing(): HasOne
+    {
+        return $this->hasOne(BniEventLanding::class);
     }
 
     public function activities(): HasMany
@@ -78,11 +88,6 @@ class BniEvent extends Model implements HasMedia
 
     protected function bniImageCollections(): array
     {
-        return ['hero', 'video_poster'];
-    }
-
-    protected function bniVideoCollections(): array
-    {
-        return ['video'];
+        return ['hero'];
     }
 }

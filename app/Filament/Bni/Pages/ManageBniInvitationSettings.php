@@ -28,7 +28,7 @@ class ManageBniInvitationSettings extends Page
 
     protected static string|UnitEnum|null $navigationGroup = 'Lễ chuyển giao';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 10;
 
     protected string $view = 'filament.bni.pages.manage-invitation-settings';
 
@@ -80,7 +80,8 @@ class ManageBniInvitationSettings extends Page
                                         TextInput::make('greeting')->label('Lời kính mời')->required()->maxLength(255)->columnSpanFull(),
                                         TextInput::make('default_guest_name')->label('Tên mặc định khi chưa chỉ định khách')->required()->maxLength(255)->columnSpanFull(),
                                     ])
-                                    ->columns(2),
+                                    ->columns(2)
+                                    ->columnSpanFull(),
                             ]),
                         Tab::make('Nội dung chương trình')
                             ->schema([
@@ -90,7 +91,8 @@ class ManageBniInvitationSettings extends Page
                                         TextInput::make('content_title')->label('Tiêu đề nội dung')->required()->maxLength(255)->columnSpanFull(),
                                         RichEditor::make('content')->label('Nội dung thư mời')->required()->columnSpanFull(),
                                     ])
-                                    ->columns(2),
+                                    ->columns(2)
+                                    ->columnSpanFull(),
                             ]),
                         Tab::make('Lịch trình & lưu ý')
                             ->schema([
@@ -101,7 +103,8 @@ class ManageBniInvitationSettings extends Page
                                         TextInput::make('note_title')->label('Tiêu đề lưu ý')->required()->maxLength(255)->columnSpanFull(),
                                         RichEditor::make('note_content')->label('Lưu ý tham dự / dress code')->required()->columnSpanFull(),
                                     ])
-                                    ->columns(2),
+                                    ->columns(2)
+                                    ->columnSpanFull(),
                             ]),
                         Tab::make('RSVP & liên hệ')
                             ->schema([
@@ -113,7 +116,8 @@ class ManageBniInvitationSettings extends Page
                                         TextInput::make('contact_title')->label('Tiêu đề liên hệ')->required()->maxLength(255)->columnSpanFull(),
                                         Textarea::make('contact_description')->label('Mô tả liên hệ')->required()->rows(3)->columnSpanFull(),
                                     ])
-                                    ->columns(2),
+                                    ->columns(2)
+                                    ->columnSpanFull(),
                             ]),
                     ])
                     ->columnSpanFull(),

@@ -34,7 +34,7 @@ class BniGalleryItemResource extends Resource
 
     protected static ?string $navigationLabel = 'Thư viện ảnh';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 9;
 
     public static function getNavigationGroup(): ?string
     {
@@ -76,7 +76,7 @@ class BniGalleryItemResource extends Resource
                         ->orderBy('title')
                         ->pluck('title', 'id')
                         ->all())
-                    ->helperText('Tên hoạt động được quản lý trong mục Sự kiện; có thể thêm tự do như “Trước lễ chuyển giao” hoặc “Trong Gala Dinner”.')
+                    ->helperText('Tên hoạt động được quản lý trong mục Hoạt động & album; có thể tạo riêng như “Trước lễ chuyển giao” hoặc “Trong Gala Dinner”.')
                     ->required()
                     ->searchable()
                     ->columnSpanFull(),
@@ -86,7 +86,7 @@ class BniGalleryItemResource extends Resource
                 Select::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions())->default(BniGalleryItem::SOURCE_ADMIN)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                 Select::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions())->required()->default(BniGalleryItem::STATUS_APPROVED)->columnSpanFull(),
                 Toggle::make('is_active')->label('Hiển thị')->default(true)->columnSpanFull(),
-            ])->columns(2),
+            ])->columns(2)->columnSpanFull(),
         ]);
     }
 

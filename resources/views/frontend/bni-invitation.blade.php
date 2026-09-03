@@ -73,20 +73,16 @@
                     <h2 id="bni-invitation-schedule-title">{{ $invitationContent['schedule_title'] }}</h2>
                 </div>
                 <div class="bni-invitation-schedule__list">
-                    @forelse ($scheduleDays as $dayNumber => $dayItems)
-                        <section class="bni-invitation-schedule__day" aria-labelledby="bni-invitation-day-{{ $dayNumber }}">
-                            <h3 id="bni-invitation-day-{{ $dayNumber }}">Ngày {{ $dayNumber }}</h3>
-                            @foreach ($dayItems as $item)
-                                @php
-                                    $itemTime = collect([$item->starts_at, $item->ends_at])->filter()->implode(' – ');
-                                @endphp
+                    @forelse ($scheduleDays as $day)
+                        <section class="bni-invitation-schedule__day" aria-labelledby="bni-invitation-day-{{ $day['number'] }}">
+                            <h3 id="bni-invitation-day-{{ $day['number'] }}">{{ $day['label'] }}</h3>
+                            @foreach ($day['items'] as $item)
                                 <article class="bni-invitation-schedule__item">
                                     <span class="bni-invitation-schedule__index" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                                    <time>{{ $itemTime ?: 'Đang cập nhật' }}</time>
+                                    <time>{{ $item['time'] ?: 'Đang cập nhật' }}</time>
                                     <div>
-                                        <h4>{{ $item->title }}</h4>
-                                        @if ($item->description)<p>{{ $item->description }}</p>@endif
-                                        @if ($item->location)<small>{{ $item->location }}</small>@endif
+                                        <h4>{{ $item['title'] }}</h4>
+                                        @if ($item['description'])<p>{{ $item['description'] }}</p>@endif
                                     </div>
                                 </article>
                             @endforeach

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Support\Bni\BniMediaService;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class BniAdminArchitectureTest extends TestCase
@@ -22,5 +23,25 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString('->slideOver()', $source);
         $this->assertStringNotContainsString("TextInput::make('slug')", $source);
         $this->assertSame(100, BniMediaService::WEBP_QUALITY);
+    }
+
+    public function test_event_content_is_split_into_relational_resources_and_schedule_days(): void
+    {
+        $eventResource = File::get(app_path('Filament/Bni/Resources/BniEvents/BniEventResource.php'));
+        $scheduleResource = File::get(app_path('Filament/Bni/Resources/BniScheduleDays/BniScheduleDayResource.php'));
+
+        $this->assertStringNotContainsString('Repeater::make', $eventResource);
+        $this->assertStringNotContainsString('settings.', $eventResource);
+        $this->assertStringNotContainsString("TextInput::make('stage')", $scheduleResource);
+        $this->assertStringNotContainsString("Textarea::make('result')", $scheduleResource);
+        $this->assertStringNotContainsString("TextInput::make('location')", $scheduleResource);
+
+        foreach (['bni_event_videos', 'bni_event_landings', 'bni_event_prizes', 'bni_schedule_days'] as $table) {
+            $this->assertTrue(Schema::hasTable($table), $table);
+        }
+
+        foreach (['bni_event_id', 'day_number', 'stage', 'result', 'location'] as $column) {
+            $this->assertFalse(Schema::hasColumn('bni_schedule_items', $column), $column);
+        }
     }
 }

@@ -62,7 +62,7 @@ class BniRegistrationResource extends Resource
                 TextInput::make('skill_level')->label('Trình độ')->columnSpanFull(),
                 DateTimePicker::make('checked_in_at')->label('Check-in lúc')->columnSpanFull(),
                 Textarea::make('note')->label('Ghi chú')->rows(3)->columnSpanFull(),
-            ])->columns(2),
+            ])->columns(2)->columnSpanFull(),
         ]);
     }
 
