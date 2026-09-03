@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Bni\Resources\BniArticleCategories\BniArticleCategoryResource;
 use App\Filament\Bni\Resources\BniArticleComments\BniArticleCommentResource;
+use App\Filament\Bni\Resources\BniArticles\BniArticleResource;
 use App\Models\BniArticle;
+use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniInvitation;
@@ -79,6 +82,61 @@ class BniSecurityHardeningTest extends TestCase
 
         $this->assertTrue($commentIds->contains($ownComment->id));
         $this->assertFalse($commentIds->contains($otherComment->id));
+    }
+
+    public function test_bni_article_categories_are_global_while_chapter_managers_only_manage_their_articles(): void
+    {
+        Role::findOrCreate('bni_admin', 'web');
+        Role::findOrCreate('bni_chapter_manager', 'web');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $chapter = BniChapter::query()->where('is_active', true)->firstOrFail();
+        $otherChapter = BniChapter::query()->where('is_active', true)->whereKeyNot($chapter->id)->firstOrFail();
+        $manager = User::factory()->create(['bni_chapter_id' => $chapter->id]);
+        $manager->assignRole('bni_chapter_manager');
+        $category = BniArticleCategory::query()->create([
+            'name' => 'Danh mục dùng chung kiểm thử',
+            'slug' => 'danh-muc-dung-chung-'.str()->random(8),
+            'is_active' => true,
+        ]);
+        $ownArticle = $this->article($event, $chapter, 'Tin quản trị chapter được sửa');
+        $otherArticle = $this->article($event, $otherChapter, 'Tin quản trị chapter không được sửa');
+        $ownArticle->categories()->attach($category);
+
+        $this->actingAs($manager)
+            ->get('/bni-admin/bni-article-categories')
+            ->assertOk()
+            ->assertSee('Danh mục tin BNI');
+
+        $this->assertTrue(BniArticleCategoryResource::canViewAny());
+        $this->assertFalse(BniArticleCategoryResource::canCreate());
+        $this->assertFalse(BniArticleCategoryResource::canEdit($category));
+        $this->assertFalse(BniArticleCategoryResource::canDelete($category));
+        $this->assertTrue(BniArticleResource::canEdit($ownArticle));
+        $this->assertTrue(BniArticleResource::canDelete($ownArticle));
+        $this->assertFalse(BniArticleResource::canEdit($otherArticle));
+        $this->assertFalse(BniArticleResource::canDelete($otherArticle));
+        $this->assertEqualsCanonicalizing(
+            [$ownArticle->id],
+            BniArticleResource::getEloquentQuery()
+                ->whereKey([$ownArticle->id, $otherArticle->id])
+                ->pluck('id')
+                ->all(),
+        );
+
+        $prepared = BniPanelAccess::prepareArticleData([
+            'bni_event_id' => 999999,
+            'bni_chapter_id' => $otherChapter->id,
+        ]);
+        $this->assertSame($event->id, $prepared['bni_event_id']);
+        $this->assertSame($chapter->id, $prepared['bni_chapter_id']);
+
+        $admin = User::factory()->create();
+        $admin->assignRole('bni_admin');
+        $this->actingAs($admin);
+
+        $this->assertTrue(BniArticleCategoryResource::canCreate());
+        $this->assertTrue(BniArticleCategoryResource::canEdit($category));
+        $this->assertTrue(BniArticleCategoryResource::canDelete($category));
     }
 
     public function test_chapter_owned_mutations_force_the_assigned_chapter_and_secure_relationships(): void

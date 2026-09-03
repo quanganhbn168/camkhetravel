@@ -73,6 +73,16 @@ class BniPanelAccess
     }
 
     /** @param Builder<Model> $query */
+    public static function scopeArticleEvents(Builder $query): Builder
+    {
+        if (self::isChapterManager() && ! self::canManageEverything()) {
+            $query->published()->whereKey(self::chapterEventId() ?? 0);
+        }
+
+        return $query;
+    }
+
+    /** @param Builder<Model> $query */
     public static function scopeInvitationEvents(Builder $query): Builder
     {
         if (self::isChapterManager() && ! self::canManageEverything()) {
@@ -88,6 +98,19 @@ class BniPanelAccess
     public static function prepareArticleData(array $data): array
     {
         $data = self::forceChapter($data);
+
+        if (self::isChapterManager() && ! self::canManageEverything()) {
+            $eventId = self::chapterEventId();
+
+            if ($eventId === null) {
+                throw ValidationException::withMessages([
+                    'bni_event_id' => 'Chapter chưa được gắn với sự kiện để tạo bài viết.',
+                ]);
+            }
+
+            $data['bni_event_id'] = $eventId;
+        }
+
         self::ensurePublishedEvent($data['bni_event_id'] ?? null);
 
         return $data;

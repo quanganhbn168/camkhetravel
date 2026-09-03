@@ -19,6 +19,7 @@ class BniArticleController extends Controller
 
         $article->load([
             'chapter',
+            'categories',
             'coverMedia',
             'approvedComments' => fn ($query) => $query->with('user')->latest('approved_at'),
             'reactions',

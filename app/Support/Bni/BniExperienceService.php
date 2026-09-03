@@ -3,11 +3,10 @@
 namespace App\Support\Bni;
 
 use App\Models\BniArticle;
+use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
-use App\Models\Post;
-use App\Models\PostCategory;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use Illuminate\Support\Collection;
@@ -60,7 +59,7 @@ class BniExperienceService
         if ($registrationUrl === '' || $registrationUrl === '#dang-ky') {
             $registrationUrl = LocalizedUrl::route('bni.registrations.create');
         }
-        $newsCategories = $this->newsCategories();
+        $newsCategories = $this->newsCategories($event);
         $galleries = BniGalleryItem::query()
             ->published()
             ->with(['activity', 'event', 'media'])
@@ -270,36 +269,42 @@ class BniExperienceService
      * @return Collection<int, array{
      *     key: string,
      *     label: string,
-     *     posts: Collection<int, array<string, mixed>>
+     *     articles: Collection<int, array<string, mixed>>
      * }>
      */
-    private function newsCategories(): Collection
+    private function newsCategories(?BniEvent $event): Collection
     {
-        return PostCategory::query()
+        return BniArticleCategory::query()
             ->where('is_active', true)
-            ->whereHas('posts', fn ($query) => $query->published())
+            ->whereHas('articles', fn ($query) => $query
+                ->published()
+                ->whereIn('type', ['event', 'chapter'])
+                ->when($event, fn ($query) => $query->where(fn ($query) => $query
+                    ->where('bni_event_id', $event->id)
+                    ->orWhereNull('bni_event_id'))))
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get()
-            ->map(function (PostCategory $category): array {
-                $posts = $category->posts()
+            ->map(function (BniArticleCategory $category) use ($event): array {
+                $articles = $category->articles()
                     ->published()
-                    ->with('curatorMedia')
+                    ->with(['chapter', 'coverMedia'])
+                    ->whereIn('type', ['event', 'chapter'])
+                    ->when($event, fn ($query) => $query->where(fn ($query) => $query
+                        ->where('bni_event_id', $event->id)
+                        ->orWhereNull('bni_event_id')))
                     ->orderByDesc('is_featured')
                     ->latest('published_at')
-                    ->latest('posts.id')
+                    ->latest('bni_articles.id')
                     ->limit(4)
                     ->get();
 
                 return [
-                    'key' => 'post-category-'.$category->getKey(),
+                    'key' => 'bni-article-category-'.$category->getKey(),
                     'label' => $category->name,
-                    'posts' => $posts->map(fn (Post $post): array => [
-                        'title' => $post->title,
-                        'excerpt' => Str::limit(trim(strip_tags((string) $post->excerpt)), 180),
-                        'published_at' => $post->published_at,
-                        'image_url' => MediaUrl::versioned($post->curatorMedia),
-                        'url' => LocalizedUrl::post($post),
+                    'articles' => $articles->map(fn (BniArticle $article): array => $this->articleCard($article) + [
+                        'excerpt' => Str::limit(trim(strip_tags((string) $article->excerpt)), 180),
+                        'url' => LocalizedUrl::route('bni.articles.show', ['article' => $article->slug]),
                     ])->values(),
                 ];
             })

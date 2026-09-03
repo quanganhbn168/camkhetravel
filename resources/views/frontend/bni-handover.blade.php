@@ -242,7 +242,7 @@
                         <p class="bni-section-heading__description">Bài viết mới nhất được cập nhật theo từng chuyên mục.</p>
                     </div>
                     @if ($newsCategories->isNotEmpty())
-                        <div class="bni-tab-list" role="tablist" aria-label="Chuyên mục bài viết">
+                        <div class="bni-tab-list" role="tablist" aria-label="Danh mục tin BNI">
                             @foreach ($newsCategories as $category)
                                 <button
                                     type="button"
@@ -267,20 +267,20 @@
                         x-cloak
                         x-transition.opacity
                     >
-                        @foreach ($category['posts'] as $post)
+                        @foreach ($category['articles'] as $article)
                             <article class="bni-news-card {{ $loop->first ? 'bni-news-card--featured' : '' }}">
-                                @if ($post['image_url'])<img src="{{ $post['image_url'] }}" alt="{{ $post['title'] }}" loading="lazy">@endif
+                                @if ($article['image_url'])<img src="{{ $article['image_url'] }}" alt="{{ $article['title'] }}" loading="lazy">@endif
                                 <div>
                                     <p>{{ $category['label'] }}</p>
-                                    <h3><a href="{{ $post['url'] }}">{{ $post['title'] }}</a></h3>
-                                    @if ($post['excerpt'])<span>{{ $post['excerpt'] }}</span>@endif
-                                    @if ($post['published_at'])<time datetime="{{ $post['published_at']->toDateString() }}">{{ $post['published_at']->translatedFormat('d/m/Y') }}</time>@endif
+                                    <h3><a href="{{ $article['url'] }}">{{ $article['title'] }}</a></h3>
+                                    @if ($article['excerpt'])<span>{{ $article['excerpt'] }}</span>@endif
+                                    @if ($article['published_at'])<time datetime="{{ $article['published_at']->toDateString() }}">{{ $article['published_at']->translatedFormat('d/m/Y') }}</time>@endif
                                 </div>
                             </article>
                         @endforeach
                     </div>
                 @empty
-                    <p class="bni-empty-copy">Tin tức sẽ hiển thị sau khi có bài viết đã xuất bản trong một chuyên mục đang hoạt động.</p>
+                    <p class="bni-empty-copy">Tin tức sẽ hiển thị sau khi có bài BNI đã xuất bản trong một danh mục đang hoạt động.</p>
                 @endforelse
             </div>
         </section>

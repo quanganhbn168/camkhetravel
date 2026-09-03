@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\BniActivity;
 use App\Models\BniArticle;
+use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
 use App\Models\BniEvent;
 use App\Models\BniPurpose;
@@ -136,13 +137,22 @@ class BniFoundationSeeder extends Seeder
             ]);
         }
 
+        $articleCategories = collect([
+            'event' => ['name' => 'Tin sự kiện', 'slug' => 'tin-su-kien', 'sort_order' => 1],
+            'chapter' => ['name' => 'Tin các chapter', 'slug' => 'tin-cac-chapter', 'sort_order' => 2],
+            'pickleball' => ['name' => 'Tin Pickleball', 'slug' => 'tin-pickleball', 'sort_order' => 3],
+        ])->map(fn (array $category): BniArticleCategory => BniArticleCategory::query()->firstOrCreate(
+            ['slug' => $category['slug']],
+            $category + ['is_active' => true],
+        ));
+
         foreach ([
             ['event', 'Khởi động hành trình Lễ chuyển giao BNI', 'Cùng chuẩn bị cho một sự kiện kết nối bốn chapter.', true],
             ['chapter', 'KINHBAC sẵn sàng cho nhiệm kỳ mới', 'Những chia sẻ đầu tiên từ chapter KINHBAC.', false],
             ['chapter', 'IMPACT: Kết nối để tạo tác động', 'Câu chuyện về các giá trị được lan tỏa từ cộng đồng.', false],
             ['event', 'Gala dinner và sinh nhật hội viên', 'Không gian kết nối giàu cảm xúc trong khuôn khổ sự kiện.', false],
         ] as $index => [$type, $title, $excerpt, $featured]) {
-            BniArticle::query()->updateOrCreate(['slug' => str($title)->slug()->toString()], [
+            $article = BniArticle::query()->updateOrCreate(['slug' => str($title)->slug()->toString()], [
                 'bni_event_id' => $handover->id,
                 'bni_chapter_id' => $type === 'chapter' ? $chapters->get($index % $chapters->count())?->id : null,
                 'type' => $type,
@@ -153,6 +163,7 @@ class BniFoundationSeeder extends Seeder
                 'is_featured' => $featured,
                 'published_at' => now()->subDays(4 - $index),
             ]);
+            $article->categories()->syncWithoutDetaching([$articleCategories[$type]->id]);
         }
     }
 }

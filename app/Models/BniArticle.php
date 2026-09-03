@@ -8,6 +8,7 @@ use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class BniArticle extends Model
@@ -48,6 +49,14 @@ class BniArticle extends Model
     public function coverMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'cover_media_id');
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            BniArticleCategory::class,
+            'bni_article_category_article',
+        )->withPivot('sort_order');
     }
 
     public function reactions(): MorphMany
