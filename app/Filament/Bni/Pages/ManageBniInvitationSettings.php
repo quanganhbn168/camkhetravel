@@ -26,9 +26,9 @@ class ManageBniInvitationSettings extends Page
 
     protected static ?string $title = 'Mẫu thư mời BNI';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Lễ chuyển giao';
+    protected static string|UnitEnum|null $navigationGroup = 'Thư mời & vận hành';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.bni.pages.manage-invitation-settings';
 
@@ -53,7 +53,6 @@ class ManageBniInvitationSettings extends Page
             'default_guest_name' => $settings->default_guest_name,
             'content_title' => $settings->content_title,
             'content' => $settings->content,
-            'schedule_title' => $settings->schedule_title,
             'note_title' => $settings->note_title,
             'note_content' => $settings->note_content,
             'rsvp_title' => $settings->rsvp_title,
@@ -94,12 +93,12 @@ class ManageBniInvitationSettings extends Page
                                     ->columns(2)
                                     ->columnSpanFull(),
                             ]),
-                        Tab::make('Lịch trình & lưu ý')
+                        Tab::make('Lưu ý tham dự')
                             ->schema([
-                                Section::make('Thông tin tham dự')
+                                Section::make('Lưu ý chung')
                                     ->icon(Heroicon::OutlinedCalendarDays)
+                                    ->description('Lịch trình trên thư mời được lấy tự động từ mục Lịch trình sự kiện, không nhập lại tại đây.')
                                     ->schema([
-                                        TextInput::make('schedule_title')->label('Tiêu đề lịch trình')->required()->maxLength(255)->columnSpanFull(),
                                         TextInput::make('note_title')->label('Tiêu đề lưu ý')->required()->maxLength(255)->columnSpanFull(),
                                         RichEditor::make('note_content')->label('Lưu ý tham dự / dress code')->required()->columnSpanFull(),
                                     ])

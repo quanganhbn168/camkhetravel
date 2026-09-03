@@ -38,6 +38,11 @@ class BniChapter extends Model implements HasMedia
         return $this->hasMany(BniArticle::class);
     }
 
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(BniContact::class)->orderByDesc('is_primary')->orderBy('sort_order');
+    }
+
     public function invitations(): HasMany
     {
         return $this->hasMany(BniInvitation::class);

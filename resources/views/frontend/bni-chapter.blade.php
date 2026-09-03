@@ -96,21 +96,28 @@
             </div>
         </section>
 
-        @if ($chapterContact['has_details'])
+        @if ($chapterContacts->isNotEmpty())
             <section class="bni-chapter-detail__contact" aria-labelledby="bni-chapter-contact-title">
-                <div class="site-shell bni-chapter-detail__contact-grid">
-                    <div>
+                <div class="site-shell">
+                    <div class="bni-chapter-detail__contact-heading">
                         <p>Đầu mối chapter</p>
                         <h2 id="bni-chapter-contact-title">Kết nối với {{ $chapter['short_name'] }}</h2>
-                        @if ($chapterContact['name'])<strong>{{ $chapterContact['name'] }}</strong>@endif
                     </div>
-                    <div class="bni-chapter-detail__contact-actions">
-                        @if ($chapterContact['phone_url'])
-                            <a class="bni-button bni-button--white" href="{{ $chapterContact['phone_url'] }}">{{ $chapterContact['phone'] }}</a>
-                        @endif
-                        @if ($chapterContact['email_url'])
-                            <a class="bni-button bni-button--ghost" href="{{ $chapterContact['email_url'] }}">{{ $chapterContact['email'] }}</a>
-                        @endif
+                    <div class="bni-chapter-detail__contact-list">
+                        @foreach ($chapterContacts as $contact)
+                            <article class="bni-chapter-detail__contact-person">
+                                <div>
+                                    @if ($contact['name'])<h3>{{ $contact['name'] }}</h3>@endif
+                                    @if ($contact['position'])<p>{{ $contact['position'] }}</p>@endif
+                                    @if ($contact['note'])<span>{{ $contact['note'] }}</span>@endif
+                                </div>
+                                <div class="bni-chapter-detail__contact-actions">
+                                    @if ($contact['phone_url'])<a class="bni-button bni-button--white" href="{{ $contact['phone_url'] }}">{{ $contact['phone'] }}</a>@endif
+                                    @if ($contact['email_url'])<a class="bni-button bni-button--ghost" href="{{ $contact['email_url'] }}">{{ $contact['email'] }}</a>@endif
+                                    @if ($contact['zalo_url'])<a class="bni-button bni-button--ghost" href="{{ $contact['zalo_url'] }}" target="_blank" rel="noopener">Zalo</a>@endif
+                                </div>
+                            </article>
+                        @endforeach
                     </div>
                 </div>
             </section>

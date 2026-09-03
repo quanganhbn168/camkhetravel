@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
+use App\Models\BniContact;
 use App\Models\BniEvent;
 use App\Models\BniEventSlide;
 use App\Models\BniGalleryItem;
@@ -51,11 +52,24 @@ class BniExperienceRoutesTest extends TestCase
             'short_name' => 'CHI TIẾT',
             'slug' => 'chapter-chi-tiet-'.str()->random(8),
             'description' => 'Giới thiệu chapter lấy trực tiếp từ cơ sở dữ liệu.',
-            'contact_name' => 'Đầu mối chapter kiểm thử',
-            'contact_phone' => '0900 111 222',
-            'contact_email' => 'chapter-detail@example.test',
             'is_active' => true,
             'sort_order' => 99,
+        ]);
+        BniContact::query()->create([
+            'bni_chapter_id' => $chapter->id,
+            'name' => 'Đầu mối chapter kiểm thử',
+            'position' => 'Giám đốc phát triển',
+            'phone' => '0900 111 222',
+            'email' => 'chapter-detail@example.test',
+            'is_primary' => true,
+            'is_active' => true,
+        ]);
+        BniContact::query()->create([
+            'bni_chapter_id' => $chapter->id,
+            'name' => 'Đầu mối chapter thứ hai',
+            'position' => 'Điều phối viên',
+            'phone' => '0900 333 444',
+            'is_active' => true,
         ]);
         $article = BniArticle::query()->create([
             'bni_event_id' => $event->id,
@@ -76,8 +90,11 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('CHI TIẾT')
             ->assertSee($chapter->description)
             ->assertSee('Đầu mối chapter kiểm thử')
+            ->assertSee('Giám đốc phát triển')
             ->assertSee('0900 111 222')
             ->assertSee('chapter-detail@example.test')
+            ->assertSee('Đầu mối chapter thứ hai')
+            ->assertSee('0900 333 444')
             ->assertSee($article->title)
             ->assertSee('<meta name="robots" content="index, follow', false)
             ->assertSee('<link rel="canonical" href="'.$url.'">', false)
@@ -266,8 +283,13 @@ class BniExperienceRoutesTest extends TestCase
             'bni_event_id' => $event->id,
             'name' => 'Chapter Kiểm Thử',
             'slug' => 'chapter-kiem-thu',
-            'contact_name' => 'Người phụ trách chapter',
-            'contact_phone' => '0900000000',
+        ]);
+        BniContact::query()->create([
+            'bni_chapter_id' => $chapter->id,
+            'name' => 'Người phụ trách chapter',
+            'phone' => '0900000000',
+            'is_primary' => true,
+            'is_active' => true,
         ]);
         $scheduleDay = BniScheduleDay::query()->create([
             'bni_event_id' => $event->id,
@@ -401,7 +423,7 @@ class BniExperienceRoutesTest extends TestCase
         $this->actingAs($user)
             ->get('/bni-admin/bni-events')
             ->assertOk()
-            ->assertSee('Sự kiện');
+            ->assertSee('Thông tin sự kiện');
 
         $this->actingAs($user)
             ->get('/bni-admin/bni-members')
@@ -411,7 +433,9 @@ class BniExperienceRoutesTest extends TestCase
         $this->actingAs($user)
             ->get('/bni-admin/manage-bni-invitation-settings')
             ->assertOk()
-            ->assertSee('Mẫu thư mời BNI');
+            ->assertSee('Mẫu thư mời BNI')
+            ->assertSee('Lịch trình trên thư mời được lấy tự động')
+            ->assertDontSee('Tiêu đề lịch trình');
     }
 
     public function test_bni_crud_uses_dedicated_create_and_edit_pages(): void
@@ -436,10 +460,14 @@ class BniExperienceRoutesTest extends TestCase
             '/bni-admin/bni-event-slides/create',
             '/bni-admin/bni-event-videos/create',
             '/bni-admin/bni-chapters/create',
+            '/bni-admin/bni-chapter-contacts/create',
+            '/bni-admin/bni-general-contacts/create',
             "/bni-admin/bni-chapters/{$chapter->slug}/edit",
             '/bni-admin/bni-purposes/create',
             '/bni-admin/bni-schedule-days/create',
             '/bni-admin/bni-event-landings/create',
+            '/bni-admin/bni-event-prizes/create',
+            '/bni-admin/bni-pickleball-schedule-days/create',
             '/bni-admin/bni-activities/create',
             '/bni-admin/bni-articles/create',
             '/bni-admin/bni-gallery-items/create',
@@ -501,6 +529,10 @@ class BniExperienceRoutesTest extends TestCase
         $this->actingAs($user)->get('/bni-admin/bni-purposes')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-schedule-days')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-event-landings')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-event-prizes')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-pickleball-schedule-days')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-chapter-contacts')->assertForbidden();
+        $this->actingAs($user)->get('/bni-admin/bni-general-contacts')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-activities')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/bni-members')->assertForbidden();
         $this->actingAs($user)->get('/bni-admin/manage-bni-invitation-settings')->assertForbidden();

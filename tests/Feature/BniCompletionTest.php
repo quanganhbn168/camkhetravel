@@ -311,7 +311,7 @@ class BniCompletionTest extends TestCase
             ->assertOk()
             ->assertSee('Thư viện ảnh')
             ->assertSee('Tải nhiều ảnh')
-            ->assertSee('Hoạt động / album')
+            ->assertSee('Album ảnh')
             ->assertDontSee('Theo chapter');
         $this->actingAs($user)->get('/bni-admin/bni-gallery-comments')->assertOk()->assertSee('Bình luận ảnh');
 

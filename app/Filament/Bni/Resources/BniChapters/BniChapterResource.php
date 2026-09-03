@@ -20,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -32,11 +33,15 @@ class BniChapterResource extends Resource
 
     protected static ?string $navigationLabel = 'Chapter';
 
+    protected static ?string $modelLabel = 'chapter';
+
+    protected static ?string $pluralModelLabel = 'Chapter';
+
     protected static ?int $navigationSort = 4;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Sự kiện BNI';
     }
 
     public static function canViewAny(): bool
@@ -56,27 +61,27 @@ class BniChapterResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return BniPanelAccess::scopeChapter(parent::getEloquentQuery(), 'id');
+        return BniPanelAccess::scopeChapter(parent::getEloquentQuery(), 'id')->withCount('contacts');
     }
 
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Thông tin chapter')->icon('heroicon-o-user-group')->schema([
-                TextInput::make('name')->label('Tên chapter')->required()->maxLength(255)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                Select::make('bni_event_id')->label('Thuộc sự kiện')->relationship('event', 'title')->searchable()->preload()->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                SpatieMediaLibraryFileUpload::make('logo')->label('Logo')->collection('logo')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
-                SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh cover')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
-                SpatieMediaLibraryFileUpload::make('video')->label('Video chapter')->collection('video')->disk('public')->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
-                TextInput::make('video_url')->label('Hoặc URL video ngoài')->url()->maxLength(2048)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                Textarea::make('description')->label('Giới thiệu')->rows(3)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-                TextInput::make('contact_name')->label('Đầu mối liên hệ trên thư mời')->helperText('Dữ liệu riêng của chapter; đây là người khách mời liên hệ khi cần hỗ trợ.')->columnSpanFull(),
-                TextInput::make('contact_email')->label('Email liên hệ trên thư mời')->email()->columnSpanFull(),
-                TextInput::make('contact_phone')->label('Số điện thoại liên hệ trên thư mời')->tel()->columnSpanFull(),
-                Toggle::make('is_active')->label('Hiển thị')->default(true)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
-            ])->columns(2)->columnSpanFull(),
+            Section::make('Thông tin chapter')
+                ->icon('heroicon-o-user-group')
+                ->description('Thêm, sửa, xóa Chapter tại đây. Danh sách nhiều đầu mối của từng Chapter được quản lý riêng trong mục Liên hệ Chapter.')
+                ->schema([
+                    TextInput::make('name')->label('Tên chapter')->required()->maxLength(255)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    Select::make('bni_event_id')->label('Thuộc sự kiện')->relationship('event', 'title')->searchable()->preload()->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('logo')->label('Logo')->collection('logo')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh cover')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('video')->label('Video chapter')->collection('video')->disk('public')->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
+                    TextInput::make('video_url')->label('Hoặc URL video ngoài')->url()->maxLength(2048)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    Textarea::make('description')->label('Giới thiệu')->rows(3)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    Toggle::make('is_active')->label('Hiển thị')->default(true)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                ])->columns(2)->columnSpanFull(),
         ]);
     }
 
@@ -85,8 +90,8 @@ class BniChapterResource extends Resource
         return $table->columns([
             TextColumn::make('name')->label('Chapter')->searchable()->sortable(),
             TextColumn::make('event.title')->label('Sự kiện')->toggleable(),
-            TextColumn::make('contact_name')->label('Đầu mối')->toggleable(),
-            TextColumn::make('is_active')->label('Hiển thị')->badge()->formatStateUsing(fn (bool $state): string => $state ? 'Có' : 'Ẩn'),
+            TextColumn::make('contacts_count')->label('Đầu mối')->sortable(),
+            ToggleColumn::make('is_active')->label('Hiển thị')->disabled(fn (): bool => ! BniPanelAccess::canManageEverything()),
         ])->defaultSort('sort_order')->recordActions([
             EditAction::make(),
             DeleteAction::make()->slideOver()->visible(fn (): bool => BniPanelAccess::canManageEverything()),

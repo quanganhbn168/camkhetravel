@@ -36,7 +36,7 @@ class BniPurposeResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Sự kiện BNI';
     }
 
     public static function canViewAny(): bool

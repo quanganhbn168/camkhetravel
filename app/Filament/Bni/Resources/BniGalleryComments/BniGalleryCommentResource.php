@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -30,11 +31,11 @@ class BniGalleryCommentResource extends Resource
 
     protected static ?string $navigationLabel = 'Bình luận ảnh';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Cộng đồng & vận hành';
+        return 'Hình ảnh';
     }
 
     public static function getModelLabel(): string
@@ -98,7 +99,7 @@ class BniGalleryCommentResource extends Resource
                 TextColumn::make('commentable.chapter.short_name')->label('Chapter')->badge()->placeholder('Sự kiện chung'),
                 TextColumn::make('author_name')->label('Người bình luận')->searchable()->sortable(),
                 TextColumn::make('body')->label('Nội dung')->limit(80)->wrap()->searchable(),
-                TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn (string $state): string => Comment::statusOptions()[$state] ?? $state),
+                SelectColumn::make('status')->label('Trạng thái')->options(Comment::statusOptions()),
                 TextColumn::make('created_at')->label('Gửi lúc')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->filters([

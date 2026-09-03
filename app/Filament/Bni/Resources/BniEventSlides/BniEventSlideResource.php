@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,7 +42,7 @@ class BniEventSlideResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Sự kiện BNI';
     }
 
     public static function canViewAny(): bool
@@ -95,7 +96,7 @@ class BniEventSlideResource extends Resource
                 SpatieMediaLibraryImageColumn::make('image')->label('Ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
                 TextColumn::make('title')->label('Tiêu đề')->placeholder('Slide chỉ có ảnh')->searchable()->wrap(),
                 TextColumn::make('event.title')->label('Sự kiện')->sortable(),
-                TextColumn::make('is_active')->label('Hiển thị')->badge()->formatStateUsing(fn (bool $state): string => $state ? 'Có' : 'Ẩn'),
+                ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->filters([
                 SelectFilter::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title'),

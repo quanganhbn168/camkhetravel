@@ -87,14 +87,18 @@
                 <div class="bni-section-heading"><h2 id="pickleball-schedule-title">Lịch thi đấu</h2></div>
                 <div class="bni-schedule__layout">
                     <div class="bni-schedule__main">
-                        <div class="bni-tab-list">
-                            @forelse ($scheduleDays as $day)<button type="button" @click="scheduleDay = {{ $day['number'] }}" :class="scheduleDay === {{ $day['number'] }} && 'is-active'">{{ $day['label'] }}</button>@empty<button class="is-active" type="button">Ngày thi đấu</button>@endforelse
-                        </div>
+                        @if ($scheduleDays->isNotEmpty())
+                            <div class="bni-tab-list">
+                                @foreach ($scheduleDays as $day)<button type="button" @click="scheduleDay = {{ $day['number'] }}" :class="scheduleDay === {{ $day['number'] }} && 'is-active'">{{ $day['label'] }}</button>@endforeach
+                            </div>
+                        @endif
                         @forelse ($scheduleDays as $day)
                             <div class="bni-schedule-list" x-show="scheduleDay === {{ $day['number'] }}">
-                                @foreach ($day['items'] as $item)
+                                @forelse ($day['items'] as $item)
                                     <article class="bni-schedule-item"><time>{{ $item['time'] ?: 'Đang cập nhật' }}</time><div><h3>{{ $item['title'] }}</h3>@if ($item['description'])<span>{{ $item['description'] }}</span>@endif</div></article>
-                                @endforeach
+                                @empty
+                                    <p class="bni-empty-copy">Các mốc thi đấu của ngày này đang được Ban tổ chức cập nhật.</p>
+                                @endforelse
                             </div>
                         @empty
                             <div class="bni-schedule-list"><p class="bni-empty-copy">Lịch thi đấu sẽ được cập nhật từ panel BNI.</p></div>

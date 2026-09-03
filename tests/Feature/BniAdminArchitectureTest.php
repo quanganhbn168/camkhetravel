@@ -36,12 +36,19 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringNotContainsString("Textarea::make('result')", $scheduleResource);
         $this->assertStringNotContainsString("TextInput::make('location')", $scheduleResource);
 
-        foreach (['bni_event_videos', 'bni_event_landings', 'bni_event_prizes', 'bni_schedule_days'] as $table) {
+        foreach (['bni_event_videos', 'bni_event_landings', 'bni_event_prizes', 'bni_schedule_days', 'bni_contacts'] as $table) {
             $this->assertTrue(Schema::hasTable($table), $table);
         }
 
         foreach (['bni_event_id', 'day_number', 'stage', 'result', 'location'] as $column) {
             $this->assertFalse(Schema::hasColumn('bni_schedule_items', $column), $column);
         }
+
+        $invitationSettings = File::get(app_path('Filament/Bni/Pages/ManageBniInvitationSettings.php'));
+        $galleryResource = File::get(app_path('Filament/Bni/Resources/BniGalleryItems/BniGalleryItemResource.php'));
+
+        $this->assertStringNotContainsString("TextInput::make('schedule_title')", $invitationSettings);
+        $this->assertStringContainsString('Stack::make', $galleryResource);
+        $this->assertStringContainsString('->contentGrid([', $galleryResource);
     }
 }

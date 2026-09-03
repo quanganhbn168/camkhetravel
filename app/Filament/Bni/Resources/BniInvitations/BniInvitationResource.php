@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -37,11 +38,11 @@ class BniInvitationResource extends Resource
 
     protected static ?string $pluralModelLabel = 'khách mời';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Cộng đồng & vận hành';
+        return 'Thư mời & vận hành';
     }
 
     public static function canViewAny(): bool
@@ -89,7 +90,7 @@ class BniInvitationResource extends Resource
             TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
             TextColumn::make('company_name')->label('Doanh nghiệp')->searchable()->toggleable(),
             TextColumn::make('phone')->label('Số điện thoại')->toggleable(),
-            TextColumn::make('rsvp_status')->label('RSVP')->badge()->formatStateUsing(fn (string $state): string => BniInvitation::rsvpOptions()[$state] ?? $state),
+            SelectColumn::make('rsvp_status')->label('RSVP')->options(BniInvitation::rsvpOptions()),
             TextColumn::make('responded_at')->label('Phản hồi lúc')->dateTime('d/m/Y H:i')->toggleable(),
         ])->filters([
             SelectFilter::make('rsvp_status')->label('Phản hồi')->options(BniInvitation::rsvpOptions()),

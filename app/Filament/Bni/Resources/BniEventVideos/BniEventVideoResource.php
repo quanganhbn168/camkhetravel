@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -26,7 +27,7 @@ class BniEventVideoResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-video-camera';
 
-    protected static ?string $navigationLabel = 'Video sự kiện';
+    protected static ?string $navigationLabel = 'Video giới thiệu';
 
     protected static ?string $modelLabel = 'video sự kiện';
 
@@ -36,7 +37,7 @@ class BniEventVideoResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Sự kiện BNI';
     }
 
     public static function canViewAny(): bool
@@ -49,7 +50,7 @@ class BniEventVideoResource extends Resource
         return $schema->components([
             Section::make('Video giới thiệu sự kiện')
                 ->icon('heroicon-o-video-camera')
-                ->description('Mỗi sự kiện có một cấu hình video riêng. Video tải lên được ưu tiên trước URL YouTube hoặc Vimeo.')
+                ->description('Video hiển thị tại phần Video giới thiệu trên trang sự kiện. Video tải lên được ưu tiên trước URL YouTube hoặc Vimeo.')
                 ->schema([
                     Select::make('bni_event_id')
                         ->label('Sự kiện')
@@ -60,7 +61,7 @@ class BniEventVideoResource extends Resource
                         ->preload()
                         ->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('poster')
-                        ->label('Ảnh poster')
+                        ->label('Ảnh cover video')
                         ->collection('poster')
                         ->conversion(BniMediaService::WEBP_CONVERSION)
                         ->disk('public')
@@ -102,6 +103,7 @@ class BniEventVideoResource extends Resource
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('poster')->label('Cover')->collection('poster')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
                 TextColumn::make('event.title')->label('Sự kiện')->searchable()->sortable(),
                 TextColumn::make('external_url')->label('Video ngoài')->limit(45)->placeholder('Dùng video tải lên'),
                 TextColumn::make('registration_label')->label('Nút đăng ký')->placeholder('Đăng ký ngay'),

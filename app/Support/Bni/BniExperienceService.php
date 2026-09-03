@@ -5,6 +5,7 @@ namespace App\Support\Bni;
 use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
+use App\Models\BniContact;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
 use App\Support\Localization\LocalizedUrl;
@@ -88,6 +89,17 @@ class BniExperienceService
             ])
             ->unique('key')
             ->values();
+        $generalContacts = $event?->contacts->where('is_active', true)->values() ?? collect();
+
+        if ($generalContacts->isEmpty()) {
+            $generalContacts = BniContact::query()
+                ->general()
+                ->active()
+                ->whereNull('bni_event_id')
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->get();
+        }
 
         return [
             'event' => $event,
@@ -131,13 +143,14 @@ class BniExperienceService
             'galleryGroups' => $galleryGroups,
             'galleryInitialGroup' => $galleryGroups->first()['key'] ?? null,
             'galleries' => $galleryCards,
+            'generalContacts' => $this->contactCards($generalContacts),
         ];
     }
 
     /** @return array<string, mixed> */
     public function chapter(BniChapter $chapter): array
     {
-        $chapter->loadMissing(['event', 'media']);
+        $chapter->loadMissing(['event', 'media', 'contacts']);
         $event = $chapter->event;
         $coverUrl = $chapter->bniMediaUrl('cover');
         $externalVideoUrl = trim((string) $chapter->video_url);
@@ -163,9 +176,7 @@ class BniExperienceService
                 ->get()
             : collect();
 
-        $phone = trim((string) $chapter->contact_phone);
-        $email = trim((string) $chapter->contact_email);
-        $phoneTarget = preg_replace('/[^0-9+]/', '', $phone) ?: null;
+        $chapterContacts = $this->contactCards($chapter->contacts->where('is_active', true)->values());
 
         return [
             'chapter' => [
@@ -180,14 +191,7 @@ class BniExperienceService
                 'external_url' => $externalVideoUrl ?: null,
                 'poster_url' => $coverUrl,
             ],
-            'chapterContact' => [
-                'name' => $chapter->contact_name,
-                'phone' => $phone ?: null,
-                'phone_url' => $phoneTarget ? 'tel:'.$phoneTarget : null,
-                'email' => $email ?: null,
-                'email_url' => $email ? 'mailto:'.$email : null,
-                'has_details' => filled($chapter->contact_name) || $phone !== '' || $email !== '',
-            ],
+            'chapterContacts' => $chapterContacts,
             'eventContext' => $event ? [
                 'title' => $event->title,
                 'date' => $this->eventDate($event),
@@ -264,6 +268,7 @@ class BniExperienceService
                 'purposes',
                 'scheduleDays.items',
                 'activities.media',
+                'contacts',
             ])
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
@@ -340,6 +345,30 @@ class BniExperienceService
                 ]),
             ])
             ->values();
+    }
+
+    /** @param Collection<int, BniContact> $contacts
+     * @return Collection<int, array<string, mixed>>
+     */
+    private function contactCards(Collection $contacts): Collection
+    {
+        return $contacts->map(function (BniContact $contact): array {
+            $phone = trim((string) $contact->phone);
+            $phoneTarget = preg_replace('/[^0-9+]/', '', $phone) ?: null;
+            $email = trim((string) $contact->email);
+
+            return [
+                'name' => $contact->name,
+                'position' => $contact->position,
+                'phone' => $phone ?: null,
+                'phone_url' => $phoneTarget ? 'tel:'.$phoneTarget : null,
+                'email' => $email ?: null,
+                'email_url' => $email ? 'mailto:'.$email : null,
+                'zalo_url' => $contact->zalo_url,
+                'note' => $contact->note,
+                'is_primary' => $contact->is_primary,
+            ];
+        })->values();
     }
 
     /** @return array<string, mixed> */

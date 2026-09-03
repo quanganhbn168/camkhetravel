@@ -6,6 +6,7 @@ use App\Models\BniActivity;
 use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
+use App\Models\BniContact;
 use App\Models\BniEvent;
 use App\Models\BniEventLanding;
 use App\Models\BniEventVideo;
@@ -39,7 +40,6 @@ class BniFoundationSeeder extends Seeder
             'content' => '<p>Lễ chuyển giao là không gian để các chapter cùng nhìn lại hành trình, tri ân Ban Điều hành và khởi động một chu kỳ phát triển mới.</p>',
             'venue' => 'Địa điểm sự kiện',
             'address' => 'Thông tin địa điểm sẽ được Ban tổ chức cập nhật',
-            'contact_name' => 'Ban tổ chức BNI',
             'status' => 'published',
             'is_featured' => true,
         ]);
@@ -48,6 +48,16 @@ class BniFoundationSeeder extends Seeder
             $handover->ends_at = Carbon::create(2026, 10, 1, 21, 0, 0, config('app.timezone'));
         }
         $handover->save();
+
+        BniContact::query()->firstOrCreate([
+            'bni_event_id' => $handover->id,
+            'bni_chapter_id' => null,
+            'name' => 'Ban tổ chức BNI',
+        ], [
+            'is_primary' => true,
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
 
         BniEventVideo::query()->updateOrCreate(['bni_event_id' => $handover->id], [
             'registration_label' => 'Đăng ký ngay',

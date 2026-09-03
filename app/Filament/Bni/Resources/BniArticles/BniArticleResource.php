@@ -22,6 +22,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -36,11 +37,15 @@ class BniArticleResource extends Resource
 
     protected static ?string $navigationLabel = 'Tin tức BNI';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?string $modelLabel = 'bài viết BNI';
+
+    protected static ?string $pluralModelLabel = 'Tin tức BNI';
+
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Tin tức BNI';
     }
 
     public static function canViewAny(): bool
@@ -103,7 +108,10 @@ class BniArticleResource extends Resource
             TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
             TextColumn::make('categories.name')->label('Danh mục')->badge()->separator(', ')->toggleable(),
             TextColumn::make('type')->label('Khu vực')->badge()->formatStateUsing(fn (string $state): string => ['event' => 'Lễ chuyển giao', 'chapter' => 'Chapter', 'pickleball' => 'Pickleball'][$state] ?? $state),
-            TextColumn::make('status')->label('Trạng thái')->badge(),
+            SelectColumn::make('status')->label('Trạng thái')->options([
+                'draft' => 'Bản nháp',
+                'published' => 'Đã xuất bản',
+            ]),
             TextColumn::make('published_at')->label('Xuất bản')->dateTime('d/m/Y H:i')->sortable(),
         ])->filters([
             SelectFilter::make('categories')->label('Danh mục')->relationship('categories', 'name'),

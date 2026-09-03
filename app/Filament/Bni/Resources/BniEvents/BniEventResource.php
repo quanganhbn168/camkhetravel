@@ -21,7 +21,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class BniEventResource extends Resource
@@ -30,13 +32,13 @@ class BniEventResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?string $navigationLabel = 'Sự kiện';
+    protected static ?string $navigationLabel = 'Thông tin sự kiện';
 
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Sự kiện BNI';
     }
 
     public static function getModelLabel(): string
@@ -46,7 +48,7 @@ class BniEventResource extends Resource
 
     public static function getPluralModelLabel(): string
     {
-        return 'Sự kiện';
+        return 'Thông tin sự kiện';
     }
 
     public static function canViewAny(): bool
@@ -80,18 +82,20 @@ class BniEventResource extends Resource
                 ])
                 ->columns(2)
                 ->columnSpanFull(),
-            Section::make('Thời gian, địa điểm & liên hệ')
+            Section::make('Thời gian & địa điểm tổ chức')
                 ->icon('heroicon-o-clock')
-                ->description('Thông tin chung hiển thị trên trang sự kiện. Đầu mối của từng thư mời vẫn được quản lý theo chapter.')
+                ->description('Đầu mối liên hệ được quản lý riêng tại Liên hệ chung và Liên hệ Chapter.')
                 ->schema([
                     DateTimePicker::make('starts_at')->label('Bắt đầu')->columnSpanFull(),
                     DateTimePicker::make('ends_at')->label('Kết thúc')->columnSpanFull(),
                     TextInput::make('venue')->label('Tên địa điểm')->columnSpanFull(),
                     TextInput::make('address')->label('Địa chỉ')->columnSpanFull(),
-                    TextInput::make('directions_url')->label('Link chỉ đường')->url()->maxLength(2048)->columnSpanFull(),
-                    TextInput::make('contact_name')->label('Đầu mối sự kiện')->columnSpanFull(),
-                    TextInput::make('contact_phone')->label('Số điện thoại')->tel()->columnSpanFull(),
-                    TextInput::make('contact_email')->label('Email')->email()->columnSpanFull(),
+                    TextInput::make('directions_url')
+                        ->label('Link chia sẻ Google Maps')
+                        ->url()
+                        ->maxLength(2048)
+                        ->helperText('Dán liên kết lấy từ nút Chia sẻ trên Google Maps.')
+                        ->columnSpanFull(),
                     Select::make('status')->label('Trạng thái')->options([
                         'draft' => 'Bản nháp',
                         'published' => 'Đã xuất bản',
@@ -109,7 +113,12 @@ class BniEventResource extends Resource
             TextColumn::make('title')->label('Sự kiện')->searchable()->sortable()->wrap(),
             TextColumn::make('type')->label('Loại')->badge()->formatStateUsing(fn (string $state): string => $state === 'pickleball' ? 'Pickleball' : 'Lễ chuyển giao'),
             TextColumn::make('starts_at')->label('Bắt đầu')->dateTime('d/m/Y H:i')->sortable(),
-            TextColumn::make('status')->label('Trạng thái')->badge(),
+            TextColumn::make('venue')->label('Địa điểm')->placeholder('Chưa nhập')->toggleable(),
+            SelectColumn::make('status')->label('Trạng thái')->options([
+                'draft' => 'Bản nháp',
+                'published' => 'Đã xuất bản',
+            ]),
+            ToggleColumn::make('is_featured')->label('Nổi bật'),
         ])->recordActions([
             EditAction::make(),
             DeleteAction::make()->slideOver(),

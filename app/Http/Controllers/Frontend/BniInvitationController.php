@@ -25,7 +25,7 @@ class BniInvitationController extends Controller
     public function template(): View
     {
         $event = $this->handoverEvent();
-        $invitationContent = BniInvitationContent::resolve();
+        $invitationContent = BniInvitationContent::resolve(event: $event);
         $canonical = LocalizedUrl::route('bni.invitations.template');
 
         return view('frontend.bni-invitation', [
@@ -50,12 +50,12 @@ class BniInvitationController extends Controller
 
     public function show(BniInvitation $invitation): View
     {
-        $invitation->load(['event.media', 'event.scheduleDays.items', 'chapter']);
+        $invitation->load(['event.media', 'event.scheduleDays.items', 'event.contacts', 'chapter.contacts']);
         abort_unless($invitation->event, 404);
 
         $event = $invitation->event;
         $chapter = $invitation->chapter;
-        $invitationContent = BniInvitationContent::resolve($chapter);
+        $invitationContent = BniInvitationContent::resolve($chapter, $event);
         $guestName = $invitation->displayGuestName((string) $invitationContent['default_guest_name']);
         $heroImageUrl = $event->bniMediaUrl('hero');
 
@@ -107,7 +107,7 @@ class BniInvitationController extends Controller
         return BniEvent::query()
             ->published()
             ->where('type', 'handover')
-            ->with(['media', 'scheduleDays.items'])
+            ->with(['media', 'scheduleDays.items', 'contacts'])
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
             ->firstOrFail();

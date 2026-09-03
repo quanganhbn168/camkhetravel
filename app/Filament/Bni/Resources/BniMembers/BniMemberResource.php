@@ -27,11 +27,15 @@ class BniMemberResource extends Resource
 
     protected static ?string $navigationLabel = 'Tài khoản hội viên';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?string $modelLabel = 'tài khoản hội viên';
+
+    protected static ?string $pluralModelLabel = 'Tài khoản hội viên';
+
+    protected static ?int $navigationSort = 4;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Cộng đồng & vận hành';
+        return 'Thư mời & vận hành';
     }
 
     public static function canViewAny(): bool

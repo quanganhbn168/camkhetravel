@@ -22,8 +22,10 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rules\Unique;
 
 class BniScheduleDayResource extends Resource
@@ -32,22 +34,27 @@ class BniScheduleDayResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar';
 
-    protected static ?string $navigationLabel = 'Lịch trình theo ngày';
+    protected static ?string $navigationLabel = 'Lịch trình sự kiện';
 
     protected static ?string $modelLabel = 'ngày lịch trình';
 
-    protected static ?string $pluralModelLabel = 'Lịch trình theo ngày';
+    protected static ?string $pluralModelLabel = 'Lịch trình sự kiện';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 8;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Sự kiện BNI';
     }
 
     public static function canViewAny(): bool
     {
         return BniPanelAccess::canManageEverything();
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereHas('event', fn (Builder $query): Builder => $query->where('type', static::eventType()));
     }
 
     public static function form(Schema $schema): Schema
@@ -57,7 +64,13 @@ class BniScheduleDayResource extends Resource
                 ->icon('heroicon-o-calendar')
                 ->description('Tạo một ngày trước, sau đó thêm các mốc giờ thuộc ngày đó.')
                 ->schema([
-                    Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->required()->searchable()->preload()->columnSpanFull(),
+                    Select::make('bni_event_id')
+                        ->label('Sự kiện')
+                        ->relationship('event', 'title', fn (Builder $query): Builder => $query->where('type', static::eventType()))
+                        ->required()
+                        ->searchable()
+                        ->preload()
+                        ->columnSpanFull(),
                     DatePicker::make('event_date')
                         ->label('Ngày')
                         ->required()
@@ -90,6 +103,7 @@ class BniScheduleDayResource extends Resource
                         ])
                         ->columns(2)
                         ->defaultItems(0)
+                        ->addActionLabel('Thêm mốc giờ')
                         ->orderColumn('sort_order')
                         ->reorderable()
                         ->collapsible()
@@ -108,10 +122,10 @@ class BniScheduleDayResource extends Resource
                 TextColumn::make('title')->label('Tên ngày')->placeholder('Theo ngày diễn ra')->searchable(),
                 TextColumn::make('event.title')->label('Sự kiện')->sortable(),
                 TextColumn::make('items_count')->counts('items')->label('Số mốc')->sortable(),
-                TextColumn::make('is_active')->label('Hiển thị')->badge()->formatStateUsing(fn (bool $state): string => $state ? 'Có' : 'Ẩn'),
+                ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->filters([
-                SelectFilter::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title'),
+                SelectFilter::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title', fn (Builder $query): Builder => $query->where('type', static::eventType())),
             ])
             ->defaultSort('event_date')
             ->recordActions([
@@ -127,5 +141,10 @@ class BniScheduleDayResource extends Resource
             'create' => CreateBniScheduleDay::route('/create'),
             'edit' => EditBniScheduleDay::route('/{record}/edit'),
         ];
+    }
+
+    protected static function eventType(): string
+    {
+        return 'handover';
     }
 }

@@ -10,12 +10,10 @@ use App\Support\Bni\BniPanelAccess;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -29,17 +27,17 @@ class BniEventLandingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-trophy';
 
-    protected static ?string $navigationLabel = 'Nội dung Pickleball';
+    protected static ?string $navigationLabel = 'Tổng quan & thể lệ';
 
-    protected static ?string $modelLabel = 'nội dung Pickleball';
+    protected static ?string $modelLabel = 'tổng quan Pickleball';
 
-    protected static ?string $pluralModelLabel = 'Nội dung Pickleball';
+    protected static ?string $pluralModelLabel = 'Tổng quan & thể lệ';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Pickleball';
     }
 
     public static function canViewAny(): bool
@@ -68,28 +66,12 @@ class BniEventLandingResource extends Resource
                 ])
                 ->columns(2)
                 ->columnSpanFull(),
-            Section::make('Giải thưởng')
+            Section::make('Cơ cấu giải thưởng')
                 ->icon('heroicon-o-gift')
-                ->description('Mỗi hạng mục là một bản ghi riêng trong bảng giải thưởng.')
+                ->description('Các hạng mục giải được thêm, sửa và sắp xếp tại mục “Cơ cấu giải thưởng” trong nhóm Pickleball.')
                 ->schema([
                     TextInput::make('prizes_title')->label('Tiêu đề khu giải thưởng')->default('Cơ cấu giải thưởng')->maxLength(255)->columnSpanFull(),
                     Textarea::make('prizes_description')->label('Mô tả chung')->rows(2)->columnSpanFull(),
-                    Repeater::make('prizes')
-                        ->relationship('prizes')
-                        ->label('Các hạng mục')
-                        ->schema([
-                            TextInput::make('title')->label('Tên hạng mục')->required()->maxLength(255)->columnSpanFull(),
-                            TextInput::make('value')->label('Giá trị / phần thưởng')->maxLength(255)->columnSpanFull(),
-                            Textarea::make('description')->label('Mô tả')->rows(2)->columnSpanFull(),
-                            Toggle::make('highlight')->label('Nhấn mạnh')->columnSpanFull(),
-                        ])
-                        ->columns(2)
-                        ->defaultItems(0)
-                        ->orderColumn('sort_order')
-                        ->reorderable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Hạng mục mới')
-                        ->columnSpanFull(),
                 ])
                 ->columns(2)
                 ->columnSpanFull(),

@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -30,11 +31,15 @@ class BniRegistrationResource extends Resource
 
     protected static ?string $navigationLabel = 'Đăng ký tham dự';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?string $modelLabel = 'đăng ký tham dự';
+
+    protected static ?string $pluralModelLabel = 'Đăng ký tham dự';
+
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Cộng đồng & vận hành';
+        return 'Thư mời & vận hành';
     }
 
     public static function canViewAny(): bool
@@ -73,7 +78,7 @@ class BniRegistrationResource extends Resource
             TextColumn::make('chapter.short_name')->label('Chapter')->badge()->toggleable(),
             TextColumn::make('team_name')->label('Đội')->toggleable(),
             TextColumn::make('phone')->label('Số điện thoại')->toggleable(),
-            TextColumn::make('status')->label('Trạng thái')->badge()->formatStateUsing(fn (string $state): string => BniRegistration::statusOptions()[$state] ?? $state),
+            SelectColumn::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions()),
             TextColumn::make('checked_in_at')->label('Check-in')->dateTime('d/m/Y H:i')->toggleable(),
         ])->filters([
             SelectFilter::make('status')->label('Trạng thái')->options(BniRegistration::statusOptions()),

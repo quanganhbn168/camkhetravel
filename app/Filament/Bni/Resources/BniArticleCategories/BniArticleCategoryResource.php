@@ -16,8 +16,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,11 +29,15 @@ class BniArticleCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Danh mục tin BNI';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?string $modelLabel = 'danh mục tin BNI';
+
+    protected static ?string $pluralModelLabel = 'Danh mục tin BNI';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Tin tức BNI';
     }
 
     public static function canViewAny(): bool
@@ -93,7 +97,7 @@ class BniArticleCategoryResource extends Resource
                 TextColumn::make('name')->label('Danh mục')->searchable()->sortable(),
                 TextColumn::make('articles_count')->counts('articles')->label('Số bài')->sortable(),
                 TextColumn::make('sort_order')->label('Thứ tự tab')->sortable(),
-                IconColumn::make('is_active')->label('Hiển thị')->boolean(),
+                ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->defaultSort('sort_order')
             ->recordActions([

@@ -8,9 +8,7 @@
 
 @section('content')
     @php
-        $contactName = $invitationContent['contact_name'] ?? null;
-        $contactEmail = $invitationContent['contact_email'] ?? null;
-        $contactPhone = $invitationContent['contact_phone'] ?? null;
+        $contacts = $invitationContent['contacts'] ?? collect();
         $location = collect([$event->venue, $event->address])->filter()->implode(', ');
     @endphp
 
@@ -206,13 +204,23 @@
                     <p class="bni-plan-section__eyebrow">{{ $chapter?->short_name ?: 'BNI' }}</p>
                     <h2 id="bni-invitation-contact-title">{{ $invitationContent['contact_title'] }}</h2>
                     <p>{{ $invitationContent['contact_description'] }}</p>
-                    @if ($contactName)<strong>{{ $contactName }}</strong>@endif
-                    @if ($contactPhone || $contactEmail || $location)
-                        <div class="bni-invitation-contact__links">
-                            @if ($contactPhone)<a href="tel:{{ preg_replace('/\s+/', '', $contactPhone) }}">{{ $contactPhone }}</a>@endif
-                            @if ($contactEmail)<a href="mailto:{{ $contactEmail }}">{{ $contactEmail }}</a>@endif
-                            @if ($location)<span>{{ $location }}</span>@endif
+                    @if ($contacts->isNotEmpty())
+                        <div class="bni-invitation-contact__people">
+                            @foreach ($contacts as $contact)
+                                <article>
+                                    @if ($contact['name'])<strong>{{ $contact['name'] }}</strong>@endif
+                                    @if ($contact['position'])<span>{{ $contact['position'] }}</span>@endif
+                                    <div class="bni-invitation-contact__links">
+                                        @if ($contact['phone_url'])<a href="{{ $contact['phone_url'] }}">{{ $contact['phone'] }}</a>@endif
+                                        @if ($contact['email_url'])<a href="{{ $contact['email_url'] }}">{{ $contact['email'] }}</a>@endif
+                                        @if ($contact['zalo_url'])<a href="{{ $contact['zalo_url'] }}" target="_blank" rel="noopener">Zalo</a>@endif
+                                    </div>
+                                </article>
+                            @endforeach
                         </div>
+                        @if ($location)<div class="bni-invitation-contact__links"><span>{{ $location }}</span></div>@endif
+                    @elseif ($location)
+                        <div class="bni-invitation-contact__links"><span>{{ $location }}</span></div>
                     @elseif ($isInvitationTemplate)
                         <p class="bni-invitation-contact__template-note">Đầu mối liên hệ sẽ hiển thị theo từng chapter khi phát hành thư mời.</p>
                     @endif

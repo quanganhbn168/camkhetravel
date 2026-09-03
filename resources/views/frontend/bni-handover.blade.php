@@ -189,18 +189,20 @@
                 <div class="bni-section-heading"><h2 id="bni-schedule-title">Lịch trình sự kiện</h2></div>
                 <div class="bni-schedule__layout">
                     <div class="bni-schedule__main">
-                        <div class="bni-tab-list" role="tablist" aria-label="Ngày sự kiện">
-                            @forelse ($scheduleDays as $day)
+                        @if ($scheduleDays->isNotEmpty())
+                            <div class="bni-tab-list" role="tablist" aria-label="Ngày sự kiện">
+                            @foreach ($scheduleDays as $day)
                                 <button type="button" role="tab" @click="scheduleDay = {{ $day['number'] }}" :aria-selected="(scheduleDay === {{ $day['number'] }}).toString()" :class="scheduleDay === {{ $day['number'] }} && 'is-active'">{{ $day['label'] }}</button>
-                            @empty
-                                <button class="is-active" type="button">Ngày 1</button><button type="button">Ngày 2</button>
-                            @endforelse
-                        </div>
+                            @endforeach
+                            </div>
+                        @endif
                         @forelse ($scheduleDays as $day)
                             <div class="bni-schedule-list" x-show="scheduleDay === {{ $day['number'] }}" x-transition.opacity>
-                                @foreach ($day['items'] as $item)
+                                @forelse ($day['items'] as $item)
                                     <article class="bni-schedule-item"><time>{{ $item['time'] ?: 'Đang cập nhật' }}</time><div><h3>{{ $item['title'] }}</h3>@if ($item['description'])<p>{{ $item['description'] }}</p>@endif</div></article>
-                                @endforeach
+                                @empty
+                                    <p class="bni-empty-copy">Các mốc giờ của ngày này đang được Ban tổ chức cập nhật.</p>
+                                @endforelse
                             </div>
                         @empty
                             <div class="bni-schedule-list"><p class="bni-empty-copy">Lịch trình sẽ được Ban tổ chức cập nhật trên CMS BNI.</p></div>
@@ -313,6 +315,16 @@
             </div>
         </section>
 
-        <section class="bni-contact-band" id="dang-ky" aria-labelledby="bni-contact-title"><div class="site-shell"><div><h2 id="bni-contact-title">Đăng ký cùng ban tổ chức</h2><p>Anh/chị đăng ký tham dự {{ $event?->title ?: 'sự kiện BNI' }} trực tiếp trên hệ thống BNI.</p></div><div class="bni-contact-band__actions">@if ($event?->contact_phone)<a class="bni-button bni-button--red" href="tel:{{ preg_replace('/\s+/', '', $event->contact_phone) }}">{{ $event->contact_phone }}</a>@endif <a class="bni-button bni-button--dark" href="{{ LocalizedUrl::route('bni.registrations.create') }}">Mở trang đăng ký</a></div></div></section>
+        <section class="bni-contact-band" id="dang-ky" aria-labelledby="bni-contact-title">
+            <div class="site-shell">
+                <div><h2 id="bni-contact-title">Đăng ký cùng ban tổ chức</h2><p>Anh/chị đăng ký tham dự {{ $event?->title ?: 'sự kiện BNI' }} trực tiếp trên hệ thống BNI.</p></div>
+                <div class="bni-contact-band__actions">
+                    @foreach ($generalContacts as $contact)
+                        @if ($contact['phone_url'])<a class="bni-button bni-button--red" href="{{ $contact['phone_url'] }}" title="{{ $contact['name'] }}">{{ $contact['phone'] }}</a>@endif
+                    @endforeach
+                    <a class="bni-button bni-button--dark" href="{{ LocalizedUrl::route('bni.registrations.create') }}">Mở trang đăng ký</a>
+                </div>
+            </div>
+        </section>
     </div>
 @endsection

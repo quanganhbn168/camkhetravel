@@ -49,6 +49,7 @@ const initialiseBniHeroSwipers = () => {
         new Swiper(element, {
             modules: [A11y, Autoplay, Keyboard, Navigation],
             slidesPerView: 1,
+            autoHeight: true,
             speed: 650,
             loop: slideCount > 1,
             watchOverflow: true,

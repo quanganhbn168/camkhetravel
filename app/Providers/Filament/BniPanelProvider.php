@@ -37,8 +37,11 @@ class BniPanelProvider extends PanelProvider
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Bni/Resources'), for: 'App\\Filament\\Bni\\Resources')
             ->navigationGroups([
-                NavigationGroup::make('Lễ chuyển giao'),
-                NavigationGroup::make('Cộng đồng & vận hành'),
+                NavigationGroup::make('Sự kiện BNI'),
+                NavigationGroup::make('Pickleball'),
+                NavigationGroup::make('Hình ảnh'),
+                NavigationGroup::make('Tin tức BNI'),
+                NavigationGroup::make('Thư mời & vận hành'),
             ])
             ->pages([
                 Dashboard::class,

@@ -20,8 +20,11 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,11 +37,15 @@ class BniGalleryItemResource extends Resource
 
     protected static ?string $navigationLabel = 'Thư viện ảnh';
 
-    protected static ?int $navigationSort = 9;
+    protected static ?string $modelLabel = 'ảnh sự kiện';
+
+    protected static ?string $pluralModelLabel = 'Thư viện ảnh';
+
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Hình ảnh';
     }
 
     public static function canViewAny(): bool
@@ -68,7 +75,7 @@ class BniGalleryItemResource extends Resource
                     ->afterStateUpdated(fn ($set) => $set('bni_activity_id', null))
                     ->columnSpanFull(),
                 Select::make('bni_activity_id')
-                    ->label('Hoạt động / album ảnh')
+                    ->label('Album ảnh')
                     ->options(fn ($get): array => BniActivity::query()
                         ->where('bni_event_id', $get('bni_event_id'))
                         ->where('is_active', true)
@@ -76,7 +83,7 @@ class BniGalleryItemResource extends Resource
                         ->orderBy('title')
                         ->pluck('title', 'id')
                         ->all())
-                    ->helperText('Tên hoạt động được quản lý trong mục Hoạt động & album; có thể tạo riêng như “Trước lễ chuyển giao” hoặc “Trong Gala Dinner”.')
+                    ->helperText('Tạo và quản lý nhóm ảnh tại mục Album ảnh, ví dụ “Trước lễ chuyển giao” hoặc “Trong Gala Dinner”.')
                     ->required()
                     ->searchable()
                     ->columnSpanFull(),
@@ -93,21 +100,33 @@ class BniGalleryItemResource extends Resource
     public static function table(Table $table): Table
     {
         return $table->columns([
-            SpatieMediaLibraryImageColumn::make('image')->label('Ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
-            TextColumn::make('title')->label('Tiêu đề')->searchable()->wrap(),
-            TextColumn::make('activity.title')->label('Hoạt động / album')->badge()->placeholder('Chưa phân loại'),
-            TextColumn::make('event.title')->label('Sự kiện tổ chức')->toggleable(),
-            TextColumn::make('source')->label('Nguồn')->badge()->formatStateUsing(fn (string $state): string => BniGalleryItem::sourceOptions()[$state] ?? $state),
-            TextColumn::make('status')->label('Kiểm duyệt')->badge()->formatStateUsing(fn (string $state): string => BniGalleryItem::statusOptions()[$state] ?? $state),
-            TextColumn::make('comments_count')->label('Bình luận')->badge(),
+            Stack::make([
+                SpatieMediaLibraryImageColumn::make('image')
+                    ->label('Ảnh')
+                    ->collection('image')
+                    ->conversion(BniMediaService::WEBP_CONVERSION)
+                    ->imageWidth('100%')
+                    ->imageHeight(220)
+                    ->extraImgAttributes(['class' => 'w-full rounded-xl object-cover']),
+                TextColumn::make('title')->label('Tiêu đề')->searchable()->wrap()->placeholder('Ảnh chưa có tiêu đề'),
+                TextColumn::make('activity.title')->label('Album')->badge()->placeholder('Chưa chọn album'),
+                TextColumn::make('event.title')->label('Sự kiện')->toggleable(),
+                SelectColumn::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions()),
+                ToggleColumn::make('is_active')->label('Hiển thị'),
+                TextColumn::make('comments_count')->label('Bình luận')->badge(),
+            ])->space(3),
         ])->filters([
             SelectFilter::make('bni_activity_id')
-                ->label('Hoạt động / album')
+                ->label('Album ảnh')
                 ->relationship('activity', 'title')
                 ->searchable()
                 ->preload(),
             SelectFilter::make('status')->label('Kiểm duyệt')->options(BniGalleryItem::statusOptions()),
             SelectFilter::make('source')->label('Nguồn ảnh')->options(BniGalleryItem::sourceOptions()),
+        ])->contentGrid([
+            'md' => 2,
+            'xl' => 3,
+            '2xl' => 4,
         ])->defaultSort('sort_order')->recordActions([
             EditAction::make()->mutateDataUsing(fn (array $data): array => self::prepareUpdateData($data)),
             Action::make('rejectAndDeleteGuestUpload')

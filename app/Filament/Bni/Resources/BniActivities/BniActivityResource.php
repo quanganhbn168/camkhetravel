@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -30,17 +31,17 @@ class BniActivityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationLabel = 'Hoạt động & album';
+    protected static ?string $navigationLabel = 'Album ảnh';
 
-    protected static ?string $modelLabel = 'hoạt động / album';
+    protected static ?string $modelLabel = 'album ảnh';
 
-    protected static ?string $pluralModelLabel = 'Hoạt động & album';
+    protected static ?string $pluralModelLabel = 'Album ảnh';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Lễ chuyển giao';
+        return 'Hình ảnh';
     }
 
     public static function canViewAny(): bool
@@ -51,12 +52,12 @@ class BniActivityResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Hoạt động / album ảnh')
+            Section::make('Album ảnh')
                 ->icon('heroicon-o-rectangle-stack')
-                ->description('Tạo album theo từng hoạt động như Trước lễ chuyển giao, Gala Dinner hoặc Pickleball.')
+                ->description('Album là nhóm ảnh theo từng phần của chương trình, ví dụ Trước lễ chuyển giao hoặc Gala Dinner. Ảnh cụ thể được thêm tại Thư viện ảnh.')
                 ->schema([
                     Select::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title')->required()->searchable()->preload()->columnSpanFull(),
-                    TextInput::make('title')->label('Tên hoạt động / album')->required()->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')->label('Tên album')->required()->maxLength(255)->columnSpanFull(),
                     Select::make('type')->label('Phong cách hiển thị')->options([
                         'general' => 'Mặc định',
                         'handover' => 'Lễ chuyển giao',
@@ -89,10 +90,10 @@ class BniActivityResource extends Resource
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->label('Ảnh')->collection('image')->conversion(BniMediaService::WEBP_CONVERSION)->square(),
-                TextColumn::make('title')->label('Hoạt động / album')->searchable()->wrap(),
+                TextColumn::make('title')->label('Album ảnh')->searchable()->wrap(),
                 TextColumn::make('event.title')->label('Sự kiện')->sortable(),
                 TextColumn::make('gallery_items_count')->counts('galleryItems')->label('Số ảnh')->sortable(),
-                TextColumn::make('is_active')->label('Hiển thị')->badge()->formatStateUsing(fn (bool $state): string => $state ? 'Có' : 'Ẩn'),
+                ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->filters([
                 SelectFilter::make('bni_event_id')->label('Sự kiện')->relationship('event', 'title'),

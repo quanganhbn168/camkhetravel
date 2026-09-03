@@ -3,7 +3,10 @@
 namespace App\Support\Bni;
 
 use App\Models\BniChapter;
+use App\Models\BniContact;
+use App\Models\BniEvent;
 use App\Settings\BniInvitationSettings;
+use Illuminate\Support\Collection;
 
 final class BniInvitationContent
 {
@@ -28,22 +31,59 @@ final class BniInvitationContent
     }
 
     /** @return array<string, mixed> */
-    public static function resolve(?BniChapter $chapter = null): array
+    public static function resolve(?BniChapter $chapter = null, ?BniEvent $event = null): array
     {
         $defaults = self::defaults();
         $settings = app(BniInvitationSettings::class);
         $content = [];
 
         foreach (array_keys($defaults) as $key) {
-            $content[$key] = filled($settings->{$key} ?? null)
+            $content[$key] = $key === 'schedule_title'
+                ? $defaults[$key]
+                : (filled($settings->{$key} ?? null)
                 ? $settings->{$key}
-                : $defaults[$key];
+                : $defaults[$key]);
         }
 
+        $event ??= $chapter?->event;
+        $contacts = self::contacts($chapter, $event);
+        $primary = $contacts->first();
+
         return $content + [
-            'contact_name' => $chapter?->contact_name,
-            'contact_email' => $chapter?->contact_email,
-            'contact_phone' => $chapter?->contact_phone,
+            'contacts' => $contacts,
+            'contact_name' => $primary['name'] ?? null,
+            'contact_email' => $primary['email'] ?? null,
+            'contact_phone' => $primary['phone'] ?? null,
         ];
+    }
+
+    /** @return Collection<int, array<string, ?string>> */
+    private static function contacts(?BniChapter $chapter, ?BniEvent $event): Collection
+    {
+        $contacts = $chapter?->contacts()->active()->get() ?? collect();
+
+        if ($contacts->isEmpty() && $event) {
+            $contacts = $event->contacts()->active()->get();
+        }
+
+        if ($contacts->isEmpty()) {
+            $contacts = BniContact::query()
+                ->general()
+                ->active()
+                ->whereNull('bni_event_id')
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->get();
+        }
+
+        return $contacts->map(fn (BniContact $contact): array => [
+            'name' => $contact->name,
+            'position' => $contact->position,
+            'phone' => $contact->phone,
+            'phone_url' => filled($contact->phone) ? 'tel:'.preg_replace('/[^0-9+]/', '', $contact->phone) : null,
+            'email' => $contact->email,
+            'email_url' => filled($contact->email) ? 'mailto:'.$contact->email : null,
+            'zalo_url' => $contact->zalo_url,
+        ])->values();
     }
 }
