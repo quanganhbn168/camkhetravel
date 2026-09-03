@@ -60,6 +60,7 @@ class AboutController extends Controller
         $about = $managed;
         $about['title'] = $managed['title'] ?: $this->website->company_name;
         $about['image_url'] = $managedImageUrl;
+        $about['video'] = $this->introVideo($managedImageUrl);
         $services = Service::query()
             ->published()
             ->with(['curatorMedia', 'slugs'])
@@ -142,6 +143,62 @@ class AboutController extends Controller
             ['value' => (string) Service::query()->published()->count(), 'label' => 'dịch vụ đang cung cấp'],
             ['value' => (string) Post::query()->published()->count(), 'label' => 'bài viết chuyên môn'],
         ]);
+    }
+
+    /** @return array{source: string, url: string, poster_url: ?string}|null */
+    private function introVideo(?string $posterUrl): ?array
+    {
+        if ($this->settings->video_source === 'youtube') {
+            $embedUrl = $this->youtubeEmbedUrl($this->settings->video_youtube_url);
+
+            return $embedUrl ? [
+                'source' => 'youtube',
+                'url' => $embedUrl,
+                'poster_url' => $posterUrl,
+            ] : null;
+        }
+
+        if ($this->settings->video_source !== 'upload' || ! $this->settings->video_media_id) {
+            return null;
+        }
+
+        $media = Media::query()->find($this->settings->video_media_id);
+        $videoUrl = $media && str_starts_with((string) $media->type, 'video/')
+            ? CuratorMediaUrl::versioned($media)
+            : null;
+
+        return $videoUrl ? [
+            'source' => 'upload',
+            'url' => $videoUrl,
+            'poster_url' => $posterUrl,
+        ] : null;
+    }
+
+    private function youtubeEmbedUrl(?string $url): ?string
+    {
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $path = trim((string) parse_url($url, PHP_URL_PATH), '/');
+        $videoId = null;
+
+        if ($host === 'youtu.be') {
+            $videoId = explode('/', $path)[0] ?? null;
+        } elseif (in_array($host, ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com'], true)) {
+            parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+            $segments = explode('/', $path);
+            $videoId = $path === 'watch'
+                ? ($query['v'] ?? null)
+                : (in_array($segments[0] ?? null, ['embed', 'shorts', 'live'], true) ? ($segments[1] ?? null) : null);
+        }
+
+        if (! is_string($videoId) || preg_match('/^[A-Za-z0-9_-]{11}$/', $videoId) !== 1) {
+            return null;
+        }
+
+        return 'https://www.youtube-nocookie.com/embed/'.$videoId.'?rel=0';
     }
 
     private function translated(array $content): string

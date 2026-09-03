@@ -104,6 +104,9 @@ class ManageSettings extends Page
             'page_intro' => $about->page_intro,
             'story_title' => $about->story_title,
             'story' => $about->story,
+            'video_source' => $about->video_source,
+            'video_youtube_url' => $about->video_youtube_url,
+            'video_media_id' => $about->video_media_id,
             'history' => $about->history,
             'history_title' => $about->history_title,
             'history_description' => $about->history_description,
@@ -433,7 +436,7 @@ class ManageSettings extends Page
         ];
     }
 
-    /** @return array<int, Tabs> */
+    /** @return array<int, Section|Tabs> */
     private function aboutSchema(): array
     {
         return [
@@ -441,8 +444,39 @@ class ManageSettings extends Page
                 ->tabs(app(LanguageCatalog::class)->active()
                     ->map(fn (Language $language): Tab => $this->aboutLanguageTab($language))
                     ->values()
-                    ->all())
+                ->all())
                 ->contained(false)
+                ->columnSpanFull(),
+            Section::make('Video giới thiệu')
+                ->icon(Heroicon::OutlinedVideoCamera)
+                ->description('Chọn một nguồn hiển thị sau phần Câu chuyện của chúng tôi. Video tải lên được quản lý trong thư viện Curator.')
+                ->schema([
+                    Select::make('video_source')
+                        ->label('Nguồn video')
+                        ->options([
+                            'youtube' => 'YouTube',
+                            'upload' => 'Video tải lên',
+                        ])
+                        ->placeholder('Không hiển thị video')
+                        ->live()
+                        ->columnSpanFull(),
+                    TextInput::make('video_youtube_url')
+                        ->label('URL video YouTube')
+                        ->url()
+                        ->maxLength(2048)
+                        ->visible(fn ($get): bool => $get('video_source') === 'youtube')
+                        ->required(fn ($get): bool => $get('video_source') === 'youtube')
+                        ->columnSpanFull(),
+                    CuratorPicker::make('video_media_id')
+                        ->label('Video tải lên')
+                        ->disk('public')
+                        ->constrained()
+                        ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
+                        ->visible(fn ($get): bool => $get('video_source') === 'upload')
+                        ->required(fn ($get): bool => $get('video_source') === 'upload')
+                        ->columnSpanFull(),
+                ])
+                ->columns(1)
                 ->columnSpanFull(),
         ];
     }
@@ -691,6 +725,14 @@ class ManageSettings extends Page
         foreach (['page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'cta_title', 'cta_button_label'] as $key) {
             $about->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
         }
+
+        $about->video_source = in_array($data['video_source'] ?? null, ['youtube', 'upload'], true)
+            ? $data['video_source']
+            : '';
+        $about->video_youtube_url = trim((string) ($data['video_youtube_url'] ?? ''));
+        $about->video_media_id = filled($data['video_media_id'] ?? null)
+            ? (int) $data['video_media_id']
+            : null;
 
         $about->save();
     }

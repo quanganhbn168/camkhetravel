@@ -16,6 +16,12 @@ class AboutSettings extends Settings
 
     public array $story;
 
+    public string $video_source = '';
+
+    public string $video_youtube_url = '';
+
+    public ?int $video_media_id = null;
+
     public array $history;
 
     public array $history_title = [];

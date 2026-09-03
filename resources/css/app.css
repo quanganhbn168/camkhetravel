@@ -207,10 +207,15 @@
     .about-page-hero__media img { display: block; width: 100%; height: 100%; min-height: inherit; object-fit: cover; }
     .about-page-story { background: white; }
     .about-page-story__shell { display: grid; gap: 2.5rem; align-items: start; }
-    .about-page-story__shell--content-only { grid-template-columns: minmax(0, 1fr); }
-    .about-page-story__heading { max-width: 30rem; }
+    .about-page-story__media { min-height: 22rem; overflow: hidden; border-radius: 2rem 0.75rem 2rem 0.75rem; background: var(--site-color-ink); box-shadow: 0 1.5rem 3.5rem color-mix(in srgb, var(--site-color-ink) 14%, transparent); }
+    .about-page-story__media img { display: block; width: 100%; height: 100%; min-height: inherit; object-fit: cover; }
+    .about-page-story__content { display: grid; align-content: center; min-width: 0; }
+    .about-page-story__heading { max-width: 36rem; }
     .about-page-story__heading h2 { font-size: var(--site-font-size-h2); line-height: 1.12; }
-    .about-page-story__body { max-width: 49rem; }
+    .about-page-story__body { max-width: 44rem; margin-top: 1.5rem; }
+    .about-page-video { background: color-mix(in srgb, var(--site-color-surface) 58%, white); }
+    .about-intro-video { width: min(100%, 72rem); aspect-ratio: 16 / 9; overflow: hidden; margin: 2.75rem auto 0; border-radius: 2rem 0.75rem 2rem 0.75rem; background: var(--site-color-ink); box-shadow: 0 1.8rem 4rem color-mix(in srgb, var(--site-color-ink) 18%, transparent); }
+    .about-intro-video video, .about-intro-video iframe { display: block; width: 100%; height: 100%; border: 0; object-fit: cover; }
     .about-page-principles { background: color-mix(in srgb, var(--site-color-surface) 52%, white); }
     .about-page-section-heading { max-width: 54rem; margin-inline: auto; text-align: center; }
     .about-page-section-heading .display-title { font-size: var(--site-font-size-h2); line-height: 1.12; }
@@ -796,7 +801,7 @@
 
     @media (min-width: 768px) {
         .about-page-hero__shell { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2.5rem, 6vw, 6rem); }
-        .about-page-story__shell { grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); gap: clamp(2.5rem, 7vw, 7rem); }
+        .about-page-story__shell { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: clamp(2.5rem, 7vw, 7rem); align-items: stretch; }
         .about-page-principles__top { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .about-principle-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .about-history__panel { grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); }
