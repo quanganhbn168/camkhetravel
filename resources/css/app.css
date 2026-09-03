@@ -358,7 +358,7 @@
     .bni-chapter-widget__content a { display: inline-flex; align-items: center; gap: 0.45rem; margin-top: auto; padding-top: 1.1rem; color: var(--bni-red); font-size: 0.7rem; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; }
     .bni-chapter-widget__content a b { transition: transform 180ms ease; }
     .bni-chapter-widget__content a:hover b, .bni-chapter-widget__content a:focus-visible b { transform: translate(0.15rem, -0.15rem); }
-    .bni-handover-overview-section { position: relative; isolation: isolate; overflow: hidden; background-color: color-mix(in srgb, var(--bni-red) 5%, var(--bni-white)); background-image: url('../images/bni/handover-city-network.webp'), url('../images/bni/handover-network-wave.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-repeat: no-repeat; background-position: right bottom, right bottom, center; background-size: min(78rem, 100vw) auto, min(84rem, 108vw) auto, cover; }
+    .bni-handover-overview-section { position: relative; isolation: isolate; overflow: hidden; background-color: color-mix(in srgb, var(--bni-red) 5%, var(--bni-white)); background-image: url('../images/bni/handover-city-network.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-repeat: no-repeat; background-position: right bottom, center; background-size: min(78rem, 100vw) auto, cover; }
     .bni-handover-overview-section::before { position: absolute; z-index: 0; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--bni-white) 98%, transparent) 0%, color-mix(in srgb, var(--bni-white) 92%, transparent) 42%, color-mix(in srgb, var(--bni-white) 72%, transparent) 100%); content: ''; pointer-events: none; }
     .bni-handover-overview-section > .site-shell { position: relative; z-index: 1; }
     .bni-section { padding: clamp(3.5rem, 6vw, 5.5rem) 0; }
@@ -410,7 +410,9 @@
     .bni-chapter-widget__visual > .bni-database-media-placeholder { min-height: 100%; }
     .bni-video-card.bni-database-media-placeholder { margin: 0; }
     .bni-video-card.bni-database-media-placeholder::after { opacity: 0.08; }
-    .bni-schedule { background: var(--bni-white); }
+    .bni-schedule { position: relative; isolation: isolate; overflow: hidden; background-color: var(--bni-white); background-image: linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 6%, var(--bni-white))); }
+    .bni-schedule::before { position: absolute; z-index: 0; inset: 0; background-image: url('../images/bni/handover-network-wave.webp'); background-repeat: no-repeat; background-position: right bottom; background-size: min(84rem, 108vw) auto; content: ''; pointer-events: none; transform: scaleX(-1); }
+    .bni-schedule > .site-shell { position: relative; z-index: 1; }
     .bni-schedule__layout { display: grid; gap: 1.5rem; }
     .bni-schedule__main { min-width: 0; border: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); border-radius: var(--bni-radius-lg); background: var(--bni-white); padding: 1.25rem; box-shadow: var(--bni-shadow); }
     .bni-tab-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
@@ -1182,8 +1184,9 @@
     .bni-chapter-widget__visual { aspect-ratio: 16 / 7; }
     .bni-chapter-widget__content { padding: 1rem; }
     .bni-chapter-widget__content h3 { font-size: 1.1rem; }
-    .bni-handover-overview-section { background-position: 70% bottom, 70% bottom, center; background-size: 170% auto, 180% auto, cover; }
+    .bni-handover-overview-section { background-position: 70% bottom, center; background-size: 170% auto, cover; }
     .bni-handover-overview-section::before { background: linear-gradient(180deg, color-mix(in srgb, var(--bni-white) 97%, transparent), color-mix(in srgb, var(--bni-white) 88%, transparent)); }
+    .bni-schedule::before { background-position: 70% bottom; background-size: 180% auto; }
     .bni-overview { gap: 1.75rem; }
     .bni-purpose-grid { grid-template-columns: 1fr; gap: 0.6rem; margin-top: 1.5rem; }
     .bni-purpose-card { padding: 1rem; }
