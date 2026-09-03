@@ -37,6 +37,12 @@
                         @if ($eventDate)<div><dt>Ngày tổ chức</dt><dd>{{ $eventDate }}</dd></div>@endif
                         @if ($eventTime)<div><dt>Thời gian</dt><dd>{{ $eventTime }}</dd></div>@endif
                         @if ($eventLocation)<div><dt>Địa điểm</dt><dd>{{ $eventLocation }}</dd></div>@endif
+                        @if ($eventDirectionsUrl)
+                            <div>
+                                <dt>Google Maps</dt>
+                                <dd><a class="bni-registration-map-link" href="{{ $eventDirectionsUrl }}" target="_blank" rel="noopener noreferrer">Xem đường đi <span aria-hidden="true">↗</span></a></dd>
+                            </div>
+                        @endif
                     </dl>
                 </aside>
 

@@ -17,7 +17,17 @@ class BniExperienceService
     /** @return array<string, mixed> */
     public function handover(): array
     {
-        $event = $this->event('handover');
+        $event = $this->currentEvent('handover', [
+            'media',
+            'video.media',
+            'landing.prizes',
+            'slides.media',
+            'chapters.media',
+            'purposes',
+            'scheduleDays.items',
+            'activities.media',
+            'contacts',
+        ]);
         $video = $event?->video;
         $chapters = $event?->chapters->where('is_active', true)->values() ?? collect();
         $heroImageUrl = $event?->bniMediaUrl('hero');
@@ -208,7 +218,17 @@ class BniExperienceService
     /** @return array<string, mixed> */
     public function pickleball(): array
     {
-        $event = $this->event('pickleball');
+        $event = $this->currentEvent('pickleball', [
+            'media',
+            'video.media',
+            'landing.prizes',
+            'slides.media',
+            'chapters.media',
+            'purposes',
+            'scheduleDays.items',
+            'activities.media',
+            'contacts',
+        ]);
         $landing = $event?->landing;
         $articles = BniArticle::query()
             ->published()
@@ -247,22 +267,13 @@ class BniExperienceService
         ];
     }
 
-    private function event(string $type): ?BniEvent
+    /** @param array<int, string> $relations */
+    public function currentEvent(string $type, array $relations = []): ?BniEvent
     {
         return BniEvent::query()
             ->published()
             ->where('type', $type)
-            ->with([
-                'media',
-                'video.media',
-                'landing.prizes',
-                'slides.media',
-                'chapters.media',
-                'purposes',
-                'scheduleDays.items',
-                'activities.media',
-                'contacts',
-            ])
+            ->with($relations)
             ->orderByDesc('is_featured')
             ->orderByDesc('starts_at')
             ->first();

@@ -104,13 +104,8 @@ class BniInvitationController extends Controller
 
     private function handoverEvent(): BniEvent
     {
-        return BniEvent::query()
-            ->published()
-            ->where('type', 'handover')
-            ->with(['media', 'scheduleDays.items', 'contacts'])
-            ->orderByDesc('is_featured')
-            ->orderByDesc('starts_at')
-            ->firstOrFail();
+        return $this->experience->currentEvent('handover', ['media', 'scheduleDays.items', 'contacts'])
+            ?? abort(404);
     }
 
     /** @return Collection<int, array<string, mixed>> */

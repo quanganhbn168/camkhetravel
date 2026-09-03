@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\BniEvent;
 use App\Models\BniRegistration;
+use App\Support\Bni\BniExperienceService;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,10 @@ use Illuminate\View\View;
 
 class BniRegistrationController extends Controller
 {
-    public function __construct(private readonly FrontendSeoBuilder $seo) {}
+    public function __construct(
+        private readonly FrontendSeoBuilder $seo,
+        private readonly BniExperienceService $experience,
+    ) {}
 
     public function create(): View
     {
@@ -36,6 +40,7 @@ class BniRegistrationController extends Controller
                 ->filter()
                 ->unique()
                 ->implode(', '),
+            'eventDirectionsUrl' => $event->directions_url,
             'seo' => $this->seo->listing(
                 'Đăng ký '.$event->title.' | '.$this->seo->siteName(),
                 'Đăng ký tham dự '.$event->title.' trên hệ thống BNI.',
@@ -72,12 +77,7 @@ class BniRegistrationController extends Controller
 
     private function handoverEvent(): BniEvent
     {
-        return BniEvent::query()
-            ->published()
-            ->where('type', 'handover')
-            ->with(['media', 'chapters'])
-            ->orderByDesc('is_featured')
-            ->orderByDesc('starts_at')
-            ->firstOrFail();
+        return $this->experience->currentEvent('handover', ['media', 'chapters'])
+            ?? abort(404);
     }
 }

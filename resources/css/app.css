@@ -648,6 +648,8 @@
     .bni-registration-facts dl > div { border-top: 1px solid color-mix(in srgb, var(--bni-white) 30%, transparent); padding-top: 1rem; }
     .bni-registration-facts dt { color: color-mix(in srgb, var(--bni-white) 70%, transparent); font-size: 0.66rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
     .bni-registration-facts dd { margin: 0.4rem 0 0; color: var(--bni-white); font-size: 0.95rem; font-weight: 750; line-height: 1.6; }
+    .bni-registration-map-link { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--bni-white); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--bni-white) 55%, transparent); text-underline-offset: 0.25rem; }
+    .bni-registration-map-link:hover { text-decoration-color: var(--bni-white); }
     .bni-registration-form-wrap { border-radius: var(--bni-radius-lg); padding: clamp(1.5rem, 4vw, 2.5rem); background: var(--bni-white); box-shadow: var(--bni-shadow); }
     .bni-registration-form-wrap > p:not(.bni-plan-section__eyebrow) { margin: 0.8rem 0 0; color: var(--bni-black); font-size: 0.9rem; line-height: 1.65; }
     .bni-registration-form { margin-top: 1.5rem; border: 0; padding: 0; box-shadow: none; }

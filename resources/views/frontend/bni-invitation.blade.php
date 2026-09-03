@@ -1844,10 +1844,6 @@
                                     </span>
                                 @endforeach
                             </div>
-                        @elseif ($location)
-                            <div class="bni-invite-contact-strip__people">
-                                <span>{{ $location }}</span>
-                            </div>
                         @elseif ($isInvitationTemplate)
                             <div class="bni-invite-contact-strip__people">
                                 <span>Đầu mối liên hệ sẽ hiển thị theo từng chapter khi phát hành thư mời.</span>

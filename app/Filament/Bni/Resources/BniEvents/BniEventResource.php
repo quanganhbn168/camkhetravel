@@ -82,19 +82,32 @@ class BniEventResource extends Resource
                 ])
                 ->columns(2)
                 ->columnSpanFull(),
-            Section::make('Thời gian & địa điểm tổ chức')
-                ->icon('heroicon-o-clock')
-                ->description('Đầu mối liên hệ được quản lý riêng tại Liên hệ chung và Liên hệ Chapter.')
+            Section::make('Thông báo chung: thời gian & địa điểm')
+                ->icon('heroicon-o-map-pin')
+                ->description('Nhập một lần tại đây. Thư mời, trang đăng ký và thông tin sự kiện công khai sẽ cùng lấy ngày giờ, địa điểm và link Google Maps này.')
                 ->schema([
-                    DateTimePicker::make('starts_at')->label('Bắt đầu')->columnSpanFull(),
-                    DateTimePicker::make('ends_at')->label('Kết thúc')->columnSpanFull(),
-                    TextInput::make('venue')->label('Tên địa điểm')->columnSpanFull(),
-                    TextInput::make('address')->label('Địa chỉ')->columnSpanFull(),
+                    DateTimePicker::make('starts_at')
+                        ->label('Ngày giờ bắt đầu')
+                        ->helperText('Ngày giờ chính hiển thị chung trên thư mời và trang đăng ký.')
+                        ->columnSpanFull(),
+                    DateTimePicker::make('ends_at')
+                        ->label('Ngày giờ kết thúc')
+                        ->helperText('Có thể để trống nếu chương trình chỉ cần thông báo giờ bắt đầu.')
+                        ->columnSpanFull(),
+                    TextInput::make('venue')
+                        ->label('Tên địa điểm')
+                        ->placeholder('Ví dụ: Trung tâm Hội nghị ...')
+                        ->columnSpanFull(),
+                    TextInput::make('address')
+                        ->label('Địa chỉ đầy đủ')
+                        ->helperText('Địa chỉ hiển thị ngay sau tên địa điểm.')
+                        ->columnSpanFull(),
                     TextInput::make('directions_url')
                         ->label('Link chia sẻ Google Maps')
                         ->url()
                         ->maxLength(2048)
-                        ->helperText('Dán liên kết lấy từ nút Chia sẻ trên Google Maps.')
+                        ->placeholder('https://maps.app.goo.gl/...')
+                        ->helperText('Dán liên kết lấy từ nút Chia sẻ trên Google Maps; link này dùng chung cho nút chỉ đường.')
                         ->columnSpanFull(),
                     Select::make('status')->label('Trạng thái')->options([
                         'draft' => 'Bản nháp',

@@ -49,6 +49,13 @@ class BniAdminArchitectureTest extends TestCase
         $slideResource = File::get(app_path('Filament/Bni/Resources/BniEventSlides/BniEventSlideResource.php'));
 
         $this->assertStringNotContainsString("TextInput::make('schedule_title')", $invitationSettings);
+        $this->assertStringContainsString('Thông báo chung: thời gian & địa điểm', $eventResource);
+
+        foreach (['starts_at', 'ends_at', 'venue', 'address', 'directions_url'] as $field) {
+            $this->assertStringContainsString("::make('{$field}')", $eventResource, $field);
+            $this->assertStringNotContainsString("::make('{$field}')", $invitationSettings, $field);
+        }
+
         $this->assertStringContainsString('Stack::make', $galleryResource);
         $this->assertStringContainsString('->contentGrid([', $galleryResource);
         $this->assertStringNotContainsString("Select::make('bni_event_id')", $slideResource);

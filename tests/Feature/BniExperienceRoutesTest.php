@@ -384,11 +384,23 @@ class BniExperienceRoutesTest extends TestCase
     {
         $event = BniEvent::query()->where('slug', 'le-chuyen-giao-bni')->firstOrFail();
         $chapter = $event->chapters()->where('is_active', true)->firstOrFail();
+        $event->update([
+            'starts_at' => '2026-10-01 08:00:00',
+            'ends_at' => '2026-10-01 11:30:00',
+            'venue' => 'Trung tâm Hội nghị BNI',
+            'address' => '01 Đường Kết Nối, Bắc Ninh',
+            'directions_url' => 'https://maps.app.goo.gl/bni-handover-test',
+        ]);
 
         $this->get(route('bni.registrations.create'))
             ->assertOk()
             ->assertSee('id="bni-registration-main"', false)
             ->assertSee('Đăng ký Lễ chuyển giao')
+            ->assertSee('01/10/2026')
+            ->assertSee('08:00 – 11:30')
+            ->assertSee('Trung tâm Hội nghị BNI, 01 Đường Kết Nối, Bắc Ninh')
+            ->assertSee('https://maps.app.goo.gl/bni-handover-test', false)
+            ->assertSee('Xem đường đi')
             ->assertSee('name="bni_chapter_id"', false)
             ->assertSee('action="'.route('bni.registrations.store').'"', false);
 
