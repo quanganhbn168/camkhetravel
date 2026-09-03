@@ -28,6 +28,13 @@ class BniCompletionTest extends TestCase
     public function test_pickleball_landing_renders_managed_prizes_rules_countdown_and_rsvp(): void
     {
         $event = BniEvent::query()->published()->where('type', 'pickleball')->firstOrFail();
+        $event->update([
+            'starts_at' => '2026-10-01 07:30:00',
+            'ends_at' => '2026-10-01 17:00:00',
+            'venue' => 'Sân Pickleball BNI',
+            'address' => '01 Đường Kết Nối, Bắc Ninh',
+            'directions_url' => 'https://maps.app.goo.gl/bni-pickleball-test',
+        ]);
         $landing = BniEventLanding::query()->updateOrCreate(['bni_event_id' => $event->id], [
             'countdown_label' => 'Đếm ngược kiểm thử',
             'prizes_title' => 'Giải thưởng kiểm thử',
@@ -53,6 +60,15 @@ class BniCompletionTest extends TestCase
             ->assertSee('Thể lệ kiểm thử')
             ->assertSee('Nội dung thể lệ lấy từ quản trị BNI.')
             ->assertSee('RSVP Pickleball kiểm thử')
+            ->assertSee('id="pickleball-intro"', false)
+            ->assertSee('id="lich-trinh"', false)
+            ->assertSee('images/pickleball/hero-pickleball.jpg', false)
+            ->assertSee('images/pickleball/gioi-thieu-pickleball.jpg', false)
+            ->assertSee('images/pickleball/dang-ky.jpg', false)
+            ->assertSee('01.10.2026')
+            ->assertSee('07:30 – 17:00')
+            ->assertSee('Sân Pickleball BNI, 01 Đường Kết Nối, Bắc Ninh')
+            ->assertSee('https://maps.app.goo.gl/bni-pickleball-test', false)
             ->assertSee('name="bni_chapter_id"', false)
             ->assertSee('name="skill_level"', false);
     }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\BniEvent;
 use App\Models\BniChapter;
 use App\Models\BniRegistration;
 use App\Support\Bni\BniExperienceService;
@@ -33,7 +32,7 @@ class BniPickleballController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $event = BniEvent::query()->published()->where('type', 'pickleball')->orderByDesc('is_featured')->firstOrFail();
+        $event = $this->experience->currentEvent('pickleball') ?? abort(404);
         $data = $request->validate([
             'full_name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],

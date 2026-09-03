@@ -564,7 +564,7 @@ class BniExperienceRoutesTest extends TestCase
         $this->get(route('bni.pickleball'))
             ->assertOk()
             ->assertSee('id="bni-pickleball-main"', false)
-            ->assertSeeText('Lịch thi đấu')
+            ->assertSeeText('Lịch trình sự kiện')
             ->assertDontSeeText('Kết quả trực tiếp')
             ->assertSee('Đăng ký tham gia');
 

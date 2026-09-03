@@ -239,6 +239,10 @@ class BniExperienceService
             ->latest('published_at')
             ->limit(6)
             ->get();
+        $eventLocation = collect([$event?->venue, $event?->address])
+            ->filter()
+            ->unique()
+            ->implode(', ');
 
         return [
             'event' => $event,
@@ -249,8 +253,22 @@ class BniExperienceService
                 ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->get(['id', 'name', 'short_name']),
+            'eventMeta' => [
+                'date' => $event?->starts_at?->format('d.m.Y'),
+                'date_range' => $event ? $this->eventDate($event) : null,
+                'weekday' => $event?->starts_at ? Str::ucfirst($event->starts_at->translatedFormat('l')) : null,
+                'time' => collect([
+                    $event?->starts_at?->format('H:i'),
+                    $event?->ends_at?->format('H:i'),
+                ])->filter()->implode(' – '),
+                'venue' => $event?->venue,
+                'address' => $event?->address,
+                'location' => $eventLocation,
+                'directions_url' => $event?->directions_url,
+            ],
             'pickleballContent' => [
                 'countdown_label' => $landing?->countdown_label ?: 'Đếm ngược đến giải đấu',
+                'introduction' => $event?->content,
                 'prizes_title' => $landing?->prizes_title ?: 'Cơ cấu giải thưởng',
                 'prizes_description' => $landing?->prizes_description,
                 'prizes' => $landing?->prizes->map(fn ($prize): array => [

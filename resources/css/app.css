@@ -1550,3 +1550,237 @@ body.bni-app-shell :is(.floating-action--zalo, .footer-social--zalo) img { filte
 @media (prefers-reduced-motion: reduce) {
     .landing-button, .landing-gallery__grid img { transition-duration: 0.01ms; }
 }
+
+/* BNI Pickleball landing — rebuilt from the supplied desktop reference. */
+.pickleball-landing {
+    --pickleball-red: #d71920;
+    --pickleball-red-dark: #a90912;
+    --pickleball-ink: #15171c;
+    --pickleball-muted: #626872;
+    --pickleball-line: #efd7d5;
+    --pickleball-cream: #fff8f5;
+    --pickleball-shadow: 0 1.1rem 3.2rem rgb(130 15 22 / 10%);
+    overflow: hidden;
+    background: #fff;
+    color: var(--pickleball-ink);
+    font-family: Inter, 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+}
+
+.pickleball-landing * { box-sizing: border-box; }
+.pickleball-landing :is(a, button, input, select, textarea) { transition: 180ms ease; }
+.pickleball-landing :is(#pickleball-intro, #lich-trinh, #pickleball-rules, #pickleball-prizes, #pickleball-register, #pickleball-news) { scroll-margin-top: 5.5rem; }
+.pickleball-shell { width: min(100% - 2.5rem, 74rem); margin-inline: auto; }
+.pickleball-section { position: relative; padding-block: clamp(4.5rem, 7vw, 6.5rem); }
+.pickleball-section-kicker, .pickleball-eyebrow { margin: 0; color: var(--pickleball-red); font-size: 0.7rem; font-weight: 900; letter-spacing: 0.16em; line-height: 1.35; text-transform: uppercase; }
+.pickleball-heading { display: grid; max-width: 44rem; gap: 0.7rem; margin-bottom: 2.5rem; }
+.pickleball-heading--center { justify-items: center; margin-inline: auto; text-align: center; }
+.pickleball-heading h2 { margin: 0; font-family: 'Arial Narrow', Inter, sans-serif; font-size: clamp(2.2rem, 4.5vw, 3.75rem); font-weight: 900; letter-spacing: -0.055em; line-height: 0.98; text-transform: uppercase; }
+.pickleball-heading > p:not(.pickleball-section-kicker) { max-width: 39rem; margin: 0; color: var(--pickleball-muted); font-size: 0.95rem; line-height: 1.7; }
+.pickleball-heading > span { width: 4.5rem; height: 0.22rem; border-radius: 999px; background: var(--pickleball-red); }
+.pickleball-button { display: inline-flex; min-height: 3rem; align-items: center; justify-content: center; gap: 0.65rem; border: 1px solid transparent; border-radius: 999px; padding: 0.75rem 1.3rem; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.04em; line-height: 1; text-transform: uppercase; }
+.pickleball-button:hover, .pickleball-button:focus-visible { transform: translateY(-0.15rem); }
+.pickleball-button--red { background: linear-gradient(135deg, var(--pickleball-red), var(--pickleball-red-dark)); color: #fff; box-shadow: 0 0.8rem 1.8rem rgb(215 25 32 / 24%); }
+.pickleball-button--red:hover, .pickleball-button--red:focus-visible { color: #fff; box-shadow: 0 1rem 2.1rem rgb(215 25 32 / 34%); }
+.pickleball-button--outline { border-color: rgb(215 25 32 / 30%); background: rgb(255 255 255 / 74%); color: var(--pickleball-red); }
+.pickleball-button--outline:hover, .pickleball-button--outline:focus-visible { border-color: var(--pickleball-red); background: #fff; color: var(--pickleball-red); }
+.pickleball-button--light { background: #fff; color: var(--pickleball-red); box-shadow: 0 0.8rem 2rem rgb(0 0 0 / 13%); }
+.pickleball-button--light:hover, .pickleball-button--light:focus-visible { color: var(--pickleball-red-dark); }
+
+.pickleball-nav { position: sticky; z-index: 50; top: 0; border-bottom: 1px solid rgb(215 25 32 / 9%); background: rgb(255 255 255 / 94%); box-shadow: 0 0.6rem 1.8rem rgb(120 20 25 / 6%); backdrop-filter: blur(1rem); }
+.pickleball-nav__inner { display: flex; min-height: 4.6rem; align-items: center; gap: 1.5rem; }
+.pickleball-nav__brand { display: inline-flex; flex: none; align-items: center; gap: 0.65rem; color: var(--pickleball-ink); font-family: 'Arial Narrow', Inter, sans-serif; font-size: 1rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
+.pickleball-nav__brand img { width: auto; height: 2rem; max-width: 5.4rem; }
+.pickleball-nav__links { display: flex; min-width: 0; flex: 1; align-items: center; justify-content: flex-end; gap: clamp(0.5rem, 1.7vw, 1.55rem); }
+.pickleball-nav__links a { color: var(--pickleball-ink); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.pickleball-nav__links a:hover, .pickleball-nav__links a:focus-visible { color: var(--pickleball-red); }
+.pickleball-nav__cta { flex: none; min-height: 2.65rem; padding-inline: 1rem; }
+
+.pickleball-hero { position: relative; isolation: isolate; min-height: 41rem; overflow: hidden; background: var(--pickleball-cream); }
+.pickleball-hero__image { position: absolute; z-index: -3; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.pickleball-hero__veil { position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, rgb(255 253 251 / 99%) 0%, rgb(255 250 247 / 96%) 34%, rgb(255 246 243 / 72%) 51%, rgb(255 246 243 / 6%) 77%); }
+.pickleball-hero::before { position: absolute; z-index: -1; top: -18rem; left: -18rem; width: 44rem; height: 44rem; border: 1px solid rgb(215 25 32 / 14%); border-radius: 999px; box-shadow: 0 0 0 5rem rgb(215 25 32 / 3%), 0 0 0 10rem rgb(215 25 32 / 2%); content: ''; }
+.pickleball-hero__inner { display: grid; min-height: 41rem; align-content: center; padding-block: 3.25rem 6.5rem; }
+.pickleball-hero__copy { display: grid; width: min(100%, 37rem); justify-items: start; gap: 1.1rem; }
+.pickleball-back-link { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--pickleball-muted); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+.pickleball-back-link:hover, .pickleball-back-link:focus-visible { color: var(--pickleball-red); }
+.pickleball-hero h1 { display: grid; margin: 0; font-family: 'Arial Narrow', Inter, sans-serif; letter-spacing: -0.065em; line-height: 0.82; text-transform: uppercase; }
+.pickleball-hero h1 span { color: var(--pickleball-ink); font-size: clamp(3.25rem, 6vw, 5.9rem); font-style: italic; font-weight: 900; }
+.pickleball-hero h1 strong { color: var(--pickleball-red); font-size: clamp(4rem, 8vw, 7.7rem); font-style: italic; font-weight: 950; text-shadow: 0.2rem 0.22rem 0 #fff, 0.32rem 0.36rem 0 rgb(169 9 18 / 22%); }
+.pickleball-hero h1 em { margin-top: 0.7rem; color: var(--pickleball-ink); font-size: clamp(1.3rem, 2.6vw, 2.35rem); font-style: italic; font-weight: 900; letter-spacing: -0.035em; line-height: 1; }
+.pickleball-hero__lead { max-width: 34rem; margin: 0; color: #3d4148; font-size: 1rem; font-weight: 600; line-height: 1.7; }
+.pickleball-hero__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.pickleball-hero__meta { display: flex; flex-wrap: wrap; gap: 0.7rem 1.25rem; color: var(--pickleball-muted); font-size: 0.72rem; font-weight: 700; }
+.pickleball-hero__meta span { display: inline-flex; align-items: center; gap: 0.45rem; }
+.pickleball-hero__meta svg { width: 1rem; height: 1rem; fill: none; stroke: var(--pickleball-red); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
+.pickleball-countdown { display: grid; width: min(100%, 31rem); gap: 0.65rem; margin-top: 0.5rem; border: 1px solid rgb(215 25 32 / 15%); border-radius: 1.2rem; background: rgb(255 255 255 / 88%); padding: 1rem 1.2rem; box-shadow: var(--pickleball-shadow); backdrop-filter: blur(0.8rem); }
+.pickleball-countdown > p { margin: 0; color: var(--pickleball-ink); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.pickleball-countdown > div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.pickleball-countdown span { border-left: 1px solid var(--pickleball-line); color: var(--pickleball-red); font-size: 1.35rem; font-weight: 900; line-height: 1; text-align: center; }
+.pickleball-countdown span:first-child { border-left: 0; }
+.pickleball-countdown small { display: block; margin-top: 0.3rem; color: var(--pickleball-muted); font-size: 0.52rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+
+.pickleball-facts { position: relative; z-index: 5; margin-top: -3.5rem; padding-bottom: 1.5rem; }
+.pickleball-facts__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: hidden; border: 1px solid var(--pickleball-line); border-radius: 1.4rem; background: #fff; box-shadow: var(--pickleball-shadow); }
+.pickleball-fact { display: flex; min-height: 13.5rem; flex-direction: column; align-items: center; border-left: 1px solid var(--pickleball-line); padding: 1.45rem 1rem; text-align: center; }
+.pickleball-fact:first-child { border-left: 0; }
+.pickleball-fact__icon { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 999px; background: var(--pickleball-red); color: #fff; box-shadow: 0 0.5rem 1.1rem rgb(215 25 32 / 22%); }
+.pickleball-fact__icon svg { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.pickleball-fact h2 { margin: 0.8rem 0 0; color: var(--pickleball-red); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.07em; text-transform: uppercase; }
+.pickleball-fact p { margin: 0.55rem 0 0; color: var(--pickleball-ink); font-size: 0.9rem; font-weight: 800; line-height: 1.45; }
+.pickleball-fact strong { display: block; margin-top: 0.25rem; color: var(--pickleball-red); font-size: 1.05rem; }
+.pickleball-fact small { display: block; margin-top: 0.35rem; color: var(--pickleball-muted); font-size: 0.68rem; line-height: 1.5; }
+.pickleball-fact > a { margin-top: auto; padding-top: 0.55rem; color: var(--pickleball-red); font-size: 0.65rem; font-weight: 850; text-decoration: underline; text-underline-offset: 0.2rem; }
+
+.pickleball-intro { background: linear-gradient(180deg, #fff, var(--pickleball-cream)); }
+.pickleball-intro__card { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); align-items: stretch; overflow: hidden; border: 1px solid var(--pickleball-line); border-radius: 1.6rem; background: #fff; box-shadow: var(--pickleball-shadow); }
+.pickleball-intro__media { min-height: 31rem; margin: 0; overflow: hidden; }
+.pickleball-intro__media img { width: 100%; height: 100%; object-fit: cover; }
+.pickleball-intro__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(2.2rem, 5vw, 4.5rem); }
+.pickleball-intro__copy h2 { margin: 0.7rem 0 0; font-family: 'Arial Narrow', Inter, sans-serif; font-size: clamp(2.35rem, 4.3vw, 4rem); font-weight: 900; letter-spacing: -0.055em; line-height: 1; text-transform: uppercase; }
+.pickleball-intro__copy h2 span { color: var(--pickleball-red); }
+.pickleball-intro__copy > p:not(.pickleball-section-kicker), .pickleball-rich-copy { margin: 1.25rem 0 0; color: var(--pickleball-muted); font-size: 0.92rem; line-height: 1.78; }
+.pickleball-rich-copy > :first-child { margin-top: 0; }
+.pickleball-rich-copy > :last-child { margin-bottom: 0; }
+.pickleball-rich-copy :is(h2, h3, h4, strong) { color: inherit; }
+.pickleball-rich-copy ul, .pickleball-rich-copy ol { padding-left: 1.25rem; }
+.pickleball-intro__values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; margin-top: 1.5rem; }
+.pickleball-intro__values div { border-left: 2px solid var(--pickleball-red); padding-left: 0.75rem; }
+.pickleball-intro__values :is(strong, span) { display: block; }
+.pickleball-intro__values strong { color: var(--pickleball-red); font-size: 0.78rem; text-transform: uppercase; }
+.pickleball-intro__values span { margin-top: 0.25rem; color: var(--pickleball-muted); font-size: 0.64rem; line-height: 1.45; }
+
+.pickleball-schedule { background: #fff; }
+.pickleball-schedule__tabs { display: flex; justify-content: center; gap: 0.55rem; margin-bottom: 1.4rem; }
+.pickleball-schedule__tabs button { min-height: 2.75rem; border: 1px solid var(--pickleball-line); border-radius: 999px; background: #fff; padding: 0.65rem 1.1rem; color: var(--pickleball-muted); font-size: 0.68rem; font-weight: 850; text-transform: uppercase; }
+.pickleball-schedule__tabs button:hover, .pickleball-schedule__tabs button.is-active { border-color: var(--pickleball-red); background: var(--pickleball-red); color: #fff; }
+.pickleball-timeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.pickleball-timeline__item { position: relative; display: grid; min-height: 13rem; align-content: start; border: 1px solid var(--pickleball-line); border-radius: 1.25rem; background: #fff; padding: 1.4rem; box-shadow: 0 0.75rem 2rem rgb(140 20 25 / 7%); }
+.pickleball-timeline__item::before { position: absolute; top: 0; left: 1.4rem; width: 3.2rem; height: 0.22rem; border-radius: 0 0 999px 999px; background: var(--pickleball-red); content: ''; }
+.pickleball-timeline__item time { color: var(--pickleball-red); font-family: 'Arial Narrow', Inter, sans-serif; font-size: 1.45rem; font-weight: 900; }
+.pickleball-timeline__dot { width: 0.55rem; height: 0.55rem; margin-block: 0.8rem; border-radius: 999px; background: var(--pickleball-red); box-shadow: 0 0 0 0.35rem rgb(215 25 32 / 10%); }
+.pickleball-timeline__item h3 { margin: 0; color: var(--pickleball-ink); font-size: 0.95rem; font-weight: 850; line-height: 1.35; }
+.pickleball-timeline__item p { margin: 0.5rem 0 0; color: var(--pickleball-muted); font-size: 0.75rem; line-height: 1.6; }
+.pickleball-empty { grid-column: 1 / -1; margin: 0; border: 1px dashed var(--pickleball-line); border-radius: 1.25rem; padding: 2rem; color: var(--pickleball-muted); text-align: center; }
+
+.pickleball-rules { overflow: hidden; background: linear-gradient(135deg, #a90811, var(--pickleball-red) 52%, #b20b14); color: #fff; }
+.pickleball-rules::before { position: absolute; right: -12rem; bottom: -20rem; width: 42rem; height: 42rem; border: 1px solid rgb(255 255 255 / 20%); border-radius: 999px; box-shadow: 0 0 0 4rem rgb(255 255 255 / 4%), 0 0 0 8rem rgb(255 255 255 / 3%); content: ''; }
+.pickleball-rules__layout { position: relative; display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); align-items: start; gap: clamp(2rem, 6vw, 6rem); }
+.pickleball-rules .pickleball-section-kicker { color: rgb(255 255 255 / 72%); }
+.pickleball-rules__heading h2 { margin: 0.7rem 0 0; color: #fff; font-family: 'Arial Narrow', Inter, sans-serif; font-size: clamp(2.4rem, 4.8vw, 4.25rem); font-weight: 900; letter-spacing: -0.055em; line-height: 0.96; text-transform: uppercase; }
+.pickleball-rules__heading > p:not(.pickleball-section-kicker) { margin: 1rem 0 0; color: rgb(255 255 255 / 76%); font-size: 0.9rem; line-height: 1.75; }
+.pickleball-rules__heading .pickleball-button { margin-top: 1.5rem; }
+.pickleball-rules__content { margin: 0; border: 1px solid rgb(255 255 255 / 18%); border-radius: 1.35rem; background: rgb(92 0 6 / 24%); padding: clamp(1.5rem, 3vw, 2.5rem); color: rgb(255 255 255 / 88%); backdrop-filter: blur(0.4rem); }
+.pickleball-rules__content :is(h2, h3, h4, strong, a) { color: #fff; }
+
+.pickleball-prizes { background: var(--pickleball-cream); }
+.pickleball-prizes__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.pickleball-prize { position: relative; isolation: isolate; min-height: 17rem; overflow: hidden; border: 1px solid var(--pickleball-line); border-radius: 1.35rem; background: #fff; padding: 1.5rem; box-shadow: 0 0.8rem 2.2rem rgb(140 20 25 / 8%); }
+.pickleball-prize::after { position: absolute; z-index: -1; right: -4rem; bottom: -4rem; width: 10rem; height: 10rem; border: 1.2rem solid rgb(215 25 32 / 5%); border-radius: 999px; content: ''; }
+.pickleball-prize__number { color: rgb(215 25 32 / 14%); font-family: 'Arial Narrow', Inter, sans-serif; font-size: 4rem; font-weight: 900; line-height: 0.85; }
+.pickleball-prize > svg { position: absolute; top: 1.4rem; right: 1.4rem; width: 2.2rem; height: 2.2rem; fill: none; stroke: var(--pickleball-red); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+.pickleball-prize h3 { margin: 1.5rem 0 0; color: var(--pickleball-ink); font-size: 1.1rem; font-weight: 900; line-height: 1.3; text-transform: uppercase; }
+.pickleball-prize strong { display: block; margin-top: 0.65rem; color: var(--pickleball-red); font-size: 1rem; }
+.pickleball-prize p { margin: 0.65rem 0 0; color: var(--pickleball-muted); font-size: 0.78rem; line-height: 1.65; }
+.pickleball-prize.is-highlighted { border-color: transparent; background: linear-gradient(145deg, var(--pickleball-red), var(--pickleball-red-dark)); color: #fff; box-shadow: 0 1.2rem 2.8rem rgb(169 9 18 / 25%); }
+.pickleball-prize.is-highlighted .pickleball-prize__number { color: rgb(255 255 255 / 18%); }
+.pickleball-prize.is-highlighted > svg { stroke: #fff; }
+.pickleball-prize.is-highlighted :is(h3, strong, p) { color: #fff; }
+.pickleball-prize--empty { grid-column: 1 / -1; display: grid; min-height: 15rem; place-items: center; align-content: center; text-align: center; }
+.pickleball-prize--empty img { width: 6rem; }
+
+.pickleball-register { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(5rem, 8vw, 7rem); background: #2a0608; }
+.pickleball-register__background { position: absolute; z-index: -3; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.pickleball-register__overlay { position: absolute; z-index: -2; inset: 0; background: linear-gradient(90deg, rgb(78 0 6 / 88%), rgb(130 0 9 / 54%) 48%, rgb(255 248 245 / 80%)); }
+.pickleball-register__inner { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: center; gap: clamp(2.5rem, 6vw, 6rem); }
+.pickleball-register__intro { color: #fff; }
+.pickleball-register__intro .pickleball-section-kicker { color: rgb(255 255 255 / 74%); }
+.pickleball-register__intro h2 { margin: 0.75rem 0 0; color: #fff; font-family: 'Arial Narrow', Inter, sans-serif; font-size: clamp(2.5rem, 5vw, 4.6rem); font-weight: 900; letter-spacing: -0.06em; line-height: 0.95; text-transform: uppercase; }
+.pickleball-register__intro > p:not(.pickleball-section-kicker) { max-width: 31rem; margin: 1rem 0 0; color: rgb(255 255 255 / 79%); font-size: 0.9rem; line-height: 1.75; }
+.pickleball-register__intro dl { display: grid; gap: 0.7rem; margin: 1.5rem 0 0; }
+.pickleball-register__intro dl > div { border-left: 2px solid rgb(255 255 255 / 55%); padding-left: 0.8rem; }
+.pickleball-register__intro dt { color: rgb(255 255 255 / 62%); font-size: 0.58rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
+.pickleball-register__intro dd { margin: 0.2rem 0 0; color: #fff; font-size: 0.82rem; font-weight: 750; line-height: 1.5; }
+.pickleball-map-link { display: inline-flex; margin-top: 1rem; color: #fff; font-size: 0.72rem; font-weight: 850; text-decoration: underline; text-underline-offset: 0.22rem; }
+.pickleball-map-link:hover, .pickleball-map-link:focus-visible { color: #fff; opacity: 0.8; }
+.pickleball-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; border: 1px solid rgb(255 255 255 / 65%); border-radius: 1.5rem; background: rgb(255 255 255 / 94%); padding: clamp(1.4rem, 3vw, 2.3rem); box-shadow: 0 1.6rem 4rem rgb(68 0 5 / 28%); backdrop-filter: blur(1rem); }
+.pickleball-form label { display: block; margin-bottom: 0.4rem; color: var(--pickleball-ink); font-size: 0.7rem; font-weight: 850; }
+.pickleball-form :is(input, select, textarea) { width: 100%; min-height: 3rem; border: 1px solid #e6ccca; border-radius: 0.75rem; background: #fff; padding: 0.72rem 0.82rem; color: var(--pickleball-ink); font-size: 0.9rem; outline: none; }
+.pickleball-form textarea { min-height: 6.5rem; resize: vertical; }
+.pickleball-form :is(input, select, textarea):focus { border-color: var(--pickleball-red); box-shadow: 0 0 0 0.2rem rgb(215 25 32 / 12%); }
+.pickleball-form__full { grid-column: 1 / -1; }
+.pickleball-form__error { margin: 0.35rem 0 0; color: var(--pickleball-red); font-size: 0.7rem; }
+.pickleball-form button { width: 100%; }
+
+.pickleball-news { background: #fff; }
+.pickleball-news__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.pickleball-news-card { overflow: hidden; border: 1px solid var(--pickleball-line); border-radius: 1.25rem; background: #fff; box-shadow: 0 0.8rem 2rem rgb(140 20 25 / 7%); }
+.pickleball-news-card > img, .pickleball-news-card__placeholder { width: 100%; height: 13rem; object-fit: cover; }
+.pickleball-news-card__placeholder { display: grid; place-items: center; background: var(--pickleball-cream); }
+.pickleball-news-card__placeholder img { width: 5rem; }
+.pickleball-news-card > div:last-child { display: grid; gap: 0.65rem; padding: 1.25rem; }
+.pickleball-news-card > div:last-child > p { margin: 0; color: var(--pickleball-red); font-size: 0.6rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+.pickleball-news-card h3 { margin: 0; font-size: 1rem; font-weight: 850; line-height: 1.4; }
+.pickleball-news-card h3 a { color: var(--pickleball-ink); }
+.pickleball-news-card h3 a:hover { color: var(--pickleball-red); }
+.pickleball-news-card span { color: var(--pickleball-muted); font-size: 0.75rem; line-height: 1.6; }
+.pickleball-news-card > div:last-child > a { color: var(--pickleball-red); font-size: 0.68rem; font-weight: 850; text-transform: uppercase; }
+
+.pickleball-final-cta { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(3.5rem, 6vw, 5rem); color: #fff; text-align: center; }
+.pickleball-final-cta > img { position: absolute; z-index: -3; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.pickleball-final-cta > div[aria-hidden='true'] { position: absolute; z-index: -2; inset: 0; background: rgb(166 3 14 / 72%); }
+.pickleball-final-cta__inner { display: grid; justify-items: center; gap: 0.75rem; }
+.pickleball-final-cta h2 { margin: 0; color: #fff; font-family: 'Arial Narrow', Inter, sans-serif; font-size: clamp(2.25rem, 4.7vw, 4.2rem); font-weight: 900; letter-spacing: -0.055em; line-height: 0.98; text-transform: uppercase; }
+.pickleball-final-cta p { margin: 0; color: rgb(255 255 255 / 86%); font-size: 0.86rem; }
+.pickleball-final-cta .pickleball-button { margin-top: 0.55rem; }
+.pickleball-footer { background: #17171c; color: rgb(255 255 255 / 70%); }
+.pickleball-footer > div { display: flex; min-height: 4.5rem; align-items: center; justify-content: space-between; gap: 1rem; }
+.pickleball-footer p { margin: 0; font-size: 0.72rem; }
+.pickleball-footer a { color: #fff; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
+
+@media (max-width: 64rem) {
+    .pickleball-nav__links { justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+    .pickleball-nav__links::-webkit-scrollbar { display: none; }
+    .pickleball-facts__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pickleball-fact:nth-child(3) { border-left: 0; }
+    .pickleball-fact:nth-child(n + 3) { border-top: 1px solid var(--pickleball-line); }
+    .pickleball-timeline, .pickleball-prizes__grid, .pickleball-news__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pickleball-register__inner { grid-template-columns: 1fr; }
+    .pickleball-register__overlay { background: rgb(101 0 7 / 76%); }
+}
+
+@media (max-width: 48rem) {
+    .pickleball-shell { width: min(100% - 1.25rem, 74rem); }
+    .pickleball-section { padding-block: 3.75rem; }
+    .pickleball-nav__inner { min-height: 4rem; gap: 0.75rem; }
+    .pickleball-nav__brand span, .pickleball-nav__cta { display: none; }
+    .pickleball-nav__brand img { height: 1.6rem; max-width: 4.2rem; }
+    .pickleball-nav__links { gap: 0.1rem; }
+    .pickleball-nav__links a { padding: 0.65rem; font-size: 0.6rem; }
+    .pickleball-hero, .pickleball-hero__inner { min-height: 42rem; }
+    .pickleball-hero__image { object-position: 63% center; opacity: 0.58; }
+    .pickleball-hero__veil { background: linear-gradient(90deg, rgb(255 251 248 / 98%), rgb(255 248 245 / 87%)); }
+    .pickleball-hero__inner { padding-block: 3rem 5.5rem; }
+    .pickleball-hero h1 span { font-size: clamp(3rem, 15vw, 4.4rem); }
+    .pickleball-hero h1 strong { font-size: clamp(3.65rem, 18vw, 5.2rem); }
+    .pickleball-hero h1 em { font-size: clamp(1.2rem, 6vw, 1.75rem); }
+    .pickleball-hero__actions { display: grid; width: 100%; grid-template-columns: 1fr; }
+    .pickleball-countdown { width: 100%; }
+    .pickleball-facts { margin-top: -2.5rem; }
+    .pickleball-facts__grid, .pickleball-intro__card, .pickleball-rules__layout, .pickleball-timeline, .pickleball-prizes__grid, .pickleball-news__grid { grid-template-columns: 1fr; }
+    .pickleball-fact { min-height: 0; border-top: 1px solid var(--pickleball-line); border-left: 0; }
+    .pickleball-fact:first-child { border-top: 0; }
+    .pickleball-intro__media { min-height: 18rem; }
+    .pickleball-intro__copy { padding: 1.5rem; }
+    .pickleball-intro__values { grid-template-columns: 1fr; }
+    .pickleball-schedule__tabs { justify-content: flex-start; overflow-x: auto; }
+    .pickleball-schedule__tabs button { flex: none; }
+    .pickleball-register__inner { gap: 2rem; }
+    .pickleball-form { grid-template-columns: 1fr; padding: 1rem; }
+    .pickleball-form > * { grid-column: 1; }
+    .pickleball-final-cta > img { object-position: center; }
+    .pickleball-footer > div { min-height: 5rem; flex-direction: column; justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pickleball-landing :is(a, button, input, select, textarea) { transition-duration: 0.01ms; }
+}
