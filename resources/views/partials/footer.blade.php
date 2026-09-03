@@ -18,7 +18,7 @@
                     </a>
                 @endif
                 @if ($website->zalo_url)
-                    <a class="footer-social" href="{{ $website->zalo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Zalo">
+                    <a class="footer-social footer-social--zalo" href="{{ $website->zalo_url }}" target="_blank" rel="noopener noreferrer" aria-label="Zalo">
                         <img class="size-5" src="{{ asset('images/zalo.svg') }}" alt="">
                     </a>
                 @endif

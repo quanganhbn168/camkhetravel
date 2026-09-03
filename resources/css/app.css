@@ -927,7 +927,8 @@
     .project-tab.is-active { border-color: var(--site-color-primary, #f68e1e); background: var(--site-color-primary, #f68e1e); color: white; }
     .footer-social { @apply grid size-9 place-items-center rounded-full border border-white/15 text-slate-300 transition hover:border-white hover:bg-white hover:text-ink; }
     .footer-social svg { @apply size-4; }
-    .footer-social img { @apply size-5 object-contain; }
+    .footer-social img { @apply size-5 object-contain; transition: filter 180ms ease; }
+    .footer-social--zalo:hover img { filter: brightness(0) saturate(100%); }
     .floating-action { @apply grid size-11 place-items-center rounded-full text-white transition hover:-translate-y-0.5 hover:brightness-110; }
     .floating-action svg { @apply size-4; }
     .floating-action img { @apply size-6 object-contain; }
