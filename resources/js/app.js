@@ -1,4 +1,5 @@
 import './bootstrap';
+import './landing-templates/landing07-communications';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
 import GLightbox from 'glightbox';

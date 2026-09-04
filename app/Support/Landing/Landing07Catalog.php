@@ -69,6 +69,9 @@ final class Landing07Catalog
                 'heroicon-o-megaphone',
                 80,
                 'giaiphaptruyenthongdoanhnghiep',
+                'frontend.landing-pages.templates.landing07-communications',
+                'resources/css/landing-templates/landing07-communications.css',
+                CommunicationsLandingContent::templateSettings(),
             ),
             self::ACADEMY => self::template(
                 'Landing07 / Nhiếp ảnh thực chiến',
@@ -440,20 +443,23 @@ final class Landing07Catalog
         string $icon,
         int $sortOrder,
         string $sourceDirectory,
+        ?string $view = null,
+        ?string $cssSource = null,
+        array $customSettings = [],
     ): array {
-        $settings = [
+        $settings = array_replace([
             'landing07_brand_label' => 'THT MEDIA',
             'landing07_service_line' => $useCase,
             'landing07_nav_cta' => 'Nhận tư vấn',
             'landing07_footer_text' => 'THT Media · Đồng hành từ mục tiêu đến đầu ra',
-        ];
+        ], $customSettings);
 
         return [
             'label' => $label,
             'description' => $description,
-            'view' => 'frontend.landing-pages.templates.landing07-source',
+            'view' => $view ?? 'frontend.landing-pages.templates.landing07-source',
             'css_class' => 'landing-page--'.$slug,
-            'css_source' => 'resources/css/landing-templates/landing07-source.css',
+            'css_source' => $cssSource ?? 'resources/css/landing-templates/landing07-source.css',
             'use_case' => $useCase,
             'palette' => compact('primary', 'accent', 'surface', 'ink'),
             'settings' => $settings,

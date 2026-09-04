@@ -6,6 +6,7 @@ use App\Models\LandingPage;
 use App\Models\LandingTemplate;
 use App\Models\PricingPlan;
 use App\Models\Project;
+use App\Support\Landing\CommunicationsLandingContent;
 use App\Support\Landing\Landing07Catalog;
 use App\Support\Landing\LandingTemplateRegistry;
 use Awcodes\Curator\Models\Media;
@@ -34,6 +35,7 @@ class Landing07ContentSeeder extends Seeder
                 ->where('key', $page['template_key'])
                 ->firstOrFail();
             $landing = $this->landing($slug, $page['title']);
+            $isCommunications = $page['template_key'] === Landing07Catalog::COMMUNICATIONS;
             $shouldInitialize = ! $landing->exists
                 || $landing->template_key !== $template->key
                 || blank($landing->sections);
@@ -88,6 +90,29 @@ class Landing07ContentSeeder extends Seeder
 
             $this->seedPlans($landing, $page['plans']);
             $landing->projects()->syncWithoutDetaching($this->catalogProjectIds($page['project_terms']));
+
+            if ($isCommunications) {
+                $landing->forceFill([
+                    'landing_template_id' => $template->id,
+                    'layout_mode' => 'custom_template',
+                    'template_key' => $template->key,
+                    'template_settings' => CommunicationsLandingContent::templateSettings(),
+                    'theme_settings' => $template->palette,
+                    'sections' => $this->hydrateSections(
+                        CommunicationsLandingContent::sections(),
+                        $heroMediaId,
+                        $galleryMediaIds,
+                    ),
+                    'title' => $page['title'],
+                    'excerpt' => $page['excerpt'],
+                    'faq_items' => $page['faq_items'],
+                    'seo_title' => $page['seo_title'],
+                    'seo_description' => $page['seo_description'],
+                    'show_header' => false,
+                    'show_footer' => false,
+                    'tracking_enabled' => true,
+                ])->saveQuietly();
+            }
         }
     }
 
