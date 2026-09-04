@@ -227,29 +227,6 @@
         @endif
     </section>
 
-    <section class="home-approach section-space" id="nang-luc">
-        <div class="site-shell home-approach__grid">
-            <article class="home-commitments">
-                <h2 class="home-commitments__title uppercase">Cam kết đồng hành</h2>
-                <p class="mt-4 max-w-md text-sm leading-7 text-slate-300">Một cách làm rõ ràng để mỗi bên cùng nắm được mục tiêu.</p>
-                <div class="home-commitments__list">
-                    @foreach ($commitments as $commitment)
-                        <div class="home-commitment"><span class="home-commitment__icon">✓</span><p>{{ $commitment }}</p></div>
-                    @endforeach
-                </div>
-            </article>
-            <article class="home-capabilities">
-                <h2 class="home-capabilities__title uppercase">Năng lực triển khai</h2>
-                <p class="mt-4 max-w-lg text-sm leading-7 text-slate-600">Các đầu việc kết nối trong một nhịp triển khai.</p>
-                <div class="home-capabilities__list">
-                    @foreach ($capabilities as $capability)
-                        <div class="home-capability"><span aria-hidden="true">→</span><p>{{ $capability }}</p></div>
-                    @endforeach
-                </div>
-            </article>
-        </div>
-    </section>
-
     <section class="home-testimonials section-space" id="phan-hoi">
         <div class="site-shell home-testimonials__layout">
             <div class="home-testimonials__intro" data-aos="fade-up">

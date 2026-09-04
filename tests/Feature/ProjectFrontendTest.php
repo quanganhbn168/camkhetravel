@@ -40,7 +40,10 @@ class ProjectFrontendTest extends TestCase
     {
         $this->get(LocalizedUrl::route('home'))
             ->assertOk()
-            ->assertDontSee('id="cau-hoi-thuong-gap"', false);
+            ->assertDontSee('id="cau-hoi-thuong-gap"', false)
+            ->assertDontSee('id="nang-luc"', false)
+            ->assertDontSee('Cam kết đồng hành')
+            ->assertDontSee('Năng lực triển khai');
     }
 
     public function test_project_detail_renders_managed_related_services_posts_and_sidebar_links(): void
