@@ -1408,7 +1408,7 @@
                         <p class="bni-invite-hero__event-prefix">Tới tham dự chương trình</p>
 
                         <p>
-                            <img class="bni-invite-hero__event-logo" src="{{ asset('images/bni/le-chuyen-giao.png') }}" alt="Lễ chuyển giao">
+                            <img class="bni-invite-hero__event-logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
                         </p>
 
                         <div class="bni-invite-date" aria-label="Thời gian diễn ra">

@@ -471,6 +471,8 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
             ->assertSee('id="bni-invitation-main"', false)
             ->assertSee('THƯ MỜI')
+            ->assertSee('bni-logo-red.svg')
+            ->assertDontSee('images/bni/le-chuyen-giao.png')
             ->assertSee('LỄ CHUYỂN GIAO')
             ->assertSee('Anh/Chị chủ doanh nghiệp')
             ->assertSee('Nội dung chung toàn hệ thống.')

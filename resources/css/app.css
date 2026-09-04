@@ -1183,8 +1183,6 @@ body.bni-app-shell {
     --site-gradient-green-dark: linear-gradient(135deg, var(--bni-red), color-mix(in srgb, var(--bni-red) 82%, var(--bni-black)));
     --site-gradient-green-light: linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 8%, var(--bni-white)));
 }
-body.bni-app-shell header img[alt="THT Media"] { filter: grayscale(1) contrast(1.15); }
-
 @media (max-width: 767px) {
     body.bni-app-shell {
         overflow-x: hidden;

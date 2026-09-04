@@ -93,6 +93,7 @@ class BniHandoverPageTest extends TestCase
         $this->assertStringNotContainsString('background: var(--bni-black)', $css);
         $this->assertStringNotContainsString('color-mix(in srgb, var(--bni-black)', $css);
         $this->assertStringNotContainsString('body.bni-app-shell :is(.floating-action--zalo, .footer-social--zalo) img { filter:', $css);
+        $this->assertStringNotContainsString('body.bni-app-shell header img[alt="THT Media"] { filter:', $css);
     }
 
     public function test_an_authenticated_user_does_not_see_a_logout_button_in_the_handover_content(): void
