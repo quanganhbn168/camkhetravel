@@ -575,6 +575,28 @@ class BniExperienceRoutesTest extends TestCase
         $this->get('/bni-admin/login')->assertOk();
     }
 
+    public function test_the_pickleball_hero_uses_the_image_managed_on_the_event(): void
+    {
+        Storage::fake('public');
+
+        $event = BniEvent::query()->published()->where('type', 'pickleball')->firstOrFail();
+        $event->clearMediaCollection('hero');
+        $hero = $event->addMedia(UploadedFile::fake()->image('pickleball-cms-hero.jpg', 1600, 900))
+            ->toMediaCollection('hero', 'public');
+
+        $this->get(route('bni.pickleball'))
+            ->assertOk()
+            ->assertSee($hero->getUrl('webp'), false)
+            ->assertDontSee('images/pickleball/hero-pickleball.jpg');
+
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertStringContainsString('.pickleball-hero__image, .pickleball-hero__inner { grid-area: 1 / 1; }', $css);
+        $this->assertStringNotContainsString('.pickleball-hero::before', $css);
+        $this->assertStringNotContainsString('.pickleball-hero__image { position: absolute', $css);
+        $this->assertStringNotContainsString('pickleball-hero__veil', $css);
+    }
+
     public function test_a_bni_administrator_can_open_the_dedicated_event_cms(): void
     {
         Role::findOrCreate('bni_admin', 'web');

@@ -29,8 +29,7 @@
         </nav>
 
         <header class="pickleball-hero" id="pickleball-top">
-            <img class="pickleball-hero__image" src="{{ asset('images/pickleball/hero-pickleball.jpg') }}" alt="Sân Pickleball trong không gian nhận diện BNI">
-            <div class="pickleball-hero__veil" aria-hidden="true"></div>
+            <img class="pickleball-hero__image" src="{{ $heroImageUrl ?: asset('images/pickleball/hero-pickleball.jpg') }}" alt="Sân Pickleball trong không gian nhận diện BNI">
             <div class="pickleball-shell pickleball-hero__inner">
                 <div class="pickleball-hero__copy">
                     <a class="pickleball-back-link" href="{{ LocalizedUrl::route('bni.handover') }}">
