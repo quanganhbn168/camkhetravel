@@ -143,19 +143,10 @@
             text-decoration: none;
         }
 
-        .bni-invite-brand__mark {
-            font-size: 37px;
-            line-height: 1;
-            font-weight: 950;
-            letter-spacing: -3px;
-        }
-
-        .bni-invite-brand__dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 999px;
-            background: var(--bni-red);
-            margin-top: 22px;
+        .bni-invite-brand__logo {
+            display: block;
+            width: 84px;
+            height: auto;
         }
 
         .bni-invite-nav {
@@ -1154,8 +1145,8 @@
                 display: none;
             }
 
-            .bni-invite-brand__mark {
-                font-size: 31px;
+            .bni-invite-brand__logo {
+                width: 72px;
             }
 
             .bni-invite-topbar .bni-invite-button {
@@ -1367,8 +1358,7 @@
         <header class="bni-invite-topbar">
             <div class="bni-invite-shell bni-invite-topbar__inner">
                 <a class="bni-invite-brand" href="{{ url('/') }}" aria-label="BNI">
-                    <span class="bni-invite-brand__mark">BNI</span>
-                    <span class="bni-invite-brand__dot"></span>
+                    <img class="bni-invite-brand__logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
                 </a>
 
                 <nav class="bni-invite-nav" aria-label="Điều hướng thư mời">
@@ -1408,7 +1398,7 @@
                         <p class="bni-invite-hero__event-prefix">Tới tham dự chương trình</p>
 
                         <p>
-                            <img class="bni-invite-hero__event-logo" src="{{ asset('bni-logo-red.svg') }}" alt="BNI">
+                            <img class="bni-invite-hero__event-logo" src="{{ asset('images/bni/le-chuyen-giao.png') }}" alt="Lễ chuyển giao">
                         </p>
 
                         <div class="bni-invite-date" aria-label="Thời gian diễn ra">
