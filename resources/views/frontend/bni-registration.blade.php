@@ -10,10 +10,6 @@
     <div class="bni-plan">
         @include('frontend.partials.bni-navigation')
 
-        @if (session('success'))
-            <div class="bni-plan-flash" role="status">{{ session('success') }}</div>
-        @endif
-
         <section class="bni-registration-hero" aria-labelledby="bni-registration-title">
             @if ($heroImageUrl)
                 <img class="bni-registration-hero__image" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">

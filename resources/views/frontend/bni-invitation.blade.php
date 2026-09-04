@@ -49,8 +49,6 @@
         $primaryPhoneUrl = data_get($primaryContact, 'phone_url')
             ?: ('tel:' . preg_replace('/\s+/', '', $primaryPhone));
 
-        $qrUrl = $invitationContent['qr_url'] ?? null;
-
         $chapterLogos = [
             [
                 'name' => 'BNI Famous',
@@ -515,15 +513,6 @@
             line-height: 1;
         }
 
-        .bni-invite-heading h2::before,
-        .bni-invite-heading h2::after {
-            content: "•";
-            margin: 0 13px;
-            color: var(--bni-red);
-            font-size: 16px;
-            vertical-align: middle;
-        }
-
         /* =========================
            INTRO
         ========================== */
@@ -543,11 +532,12 @@
 
         .bni-invite-intro__copy h2 {
             position: relative;
-            margin: 0 0 30px;
+            margin: 0 0 26px;
             color: var(--bni-red);
             text-transform: uppercase;
-            font-size: clamp(24px, 2.6vw, 36px);
+            font-size: clamp(18px, 1.8vw, 24px);
             font-weight: 950;
+            line-height: 1.25;
         }
 
         .bni-invite-intro__copy h2::after {
@@ -801,138 +791,13 @@
         /* =========================
            RSVP
         ========================== */
-        .bni-invite-rsvp-card {
-            display: grid;
-            grid-template-columns: 230px 1fr 1fr;
-            gap: 0;
-            align-items: stretch;
-            overflow: hidden;
-            border: 1px solid rgba(207, 32, 47, .14);
-            border-radius: 22px;
-            background: rgba(255, 255, 255, .97);
-            box-shadow: var(--bni-shadow);
-        }
-
-        .bni-invite-rsvp-card__qr,
-        .bni-invite-rsvp-card__contact,
-        .bni-invite-rsvp-card__note {
-            min-height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 28px;
-        }
-
-        .bni-invite-rsvp-card__contact,
-        .bni-invite-rsvp-card__note {
-            border-left: 1px solid rgba(207, 32, 47, .1);
-        }
-
-        .bni-invite-rsvp-card__qr img {
-            width: 130px;
-            height: 130px;
-            object-fit: contain;
-            padding: 6px;
-            border: 2px solid var(--bni-red);
-            border-radius: 8px;
-            background: #fff;
-        }
-
-        .bni-invite-qr-fallback {
-            width: 130px;
-            height: 130px;
-            display: grid;
-            place-items: center;
-            padding: 10px;
-            border: 2px solid var(--bni-red);
-            border-radius: 8px;
-            color: var(--bni-red);
+        .bni-invite-rsvp-description {
+            width: min(720px, 100%);
+            margin: -8px auto 24px;
+            color: #57575a;
+            font-size: 14px;
+            line-height: 1.75;
             text-align: center;
-            background:
-                linear-gradient(90deg, rgba(207,32,47,.06) 50%, transparent 50%),
-                linear-gradient(rgba(207,32,47,.06) 50%, transparent 50%);
-            background-size: 18px 18px;
-        }
-
-        .bni-invite-qr-fallback strong {
-            display: block;
-            padding: 9px;
-            border-radius: 7px;
-            background: #fff;
-            font-size: 13px;
-            line-height: 1.25;
-            box-shadow: 0 2px 8px rgba(0,0,0,.06);
-        }
-
-        .bni-invite-hotline {
-            display: flex;
-            align-items: center;
-            gap: 17px;
-            text-decoration: none;
-        }
-
-        .bni-invite-hotline__icon {
-            width: 62px;
-            height: 62px;
-            display: grid;
-            place-items: center;
-            flex: 0 0 auto;
-            border-radius: 999px;
-            background: var(--bni-red);
-            color: #fff;
-        }
-
-        .bni-invite-hotline__icon svg {
-            width: 27px;
-            height: 27px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-        }
-
-        .bni-invite-hotline span {
-            display: block;
-            margin-bottom: 3px;
-            color: #57575a;
-            text-transform: uppercase;
-            font-size: 12px;
-            font-weight: 800;
-        }
-
-        .bni-invite-hotline strong {
-            display: block;
-            color: var(--bni-red);
-            font-size: clamp(23px, 2.4vw, 34px);
-            font-weight: 950;
-        }
-
-        .bni-invite-rsvp-card__note p {
-            margin: 0;
-            color: #57575a;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .bni-invite-rsvp-details {
-            margin-top: 18px;
-            border-radius: 18px;
-            background: rgba(255,255,255,.98);
-            box-shadow: 0 14px 35px rgba(93, 14, 20, .06);
-        }
-
-        .bni-invite-rsvp-details__title {
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 54px;
-            padding: 0 25px;
-            border-radius: 14px 14px 0 0;
-            background: var(--bni-red);
-            color: #fff;
-            text-transform: uppercase;
-            font-size: 14px;
-            font-weight: 950;
         }
 
         .bni-invite-rsvp-form {
@@ -941,13 +806,14 @@
             gap: 18px;
             padding: 28px;
             border: 1px solid rgba(207, 32, 47, .1);
-            border-top: 0;
-            border-radius: 0 0 14px 14px;
+            border-radius: 14px;
             background: #fff;
+            box-shadow: 0 14px 35px rgba(93, 14, 20, .06);
         }
 
         .bni-invite-rsvp-form fieldset,
-        .bni-invite-rsvp-form .bni-field--full {
+        .bni-invite-rsvp-form .bni-field--full,
+        .bni-invite-rsvp-form .bni-form-status {
             grid-column: 1 / -1;
         }
 
@@ -1195,22 +1061,6 @@
                 gap: 55px;
             }
 
-            .bni-invite-rsvp-card {
-                grid-template-columns: 1fr;
-            }
-
-            .bni-invite-rsvp-card__qr,
-            .bni-invite-rsvp-card__contact,
-            .bni-invite-rsvp-card__note {
-                min-height: auto;
-            }
-
-            .bni-invite-rsvp-card__contact,
-            .bni-invite-rsvp-card__note {
-                border-left: 0;
-                border-top: 1px solid rgba(207,32,47,.1);
-            }
-
             .bni-invite-dresscode__circle {
                 width: 110px;
                 height: 110px;
@@ -1307,11 +1157,6 @@
                 width: 28px;
             }
 
-            .bni-invite-heading h2::before,
-            .bni-invite-heading h2::after {
-                margin-inline: 6px;
-            }
-
             .bni-invite-day {
                 padding-inline: 22px;
             }
@@ -1345,7 +1190,8 @@
             }
 
             .bni-invite-rsvp-form fieldset,
-            .bni-invite-rsvp-form .bni-field--full {
+            .bni-invite-rsvp-form .bni-field--full,
+            .bni-invite-rsvp-form .bni-form-status {
                 grid-column: auto;
             }
         }
@@ -1617,52 +1463,17 @@
                         <h2>{{ $invitationContent['rsvp_title'] ?? 'Xác nhận tham dự' }}</h2>
                     </div>
 
-                    <div class="bni-invite-rsvp-card">
-                        <div class="bni-invite-rsvp-card__qr">
-                            @if ($qrUrl)
-                                <img src="{{ $qrUrl }}" alt="QR xác nhận tham dự">
-                            @else
-                                <div class="bni-invite-qr-fallback">
-                                    <strong>
-                                        MÃ THƯ MỜI<br>
-                                        {{ $invitation?->invitation_code ?: ($invitation ? 'BNI-'.$invitation->id : 'BNI') }}
-                                    </strong>
-                                </div>
-                            @endif
-                        </div>
+                    <p class="bni-invite-rsvp-description">
+                        {{ $invitationContent['rsvp_description']
+                            ?? 'Vui lòng xác nhận tham dự để Ban Tổ Chức chủ động sắp xếp và đón tiếp chu đáo.' }}
+                    </p>
 
-                        <div class="bni-invite-rsvp-card__contact">
-                            <a class="bni-invite-hotline" href="{{ $primaryPhoneUrl }}">
-                                <span class="bni-invite-hotline__icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24">
-                                        <path d="M7 4h3l1.2 4-2 1.4a15 15 0 0 0 5.4 5.4l1.4-2L20 14v3c0 1.1-.9 2-2 2C10.8 19 5 13.2 5 6c0-1.1.9-2 2-2z"></path>
-                                    </svg>
-                                </span>
-                                <span>
-                                    Hotline
-                                    <strong>{{ $primaryPhone }}</strong>
-                                </span>
-                            </a>
-                        </div>
-
-                        <div class="bni-invite-rsvp-card__note">
-                            <p>
-                                {{ $invitationContent['rsvp_description']
-                                    ?? 'Vui lòng xác nhận tham dự để Ban Tổ Chức chủ động sắp xếp và đón tiếp chu đáo.' }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="bni-invite-rsvp-details">
-                        <h3 class="bni-invite-rsvp-details__title">
-                            {{ $invitation ? 'Xác nhận tham dự' : 'Đăng ký tham dự' }}
-                        </h3>
-
-                        @if ($invitation)
-                            <form
+                    @if ($invitation)
+                        <form
                                 class="bni-invite-rsvp-form"
                                 method="POST"
                                 action="{{ LocalizedUrl::route('bni.invitations.rsvp', ['invitation' => $invitation]) }}"
+                                data-bni-ajax-form
                             >
                                 @csrf
 
@@ -1729,12 +1540,15 @@
                                         Gửi phản hồi
                                     </button>
                                 </div>
-                            </form>
-                        @else
-                            <form
+                                <p class="bni-form-status" data-bni-form-status role="status" aria-live="polite" hidden></p>
+                        </form>
+                    @else
+                        <form
                                 class="bni-invite-rsvp-form"
                                 method="POST"
                                 action="{{ LocalizedUrl::route('bni.invitations.template.rsvp') }}"
+                                data-bni-ajax-form
+                                data-reset-on-success="true"
                             >
                                 @csrf
 
@@ -1796,9 +1610,9 @@
                                         Gửi xác nhận
                                     </button>
                                 </div>
-                            </form>
-                        @endif
-                    </div>
+                                <p class="bni-form-status" data-bni-form-status role="status" aria-live="polite" hidden></p>
+                        </form>
+                    @endif
 
                     <div class="bni-invite-contact-strip" id="lien-he">
                         @if ($contacts->isNotEmpty())

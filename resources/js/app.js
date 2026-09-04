@@ -246,6 +246,98 @@ const initialiseBniCountdowns = () => {
     });
 };
 
+const initialiseBniFlashes = () => {
+    document.querySelectorAll('[data-bni-flash]').forEach((flash) => {
+        if (flash.dataset.bniFlashReady === 'true') {
+            return;
+        }
+
+        flash.dataset.bniFlashReady = 'true';
+        window.setTimeout(() => {
+            flash.classList.add('is-leaving');
+            window.setTimeout(() => {
+                flash.hidden = true;
+            }, 300);
+        }, 5000);
+    });
+};
+
+const initialiseBniAjaxForms = () => {
+    document.querySelectorAll('[data-bni-ajax-form]').forEach((form) => {
+        if (form.dataset.bniAjaxReady === 'true') {
+            return;
+        }
+
+        form.dataset.bniAjaxReady = 'true';
+        const status = form.querySelector('[data-bni-form-status]');
+        const submitButton = form.querySelector('[type="submit"]');
+        let hideStatusTimer;
+
+        const showStatus = (message, type) => {
+            if (!status) {
+                return;
+            }
+
+            window.clearTimeout(hideStatusTimer);
+            status.textContent = message;
+            status.classList.toggle('is-success', type === 'success');
+            status.classList.toggle('is-error', type === 'error');
+            status.hidden = false;
+
+            if (type === 'success') {
+                hideStatusTimer = window.setTimeout(() => {
+                    status.hidden = true;
+                }, 6000);
+            }
+        };
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!form.reportValidity()) {
+                return;
+            }
+
+            submitButton?.setAttribute('aria-busy', 'true');
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            try {
+                const response = await window.fetch(form.action, {
+                    method: form.method || 'POST',
+                    body: new FormData(form),
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                const payload = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    const firstValidationMessage = Object.values(payload.errors || {}).flat()[0];
+
+                    throw new Error(firstValidationMessage || payload.message || 'Thông tin chưa được gửi. Anh/chị vui lòng kiểm tra lại.');
+                }
+
+                if (form.dataset.resetOnSuccess === 'true') {
+                    form.reset();
+                }
+
+                showStatus(payload.message || 'Thông tin đã được ghi nhận.', 'success');
+            } catch (error) {
+                showStatus(error.message || 'Không thể gửi thông tin lúc này. Anh/chị vui lòng thử lại.', 'error');
+            } finally {
+                submitButton?.removeAttribute('aria-busy');
+                if (submitButton) {
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    });
+};
+
 const initialiseBniPwa = () => {
     if (document.body.dataset.bniPage !== 'true' || !('serviceWorker' in navigator)) {
         return;
@@ -570,6 +662,8 @@ if (document.readyState === 'loading') {
         initialiseAos();
         initialiseCountUps();
         initialiseBniCountdowns();
+        initialiseBniFlashes();
+        initialiseBniAjaxForms();
         initialiseBniPwa();
         initialiseLandingPages();
         initialiseLightboxes();
@@ -583,6 +677,8 @@ if (document.readyState === 'loading') {
     initialiseAos();
     initialiseCountUps();
     initialiseBniCountdowns();
+    initialiseBniFlashes();
+    initialiseBniAjaxForms();
     initialiseBniPwa();
     initialiseLandingPages();
     initialiseLightboxes();

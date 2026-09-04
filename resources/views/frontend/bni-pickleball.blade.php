@@ -19,7 +19,7 @@
                     <a href="#lich-trinh">Lịch trình</a>
                     <a href="#pickleball-rules">Thể lệ</a>
                     <a href="#pickleball-prizes">Giải thưởng</a>
-                    @if ($articles->isNotEmpty())<a href="#pickleball-news">Tin giải đấu</a>@endif
+                    <a href="#pickleball-news">Tin Pickleball</a>
                 </div>
                 <a class="pickleball-button pickleball-button--red pickleball-nav__cta" href="#pickleball-register">
                     Đăng ký ngay
@@ -245,7 +245,7 @@
                     @endif
                 </div>
 
-                <form class="pickleball-form" method="POST" action="{{ LocalizedUrl::route('bni.pickleball.register') }}">
+                <form class="pickleball-form" method="POST" action="{{ LocalizedUrl::route('bni.pickleball.register') }}" data-bni-ajax-form data-reset-on-success="true">
                     @csrf
                     <div>
                         <label for="pickleball-full-name">Họ và tên *</label>
@@ -296,38 +296,39 @@
                         Gửi đăng ký
                         <span aria-hidden="true">→</span>
                     </button>
+                    <p class="bni-form-status pickleball-form__full" data-bni-form-status role="status" aria-live="polite" hidden></p>
                 </form>
             </div>
         </section>
 
-        @if ($articles->isNotEmpty())
-            <section class="pickleball-section pickleball-news" id="pickleball-news" aria-labelledby="pickleball-news-title">
-                <div class="pickleball-shell">
-                    <div class="pickleball-heading">
-                        <p class="pickleball-section-kicker">Cập nhật từ sân đấu</p>
-                        <h2 id="pickleball-news-title">Tin giải đấu</h2>
-                        <span aria-hidden="true"></span>
-                    </div>
-                    <div class="pickleball-news__grid">
-                        @foreach ($articles as $article)
-                            <article class="pickleball-news-card">
-                                @if ($article['image_url'])
-                                    <img src="{{ $article['image_url'] }}" alt="" loading="lazy">
-                                @else
-                                    <div class="pickleball-news-card__placeholder"><img src="{{ asset('bni-logo-red.svg') }}" alt=""></div>
-                                @endif
-                                <div>
-                                    <p>Pickleball</p>
-                                    <h3><a href="{{ LocalizedUrl::route('bni.articles.show', ['article' => $article['slug']]) }}">{{ $article['title'] }}</a></h3>
-                                    @if ($article['excerpt'])<span>{{ $article['excerpt'] }}</span>@endif
-                                    <a href="{{ LocalizedUrl::route('bni.articles.show', ['article' => $article['slug']]) }}">Xem bài viết →</a>
-                                </div>
-                            </article>
-                        @endforeach
-                    </div>
+        <section class="pickleball-section pickleball-news" id="pickleball-news" aria-labelledby="pickleball-news-title">
+            <div class="pickleball-shell">
+                <div class="pickleball-heading">
+                    <p class="pickleball-section-kicker">Cập nhật từ sân đấu</p>
+                    <h2 id="pickleball-news-title">Tin Pickleball</h2>
+                    <span aria-hidden="true"></span>
                 </div>
-            </section>
-        @endif
+                <div class="pickleball-news__grid">
+                    @forelse ($articles as $article)
+                        <article class="pickleball-news-card">
+                            @if ($article['image_url'])
+                                <img src="{{ $article['image_url'] }}" alt="" loading="lazy">
+                            @else
+                                <div class="pickleball-news-card__placeholder"><img src="{{ asset('bni-logo-red.svg') }}" alt=""></div>
+                            @endif
+                            <div>
+                                <p>Pickleball</p>
+                                <h3><a href="{{ LocalizedUrl::route('bni.articles.show', ['article' => $article['slug']]) }}">{{ $article['title'] }}</a></h3>
+                                @if ($article['excerpt'])<span>{{ $article['excerpt'] }}</span>@endif
+                                <a href="{{ LocalizedUrl::route('bni.articles.show', ['article' => $article['slug']]) }}">Xem bài viết →</a>
+                            </div>
+                        </article>
+                    @empty
+                        <p class="pickleball-empty">Tin tức thuộc danh mục “Tin Pickleball” sẽ được hiển thị tại đây.</p>
+                    @endforelse
+                </div>
+            </div>
+        </section>
 
         <section class="pickleball-final-cta" aria-labelledby="pickleball-final-title">
             <img src="{{ asset('images/pickleball/dang-ky.jpg') }}" alt="" aria-hidden="true" loading="lazy">

@@ -8,6 +8,7 @@ use App\Models\BniRegistration;
 use App\Support\Bni\BniExperienceService;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -30,7 +31,7 @@ class BniPickleballController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $event = $this->experience->currentEvent('pickleball') ?? abort(404);
         $data = $request->validate([
@@ -49,6 +50,12 @@ class BniPickleballController extends Controller
 
         $event->registrations()->create($data + ['status' => BniRegistration::STATUS_PENDING]);
 
-        return back()->with('success', 'Đăng ký đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.');
+        $message = 'Đăng ký đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.';
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 201);
+        }
+
+        return back()->with('success', $message);
     }
 }

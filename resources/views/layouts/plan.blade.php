@@ -14,7 +14,7 @@
     @yield('before_content')
     <main id="@yield('main_id', 'plan-main')" class="@yield('main_class', 'overflow-x-clip')">
         @if (session('success'))
-            <div class="bni-plan-flash" role="status">{{ session('success') }}</div>
+            <div class="bni-plan-flash" data-bni-flash role="status">{{ session('success') }}</div>
         @endif
         @yield('content')
     </main>

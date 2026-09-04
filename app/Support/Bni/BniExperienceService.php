@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 
 class BniExperienceService
 {
+    private const PICKLEBALL_NEWS_CATEGORY_SLUG = 'tin-pickleball';
+
     /** @return array<string, mixed> */
     public function handover(): array
     {
@@ -233,8 +235,9 @@ class BniExperienceService
         $articles = BniArticle::query()
             ->published()
             ->with(['chapter', 'media'])
-            ->where('type', 'pickleball')
-            ->when($event, fn ($query) => $query->where('bni_event_id', $event->id))
+            ->whereHas('categories', fn ($query) => $query
+                ->where('slug', self::PICKLEBALL_NEWS_CATEGORY_SLUG)
+                ->where('is_active', true))
             ->orderByDesc('is_featured')
             ->latest('published_at')
             ->limit(6)

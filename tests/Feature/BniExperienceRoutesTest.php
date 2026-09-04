@@ -345,9 +345,11 @@ class BniExperienceRoutesTest extends TestCase
             ->assertOk()
             ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
             ->assertSee('Xác nhận tham dự')
-            ->assertSee('Đăng ký tham dự')
+            ->assertDontSee('Đăng ký tham dự')
             ->assertSee('name="full_name"', false)
             ->assertSee('action="'.route('bni.invitations.template.rsvp').'"', false)
+            ->assertSee('data-bni-ajax-form', false)
+            ->assertSee('data-bni-form-status', false)
             ->assertSee('Ngày 1')
             ->assertSee('Ngày 2')
             ->assertSee('Chỉ đường')
@@ -358,6 +360,8 @@ class BniExperienceRoutesTest extends TestCase
             ->assertDontSee('Vì sao nên tham dự?')
             ->assertDontSee('<details', false)
             ->assertDontSee('Mã thư mời')
+            ->assertDontSee('bni-invite-rsvp-card', false)
+            ->assertDontSee('.bni-invite-heading h2::before', false)
             ->assertDontSee('xem-thu');
     }
 
@@ -365,12 +369,13 @@ class BniExperienceRoutesTest extends TestCase
     {
         $event = BniEvent::query()->where('slug', 'le-chuyen-giao-bni')->firstOrFail();
 
-        $this->post(route('bni.invitations.template.rsvp'), [
+        $this->postJson(route('bni.invitations.template.rsvp'), [
             'full_name' => 'Khách RSVP kiểm thử',
             'phone' => '0900000000',
             'email' => 'rsvp@example.test',
             'note' => 'Xác nhận tham dự chương trình.',
-        ])->assertRedirect();
+        ])->assertCreated()
+            ->assertJsonPath('message', 'Thông tin RSVP đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.');
 
         $this->assertDatabaseHas('bni_registrations', [
             'bni_event_id' => $event->id,
@@ -431,8 +436,10 @@ class BniExperienceRoutesTest extends TestCase
             'venue' => 'Trung tâm hội nghị',
         ]);
         $settings = app(BniInvitationSettings::class);
+        $settings->content_title = 'Tiêu đề nội dung lấy từ database';
         $settings->content = '<p>Nội dung chung toàn hệ thống.</p>';
         $settings->note_content = '<p>Dress code chung toàn hệ thống.</p>';
+        $settings->rsvp_description = 'Mô tả RSVP lấy từ database.';
         $settings->save();
 
         $chapter = BniChapter::query()->create([
@@ -477,12 +484,14 @@ class BniExperienceRoutesTest extends TestCase
             ->assertDontSee('bni-invite-brand__mark')
             ->assertSee('LỄ CHUYỂN GIAO')
             ->assertSee('Anh/Chị chủ doanh nghiệp')
+            ->assertSee('Tiêu đề nội dung lấy từ database')
             ->assertSee('Nội dung chung toàn hệ thống.')
             ->assertSee('Lịch trình sự kiện')
             ->assertSee('Đón tiếp khách mời')
             ->assertSee('Trang phục')
             ->assertSee('images/bni/dress-code-vest-line.webp')
             ->assertSee('Xác nhận tham dự')
+            ->assertSee('Mô tả RSVP lấy từ database.')
             ->assertSee('name="rsvp_status"', false)
             ->assertSee('Người phụ trách chapter')
             ->assertSee('property="og:type"', false)
@@ -573,9 +582,70 @@ class BniExperienceRoutesTest extends TestCase
             ->assertDontSeeText('Lịch thi đấu')
             ->assertDontSee('pickleball-timeline__dot')
             ->assertDontSeeText('Kết quả trực tiếp')
-            ->assertSee('Đăng ký tham gia');
+            ->assertSee('Đăng ký tham gia')
+            ->assertSee('id="pickleball-news"', false)
+            ->assertSeeText('Tin Pickleball')
+            ->assertSee('data-bni-ajax-form', false);
 
         $this->get('/bni-admin/login')->assertOk();
+    }
+
+    public function test_pickleball_news_comes_from_the_tin_pickleball_category(): void
+    {
+        $category = BniArticleCategory::query()->firstOrCreate(
+            ['slug' => 'tin-pickleball'],
+            ['name' => 'Tin Pickleball', 'is_active' => true, 'sort_order' => 3],
+        );
+        $category->update(['is_active' => true]);
+        $article = BniArticle::query()->create([
+            'bni_event_id' => BniEvent::query()->where('type', 'handover')->value('id'),
+            'type' => 'event',
+            'title' => 'Tin Pickleball lấy theo danh mục kiểm thử',
+            'slug' => 'tin-pickleball-theo-danh-muc-'.str()->random(8),
+            'excerpt' => 'Bài viết được chọn bằng danh mục Tin Pickleball.',
+            'body' => '<p>Nội dung kiểm thử.</p>',
+            'status' => 'published',
+            'is_featured' => true,
+            'published_at' => now(),
+        ]);
+        $article->categories()->attach($category);
+        $uncategorized = BniArticle::query()->create([
+            'bni_event_id' => BniEvent::query()->where('type', 'pickleball')->value('id'),
+            'type' => 'pickleball',
+            'title' => 'Tin Pickleball chưa gắn đúng danh mục',
+            'slug' => 'tin-pickleball-khong-danh-muc-'.str()->random(8),
+            'body' => '<p>Không được hiển thị.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $this->get(route('bni.pickleball'))
+            ->assertOk()
+            ->assertSee($article->title)
+            ->assertSee(route('bni.articles.show', ['article' => $article]), false)
+            ->assertDontSee($uncategorized->title);
+    }
+
+    public function test_pickleball_registration_supports_ajax_without_a_page_redirect(): void
+    {
+        $event = BniEvent::query()->published()->where('type', 'pickleball')->firstOrFail();
+
+        $this->postJson(route('bni.pickleball.register'), [
+            'full_name' => 'Vận động viên AJAX',
+            'phone' => '0911222333',
+            'email' => 'pickleball-ajax@example.test',
+            'team_name' => 'Đội Kết Nối',
+            'skill_level' => 'intermediate',
+            'note' => 'Đăng ký không tải lại trang.',
+        ])->assertCreated()
+            ->assertJsonPath('message', 'Đăng ký đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.');
+
+        $this->assertDatabaseHas('bni_registrations', [
+            'bni_event_id' => $event->id,
+            'full_name' => 'Vận động viên AJAX',
+            'phone' => '0911222333',
+            'status' => 'pending',
+        ]);
     }
 
     public function test_the_pickleball_hero_uses_the_image_managed_on_the_event(): void

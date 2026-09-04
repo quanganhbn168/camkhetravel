@@ -10,6 +10,7 @@ use App\Support\Bni\BniExperienceService;
 use App\Support\Bni\BniInvitationContent;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -74,7 +75,7 @@ class BniInvitationController extends Controller
         ]);
     }
 
-    public function templateRsvp(Request $request): RedirectResponse
+    public function templateRsvp(Request $request): RedirectResponse|JsonResponse
     {
         $event = $this->handoverEvent();
         $data = $request->validate([
@@ -86,10 +87,16 @@ class BniInvitationController extends Controller
 
         $event->registrations()->create($data + ['status' => BniRegistration::STATUS_PENDING]);
 
-        return back()->with('success', 'Thông tin RSVP đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.');
+        $message = 'Thông tin RSVP đã được ghi nhận. Ban tổ chức sẽ liên hệ xác nhận.';
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message], 201);
+        }
+
+        return back()->with('success', $message);
     }
 
-    public function rsvp(Request $request, BniInvitation $invitation): RedirectResponse
+    public function rsvp(Request $request, BniInvitation $invitation): RedirectResponse|JsonResponse
     {
         $data = $request->validate([
             'rsvp_status' => ['required', 'in:attending,declined'],
@@ -99,7 +106,13 @@ class BniInvitationController extends Controller
 
         $invitation->update($data + ['responded_at' => now()]);
 
-        return back()->with('success', 'Cảm ơn anh/chị đã phản hồi thư mời.');
+        $message = 'Cảm ơn anh/chị đã phản hồi thư mời.';
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => $message]);
+        }
+
+        return back()->with('success', $message);
     }
 
     private function handoverEvent(): BniEvent
