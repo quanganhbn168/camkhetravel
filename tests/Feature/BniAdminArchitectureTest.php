@@ -29,12 +29,15 @@ class BniAdminArchitectureTest extends TestCase
     {
         $eventResource = File::get(app_path('Filament/Bni/Resources/BniEvents/BniEventResource.php'));
         $scheduleResource = File::get(app_path('Filament/Bni/Resources/BniScheduleDays/BniScheduleDayResource.php'));
+        $pickleballScheduleResource = File::get(app_path('Filament/Bni/Resources/BniPickleballScheduleDays/BniPickleballScheduleDayResource.php'));
 
         $this->assertStringNotContainsString('Repeater::make', $eventResource);
         $this->assertStringNotContainsString('settings.', $eventResource);
         $this->assertStringNotContainsString("TextInput::make('stage')", $scheduleResource);
         $this->assertStringNotContainsString("Textarea::make('result')", $scheduleResource);
         $this->assertStringNotContainsString("TextInput::make('location')", $scheduleResource);
+        $this->assertStringContainsString("\$navigationLabel = 'Lịch trình sự kiện'", $pickleballScheduleResource);
+        $this->assertStringNotContainsString('Lịch thi đấu', $pickleballScheduleResource);
 
         foreach (['bni_event_videos', 'bni_event_landings', 'bni_event_prizes', 'bni_schedule_days', 'bni_contacts'] as $table) {
             $this->assertTrue(Schema::hasTable($table), $table);

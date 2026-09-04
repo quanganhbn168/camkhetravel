@@ -50,6 +50,7 @@ class BniCompletionTest extends TestCase
             'description' => 'Nội dung quản trị được hiển thị.',
             'highlight' => true,
         ]);
+        $expectedHeroImageUrl = $event->bniMediaUrl('hero') ?: asset('images/pickleball/hero-pickleball.jpg');
 
         $this->get(route('bni.pickleball'))
             ->assertOk()
@@ -62,7 +63,7 @@ class BniCompletionTest extends TestCase
             ->assertSee('RSVP Pickleball kiểm thử')
             ->assertSee('id="pickleball-intro"', false)
             ->assertSee('id="lich-trinh"', false)
-            ->assertSee('images/pickleball/hero-pickleball.jpg', false)
+            ->assertSee($expectedHeroImageUrl, false)
             ->assertSee('images/pickleball/gioi-thieu-pickleball.jpg', false)
             ->assertSee('images/pickleball/dang-ky.jpg', false)
             ->assertSee('01.10.2026')

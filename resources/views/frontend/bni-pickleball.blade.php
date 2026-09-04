@@ -150,13 +150,13 @@
         <section class="pickleball-section pickleball-schedule" id="lich-trinh" aria-labelledby="pickleball-schedule-title">
             <div class="pickleball-shell">
                 <div class="pickleball-heading pickleball-heading--center">
-                    <p class="pickleball-section-kicker">Chương trình thi đấu</p>
+                    <p class="pickleball-section-kicker">Chương trình sự kiện</p>
                     <h2 id="pickleball-schedule-title">Lịch trình sự kiện</h2>
                     <span aria-hidden="true"></span>
                 </div>
 
                 @if ($scheduleDays->isNotEmpty())
-                    <div class="pickleball-schedule__tabs" role="tablist" aria-label="Chọn ngày thi đấu">
+                    <div class="pickleball-schedule__tabs" role="tablist" aria-label="Chọn ngày sự kiện">
                         @foreach ($scheduleDays as $day)
                             <button type="button" role="tab" @click="scheduleDay = {{ $day['number'] }}" :class="scheduleDay === {{ $day['number'] }} && 'is-active'" :aria-selected="scheduleDay === {{ $day['number'] }}">
                                 {{ $day['label'] }}
@@ -170,18 +170,17 @@
                         @forelse ($day['items'] as $item)
                             <article class="pickleball-timeline__item">
                                 <time>{{ $item['time'] ?: 'Đang cập nhật' }}</time>
-                                <span class="pickleball-timeline__dot" aria-hidden="true"></span>
                                 <div>
                                     <h3>{{ $item['title'] }}</h3>
                                     @if ($item['description'])<p>{{ $item['description'] }}</p>@endif
                                 </div>
                             </article>
                         @empty
-                            <p class="pickleball-empty">Các mốc thi đấu của ngày này đang được Ban tổ chức cập nhật.</p>
+                            <p class="pickleball-empty">Các mốc trong ngày này đang được Ban tổ chức cập nhật.</p>
                         @endforelse
                     </div>
                 @empty
-                    <p class="pickleball-empty">Lịch thi đấu sẽ được cập nhật từ hệ thống quản trị BNI.</p>
+                    <p class="pickleball-empty">Lịch trình sự kiện sẽ được cập nhật từ hệ thống quản trị BNI.</p>
                 @endforelse
             </div>
         </section>

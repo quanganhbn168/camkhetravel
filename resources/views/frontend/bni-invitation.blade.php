@@ -766,14 +766,13 @@
             box-shadow: 0 9px 26px rgba(0,0,0,.11);
         }
 
-        .bni-invite-dresscode__circle svg {
-            width: 68px;
-            height: 68px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.55;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+        .bni-invite-dresscode__vest-icon {
+            display: block;
+            width: 72px;
+            height: 72px;
+            background: currentColor;
+            -webkit-mask: url('/images/bni/dress-code-vest-line.webp') center / contain no-repeat;
+            mask: url('/images/bni/dress-code-vest-line.webp') center / contain no-repeat;
         }
 
         .bni-invite-dresscode__circle--red {
@@ -1331,7 +1330,7 @@
                 height: 88px;
             }
 
-            .bni-invite-dresscode__circle svg {
+            .bni-invite-dresscode__vest-icon {
                 width: 49px;
                 height: 49px;
             }
@@ -1602,11 +1601,7 @@
                         ] as $dress)
                             <div class="bni-invite-dresscode__item">
                                 <div class="bni-invite-dresscode__circle bni-invite-dresscode__circle--{{ $dress['class'] }}">
-                                    <svg viewBox="0 0 64 64" aria-hidden="true">
-                                        <path d="M21 9l11 7 11-7 7 10-7 7v29H21V26l-7-7 7-10z"></path>
-                                        <path d="M25 12l7 9 7-9M32 21v34"></path>
-                                        <path d="M21 26l11 8 11-8"></path>
-                                    </svg>
+                                    <span class="bni-invite-dresscode__vest-icon" aria-hidden="true"></span>
                                 </div>
                                 <strong>{{ $dress['name'] }}</strong>
                             </div>

@@ -481,6 +481,7 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Lịch trình sự kiện')
             ->assertSee('Đón tiếp khách mời')
             ->assertSee('Trang phục')
+            ->assertSee('images/bni/dress-code-vest-line.webp')
             ->assertSee('Xác nhận tham dự')
             ->assertSee('name="rsvp_status"', false)
             ->assertSee('Người phụ trách chapter')
@@ -569,6 +570,8 @@ class BniExperienceRoutesTest extends TestCase
             ->assertOk()
             ->assertSee('id="bni-pickleball-main"', false)
             ->assertSeeText('Lịch trình sự kiện')
+            ->assertDontSeeText('Lịch thi đấu')
+            ->assertDontSee('pickleball-timeline__dot')
             ->assertDontSeeText('Kết quả trực tiếp')
             ->assertSee('Đăng ký tham gia');
 
@@ -595,6 +598,13 @@ class BniExperienceRoutesTest extends TestCase
         $this->assertStringNotContainsString('.pickleball-hero::before', $css);
         $this->assertStringNotContainsString('.pickleball-hero__image { position: absolute', $css);
         $this->assertStringNotContainsString('pickleball-hero__veil', $css);
+        $this->assertStringNotContainsString("background-image: url('/images/pickleball/backgroud-pickleball.png');", $css);
+        $this->assertStringContainsString('.pickleball-intro { background: transparent; }', $css);
+        $this->assertStringContainsString('.pickleball-schedule { background: #fff; }', $css);
+        $this->assertStringContainsString(".pickleball-rules { overflow: hidden; background: #780009 url('/images/pickleball/sections/rules-background-bottom-left.webp') left bottom", $css);
+        $this->assertStringContainsString('.pickleball-prizes { background: var(--pickleball-cream); }', $css);
+        $this->assertStringContainsString('.pickleball-news { background: #fff; }', $css);
+        $this->assertStringNotContainsString('pickleball-timeline__dot', $css);
     }
 
     public function test_a_bni_administrator_can_open_the_dedicated_event_cms(): void

@@ -9,11 +9,11 @@ use App\Filament\Bni\Resources\BniScheduleDays\BniScheduleDayResource;
 
 class BniPickleballScheduleDayResource extends BniScheduleDayResource
 {
-    protected static ?string $navigationLabel = 'Lịch thi đấu';
+    protected static ?string $navigationLabel = 'Lịch trình sự kiện';
 
-    protected static ?string $modelLabel = 'ngày thi đấu';
+    protected static ?string $modelLabel = 'ngày lịch trình';
 
-    protected static ?string $pluralModelLabel = 'Lịch thi đấu';
+    protected static ?string $pluralModelLabel = 'Lịch trình sự kiện';
 
     protected static ?int $navigationSort = 3;
 

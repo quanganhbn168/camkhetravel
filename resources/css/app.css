@@ -1565,7 +1565,7 @@ body.bni-app-shell {
     --pickleball-heading-feature: clamp(1.8rem, 2.75vw, 2.5rem);
     --pickleball-heading-cta: clamp(1.65rem, 2.4vw, 2.2rem);
     overflow: hidden;
-    background: #fff;
+    background: var(--pickleball-cream);
     color: var(--pickleball-ink);
     font-family: var(--pickleball-font-body);
     font-size: 0.9375rem;
@@ -1636,8 +1636,8 @@ body.bni-app-shell {
 .pickleball-fact small { display: block; margin-top: 0.35rem; color: var(--pickleball-muted); font-size: 0.68rem; line-height: 1.5; }
 .pickleball-fact > a { margin-top: auto; padding-top: 0.55rem; color: var(--pickleball-red); font-size: 0.65rem; font-weight: 800; text-decoration: underline; text-underline-offset: 0.2rem; }
 
-.pickleball-intro { background: linear-gradient(180deg, #fff, var(--pickleball-cream)); }
-.pickleball-intro__card { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); align-items: stretch; overflow: hidden; border: 1px solid var(--pickleball-line); border-radius: 1.6rem; background: #fff; box-shadow: var(--pickleball-shadow); }
+.pickleball-intro { background: transparent; }
+.pickleball-intro__card { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); align-items: stretch; }
 .pickleball-intro__media { min-height: 27rem; margin: 0; overflow: hidden; }
 .pickleball-intro__media img { width: 100%; height: 100%; object-fit: cover; }
 .pickleball-intro__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(2rem, 4vw, 3.5rem); }
@@ -1666,13 +1666,12 @@ body.bni-app-shell {
 .pickleball-timeline__item { position: relative; display: grid; min-height: 11.75rem; align-content: start; border: 1px solid var(--pickleball-line); border-radius: 1.25rem; background: #fff; padding: 1.3rem; box-shadow: 0 0.75rem 2rem rgb(140 20 25 / 7%); }
 .pickleball-timeline__item::before { position: absolute; top: 0; left: 1.4rem; width: 3.2rem; height: 0.22rem; border-radius: 0 0 999px 999px; background: var(--pickleball-red); content: ''; }
 .pickleball-timeline__item time { color: var(--pickleball-red); font-family: var(--pickleball-font-heading); font-size: 1.25rem; font-weight: 800; }
-.pickleball-timeline__dot { width: 0.55rem; height: 0.55rem; margin-block: 0.8rem; border-radius: 999px; background: var(--pickleball-red); box-shadow: 0 0 0 0.35rem rgb(215 25 32 / 10%); }
+.pickleball-timeline__item time + div { margin-top: 0.9rem; }
 .pickleball-timeline__item h3 { margin: 0; color: var(--pickleball-ink); font-family: var(--pickleball-font-heading); font-size: 0.95rem; font-weight: 700; line-height: 1.4; }
 .pickleball-timeline__item p { margin: 0.5rem 0 0; color: var(--pickleball-muted); font-size: 0.75rem; line-height: 1.6; }
 .pickleball-empty { grid-column: 1 / -1; margin: 0; border: 1px dashed var(--pickleball-line); border-radius: 1.25rem; padding: 2rem; color: var(--pickleball-muted); text-align: center; }
 
-.pickleball-rules { overflow: hidden; background: linear-gradient(135deg, #a90811, var(--pickleball-red) 52%, #b20b14); color: #fff; }
-.pickleball-rules::before { position: absolute; right: -12rem; bottom: -20rem; width: 42rem; height: 42rem; border: 1px solid rgb(255 255 255 / 20%); border-radius: 999px; box-shadow: 0 0 0 4rem rgb(255 255 255 / 4%), 0 0 0 8rem rgb(255 255 255 / 3%); content: ''; }
+.pickleball-rules { overflow: hidden; background: #780009 url('/images/pickleball/sections/rules-background-bottom-left.webp') left bottom / cover no-repeat; color: #fff; }
 .pickleball-rules__layout { position: relative; display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); align-items: start; gap: clamp(2rem, 6vw, 6rem); }
 .pickleball-rules .pickleball-section-kicker { color: rgb(255 255 255 / 72%); }
 .pickleball-rules__heading h2 { margin: 0.65rem 0 0; color: #fff; font-family: var(--pickleball-font-heading); font-size: var(--pickleball-heading-feature); font-weight: 800; letter-spacing: -0.035em; line-height: 1.16; }
