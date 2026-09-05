@@ -30,6 +30,7 @@ class Service extends Model
             'reference_videos' => 'array',
             'commitment_items' => 'array',
             'is_featured' => 'boolean',
+            'is_home' => 'boolean',
             'published_at' => 'datetime',
         ];
     }

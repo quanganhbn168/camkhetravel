@@ -31,6 +31,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class ServiceResource extends Resource
@@ -275,6 +276,7 @@ class ServiceResource extends Resource
                         Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư'])->required()->default('draft'),
                         TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(fn (): int => ((int) Service::query()->max('sort_order')) + 1),
                         Toggle::make('is_featured')->label('Dịch vụ nổi bật'),
+                        Toggle::make('is_home')->label('Hiển thị trang chủ'),
                     ])
                     ->columns(1)
                     ->columnSpan(['lg' => 1]),
@@ -292,11 +294,13 @@ class ServiceResource extends Resource
                 TextColumn::make('backstage_projects_count')->counts('backstageProjects')->label('Dự án')->sortable(),
                 TextColumn::make('pricingCatalog.title')->label('Bảng giá')->placeholder('Chưa có')->wrap()->toggleable(),
                 IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
+                IconColumn::make('is_home')->label('Trang chủ')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('service_category_id')->label('Danh mục dịch vụ')->relationship('category', 'name'),
                 SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư']),
+                TernaryFilter::make('is_home')->label('Trang chủ'),
             ])
             ->defaultSort('sort_order')
             ->recordActions([

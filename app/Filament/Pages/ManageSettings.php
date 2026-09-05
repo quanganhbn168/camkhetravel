@@ -74,6 +74,8 @@ class ManageSettings extends Page
             'hotline' => $website->hotline,
             'contact_phone' => $website->contact_phone,
             'address' => $website->address,
+            'phones' => $this->contactPhonesForForm($website),
+            'branches' => $this->contactBranchesForForm($website),
             'google_maps_embed_url' => $website->google_maps_embed_url,
             'google_maps_url' => $website->google_maps_url,
             'facebook_url' => $website->facebook_url,
@@ -248,9 +250,32 @@ class ManageSettings extends Page
                 ->icon(Heroicon::OutlinedPhone)
                 ->schema([
                     TextInput::make('contact_email')->label('Email')->email()->maxLength(255),
-                    TextInput::make('hotline')->label('SĐT 1')->tel()->maxLength(50),
-                    TextInput::make('contact_phone')->label('SĐT 2')->tel()->maxLength(50),
-                    Textarea::make('address')->label('Địa chỉ')->rows(3)->columnSpanFull(),
+                    Repeater::make('phones')
+                        ->label('Danh sách số điện thoại')
+                        ->schema([
+                            TextInput::make('label')->label('Nhãn')->placeholder('Hotline / Kinh doanh')->maxLength(100),
+                            TextInput::make('number')->label('Số điện thoại')->tel()->required()->placeholder('0982 123 456')->maxLength(30),
+                            \Filament\Forms\Components\Toggle::make('is_primary')->label('Số chính')->default(false),
+                        ])
+                        ->columns(3)
+                        ->addActionLabel('Thêm số điện thoại')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn (array $state): ?string => $state['number'] ?? 'Số điện thoại mới')
+                        ->columnSpanFull(),
+                    Repeater::make('branches')
+                        ->label('Danh sách địa chỉ / chi nhánh')
+                        ->schema([
+                            TextInput::make('name')->label('Tên địa điểm')->required()->placeholder('Trụ sở chính')->maxLength(150),
+                            Textarea::make('address')->label('Địa chỉ')->required()->rows(2)->maxLength(500),
+                            \Filament\Forms\Components\Toggle::make('is_active')->label('Hiển thị')->default(true),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('Thêm địa chỉ')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Địa điểm mới')
+                        ->columnSpanFull(),
                     Textarea::make('google_maps_embed_url')
                         ->label('Google Maps embed URL')
                         ->helperText('Dán URL embed hoặc nguyên thẻ <iframe>. Nếu chỉ có link share bên dưới, hệ thống sẽ lấy tọa độ từ link khi lưu và tạo embed cố định.')
@@ -730,9 +755,16 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveWebsite(WebsiteSettings $website, array $data, FaviconService $favicons, GoogleMapsShareResolver $maps): void
     {
-        foreach (['site_name', 'tagline', 'contact_email', 'hotline', 'contact_phone', 'address', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
+        foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
+
+        $website->phones = $this->normalizeContactPhones($data['phones'] ?? []);
+        $website->hotline = $website->phones[0]['number'] ?? '';
+        $website->contact_phone = $website->phones[1]['number'] ?? '';
+        $website->branches = $this->normalizeContactBranches($data['branches'] ?? []);
+        $website->address = collect($website->branches)->firstWhere('is_active', true)['address']
+            ?? ($website->branches[0]['address'] ?? '');
 
         $website->google_maps_url = filled($data['google_maps_url'] ?? null)
             ? trim((string) $data['google_maps_url'])
@@ -746,6 +778,85 @@ class ManageSettings extends Page
 
         $favicons->sync(Media::query()->find($website->favicon_media_id));
         $website->save();
+    }
+
+    private function contactPhonesForForm(WebsiteSettings $website): array
+    {
+        $phones = is_array($website->phones ?? null) ? $website->phones : [];
+
+        if ($phones !== []) {
+            return $this->normalizeContactPhones($phones);
+        }
+
+        return array_values(array_filter([
+            filled($website->hotline) ? ['label' => 'Hotline chính', 'number' => $website->hotline, 'is_primary' => true] : null,
+            filled($website->contact_phone) ? ['label' => 'Số điện thoại phụ', 'number' => $website->contact_phone, 'is_primary' => false] : null,
+        ]));
+    }
+
+    private function contactBranchesForForm(WebsiteSettings $website): array
+    {
+        $branches = is_array($website->branches ?? null) ? $website->branches : [];
+
+        if ($branches !== []) {
+            return $this->normalizeContactBranches($branches);
+        }
+
+        return filled($website->address)
+            ? [['name' => 'Trụ sở chính', 'address' => $website->address, 'is_active' => true]]
+            : [];
+    }
+
+    private function normalizeContactPhones(mixed $phones): array
+    {
+        $normalized = array_values(array_filter(array_map(
+            static function (mixed $phone): ?array {
+                if (! is_array($phone)) {
+                    return null;
+                }
+
+                $number = trim((string) ($phone['number'] ?? ''));
+
+                return $number === '' ? null : [
+                    'label' => trim((string) ($phone['label'] ?? '')),
+                    'number' => $number,
+                    'is_primary' => (bool) ($phone['is_primary'] ?? false),
+                ];
+            },
+            is_array($phones) ? $phones : [],
+        )));
+
+        if ($normalized !== []) {
+            $primaryIndex = collect($normalized)->search(fn (array $phone): bool => $phone['is_primary']);
+            $primaryIndex = $primaryIndex === false ? 0 : $primaryIndex;
+
+            foreach ($normalized as $index => &$phone) {
+                $phone['is_primary'] = $index === $primaryIndex;
+            }
+            unset($phone);
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeContactBranches(mixed $branches): array
+    {
+        return array_values(array_filter(array_map(
+            static function (mixed $branch): ?array {
+                if (! is_array($branch)) {
+                    return null;
+                }
+
+                $address = trim((string) ($branch['address'] ?? ''));
+
+                return $address === '' ? null : [
+                    'name' => trim((string) ($branch['name'] ?? 'Địa điểm')),
+                    'address' => $address,
+                    'is_active' => (bool) ($branch['is_active'] ?? true),
+                ];
+            },
+            is_array($branches) ? $branches : [],
+        )));
     }
 
     /** @return array<int, string> */

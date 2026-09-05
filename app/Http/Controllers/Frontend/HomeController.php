@@ -72,6 +72,7 @@ class HomeController extends Controller
 
         $services = Service::query()
             ->published()
+            ->where('is_home', true)
             ->with(['category', 'curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')

@@ -1,5 +1,19 @@
 @use(App\Support\Localization\LocalizedUrl)
 
+@php
+    $isBniHandover = request()->routeIs('bni.handover');
+    $contactPhones = collect($website->phones ?? [])
+        ->filter(fn ($phone) => is_array($phone) && filled($phone['number'] ?? null))
+        ->values();
+
+    if ($contactPhones->isEmpty()) {
+        $contactPhones = collect([
+            ['number' => $website->hotline],
+            ['number' => $website->contact_phone],
+        ])->filter(fn ($phone) => filled($phone['number'] ?? null))->values();
+    }
+@endphp
+
 <div class="relative z-40"
     x-data="{
         open: false,
@@ -31,15 +45,16 @@
                     <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
                 </button>
 
-                @if ($website->hotline || $website->contact_phone)
+                    @if ($contactPhones->isNotEmpty())
                     <div class="group flex items-center gap-2 border-l border-slate-200 pl-5 text-right">
                         <span class="grid size-9 place-items-center rounded-full bg-mist text-accent transition group-hover:bg-primary group-hover:text-white">
                             <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8 9.72a16 16 0 0 0 6 6l1.28-1.28a16 16 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92Z"/></svg>
                         </span>
                         <span class="flex flex-wrap items-center justify-end gap-x-2 text-sm font-semibold text-ink">
-                            @if ($website->hotline)<a class="hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>@endif
-                            @if ($website->hotline && $website->contact_phone)<span class="text-slate-300" aria-hidden="true">-</span>@endif
-                            @if ($website->contact_phone)<a class="hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $website->contact_phone) }}">{{ $website->contact_phone }}</a>@endif
+                            @foreach ($contactPhones as $phone)
+                                @if (! $loop->first)<span class="text-slate-300" aria-hidden="true">-</span>@endif
+                                <a class="hover:text-primary" href="tel:{{ preg_replace('/\s+/', '', $phone['number']) }}">{{ $phone['number'] }}</a>
+                            @endforeach
                         </span>
                     </div>
                 @endif
@@ -56,8 +71,8 @@
             </div>
         </div>
 
-        <div class="hidden border-t border-white/15 bg-midnight lg:block">
-            <nav class="mx-auto flex w-[min(100%-2rem,96rem)] flex-wrap items-stretch justify-center" aria-label="Điều hướng chính">
+        <div class="hidden border-t {{ $isBniHandover ? 'border-white/15 bg-midnight' : 'border-slate-200 bg-white' }} lg:block">
+            <nav class="mx-auto flex w-[min(100%-2rem,96rem)] flex-wrap items-stretch {{ $isBniHandover ? 'justify-center' : 'justify-start' }}" aria-label="Điều hướng chính">
                 @foreach ($headerNavigation as $item)
                     <div class="relative shrink-0"
                         @if ($item['has_children'])
@@ -67,7 +82,7 @@
                             @focusin="submenuOpen = true"
                             @focusout="submenuOpen = false"
                         @endif>
-                        <a class="flex min-h-13 items-center gap-2 px-3 py-3 text-[0.7rem] font-semibold leading-4 tracking-[0.04em] text-white uppercase transition hover:bg-white/10 hover:text-white {{ $item['is_active'] ? 'bg-primary text-white hover:bg-primary' : '' }}" href="{{ $item['url'] }}" @if ($item['has_children']) :aria-expanded="submenuOpen.toString()" aria-haspopup="true" @endif @if ($item['target'] === '_blank') target="_blank" rel="noopener noreferrer" @endif @if ($item['is_active']) aria-current="page" @endif>
+                        <a class="flex min-h-13 items-center gap-2 px-3 py-3 text-[0.7rem] font-semibold leading-4 tracking-[0.04em] {{ $isBniHandover ? 'text-white hover:bg-white/10 hover:text-white' : 'text-ink hover:bg-slate-50 hover:text-primary' }} uppercase transition {{ $item['is_active'] ? 'bg-primary text-white hover:bg-primary' : '' }}" href="{{ $item['url'] }}" @if ($item['has_children']) :aria-expanded="submenuOpen.toString()" aria-haspopup="true" @endif @if ($item['target'] === '_blank') target="_blank" rel="noopener noreferrer" @endif @if ($item['is_active']) aria-current="page" @endif>
                             @if ($item['home'] ?? false)
                                 <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg>
                                 <span class="sr-only">{{ $item['label'] }}</span>

@@ -1,5 +1,22 @@
 @use(App\Support\Localization\LocalizedUrl)
 
+@php
+    $contactPhones = collect($website->phones ?? [])
+        ->filter(fn ($phone) => is_array($phone) && filled($phone['number'] ?? null))
+        ->values();
+
+    if ($contactPhones->isEmpty()) {
+        $contactPhones = collect([
+            ['number' => $website->hotline],
+            ['number' => $website->contact_phone],
+        ])->filter(fn ($phone) => filled($phone['number'] ?? null))->values();
+    }
+
+    $contactBranches = collect($website->branches ?? [])
+        ->filter(fn ($branch) => is_array($branch) && ($branch['is_active'] ?? true) && filled($branch['address'] ?? null))
+        ->values();
+@endphp
+
 <footer class="bg-ink pt-14 text-slate-300 md:pt-18">
     <div class="site-shell grid gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1.35fr] lg:gap-8">
         <div class="lg:pr-7">
@@ -71,14 +88,19 @@
         <div>
             <h2 class="text-sm font-bold text-white uppercase">Thông tin liên hệ</h2>
             <div class="mt-5 grid gap-3 text-sm leading-6">
-                @if ($website->address)<p class="flex gap-3 text-slate-400"><svg class="mt-1 size-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>{{ $website->address }}</span></p>@endif
-                @if ($website->hotline || $website->contact_phone)
+                @if ($contactBranches->isNotEmpty())
+                    @foreach ($contactBranches as $branch)
+                        <p class="flex gap-3 text-slate-400"><svg class="mt-1 size-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>{{ $branch['name'] ?? 'Địa chỉ' }}: {{ $branch['address'] }}</span></p>
+                    @endforeach
+                @elseif ($website->address)<p class="flex gap-3 text-slate-400"><svg class="mt-1 size-4 shrink-0 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>{{ $website->address }}</span></p>@endif
+                @if ($contactPhones->isNotEmpty())
                     <p class="flex gap-3 text-slate-400">
                         <svg class="mt-1 size-4 shrink-0 text-primary" data-footer-contact-icon="phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.64a2 2 0 0 1-.45 2.11L8 9.75a16 16 0 0 0 6 6l1.28-1.28a16 16 0 0 1 2.11-.45c.86.29 1.74.5 2.64.62A2 2 0 0 1 22 16.92Z"/></svg>
                         <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                            @if ($website->hotline)<a class="hover:text-white" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>@endif
-                            @if ($website->hotline && $website->contact_phone)<span class="text-slate-500" aria-hidden="true">|</span>@endif
-                            @if ($website->contact_phone)<a class="hover:text-white" href="tel:{{ preg_replace('/\s+/', '', $website->contact_phone) }}">{{ $website->contact_phone }}</a>@endif
+                            @foreach ($contactPhones as $phone)
+                                @if (! $loop->first)<span class="text-slate-500" aria-hidden="true">|</span>@endif
+                                <a class="hover:text-white" href="tel:{{ preg_replace('/\s+/', '', $phone['number']) }}">{{ $phone['number'] }}</a>
+                            @endforeach
                         </span>
                     </p>
                 @endif

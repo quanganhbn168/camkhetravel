@@ -2,6 +2,23 @@
 
 @use(App\Support\Localization\LocalizedUrl)
 
+@php
+    $contactPhones = collect($website->phones ?? [])
+        ->filter(fn ($phone) => is_array($phone) && filled($phone['number'] ?? null))
+        ->values();
+
+    if ($contactPhones->isEmpty()) {
+        $contactPhones = collect([
+            ['number' => $website->hotline],
+            ['number' => $website->contact_phone],
+        ])->filter(fn ($phone) => filled($phone['number'] ?? null))->values();
+    }
+
+    $contactBranches = collect($website->branches ?? [])
+        ->filter(fn ($branch) => is_array($branch) && ($branch['is_active'] ?? true) && filled($branch['address'] ?? null))
+        ->values();
+@endphp
+
 @section('content')
     <section class="contact-page-hero">
         @if ($contactHeroImageUrl)
@@ -18,23 +35,22 @@
                 <aside class="p-8 md:p-10">
                     <h2 class="font-display text-3xl leading-tight text-ink">Thông tin kết nối</h2>
                     <div class="mt-10 grid gap-4">
-                        @if ($website->hotline || $website->contact_phone)
+                        @if ($contactPhones->isNotEmpty())
                             <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                                @if ($website->hotline)
-                                    <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a>
-                                @endif
-                                @if ($website->hotline && $website->contact_phone)
-                                    <span class="text-slate-400" aria-hidden="true">-</span>
-                                @endif
-                                @if ($website->contact_phone)
-                                    <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->contact_phone) }}">{{ $website->contact_phone }}</a>
-                                @endif
+                                @foreach ($contactPhones as $phone)
+                                    @if (! $loop->first)<span class="text-slate-400" aria-hidden="true">-</span>@endif
+                                    <a class="text-primary text-lg font-semibold" href="tel:{{ preg_replace('/\s+/', '', $phone['number']) }}">{{ $phone['number'] }}</a>
+                                @endforeach
                             </div>
                         @endif
                         @if ($website->contact_email)
                             <a class="text-sm text-slate-500 hover:text-ink" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a>
                         @endif
-                        @if ($website->address)
+                        @if ($contactBranches->isNotEmpty())
+                            @foreach ($contactBranches as $branch)
+                                <p class="{{ $loop->first ? 'mt-5 border-t border-slate-200 pt-5' : 'pt-2' }} text-sm leading-7 text-slate-600"><span class="font-semibold text-ink">{{ $branch['name'] ?? 'Địa chỉ' }}:</span> {{ $branch['address'] }}</p>
+                            @endforeach
+                        @elseif ($website->address)
                             <p class="mt-5 border-t border-slate-200 pt-5 text-sm leading-7 text-slate-600">{{ $website->address }}</p>
                         @endif
                         @if ($googleMapsUrl)
