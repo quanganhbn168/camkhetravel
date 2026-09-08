@@ -90,6 +90,7 @@ class BniArticleController extends Controller
                 $article->title.' | BNI',
                 $article->excerpt ?: $article->title,
                 LocalizedUrl::route('bni.articles.show', ['article' => $article]),
+                image: $article->bniMediaUrl('seo_image') ?: $article->bniMediaUrl('cover'),
             ),
         ]);
     }

@@ -55,7 +55,7 @@ class BniChapter extends Model implements HasMedia
 
     protected function bniImageCollections(): array
     {
-        return ['logo', 'cover'];
+        return ['logo', 'cover', 'seo_image'];
     }
 
     protected function bniVideoCollections(): array

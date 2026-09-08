@@ -22,11 +22,14 @@ class BniPickleballController extends Controller
 
     public function index(): View
     {
-        return view('frontend.bni.pickleball', $this->experience->pickleball() + [
+        $data = $this->experience->pickleball();
+
+        return view('frontend.bni.pickleball', $data + [
             'seo' => $this->seo->listing(
                 'BNI Pickleball | '.$this->seo->siteName(),
                 'Giải đấu pickleball trong khuôn khổ Lễ chuyển giao BNI.',
                 LocalizedUrl::route('bni.pickleball'),
+                image: ($data['event'] ?? null)?->bniMediaUrl('seo_image') ?: ($data['heroImageUrl'] ?? null),
             ),
         ]);
     }

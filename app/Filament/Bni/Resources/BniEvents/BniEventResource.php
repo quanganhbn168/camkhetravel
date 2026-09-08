@@ -5,6 +5,7 @@ namespace App\Filament\Bni\Resources\BniEvents;
 use App\Filament\Bni\Resources\BniEvents\Pages\CreateBniEvent;
 use App\Filament\Bni\Resources\BniEvents\Pages\EditBniEvent;
 use App\Filament\Bni\Resources\BniEvents\Pages\ListBniEvents;
+use App\Filament\Forms\BniSeoImageField;
 use App\Models\BniEvent;
 use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
@@ -69,6 +70,7 @@ class BniEventResource extends Resource
                         'pickleball' => 'Pickleball',
                     ])->required()->columnSpanFull(),
                     TextInput::make('kicker')->label('Dòng nhãn')->maxLength(255)->columnSpanFull(),
+                    BniSeoImageField::make(),
                     SpatieMediaLibraryFileUpload::make('hero')
                         ->label('Ảnh banner')
                         ->collection('hero')

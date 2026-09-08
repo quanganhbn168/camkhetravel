@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\Projects;
 
+use App\Filament\Forms\SeoImageField;
+use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Filament\Resources\Projects\Pages\ListProjects;
-use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Project;
 use App\Support\Seo\ContentSeoFallbacks;
@@ -18,8 +19,8 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Group;
@@ -117,6 +118,7 @@ class ProjectResource extends Resource
                     Section::make('SEO')
                         ->icon(Heroicon::OutlinedMagnifyingGlass)
                         ->schema([
+                            SeoImageField::make(),
                             TextInput::make('seo_title')
                                 ->label('SEO title')
                                 ->maxLength(255)

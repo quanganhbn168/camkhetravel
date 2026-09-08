@@ -94,7 +94,7 @@ class FrontendSeoBuilder
         );
     }
 
-    public function listing(string $title, string $description, string $canonical, bool $indexable = true): array
+    public function listing(string $title, string $description, string $canonical, bool $indexable = true, ?string $image = null): array
     {
         return $this->page(
             title: $title,
@@ -105,6 +105,7 @@ class FrontendSeoBuilder
                 $this->webPageSchema($canonical, $title, $description),
             ],
             robots: $indexable ? self::INDEX_ROBOTS : self::NOINDEX_ROBOTS,
+            image: $image,
         );
     }
 
@@ -112,6 +113,7 @@ class FrontendSeoBuilder
     {
         $canonical = LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]);
         $chapterName = $chapter->short_name ?: $chapter->name;
+        $image = $chapter->bniMediaUrl('seo_image') ?: $image;
         $title = 'BNI Chapter '.$chapterName.' | '.$this->website->site_name;
         $description = $chapter->description ?: $chapter->name;
 
@@ -137,6 +139,7 @@ class FrontendSeoBuilder
     {
         $canonical = LocalizedUrl::route('bni.invitations.show', ['invitation' => $invitation]);
         $event = $invitation->event;
+        $image = $event?->bniMediaUrl('seo_image') ?: $image;
         $eventLabel = trim((string) ($content['event_label'] ?? 'LỄ CHUYỂN GIAO'));
         $eventTitle = $event?->title ?: $eventLabel;
         $title = trim(($content['label'] ?? 'THƯ MỜI').' '.$eventLabel.' – '.$guestName.' | '.$this->website->site_name);
@@ -247,7 +250,7 @@ class FrontendSeoBuilder
             title: $title,
             description: $description,
             canonical: $canonical,
-            image: $service->image_url,
+            image: $service->seoImageUrl($service->image_url),
             schema: [
                 $this->organizationSchema(),
                 [
@@ -278,7 +281,7 @@ class FrontendSeoBuilder
             title: $title,
             description: $description,
             canonical: $canonical,
-            image: $landingPage->image_url,
+            image: $landingPage->seoImageUrl($landingPage->image_url),
             schema: [
                 $this->organizationSchema(),
                 $this->webPageSchema($canonical, $landingPage->title, $description),
@@ -315,7 +318,7 @@ class FrontendSeoBuilder
             title: $title,
             description: $description,
             canonical: $canonical,
-            image: $project->image_url,
+            image: $project->seoImageUrl($project->image_url),
             schema: [
                 $this->organizationSchema(),
                 $creativeWork,
@@ -352,7 +355,7 @@ class FrontendSeoBuilder
             title: $title,
             description: $description,
             canonical: $canonical,
-            image: $post->image_url,
+            image: $post->seoImageUrl($post->image_url),
             type: 'article',
             schema: [
                 $this->organizationSchema(),

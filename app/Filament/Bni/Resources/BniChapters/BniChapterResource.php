@@ -5,6 +5,7 @@ namespace App\Filament\Bni\Resources\BniChapters;
 use App\Filament\Bni\Resources\BniChapters\Pages\CreateBniChapter;
 use App\Filament\Bni\Resources\BniChapters\Pages\EditBniChapter;
 use App\Filament\Bni\Resources\BniChapters\Pages\ListBniChapters;
+use App\Filament\Forms\BniSeoImageField;
 use App\Models\BniChapter;
 use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
@@ -75,6 +76,7 @@ class BniChapterResource extends Resource
                     TextInput::make('short_name')->label('Tên ngắn')->maxLength(48)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                     Select::make('bni_event_id')->label('Thuộc sự kiện')->relationship('event', 'title')->searchable()->preload()->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                     TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
+                    BniSeoImageField::make(),
                     SpatieMediaLibraryFileUpload::make('logo')->label('Logo')->collection('logo')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh cover')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('video')->label('Video chapter')->collection('video')->disk('public')->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),

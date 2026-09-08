@@ -46,6 +46,7 @@ class BniRegistrationController extends Controller
                 'Đăng ký tham dự '.$event->title.' trên hệ thống BNI.',
                 LocalizedUrl::route('bni.registrations.create'),
                 false,
+                image: $event->bniMediaUrl('seo_image') ?: $event->bniMediaUrl('hero'),
             ),
         ]);
     }

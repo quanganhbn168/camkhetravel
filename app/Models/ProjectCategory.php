@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectCategory extends Model
 {
+    use HasSeoImage;
     use HasSlug;
 
     protected $guarded = [];

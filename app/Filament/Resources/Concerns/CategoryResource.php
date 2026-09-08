@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Concerns;
 
+use App\Filament\Forms\SeoImageField;
 use App\Support\Seo\ContentSeoFallbacks;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -54,6 +55,7 @@ abstract class CategoryResource extends Resource
 
                         return ((int) $model::query()->max('sort_order')) + 1;
                     }),
+                    SeoImageField::make(),
                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                     Toggle::make('is_active')->label('Hiển thị')->default(true)->columnSpanFull(),
                 ])

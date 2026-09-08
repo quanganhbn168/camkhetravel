@@ -43,7 +43,7 @@ class ProjectController extends Controller
         $request ??= request();
 
         return view('frontend.projects.index', $this->listingData($category, $this->backstageService($request), $request) + [
-            'seo' => $this->seo->listing($title, $description, LocalizedUrl::projectCategory($category)),
+            'seo' => $this->seo->listing($title, $description, LocalizedUrl::projectCategory($category), image: $category->seoImageUrl()),
         ]);
     }
 
@@ -116,8 +116,7 @@ class ProjectController extends Controller
         ?ProjectCategory $activeCategory = null,
         ?Service $backstageService = null,
         ?Request $request = null,
-    ): array
-    {
+    ): array {
         $request ??= request();
         $sort = $request->string('sort')->value();
         $sort = in_array($sort, ['latest', 'featured', 'title'], true) ? $sort : 'latest';

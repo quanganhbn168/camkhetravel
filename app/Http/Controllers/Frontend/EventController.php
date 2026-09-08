@@ -49,7 +49,7 @@ class EventController extends Controller
         return view('frontend.events.show', [
             'event' => $event,
             'details' => $details,
-            'seo' => $this->seo->listing($event->title, $details['summary'] ?: $event->title, $canonical),
+            'seo' => $this->seo->listing($event->title, $details['summary'] ?: $event->title, $canonical, image: $event->bniMediaUrl('seo_image') ?: $details['image']),
         ]);
     }
 }

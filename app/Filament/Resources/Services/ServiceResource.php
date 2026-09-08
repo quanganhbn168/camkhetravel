@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Services;
 
+use App\Filament\Forms\SeoImageField;
 use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
+use App\Filament\Resources\ServicePricings\ServicePricingResource;
 use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
-use App\Filament\Resources\ServicePricings\ServicePricingResource;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Service;
 use App\Support\Localization\LocalizedUrl;
@@ -138,6 +139,7 @@ class ServiceResource extends Resource
                     Section::make('SEO')
                         ->icon(Heroicon::OutlinedMagnifyingGlass)
                         ->schema([
+                            SeoImageField::make(),
                             TextInput::make('seo_title')->label('SEO title')->maxLength(255)->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))->columnSpanFull(),
                             Textarea::make('seo_description')->label('Meta description')->rows(5)->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))->columnSpanFull(),
                         ])

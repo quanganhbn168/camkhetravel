@@ -74,6 +74,6 @@ class BniArticle extends Model implements HasMedia
 
     protected function bniImageCollections(): array
     {
-        return ['cover'];
+        return ['cover', 'seo_image'];
     }
 }

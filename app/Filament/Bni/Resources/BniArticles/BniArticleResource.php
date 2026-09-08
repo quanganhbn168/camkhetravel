@@ -5,6 +5,7 @@ namespace App\Filament\Bni\Resources\BniArticles;
 use App\Filament\Bni\Resources\BniArticles\Pages\CreateBniArticle;
 use App\Filament\Bni\Resources\BniArticles\Pages\EditBniArticle;
 use App\Filament\Bni\Resources\BniArticles\Pages\ListBniArticles;
+use App\Filament\Forms\BniSeoImageField;
 use App\Models\BniArticle;
 use App\Support\Bni\BniMediaService;
 use App\Support\Bni\BniPanelAccess;
@@ -74,6 +75,7 @@ class BniArticleResource extends Resource
             Group::make([
                 Section::make('Nội dung bài viết')->icon('heroicon-o-document-text')->schema([
                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
+                    BniSeoImageField::make(),
                     SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh đại diện')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->columnSpanFull(),
                     Textarea::make('excerpt')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                     RichEditor::make('body')->label('Nội dung')->columnSpanFull(),

@@ -84,7 +84,7 @@ class PostController extends Controller
             'sort' => $sort,
             'sortOptions' => self::SORT_OPTIONS,
             'heroImageUrl' => $posts->first()?->image_url,
-            'seo' => $this->listingSeo($title, $description, $canonicalUrl),
+            'seo' => $this->seo->listing($title, $description, $canonicalUrl, image: $category->seoImageUrl()),
         ]);
     }
 

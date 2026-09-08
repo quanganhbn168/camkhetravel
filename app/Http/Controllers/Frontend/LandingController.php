@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\LandingPage;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Landing\LandingPageBlocks;
-use App\Support\Landing\LandingRegistry;
 use App\Support\Landing\LandingPresenter;
-use App\Support\Localization\LocalizedUrl;
+use App\Support\Landing\LandingRegistry;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\View\View;
 
@@ -59,7 +58,7 @@ class LandingController extends Controller
         $landingTemplateSettings = $this->landingPageBlocks->templateSettings($landingPage);
         $landingTheme = $this->landingPageBlocks->theme($landingPage);
 
-        return view($templateView, [
+        return view($usesLanding ? $templateView : 'frontend.landing.builder-shell', [
             'landingPage' => $landingPage,
             'landingBlocks' => $usesBuilderLayout ? $this->landingPageBlocks->prepare($landingPage) : [],
             'landingTheme' => $landingTheme,

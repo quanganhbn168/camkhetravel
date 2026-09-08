@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ServiceCategory extends Model
 {
+    use HasSeoImage;
     use HasSlug;
 
     protected $guarded = [];

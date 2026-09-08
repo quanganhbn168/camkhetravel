@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LandingPages;
 
+use App\Filament\Forms\SeoImageField;
 use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
 use App\Filament\Resources\LandingPages\Pages\CreateLandingPage;
 use App\Filament\Resources\LandingPages\Pages\EditLandingPage;
@@ -92,6 +93,7 @@ class LandingPageResource extends Resource
                             CuratorPicker::make('curator_media_id')->label('Ảnh đại diện / hero')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                             Textarea::make('excerpt')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                             RichEditor::make('body')->label('Nội dung bổ sung')->plugins([ScopedAttachCuratorMediaPlugin::make()])->columnSpanFull(),
+                            SeoImageField::make(),
                             TextInput::make('seo_title')->label('SEO title')->maxLength(255)->formatStateUsing(fn (?string $state, ?LandingPage $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))->columnSpanFull(),
                             Textarea::make('seo_description')->label('Meta description')->rows(4)->formatStateUsing(fn (?string $state, ?LandingPage $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))->columnSpanFull(),
                         ])

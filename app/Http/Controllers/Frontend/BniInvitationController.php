@@ -45,6 +45,7 @@ class BniInvitationController extends Controller
                 $invitationContent['greeting'].' '.$invitationContent['event_label'].' dành cho các chapter BNI.',
                 $canonical,
                 false,
+                image: $event->bniMediaUrl('seo_image') ?: $event->bniMediaUrl('hero'),
             ),
         ]);
     }

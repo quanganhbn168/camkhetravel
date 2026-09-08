@@ -7,8 +7,8 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Support\Frontend\MediaUrl;
-use App\Support\Landing\LandingRegistry;
 use App\Support\Landing\LandingPresenter;
+use App\Support\Landing\LandingRegistry;
 use App\Support\Landing\LandingTemplateRegistry;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Pricing\PricingCatalogPresenter;
@@ -52,7 +52,7 @@ class ServiceController extends Controller
         $description = $category->description ?: 'Dịch vụ truyền thông thuộc nhóm '.$category->name.'.';
 
         return view('frontend.services.index', $this->listingData($category) + [
-            'seo' => $this->seo->listing($title, $description, LocalizedUrl::serviceCategory($category)),
+            'seo' => $this->seo->listing($title, $description, LocalizedUrl::serviceCategory($category), image: $category->seoImageUrl()),
         ]);
     }
 
