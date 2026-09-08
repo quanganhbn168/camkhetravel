@@ -32,7 +32,7 @@ class TiktokLandingTest extends TestCase
         $this->seed(TiktokLandingSeeder::class);
         $this->assertSame('TikTok nội dung từ CMS', $page->fresh()->landing_content['hero']['title']);
         $this->assertSame(1, LandingPage::where('template_key', LandingRegistry::TIKTOK)->count());
-        $this->get('/xay-kenh-tiktok')->assertOk()->assertSee('TikTok nội dung từ CMS')
+        $this->get('/xay-kenh-tiktok')->assertOk()->assertSeeText('TikTok nội dung từ CMS')
             ->assertSee('Tháng 10')->assertSee('8.000.000đ')->assertSee('10.000.000đ')
             ->assertSee('tht-landing-header', false)->assertSee('tht-landing-footer', false)
             ->assertSee('storage/media/landing/pages/tiktok/tht-media-team.webp', false)

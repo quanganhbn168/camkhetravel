@@ -4,23 +4,22 @@
     <section class="tt-section tt-hero" id="hero-section">
         <x-landing.container class="tt-hero__grid">
             <div>
-                <p class="tt-eyebrow">THT MEDIA · TIKTOK</p>
-                <h1>{{ $content['hero']['title'] }}</h1>
+                <h1>@include('frontend.landing.parts.tiktok.highlighted-title', ['title' => $content['hero']['title'], 'pink' => 'Xây Kênh', 'cyan' => 'TikTok'])</h1>
                 <p class="tt-intro">{{ $content['hero']['description'] }}</p>
                 <div class="tt-actions">
                     <a class="tt-button" href="tel:{{ $contact['hotline_1'] }}">Gọi Hotline {{ $contact['hotline_display'] }}</a>
                     <a class="tt-button tt-button--outline" href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer">Chat Zalo ↗</a>
                 </div>
             </div>
-            <div class="tt-hero__visual"><img src="{{ $content['hero']['image'] }}" alt="Đội ngũ xây kênh TikTok THT Media" fetchpriority="high"><span aria-hidden="true"></span></div>
+            <div class="tt-hero__visual"><img src="{{ $content['hero']['image'] }}" alt="Đội ngũ xây kênh TikTok THT Media" fetchpriority="high"><span class="tt-orb tt-orb--pink" aria-hidden="true"></span><span class="tt-orb tt-orb--cyan" aria-hidden="true"></span><span class="tt-orb tt-orb--white" aria-hidden="true"></span></div>
         </x-landing.container>
     </section>
 
     @if ($content['promotion']['enabled'] ?? false)
         <section class="tt-section tt-promotion" id="uu-dai-tiktok">
             <x-landing.container>
-                <header class="tt-section-heading"><h2>{{ $content['promotion']['title'] }}</h2><p>{{ $content['promotion']['description'] }}</p></header>
-                <div class="grid gap-5 md:grid-cols-2">
+                <header class="tt-section-heading"><h2>@include('frontend.landing.parts.tiktok.highlighted-title', ['title' => $content['promotion']['title'], 'pink' => 'Tháng 10', 'cyan' => '6 Năm'])</h2><p>{{ $content['promotion']['description'] }}</p></header>
+                <div class="tt-promotion-grid">
                     @foreach ($content['promotion']['items'] as $item)
                         <article class="tt-card"><h3>{{ $item['title'] }}</h3><p>{{ $item['description'] }}</p></article>
                     @endforeach
@@ -67,7 +66,7 @@
                 @endforeach
             </div>
             @foreach ($content['samples']['categories'] as $category)
-                <div x-show="category === {{ $loop->index }}" @if (!$loop->first) x-cloak @endif>
+                <div class="tt-category-panel" x-show="category === {{ $loop->index }}" @if (!$loop->first) x-cloak @endif>
                     <div class="tt-filters tt-filters--tiers" role="group" aria-label="Gói video {{ $category['name'] }}">
                         @foreach ($category['tiers'] as $tier)
                             <button type="button" :aria-pressed="tier === '{{ $tier['key'] }}'" @click="tier = '{{ $tier['key'] }}'">{{ $tier['label'] }}</button>
@@ -89,7 +88,7 @@
 
     <section class="tt-section" id="ve-chung-toi">
         <x-landing.container>
-            <div class="tt-about-grid"><div><h2>{{ $content['about']['title'] }}</h2><p class="tt-intro">{{ $content['about']['description'] }}</p></div><img class="tt-about-image" src="{{ $content['about']['image'] }}" alt="Đội ngũ THT Media" loading="lazy"></div>
+            <div class="tt-about-grid"><div><h2>{{ $content['about']['title'] }}</h2><p class="tt-intro">{{ $content['about']['description'] }}</p></div><div class="tt-about-visual"><img class="tt-about-image" src="{{ $content['about']['image'] }}" alt="Đội ngũ THT Media" loading="lazy"></div></div>
             <h3 class="tt-features-title">{{ $content['about']['features_title'] }}</h3>
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 @foreach ($content['about']['features'] as $feature)
@@ -102,9 +101,9 @@
     <section class="tt-section" id="khach-hang-tiktok">
         <x-landing.container>
             <header class="tt-section-heading"><h2>{{ $content['testimonials']['title'] }}</h2></header>
-            <div class="grid gap-5 lg:grid-cols-3">
+            <div class="tt-testimonial-grid">
                 @foreach ($content['testimonials']['items'] as $item)
-                    <figure class="tt-card tt-testimonial"><img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" loading="lazy"><blockquote>{{ $item['quote'] }}</blockquote><figcaption>{{ $item['name'] }}</figcaption></figure>
+                    <figure class="tt-card tt-testimonial"><img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" loading="lazy"><figcaption>{{ $item['name'] }}</figcaption><blockquote>{{ $item['quote'] }}</blockquote></figure>
                 @endforeach
             </div>
         </x-landing.container>
@@ -113,7 +112,7 @@
     <section class="tt-section" id="bang-gia-tiktok" x-data="{ camera: false }">
         <x-landing.container>
             <header class="tt-section-heading"><h2>{{ $content['pricing']['title'] }}</h2></header>
-            <div class="tt-filters justify-center" role="group" aria-label="Thiết bị quay"><button type="button" :aria-pressed="!camera" @click="camera = false">Quay bằng Điện thoại</button><button type="button" :aria-pressed="camera" @click="camera = true">Quay bằng Máy quay</button></div>
+            <div class="tt-filters tt-price-toggle" role="group" aria-label="Thiết bị quay"><button type="button" :aria-pressed="!camera" @click="camera = false">Quay bằng Điện thoại</button><button type="button" :aria-pressed="camera" @click="camera = true">Quay bằng Máy quay</button></div>
             <div class="tt-price-table" aria-live="polite">
                 <div class="tt-price-head" aria-hidden="true"><span>Gói dịch vụ</span><span>Gói 10 VIDEO</span><span>Gói 30 VIDEO</span><span>Gói 60 VIDEO</span></div>
                 @foreach ($content['pricing']['rows'] as $row)
