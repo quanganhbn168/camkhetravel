@@ -1,0 +1,225 @@
+{
+    "template_key": "landing_branding",
+    "page_class": "tht-landing-branding",
+    "brand": {
+        "name": "THT MEDIA",
+        "tagline": "ĐỒNG HÀNH CÙNG THƯƠNG HIỆU VIỆT"
+    },
+    "seo": {
+        "description": "Bộ nhận diện thương hiệu doanh nghiệp giai đoạn 1: profile, website, hình ảnh và phim doanh nghiệp. Combo trọn bộ 19.900.000đ cùng THT Media."
+    },
+    "navigation": [
+        {
+            "label": "Giới thiệu",
+            "url": "#gioi-thieu"
+        },
+        {
+            "label": "Dịch vụ",
+            "url": "#dich-vu"
+        },
+        {
+            "label": "Quy trình",
+            "url": "#quy-trinh"
+        },
+        {
+            "label": "Dự án",
+            "url": "#du-an"
+        },
+        {
+            "label": "Liên hệ",
+            "url": "#lien-he"
+        }
+    ],
+    "hero": {
+        "eyebrow": "GIAI ĐOẠN 1",
+        "title": "BỘ NHẬN DIỆN\nTHƯƠNG HIỆU",
+        "subtitle": "GIẢI PHÁP TRỌN BỘ CHO DOANH NGHIỆP",
+        "description": "Từ hình ảnh đến trải nghiệm số – Xây dựng thương hiệu vững mạnh",
+        "image": "branding/hero-branding.webp",
+        "benefits": [
+            {
+                "icon": "team",
+                "label": "Chuyên nghiệp"
+            },
+            {
+                "icon": "badge",
+                "label": "Sáng tạo"
+            },
+            {
+                "icon": "box",
+                "label": "Hiệu quả"
+            },
+            {
+                "icon": "website",
+                "label": "Đồng hành lâu dài"
+            }
+        ]
+    },
+    "intro": {
+        "eyebrow": "VẤN ĐỀ DOANH NGHIỆP THƯỜNG GẶP",
+        "title": "HÌNH ẢNH CHUYÊN NGHIỆP\nLÀ BƯỚC ĐẦU CỦA THÀNH CÔNG",
+        "description": "Trong thời đại số, một thương hiệu chuyên nghiệp không chỉ tạo niềm tin mà còn mở ra nhiều cơ hội kinh doanh. THT MEDIA giúp doanh nghiệp của bạn xây dựng hình ảnh đồng bộ, hiện đại và khác biệt trên mọi nền tảng."
+    },
+    "offer": {
+        "price": 19900000,
+        "heading": "COMBO TRỌN BỘ – GIÁ TRỊ VƯỢT TRỘI",
+        "description": "Sở hữu ngay bộ nhận diện thương hiệu toàn diện với chi phí tối ưu nhất",
+        "note": "Số lượng ưu đãi có hạn – Liên hệ ngay hôm nay!"
+    },
+    "services": [
+        {
+            "icon": "profile",
+            "title": "PROFILE < 30 TRANG",
+            "name": "Thiết kế Profile < 30 trang",
+            "price": 9000000,
+            "features": [
+                "Thiết kế profile chuyên nghiệp",
+                "Truyền tải năng lực & khác biệt",
+                "File in ấn và bản mềm"
+            ],
+            "ecosystem": "PROFILE",
+            "caption": "Truyền tải giá trị\nvà năng lực doanh nghiệp"
+        },
+        {
+            "icon": "website",
+            "title": "WEBSITE CƠ BẢN",
+            "name": "Website cơ bản",
+            "price": 8000000,
+            "features": [
+                "Giao diện hiện đại, chuẩn SEO",
+                "Tối ưu hiển thị trên mọi thiết bị",
+                "Dễ dàng quản trị, cập nhật"
+            ],
+            "ecosystem": "WEBSITE",
+            "caption": "Hiện diện chuyên nghiệp\ntrên môi trường số"
+        },
+        {
+            "icon": "photo",
+            "title": "CHỤP ẢNH",
+            "name": "Chụp ảnh doanh nghiệp",
+            "price": 3000000,
+            "features": [
+                "Chụp ảnh doanh nghiệp",
+                "Ảnh sản phẩm, nhà xưởng, sự kiện",
+                "Chỉnh sửa chuyên nghiệp"
+            ],
+            "ecosystem": "HÌNH ẢNH",
+            "caption": "Tạo ấn tượng trực quan\nmạnh mẽ"
+        },
+        {
+            "icon": "video",
+            "title": "SẢN XUẤT PHIM\nDOANH NGHIỆP CƠ BẢN",
+            "name": "Sản xuất phim doanh nghiệp cơ bản",
+            "price": 20000000,
+            "features": [
+                "Kịch bản chuyên nghiệp",
+                "Quay dựng hiện đại",
+                "Video kể câu chuyện thương hiệu"
+            ],
+            "ecosystem": "VIDEO",
+            "caption": "Kể câu chuyện thương hiệu\nsống động"
+        }
+    ],
+    "audiences": [
+        {
+            "icon": "building",
+            "title": "DOANH NGHIỆP MỚI",
+            "description": "Xây dựng hình ảnh chuyên nghiệp từ những bước đầu tiên",
+            "image": "branding/business-new-demo.webp"
+        },
+        {
+            "icon": "website",
+            "title": "DOANH NGHIỆP CẦN\nNÂNG TẦM HÌNH ẢNH",
+            "description": "Làm mới thương hiệu, tạo khác biệt trên thị trường",
+            "image": "branding/business-team-demo.webp"
+        },
+        {
+            "icon": "badge",
+            "title": "DOANH NGHIỆP B2B",
+            "description": "Tăng uy tín, mở rộng cơ hội hợp tác, đấu thầu",
+            "image": "branding/business-partners-demo.webp"
+        },
+        {
+            "icon": "video",
+            "title": "DOANH NGHIỆP MỞ RỘNG",
+            "description": "Chuẩn hóa thương hiệu để phát triển bền vững",
+            "image": "branding/business-logistics-demo.webp"
+        }
+    ],
+    "process": [
+        {
+            "title": "Khảo sát",
+            "description": "Tiếp nhận nhu cầu,\ntư vấn giải pháp"
+        },
+        {
+            "title": "Định hướng",
+            "description": "Lên ý tưởng, kế hoạch\ntriển khai"
+        },
+        {
+            "title": "Chụp / Quay",
+            "description": "Thực hiện sản xuất\nnội dung"
+        },
+        {
+            "title": "Thiết kế & phát triển",
+            "description": "Hoàn thiện sản phẩm\ntheo yêu cầu"
+        },
+        {
+            "title": "Bàn giao",
+            "description": "Nghiệm thu và đồng hành\nsau dự án"
+        }
+    ],
+    "projects": [
+        {
+            "title": "Profile doanh nghiệp",
+            "caption": "Mẫu thiết kế hồ sơ năng lực",
+            "image": "branding/project-profile-mockup.webp",
+            "url": "/thiet-ke-profile-doanh-nghiep-ho-so-nang-luc"
+        },
+        {
+            "title": "Website doanh nghiệp",
+            "caption": "Giao diện website minh họa",
+            "image": "branding/project-website-mockup.webp",
+            "url": "/thiet-ke-website"
+        },
+        {
+            "title": "Chụp ảnh doanh nghiệp",
+            "caption": "Hình ảnh hoạt động doanh nghiệp",
+            "image": "branding/project-photo.webp",
+            "url": "/du-an"
+        },
+        {
+            "title": "Phim doanh nghiệp",
+            "caption": "Hậu trường sản xuất THT Media",
+            "image": "branding/project-film.webp",
+            "url": "/dich-vu-san-xuat-phim-doanh-nghiep"
+        }
+    ],
+    "reasons": [
+        {
+            "icon": "box",
+            "title": "Triển khai đồng bộ",
+            "description": "Từ chiến lược đến thực thi"
+        },
+        {
+            "icon": "badge",
+            "title": "Hình ảnh chuyên nghiệp",
+            "description": "Đúng ngành, đúng mục tiêu"
+        },
+        {
+            "icon": "team",
+            "title": "Kinh nghiệm thực chiến",
+            "description": "Hàng trăm dự án thành công"
+        },
+        {
+            "icon": "profile",
+            "title": "Tối ưu chi phí",
+            "description": "Hiệu quả lâu dài"
+        }
+    ],
+    "contact_section": {
+        "eyebrow": "BẮT ĐẦU XÂY DỰNG THƯƠNG HIỆU NGAY HÔM NAY",
+        "title": "ƯU ĐÃI CHỈ CÒN",
+        "description": "Đầu tư đúng – Hiệu quả thật – Đồng hành dài lâu"
+    },
+    "footer_text": "Kiến tạo giá trị bền vững cho doanh nghiệp Việt."
+}

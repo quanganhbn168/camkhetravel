@@ -17,8 +17,12 @@
         ->values();
 @endphp
 
-<footer class="bg-ink pt-14 text-slate-300 md:pt-18">
-    <div class="site-shell grid gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1.35fr] lg:gap-8">
+<footer class="site-footer bg-ink pt-14 text-slate-300 md:pt-18">
+    @if ($websiteMediaUrls->get($website->footer_background_media_id))
+        <img class="site-footer__background" src="{{ $websiteMediaUrls->get($website->footer_background_media_id) }}" alt="" aria-hidden="true" loading="lazy">
+        <div class="site-footer__overlay" aria-hidden="true"></div>
+    @endif
+    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 grid gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1.35fr] lg:gap-8">
         <div class="lg:pr-7">
             <a class="inline-flex items-center" href="{{ LocalizedUrl::route('home') }}" aria-label="{{ $website->site_name }}">
                 @if ($websiteMediaUrls->get($website->logo_media_id))
@@ -109,7 +113,7 @@
         </div>
     </div>
     <div class="border-t border-white/10">
-        <div class="site-shell flex flex-col gap-3 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-3 py-6 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
         <span>© {{ now()->year }} {{ $website->company_name ?: $website->site_name }}. All rights reserved.</span>
             <div class="flex gap-5"><a class="hover:text-slate-300" href="{{ LocalizedUrl::route('home') }}">Chính sách bảo mật</a><a class="hover:text-slate-300" href="{{ LocalizedUrl::route('contact') }}">Điều khoản sử dụng</a></div>
         </div>

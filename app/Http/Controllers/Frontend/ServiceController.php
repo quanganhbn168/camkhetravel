@@ -7,11 +7,15 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Support\Frontend\MediaUrl;
+use App\Support\Landing\LandingRegistry;
+use App\Support\Landing\LandingPresenter;
+use App\Support\Landing\LandingTemplateRegistry;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Pricing\PricingCatalogPresenter;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ServiceController extends Controller
@@ -19,6 +23,7 @@ class ServiceController extends Controller
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
         private readonly PricingCatalogPresenter $pricingCatalogPresenter,
+        private readonly LandingPresenter $landingPresenter,
     ) {}
 
     public function index(): View
@@ -30,6 +35,13 @@ class ServiceController extends Controller
                 LocalizedUrl::route('services.index'),
             ),
         ]);
+    }
+
+    public function redirectCategory(ServiceCategory $category): RedirectResponse
+    {
+        abort_unless($category->is_active, 404);
+
+        return redirect()->to(LocalizedUrl::serviceCategory($category), 301);
     }
 
     public function category(ServiceCategory $category): View
@@ -44,9 +56,44 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function show(Service $service): View
+    public function show(Service $service, ?string $landingTemplateKey = null): View
     {
         abort_unless($service->status === 'published' && (! $service->published_at || $service->published_at->isPast()), 404);
+
+        if ($landingTemplateKey && LandingRegistry::find($landingTemplateKey)) {
+            $service->load([
+                'category',
+                'curatorMedia',
+                'pricingCatalog.packages' => fn ($query) => $query
+                    ->active()
+                    ->with(['items' => fn ($itemQuery) => $itemQuery->active()->orderBy('sort_order')])
+                    ->orderBy('sort_order'),
+            ]);
+            $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia));
+
+            return view('frontend.landing.shell', [
+                'service' => $service,
+                'landingViewModel' => $this->landingPresenter->present($landingTemplateKey, service: $service),
+                'benefitItems' => $this->mediaItems($service->benefit_items),
+                'processItems' => $this->mediaItems($service->process_items),
+                'processBackgroundUrl' => MediaUrl::resolve($service->processBackgroundMedia) ?: $service->image_url,
+                'pricingMatrix' => $this->pricingCatalogPresenter->present($service->pricingCatalog),
+                'backstageImages' => array_values(array_unique($this->galleryImages($service->backstage_gallery))),
+                'landingTemplateDefinition' => LandingTemplateRegistry::find($landingTemplateKey) ?? [],
+                'landingTheme' => [
+                    'primary' => LandingTemplateRegistry::palette($landingTemplateKey)['primary'],
+                    'accent' => LandingTemplateRegistry::palette($landingTemplateKey)['accent'],
+                    'surface' => LandingTemplateRegistry::palette($landingTemplateKey)['surface'],
+                    'ink' => LandingTemplateRegistry::palette($landingTemplateKey)['ink'],
+                ],
+                'landingLayout' => 'layouts.landing',
+                'landingAssets' => ['vite' => LandingRegistry::viteAssets($landingTemplateKey)],
+                'landingTracking' => ['head' => null, 'body' => null, 'footer' => null],
+                'hideHeader' => false,
+                'hideFooter' => false,
+                'seo' => $this->seo->service($service),
+            ]);
+        }
 
         $service->load([
             'category',

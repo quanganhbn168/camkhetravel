@@ -24,6 +24,7 @@ class LandingPage extends Model
             'backstage_gallery' => 'array',
             'faq_items' => 'array',
             'sections' => 'array',
+            'landing_content' => 'array',
             'template_settings' => 'array',
             'theme_settings' => 'array',
             'is_featured' => 'boolean',

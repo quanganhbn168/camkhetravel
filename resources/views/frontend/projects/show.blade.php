@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="resource-detail-hero resource-detail-hero--project">
-        <div class="site-shell resource-detail-hero__project-wrap">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-detail-hero__project-wrap">
             <nav aria-label="Breadcrumb">
                 <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/65">
                     <li><a class="hover:text-white" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li><li aria-hidden="true">/</li>
@@ -29,7 +29,7 @@
     </section>
 
     <section id="noi-dung-du-an" class="project-detail-content">
-        <div class="site-shell project-detail-content__grid">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 project-detail-content__grid">
             <article class="article-prose project-detail-content__article">
                 @if (filled(strip_tags((string) $project->body_html)))
                     <h2 class="!mt-0">NỘI DUNG DỰ ÁN</h2>
@@ -79,7 +79,7 @@
 
     @if ($faqItems->isNotEmpty())
         <section class="home-faq section-space" id="cau-hoi-thuong-gap">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <header class="home-faq__header">
                     <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">{{ $project->faq_title ?: 'Câu hỏi thường gặp' }}</h2>
                     @if ($project->faq_description)<p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">{{ $project->faq_description }}</p>@endif
@@ -97,7 +97,7 @@
     @endif
 
     <section class="resource-related-section" id="phan-hoi">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="mx-auto max-w-2xl text-center">
                 <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Đánh giá từ khách hàng</h2>
                 @if ($ratingSummary['count'])
@@ -130,28 +130,28 @@
 
     @if ($relatedServices->isNotEmpty())
         <section class="resource-related-section" id="dich-vu-lien-quan">
-            <div class="site-shell flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div><h2 class="display-title text-3xl leading-tight md:text-4xl">Dịch vụ đồng hành cùng dự án</h2></div>
                 <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a>
             </div>
-            <div class="site-shell mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedServices as $service) @include('frontend.partials.service-card') @endforeach</div>
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedServices as $service) @include('frontend.partials.service-card') @endforeach</div>
         </section>
     @endif
 
     @if ($relatedPosts->isNotEmpty())
         <section class="resource-related-section" id="bai-viet-lien-quan">
-            <div class="site-shell flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div><h2 class="display-title text-3xl leading-tight md:text-4xl">Bài viết liên quan</h2></div>
                 <a class="section-link" href="{{ LocalizedUrl::route('posts.index') }}">Xem tất cả bài viết <span aria-hidden="true">→</span></a>
             </div>
-            <div class="site-shell mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedPosts as $post) @include('frontend.partials.post-card') @endforeach</div>
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedPosts as $post) @include('frontend.partials.post-card') @endforeach</div>
         </section>
     @endif
 
     @if ($relatedProjects->isNotEmpty())
         <section class="resource-related-section">
-            <div class="site-shell flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><div><h2 class="display-title text-3xl leading-tight md:text-4xl">Khám phá thêm các dự án đã thực hiện</h2></div><a class="section-link" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a></div>
-            <div class="site-shell mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedProjects as $project) @include('frontend.partials.project-card') @endforeach</div>
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><div><h2 class="display-title text-3xl leading-tight md:text-4xl">Khám phá thêm các dự án đã thực hiện</h2></div><a class="section-link" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a></div>
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedProjects as $project) @include('frontend.partials.project-card') @endforeach</div>
         </section>
     @endif
 @endsection

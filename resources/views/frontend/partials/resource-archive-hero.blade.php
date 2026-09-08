@@ -5,7 +5,7 @@
         <img class="resource-archive-hero__image" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">
     @endif
     <div class="resource-archive-hero__overlay"></div>
-    <div class="site-shell resource-archive-hero__content">
+    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-archive-hero__content">
         <nav aria-label="Breadcrumb">
             <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/65">
                 <li><a class="hover:text-white" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li>

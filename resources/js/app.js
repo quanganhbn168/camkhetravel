@@ -1,5 +1,4 @@
 import './bootstrap';
-import './landing-templates/landing07-communications';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
 import GLightbox from 'glightbox';
@@ -12,6 +11,64 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 
 window.Alpine = Alpine;
+window.AOS = AOS;
+window.Swiper = Swiper;
+window.GLightbox = GLightbox;
+
+const openLandingModal = (modal) => {
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.add('is-open', 'show');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    modal.querySelector('.tht-landing-modal-close')?.focus();
+};
+
+const closeLandingModal = (modal) => {
+    if (!modal) {
+        return;
+    }
+
+    modal.classList.remove('is-open', 'show');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+};
+
+window.landingOpenModal = openLandingModal;
+window.landingCloseModal = closeLandingModal;
+
+const initialiseLandingModals = () => {
+    document.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-landing-modal-open]');
+        const dismiss = event.target.closest('[data-landing-modal-close]');
+
+        if (trigger) {
+            const selector = trigger.dataset.landingModalOpen;
+            const modal = selector ? document.querySelector(selector) : null;
+            if (modal) {
+                event.preventDefault();
+                openLandingModal(modal);
+            }
+        }
+
+        if (dismiss) {
+            event.preventDefault();
+            closeLandingModal(dismiss.closest('.modal'));
+        }
+
+        if (event.target.classList?.contains('modal')) {
+            closeLandingModal(event.target);
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            document.querySelectorAll('.modal.is-open').forEach(closeLandingModal);
+        }
+    });
+};
 
 Alpine.start();
 
@@ -668,6 +725,7 @@ if (document.readyState === 'loading') {
         initialiseBniPwa();
         initialiseLandingPages();
         initialiseLightboxes();
+        initialiseLandingModals();
     }, { once: true });
 } else {
     initialiseHeroSwipers();
@@ -683,4 +741,5 @@ if (document.readyState === 'loading') {
     initialiseBniPwa();
     initialiseLandingPages();
     initialiseLightboxes();
+    initialiseLandingModals();
 }

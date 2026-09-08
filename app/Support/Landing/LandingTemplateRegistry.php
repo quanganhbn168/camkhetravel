@@ -14,10 +14,6 @@ final class LandingTemplateRegistry
 
     public const PORTFOLIO = 'portfolio_showcase';
 
-    public const CORPORATE_FILM = 'landing07_corporate_film';
-
-    public const EVENT_MEDIA = 'landing07_event_media';
-
     /**
      * @return array<string, array{
      *     label: string,
@@ -36,7 +32,7 @@ final class LandingTemplateRegistry
             self::ANNIVERSARY => [
                 'label' => 'Tri ân / Sự kiện',
                 'description' => 'Phong cách xanh – vàng sang trọng, phù hợp chương trình kỷ niệm, khai trương và ưu đãi có countdown.',
-                'view' => 'frontend.landing-pages.templates.anniversary-campaign',
+                'view' => 'frontend.landing.templates.anniversary-campaign',
                 'css_class' => 'landing-page--anniversary',
                 'css_source' => 'resources/css/landing-templates/anniversary.css',
                 'use_case' => 'Countdown · Quyền lợi · Bảng giá · Form đăng ký',
@@ -56,7 +52,7 @@ final class LandingTemplateRegistry
             self::CONVERSION => [
                 'label' => 'Chuyển đổi / Báo giá',
                 'description' => 'Tương phản mạnh, CTA nổi bật và form được ưu tiên cho quảng cáo, dịch vụ hoặc chiến dịch thu lead.',
-                'view' => 'frontend.landing-pages.templates.conversion-offer',
+                'view' => 'frontend.landing.templates.conversion-offer',
                 'css_class' => 'landing-page--conversion',
                 'css_source' => 'resources/css/landing-templates/conversion-offer.css',
                 'use_case' => 'Hero bán hàng · Gói giá · Bằng chứng · Form thu lead',
@@ -77,7 +73,7 @@ final class LandingTemplateRegistry
             self::PORTFOLIO => [
                 'label' => 'Dự án / Hồ sơ năng lực',
                 'description' => 'Bố cục editorial giàu hình ảnh, dành cho case study, dự án tiêu biểu và hồ sơ năng lực theo chiến dịch.',
-                'view' => 'frontend.landing-pages.templates.portfolio-showcase',
+                'view' => 'frontend.landing.templates.portfolio-showcase',
                 'css_class' => 'landing-page--portfolio',
                 'css_source' => 'resources/css/landing-templates/portfolio-showcase.css',
                 'use_case' => 'Dự án · Gallery · Nội dung dài · CTA liên hệ',
@@ -93,60 +89,6 @@ final class LandingTemplateRegistry
                     'portfolio_nav_cta' => 'Trao đổi dự án',
                     'portfolio_intro' => 'Những dự án được chọn lọc để thể hiện cách THT Media tiếp cận và triển khai công việc.',
                     'portfolio_footer_text' => 'THT Media · Selected works',
-                ],
-            ],
-            self::CORPORATE_FILM => [
-                'label' => 'Landing07 / Phim doanh nghiệp',
-                'description' => 'Template Laravel cho landing sản xuất phim: hero điện ảnh, dự án, bảng giá và CTA tư vấn.',
-                'view' => 'frontend.landing-pages.templates.landing07-corporate-film',
-                'css_class' => 'landing-page--landing07-film',
-                'css_source' => 'resources/css/landing-templates/landing07-corporate-film.css',
-                'use_case' => 'Hero video · Showreel · Dự án · Bảng giá · Form tư vấn',
-                'palette' => [
-                    'primary' => '#0b633a',
-                    'accent' => '#f28c28',
-                    'surface' => '#f3f0e8',
-                    'ink' => '#071b14',
-                ],
-                'settings' => [
-                    'film_brand_label' => 'THT FILMS',
-                    'film_service_line' => 'Company Profile · TVC · Video thương hiệu · Video nhà máy',
-                    'film_hero_video_media_id' => null,
-                    'film_showreel_media_id' => null,
-                    'film_showreel_label' => 'Xem showreel',
-                    'film_nav_cta' => 'Nhận tư vấn miễn phí',
-                    'film_quote' => 'Mỗi doanh nghiệp đều có một câu chuyện riêng. Điều tạo nên khác biệt là cách câu chuyện ấy được kể.',
-                    'film_footer_text' => 'THT Films · Sản xuất hình ảnh tạo dựng niềm tin',
-                ],
-            ],
-            self::EVENT_MEDIA => [
-                'label' => 'Landing07 / Quay chụp sự kiện',
-                'description' => 'Template Laravel cho landing event media: hero contact-sheet, lưới đầu ra và bảng giá theo cấu hình ekip.',
-                'view' => 'frontend.landing-pages.templates.landing07-event-media',
-                'css_class' => 'landing-page--landing07-event',
-                'css_source' => 'resources/css/landing-templates/landing07-event-media.css',
-                'use_case' => 'Hero sự kiện · Bộ đầu ra · Gallery · Gói ekip · Dự án',
-                'palette' => [
-                    'primary' => '#071b34',
-                    'accent' => '#f3b548',
-                    'surface' => '#f5f7fa',
-                    'ink' => '#071b34',
-                ],
-                'settings' => [
-                    'event_brand_label' => 'THT EVENT MEDIA',
-                    'event_service_line' => 'Ảnh · Video · Flycam · Livestream · Highlight',
-                    'event_hero_video_media_id' => null,
-                    'event_nav_cta' => 'Gửi lịch sự kiện',
-                    'event_brief_label' => 'Gửi lịch sự kiện',
-                    'event_brief_title' => 'Kiểm tra ekip còn trống',
-                    'event_brief_text' => 'Gửi ngày, địa điểm, thời lượng và nhu cầu ảnh, video hoặc livestream.',
-                    'event_brief_items' => [
-                        'Ngày và thời lượng tổ chức',
-                        'Địa điểm, quy mô chương trình',
-                        'Nhu cầu ảnh, video, flycam hoặc livestream',
-                    ],
-                    'event_caption' => 'Hình ảnh để sự kiện tiếp tục tạo giá trị',
-                    'event_footer_text' => 'THT Media · Ghi đúng khoảnh khắc, hoàn thiện đúng đầu ra',
                 ],
             ],
         ];
@@ -191,7 +133,7 @@ final class LandingTemplateRegistry
             ];
         }
 
-        return array_merge($definitions, Landing07Catalog::templates());
+        return array_merge($definitions, LandingRegistry::templateDefinitions());
     }
 
     /** @return array<string, string> */
@@ -256,73 +198,7 @@ final class LandingTemplateRegistry
     /** @return list<array{type: string, data: array<string, mixed>}> */
     private static function blueprintSections(?string $key): array
     {
-        return match ($key) {
-            self::CORPORATE_FILM => [
-                [
-                    'type' => 'hero',
-                    'data' => [
-                        'block_id' => 'hero',
-                        'eyebrow' => 'Dịch vụ sản xuất phim doanh nghiệp',
-                        'title' => 'Khi khách hàng chưa đến doanh nghiệp, hãy để bộ phim kể câu chuyện thay bạn.',
-                        'subtitle' => 'THT Media đồng hành từ mục tiêu, kịch bản, ghi hình đến hậu kỳ để tạo nên tư liệu có giá trị sử dụng lâu dài.',
-                        'cta_label' => 'Nhận tư vấn miễn phí',
-                        'cta_url' => '#tu-van',
-                        'secondary_label' => 'Xem dự án',
-                        'secondary_url' => '#du-an',
-                    ],
-                ],
-                [
-                    'type' => 'benefits',
-                    'data' => [
-                        'block_id' => 'gia-tri-bo-phim',
-                        'eyebrow' => 'Giá trị bộ phim',
-                        'title' => 'Một bộ phim doanh nghiệp có thể giúp bạn',
-                        'items' => [
-                            ['title' => 'Tạo dựng niềm tin', 'description' => 'Thể hiện trực quan quy mô, năng lực và câu chuyện thương hiệu.', 'features' => ['Khẳng định năng lực doanh nghiệp', 'Tăng sự tin tưởng từ khách hàng và đối tác']],
-                            ['title' => 'Dùng lâu dài', 'description' => 'Tạo nguồn tư liệu cho website, bán hàng, tuyển dụng và truyền thông.', 'features' => ['Tối ưu cho nhiều nền tảng', 'Hỗ trợ đội ngũ kinh doanh']],
-                        ],
-                    ],
-                ],
-                ['type' => 'projects', 'data' => ['block_id' => 'du-an', 'eyebrow' => 'Năng lực sản xuất', 'title' => 'Các sản phẩm tiêu biểu', 'limit' => 6]],
-                ['type' => 'pricing', 'data' => ['block_id' => 'bang-gia', 'eyebrow' => 'Phương án sản xuất', 'title' => 'Gói dịch vụ theo mục tiêu và phạm vi']],
-                ['type' => 'gallery', 'data' => ['block_id' => 'hau-truong', 'eyebrow' => 'Behind the scenes', 'title' => 'Hình ảnh ekip và quá trình sản xuất']],
-                ['type' => 'faqs', 'data' => ['block_id' => 'cau-hoi', 'eyebrow' => 'Thông tin cần biết', 'title' => 'Câu hỏi về sản xuất phim doanh nghiệp']],
-                ['type' => 'lead_form', 'data' => ['block_id' => 'tu-van', 'title' => 'Trao đổi ý tưởng cùng THT Films', 'description' => 'Cho THT biết mục tiêu, bối cảnh và thời điểm dự kiến để nhận phương án phù hợp.', 'button_label' => 'Gửi yêu cầu tư vấn']],
-            ],
-            self::EVENT_MEDIA => [
-                [
-                    'type' => 'hero',
-                    'data' => [
-                        'block_id' => 'hero',
-                        'eyebrow' => 'Dịch vụ quay chụp sự kiện',
-                        'title' => 'Quay phim – chụp ảnh sự kiện',
-                        'subtitle' => 'Sự kiện chỉ diễn ra một lần. THT Media chuẩn bị shot-list, ghi lại toàn cảnh, nghi thức, cảm xúc và nhận diện thương hiệu theo đúng kênh sử dụng.',
-                        'cta_label' => 'Gửi lịch – kiểm tra ekip',
-                        'cta_url' => '#tu-van',
-                        'secondary_label' => 'Xem bộ đầu ra',
-                        'secondary_url' => '#bo-dau-ra',
-                    ],
-                ],
-                [
-                    'type' => 'benefits',
-                    'data' => [
-                        'block_id' => 'bo-dau-ra',
-                        'eyebrow' => 'Bộ đầu ra',
-                        'title' => 'Không chỉ giao file – giao bộ tài nguyên có thể sử dụng ngay',
-                        'items' => [
-                            ['title' => 'Ảnh và video sự kiện', 'description' => 'Tư liệu được chọn lọc theo diễn biến, nghi thức và nhận diện thương hiệu.', 'features' => ['Album ảnh hậu kỳ', 'Video ghi hình và highlight']],
-                            ['title' => 'Đa nền tảng', 'description' => 'Cấu hình thêm flycam, livestream hoặc phiên bản video dọc khi cần.', 'features' => ['Reels, TikTok và Zalo', 'Flycam hoặc livestream']],
-                        ],
-                    ],
-                ],
-                ['type' => 'gallery', 'data' => ['block_id' => 'tu-lieu', 'eyebrow' => 'Bốn góc nhìn', 'title' => 'Toàn cảnh, nghi thức, cảm xúc và thương hiệu']],
-                ['type' => 'pricing', 'data' => ['block_id' => 'bang-gia', 'eyebrow' => 'Phương án dịch vụ', 'title' => 'Cấu hình ekip theo quy mô và mục tiêu sử dụng']],
-                ['type' => 'projects', 'data' => ['block_id' => 'du-an', 'eyebrow' => 'Dự án tham khảo', 'title' => 'Dấu ấn của từng chương trình', 'limit' => 6]],
-                ['type' => 'faqs', 'data' => ['block_id' => 'cau-hoi', 'eyebrow' => 'Câu hỏi thường gặp', 'title' => 'Chuẩn bị ekip quay chụp']],
-                ['type' => 'lead_form', 'data' => ['block_id' => 'tu-van', 'title' => 'Đừng đợi tới sát ngày mới tìm ekip quay chụp', 'description' => 'Gửi lịch dự kiến để THT kiểm tra nhân sự, thiết bị và đề xuất số lượng góc máy phù hợp.', 'button_label' => 'Kiểm tra lịch ekip']],
-            ],
-            default => [],
-        };
+        return [];
     }
 
     private static function databaseReady(): bool
@@ -355,18 +231,6 @@ final class LandingTemplateRegistry
                 'source_path' => null,
                 'icon' => 'heroicon-o-photo',
                 'sort_order' => 30,
-            ],
-            self::CORPORATE_FILM => [
-                'source_name' => 'Landing07 source snapshot · Laravel catalog',
-                'source_path' => 'landing-07/dichvulamphimdoanhnghiep/data.php',
-                'icon' => 'heroicon-o-video-camera',
-                'sort_order' => 40,
-            ],
-            self::EVENT_MEDIA => [
-                'source_name' => 'Landing07 source snapshot · Laravel catalog',
-                'source_path' => 'landing-07/quaychupsukien/data.php',
-                'icon' => 'heroicon-o-camera',
-                'sort_order' => 50,
             ],
         ];
     }
@@ -408,38 +272,6 @@ final class LandingTemplateRegistry
                     self::field('portfolio_nav_cta', 'text', 'Nhãn CTA đầu trang', maxLength: 100),
                     self::field('portfolio_intro', 'textarea', 'Lời dẫn đầu trang', maxLength: 600, rows: 3, fullWidth: true),
                     self::field('portfolio_footer_text', 'textarea', 'Dòng chân trang', maxLength: 255, rows: 2, fullWidth: true),
-                ],
-            ),
-            self::CORPORATE_FILM => self::schema(
-                'Thiết lập Landing07 / Phim doanh nghiệp',
-                'Schema Laravel cho landing sản xuất phim: hero video, showreel và CTA dự án.',
-                'heroicon-o-video-camera',
-                [
-                    self::field('film_brand_label', 'text', 'Tên thương hiệu trên đầu trang', maxLength: 120, fullWidth: true),
-                    self::field('film_service_line', 'text', 'Dòng loại hình sản xuất', maxLength: 255),
-                    self::field('film_hero_video_media_id', 'media', 'Video nền hero', helperText: 'Ưu tiên MP4 hoặc WebM ngắn, không âm thanh; ảnh của block Hero được dùng làm poster dự phòng.', fullWidth: true, mediaRole: 'hero_video'),
-                    self::field('film_showreel_media_id', 'media', 'Video showreel local', helperText: 'Chỉ chọn video đã lưu trong kho media Laravel. Để trống sẽ dùng nút xem dự án.', fullWidth: true, mediaRole: 'showreel'),
-                    self::field('film_showreel_label', 'text', 'Nhãn nút showreel', maxLength: 100),
-                    self::field('film_nav_cta', 'text', 'Nhãn CTA đầu trang', maxLength: 100),
-                    self::field('film_quote', 'textarea', 'Thông điệp điện ảnh', maxLength: 500, rows: 3, fullWidth: true),
-                    self::field('film_footer_text', 'textarea', 'Dòng chân trang', maxLength: 255, rows: 2, fullWidth: true),
-                ],
-            ),
-            self::EVENT_MEDIA => self::schema(
-                'Thiết lập Landing07 / Quay chụp sự kiện',
-                'Schema chuyển thể từ landing Event Media: hero tư liệu, brief kiểm tra ekip và lưới đầu ra.',
-                'heroicon-o-camera',
-                [
-                    self::field('event_brand_label', 'text', 'Tên thương hiệu trên đầu trang', maxLength: 120, fullWidth: true),
-                    self::field('event_service_line', 'text', 'Dòng loại hình dịch vụ', maxLength: 255),
-                    self::field('event_hero_video_media_id', 'media', 'Video nền hero', helperText: 'Nếu không chọn video, template dùng ảnh của block Hero làm nền.', fullWidth: true, mediaRole: 'hero_video'),
-                    self::field('event_nav_cta', 'text', 'Nhãn CTA đầu trang', maxLength: 100),
-                    self::field('event_brief_label', 'text', 'Nhãn khung brief', maxLength: 100),
-                    self::field('event_brief_title', 'text', 'Tiêu đề khung brief', maxLength: 180, fullWidth: true),
-                    self::field('event_brief_text', 'textarea', 'Hướng dẫn gửi brief', maxLength: 500, rows: 3, fullWidth: true),
-                    self::field('event_brief_items', 'tags', 'Thông tin khách hàng cần gửi', helperText: 'Nhập một ý rồi nhấn Enter.', fullWidth: true),
-                    self::field('event_caption', 'text', 'Chú thích cuối hero', maxLength: 255, fullWidth: true),
-                    self::field('event_footer_text', 'textarea', 'Dòng chân trang', maxLength: 255, rows: 2, fullWidth: true),
                 ],
             ),
         ];

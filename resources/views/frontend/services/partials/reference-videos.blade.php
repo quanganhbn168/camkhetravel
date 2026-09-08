@@ -7,7 +7,7 @@
 
 @if ($hasReferenceVideos || $hasReferenceImages)
     <section class="service-reference resource-related-section border-y border-slate-100 bg-white" id="tai-lieu-tham-khao" x-data="{ activeTab: '{{ $referenceInitialTab }}' }">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="mx-auto max-w-3xl text-center">
                 <h2 class="display-title text-3xl leading-tight md:text-4xl">Các dự án nổi bật</h2>
             </header>

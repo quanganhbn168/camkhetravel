@@ -1,0 +1,241 @@
+/* Outsourced marketing: operating system/dashboard layout. */
+.tht-landing-marketing-page {
+    --marketing-layout-ink: #0d2135;
+    --marketing-layout-accent: #ef8b3a;
+    --marketing-layout-soft: #e8f0f4;
+    background: #f2f5f7;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero {
+    background: var(--marketing-layout-ink);
+    color: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, .78fr);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero h1,
+.tht-landing-marketing-page .tht-landing-marketing-hero__summary,
+.tht-landing-marketing-page .tht-landing-marketing-hero__highlights li,
+.tht-landing-marketing-page .tht-landing-marketing-hero__microcopy {
+    color: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-kicker,
+.tht-landing-marketing-page .tht-landing-marketing-hero__highlights i {
+    color: var(--marketing-layout-accent);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__image {
+    border: 10px solid rgba(255, 255, 255, .08);
+    border-radius: 0;
+    box-shadow: 18px 18px 0 var(--marketing-layout-accent);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-problems,
+.tht-landing-marketing-page .tht-landing-marketing-team,
+.tht-landing-marketing-page .tht-landing-marketing-kpi,
+.tht-landing-marketing-page .tht-landing-marketing-cases {
+    background: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-problem-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid #bfd0dc;
+    border-left: 1px solid #bfd0dc;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-problem-grid article {
+    min-height: 190px;
+    padding: 28px;
+    border-right: 1px solid #bfd0dc;
+    border-bottom: 1px solid #bfd0dc;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-problem-grid article:nth-child(2),
+.tht-landing-marketing-page .tht-landing-marketing-problem-grid article:nth-child(3) {
+    background: var(--marketing-layout-soft);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-fit {
+    background: #edf3f6;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-fit-grid {
+    gap: 0;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-fit-grid article {
+    border: 0;
+    border-top: 4px solid var(--marketing-layout-ink);
+    border-radius: 0;
+    background: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-fit-grid article + article {
+    border-top-color: var(--marketing-layout-accent);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-team-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: #bfd0dc;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-team-grid article {
+    min-height: 230px;
+    border: 0;
+    border-radius: 0;
+    background: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-modules {
+    background: var(--marketing-layout-ink);
+    color: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-modules .tht-landing-marketing-section__title,
+.tht-landing-marketing-page .tht-landing-marketing-modules .tht-landing-marketing-section__description {
+    color: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-30 {
+    background: #f2f5f7;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-30-grid {
+    position: relative;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-30-grid::before {
+    position: absolute;
+    top: 15px;
+    right: 0;
+    left: 0;
+    border-top: 1px solid #9fb6c4;
+    content: '';
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-30-grid article {
+    position: relative;
+    min-height: 230px;
+    padding: 46px 24px 20px;
+    border: 0;
+    border-left: 1px solid #bfd0dc;
+    border-radius: 0;
+    background: transparent;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-30-grid article::before {
+    position: absolute;
+    top: 9px;
+    left: 23px;
+    width: 13px;
+    height: 13px;
+    border: 3px solid #f2f5f7;
+    border-radius: 50%;
+    background: var(--marketing-layout-accent);
+    content: '';
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-plans {
+    background: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid {
+    display: block;
+    border-top: 2px solid var(--marketing-layout-ink);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article,
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article.is-featured {
+    display: grid;
+    grid-template-columns: 56px minmax(180px, .8fr) minmax(210px, .8fr) minmax(0, 1.3fr) auto;
+    grid-template-areas:
+        "number title price fit cta"
+        "number title price items cta";
+    align-items: center;
+    gap: 20px;
+    min-height: 150px;
+    padding: 24px 0;
+    border: 0;
+    border-bottom: 1px solid #bfd0dc;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article h3,
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article p,
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article ul {
+    margin: 0;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-plan-number { grid-area: number; }
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article h3 { grid-area: title; }
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article .tht-landing-price { grid-area: price; }
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article > p { grid-area: fit; }
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article > ul { grid-area: items; }
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid article > a { grid-area: cta; }
+
+.tht-landing-marketing-page .tht-landing-marketing-plan-grid .tht-landing-price {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: #bfd0dc;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-kpi-grid article {
+    min-height: 230px;
+    border: 0;
+    border-radius: 0;
+    background: var(--marketing-layout-ink);
+    color: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-kpi-grid article h3,
+.tht-landing-marketing-page .tht-landing-marketing-kpi-grid article p {
+    color: #fff;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-case-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-case-grid article {
+    border-radius: 0;
+}
+
+@media (max-width: 767.98px) {
+    .tht-landing-marketing-page .tht-landing-marketing-hero__grid,
+    .tht-landing-marketing-page .tht-landing-marketing-team-grid,
+    .tht-landing-marketing-page .tht-landing-marketing-kpi-grid,
+    .tht-landing-marketing-page .tht-landing-marketing-30-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tht-landing-marketing-page .tht-landing-marketing-plan-grid article,
+    .tht-landing-marketing-page .tht-landing-marketing-plan-grid article.is-featured {
+        grid-template-columns: 46px 1fr;
+        grid-template-areas:
+            "number title"
+            "number price"
+            "number fit"
+            "number items"
+            "number cta";
+    }
+
+    .tht-landing-marketing-page .tht-landing-marketing-case-grid {
+        grid-template-columns: 1fr;
+    }
+}

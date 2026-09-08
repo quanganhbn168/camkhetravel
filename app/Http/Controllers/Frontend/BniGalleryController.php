@@ -42,7 +42,7 @@ class BniGalleryController extends Controller
             ->paginate(18)
             ->withQueryString();
 
-        return view('frontend.bni-gallery-index', [
+        return view('frontend.bni.gallery-index', [
             'activityOptions' => $activityOptions,
             'galleryItems' => $galleryItems,
             'selectedActivity' => $selectedActivity,
@@ -68,7 +68,7 @@ class BniGalleryController extends Controller
         $imageUrl = $galleryItem->bniMediaUrl('image');
         abort_unless($imageUrl, 404);
 
-        return view('frontend.bni-gallery-show', [
+        return view('frontend.bni.gallery-show', [
             'galleryItem' => $galleryItem,
             'imageUrl' => $imageUrl,
             'seo' => $this->seo->listing(

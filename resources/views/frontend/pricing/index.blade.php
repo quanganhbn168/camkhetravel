@@ -5,7 +5,7 @@
 @section('content')
     <section class="pricing-page-hero">
         <div class="pricing-page-hero__glow" aria-hidden="true"></div>
-        <div class="site-shell pricing-page-hero__inner">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 pricing-page-hero__inner">
             <p class="pricing-page-hero__eyebrow">BẢNG GIÁ THEO DỊCH VỤ</p>
             <h1>{{ $selectedService ? 'Mức đầu tư cho '.$selectedService->title : 'Chọn đúng dịch vụ, xem đúng bảng giá' }}</h1>
             <p>Thay vì trộn tất cả gói trên một màn hình, mỗi dịch vụ có bảng giá, phạm vi công việc và tài liệu riêng để anh/chị dễ so sánh.</p>
@@ -13,7 +13,7 @@
     </section>
 
     <section class="pricing-service-directory" aria-labelledby="pricing-service-directory-title">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="pricing-service-directory__heading">
                 <div>
                     <p class="pricing-service-directory__eyebrow">01 · CHỌN DỊCH VỤ</p>
@@ -68,7 +68,7 @@
 
     @if ($selectedService)
         <section class="pricing-selected-service" id="chi-tiet-bang-gia" aria-labelledby="pricing-selected-service-title">
-            <div class="site-shell pricing-selected-service__layout">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 pricing-selected-service__layout">
                 <div>
                     <p class="pricing-service-directory__eyebrow">02 · BẢNG GIÁ ĐANG XEM</p>
                     <h2 id="pricing-selected-service-title">{{ $selectedService->title }}</h2>
@@ -97,7 +97,7 @@
 
         @if ($servicePricingMatrix['packages'] === [] && ! $pricingMediaUrl && ! $pricingSourceUrl)
             <section class="section-space">
-                <div class="site-shell">
+                <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                     <div class="pricing-page-empty">
                         <h2>Bảng giá dịch vụ đang được hoàn thiện</h2>
                         <p>Anh/chị để lại mục tiêu và ngân sách dự kiến, THT Media sẽ tư vấn phạm vi phù hợp.</p>
@@ -109,7 +109,7 @@
     @endif
 
     <section class="bg-ink py-14 text-white">
-        <div class="site-shell flex flex-col items-start justify-between gap-7 md:flex-row md:items-center">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col items-start justify-between gap-7 md:flex-row md:items-center">
             <div><h2 class="font-display text-3xl md:text-4xl">Cần một cấu hình riêng?</h2><p class="mt-3 max-w-2xl leading-7 text-slate-300">THT Media có thể ghép phạm vi theo mục tiêu, kênh triển khai, tiến độ và ngân sách thực tế.</p></div>
             <a class="button-primary shrink-0" href="{{ LocalizedUrl::route('contact') }}">Yêu cầu báo giá <span aria-hidden="true">→</span></a>
         </div>

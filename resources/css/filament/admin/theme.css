@@ -1,3 +1,7 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
 @import 'tailwindcss' source(none);
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import '../../../../vendor/awcodes/filament-curator/resources/css/plugin.css';
@@ -15,9 +19,9 @@
 }
 
 .fi-fo-rich-editor-main {
-    @apply h-96 overflow-y-auto overscroll-contain md:h-[36rem];
+    @apply h-96 overflow-hidden md:h-[36rem];
 }
 
 .fi-fo-rich-editor-content {
-    @apply min-h-full;
+    @apply min-h-0 overflow-y-auto overscroll-contain;
 }

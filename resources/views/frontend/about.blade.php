@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="about-page-hero">
-        <div class="site-shell about-page-hero__shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 about-page-hero__shell">
             <div class="about-page-hero__content" data-aos="fade-right">
                 <h1>{{ $about['title'] }}</h1>
                 @if ($about['intro'])
@@ -25,7 +25,7 @@
 
     @if (filled(trim(strip_tags($about['story'] ?? ''))))
         <section class="about-page-story section-space">
-            <div class="site-shell about-page-story__shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 about-page-story__shell">
                 <div class="about-page-story__media" data-aos="fade-right">
                     @if ($about['story_image_url'])
                         <img src="{{ $about['story_image_url'] }}" alt="{{ $about['story_title'] ?: $about['title'] }}" loading="lazy">
@@ -49,7 +49,7 @@
 
     @if ($about['video'])
         <section class="about-page-video section-space" aria-labelledby="about-page-video-title">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <header class="about-page-section-heading" data-aos="fade-up">
                     <h2 class="display-title" id="about-page-video-title">Video giới thiệu</h2>
                 </header>
@@ -69,7 +69,7 @@
 
     @if ($services->isNotEmpty())
         <section class="about-page-services section-space">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 @if ($about['services_title'] || $about['services_link_label'])
                     <header class="about-page-section-heading about-page-section-heading--split" data-aos="fade-up">
                         @if ($about['services_title'])
@@ -106,7 +106,7 @@
 
     @if ($about['mission'] || $about['vision'] || $about['core_values'])
         <section class="about-page-principles section-space">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 @if ($about['principles_title'])
                     <header class="about-page-section-heading" data-aos="fade-up">
                         <h2 class="display-title">{{ $about['principles_title'] }}</h2>
@@ -161,7 +161,7 @@
 
     @if ($historyTimeline->isNotEmpty())
         <section class="about-page-history section-space" x-data="{ activeHistory: 0 }">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 @if ($about['history_title'] || $about['history_description'])
                     <header class="about-page-section-heading" data-aos="fade-up">
                         @if ($about['history_title'])
@@ -222,7 +222,7 @@
         </section>
     @elseif ($about['history'])
         <section class="about-page-history section-space">
-            <div class="site-shell about-page-history__fallback">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 about-page-history__fallback">
                 @if ($about['history_title'])
                     <h2 class="display-title">{{ $about['history_title'] }}</h2>
                 @endif
@@ -236,7 +236,7 @@
 
     @if ($stats->isNotEmpty())
         <section class="about-page-stats section-space">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 @if ($about['stats_title'])
                     <header class="about-page-section-heading" data-aos="fade-up">
                         <h2 class="display-title">{{ $about['stats_title'] }}</h2>
@@ -256,7 +256,7 @@
 
     @if ($about['team_title'] || $about['team_description'] || $about['team_image_url'] || $departments->isNotEmpty())
         <section class="about-page-showcase about-page-team section-space">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 @if ($about['team_title'] || $about['team_description'])
                     <header class="about-page-section-heading" data-aos="fade-up">
                         @if ($about['team_title'])
@@ -313,7 +313,7 @@
 
     @if ($about['office_title'] || $about['office_description'] || $about['office_gallery']->isNotEmpty())
         <section class="about-page-showcase about-page-office section-space">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 @if ($about['office_title'] || $about['office_description'])
                     <header class="about-page-section-heading" data-aos="fade-up">
                         @if ($about['office_title'])
@@ -352,7 +352,7 @@
 
     @if ($about['cta_title'])
         <section class="about-page-cta">
-            <div class="site-shell about-page-cta__shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 about-page-cta__shell">
                 <div>
                     <h2>{{ $about['cta_title'] }}</h2>
                 </div>

@@ -1,0 +1,302 @@
+{
+    "template_key": "landing_profile",
+    "slug": "thiet-ke-profile-doanh-nghiep-ho-so-nang-luc",
+    "content": {
+        "page_class": "tht-landing-theme-enterprise",
+        "contact": {
+            "brand_name": "THT Media",
+            "hotline_1": "0973 494 999",
+            "hotline_display": "0973 494 999",
+            "zalo_url": "https://zalo.me/0973494999",
+            "email": "thtmediaqvm@gmail.com",
+            "hotline_2": "0375 433 678",
+            "address_1": "263 Bình Than, Đại Phúc, TP. Bắc Ninh",
+            "address_2": "68 Bính Hạ, Trang Hạ, Từ Sơn, Bắc Ninh",
+            "website": "https://thtmedia.com.vn",
+            "map_embed": "https://maps.google.com/maps?q=THT+Media+263+B%C3%ACnh+Than%2C+%C4%90%E1%BA%A1i+Ph%C3%BAc%2C+B%E1%BA%AFc+Ninh&t=&z=15&ie=UTF8&iwloc=&output=embed",
+            "favicon": "wp-uploads/2023/01/THT-media-favicon-150x150.png",
+            "logo_url": "wp-uploads/2023/01/THT-media-logo-2023.png",
+            "global_form_action": "https://script.google.com/macros/s/AKfycbzOVGGVT70K5jm9c2ekVzKGN0lXAaTIJbbsKenr5Q4pNVY6RqzNpYkuD1rdQfXq-Kwn/exec"
+        },
+        "brand": {
+            "name": "THT Media",
+            "logo": "logo-tht-new.png"
+        },
+        "navigation": [
+            {
+                "label": "Dịch vụ",
+                "url": "#dich-vu"
+            },
+            {
+                "label": "Ưu đãi",
+                "url": "#uu-dai"
+            },
+            {
+                "label": "Portfolio",
+                "url": "#portfolio"
+            },
+            {
+                "label": "Câu hỏi",
+                "url": "#faq"
+            }
+        ],
+        "footer_text": "THT Media biến dữ liệu doanh nghiệp thành profile rõ ràng, có cấu trúc và có thể sử dụng trong bán hàng, dự thầu hoặc hợp tác.",
+        "seo": {
+            "title": "Thiết Kế Profile Doanh Nghiệp – Hồ Sơ Năng Lực | THT Media",
+            "description": "Biên tập nội dung, chụp ảnh doanh nghiệp, thiết kế profile, hồ sơ năng lực và file trình chiếu. Gửi profile hiện tại để nhận audit miễn phí.",
+            "keywords": "thiết kế profile doanh nghiệp, hồ sơ năng lực, company profile, chụp ảnh doanh nghiệp, THT Media",
+            "image": "thietkeprofiledoanhnghiep/assets/images/live/og-thiet-ke-profile-doanh-nghiep.png"
+        },
+        "tracking_head": "",
+        "tracking_body": "",
+        "tracking_footer": "",
+        "form_action": "",
+        "hero": {
+            "title": "THIẾT KẾ PROFILE – HỒ SƠ NĂNG LỰC DOANH NGHIỆP",
+            "summary": "Thiết kế theo mục đích sử dụng để đối tác hiểu doanh nghiệp trước khi anh/chị bắt đầu thuyết trình. THT Media hỗ trợ từ định hướng nội dung, xây dựng cấu trúc, biên tập câu chữ, chụp ảnh doanh nghiệp đến thiết kế và hoàn thiện file sử dụng trên digital hoặc in ấn.",
+            "primary": "NHẬN ƯU ĐÃI NGAY",
+            "secondary": "XEM ƯU ĐÃI THÁNG 9",
+            "image": "thietkeprofiledoanhnghiep/assets/images/live/hero-thiet-ke-profile.jpg",
+            "image_alt": "Bộ profile doanh nghiệp thực tế đã thiết kế cho Novatech, Đậu Việt, Hoàng Nam và SEODO",
+            "highlights": [
+                "Định hướng nội dung theo mục đích sử dụng.",
+                "Có thể kết hợp chụp ảnh doanh nghiệp.",
+                "Bàn giao PDF, file in, slide hoặc ngoại ngữ theo phạm vi."
+            ],
+            "microcopy": "Chưa có profile cũng được. Chỉ cần gửi website hoặc thông tin giới thiệu doanh nghiệp."
+        },
+        "problems": {
+            "eyebrow": "PROFILE THIẾU SỨC THUYẾT PHỤC",
+            "title": "Profile thiếu sức thuyết phục thường không phải vì thiết kế xấu",
+            "items": [
+                {
+                    "title": "Quá nhiều thông tin về mình",
+                    "text": "Nội dung kể dài về lịch sử nhưng không trả lời điều đối tác muốn biết."
+                },
+                {
+                    "title": "Không có thứ tự ưu tiên",
+                    "text": "Sản phẩm, máy móc, nhân sự, dự án và chứng nhận được đưa vào nhưng thiếu cấu trúc dẫn dắt."
+                },
+                {
+                    "title": "Thiếu bằng chứng",
+                    "text": "Nhiều câu như “uy tín”, “chuyên nghiệp”, “hàng đầu” nhưng không có dự án, dữ liệu hoặc hình ảnh thực tế."
+                },
+                {
+                    "title": "Hình ảnh chung chung",
+                    "text": "Ảnh stock hoặc ảnh chất lượng thấp khiến quy mô thật của doanh nghiệp không được thể hiện."
+                },
+                {
+                    "title": "Không rõ dùng để làm gì",
+                    "text": "Một profile dùng cho bán hàng, dự thầu, tuyển dụng và nhà đầu tư cùng lúc thường không tối ưu cho mục tiêu nào."
+                }
+            ],
+            "footer": "Một profile hiệu quả cần trả lời nhanh năm câu hỏi: doanh nghiệp là ai, đang giải quyết vấn đề gì, có năng lực nào, bằng chứng ở đâu và vì sao nên lựa chọn."
+        },
+        "services": {
+            "eyebrow": "DỊCH VỤ GỒM NHỮNG GÌ?",
+            "title": "THT không chỉ dàn trang những gì doanh nghiệp gửi sang",
+            "items": [
+                {
+                    "title": "Định hướng nội dung",
+                    "text": "Xác định đối tượng đọc, mục tiêu sử dụng, thông điệp và điểm mạnh cần ưu tiên."
+                },
+                {
+                    "title": "Xây dựng cấu trúc",
+                    "text": "Lập mục lục và thứ tự nội dung để người đọc nắm được năng lực quan trọng trước."
+                },
+                {
+                    "title": "Biên tập và copywriting",
+                    "text": "Rút gọn, viết lại và chuẩn hóa câu chữ theo ngôn ngữ doanh nghiệp, tránh những đoạn giới thiệu chung chung."
+                },
+                {
+                    "title": "Ưu đãi khi kết hợp chụp ảnh",
+                    "text": "Khi triển khai profile cùng gói chụp ảnh doanh nghiệp, anh/chị được giảm 50.000đ trên mỗi trang thiết kế profile trong thời gian ưu đãi."
+                },
+                {
+                    "title": "Thiết kế",
+                    "text": "Xây dựng concept, hệ thống lưới, màu sắc, typography, icon, biểu đồ và các trang nội dung."
+                },
+                {
+                    "title": "Hoàn thiện đầu ra",
+                    "text": "File PDF gửi online, file phục vụ in ấn, mockup, bản trình chiếu hoặc phiên bản ngoại ngữ theo phạm vi dự án."
+                }
+            ],
+            "note": "THT có thể kết hợp chụp ảnh doanh nghiệp phục vụ profile, brochure, hồ sơ thầu, đồng thời phát triển thêm catalogue hoặc website từ cùng bộ thông tin.",
+            "cta_note": "Ưu đãi tháng 9 giảm 50.000đ/trang khi anh/chị liên hệ THT qua Zalo.",
+            "cta": "NHẬN ƯU ĐÃI NGAY"
+        },
+        "plans": {
+            "eyebrow": "CÁC PHƯƠNG ÁN TRIỂN KHAI",
+            "title": "Chốt phạm vi sau khi biết số trang và tài liệu hiện có",
+            "items": [
+                {
+                    "title": "Thiết kế từ nội dung có sẵn",
+                    "price_label": "300.000đ/trang",
+                    "fit": "Doanh nghiệp đã có nội dung, hình ảnh và cấu trúc tương đối hoàn chỉnh.",
+                    "items": [
+                        "Đề xuất concept.",
+                        "Chuẩn hóa bố cục.",
+                        "Thiết kế.",
+                        "Hoàn thiện file."
+                    ],
+                    "cta": "NHẬN ƯU ĐÃI NGAY"
+                },
+                {
+                    "title": "Biên tập nội dung và thiết kế",
+                    "price_label": "Theo phạm vi biên tập",
+                    "price_note": "Mức nền thiết kế profile: 300.000đ/trang",
+                    "fit": "Doanh nghiệp đã có dữ liệu nhưng nội dung còn rời rạc hoặc chưa thể hiện được điểm mạnh.",
+                    "items": [
+                        "Audit tài liệu.",
+                        "Lập mục lục.",
+                        "Viết và biên tập.",
+                        "Thiết kế và hoàn thiện đầu ra."
+                    ],
+                    "cta": "NHẬN ƯU ĐÃI NGAY"
+                },
+                {
+                    "title": "Profile trọn gói",
+                    "price_label": "Theo brief thực tế",
+                    "price_note": "Chụp ảnh · nội dung · in ấn · ngoại ngữ báo riêng",
+                    "fit": "Doanh nghiệp cần xây dựng mới hoặc làm lại toàn bộ.",
+                    "items": [
+                        "Tư vấn chiến lược.",
+                        "Xây dựng cấu trúc và copywriting.",
+                        "Chụp ảnh doanh nghiệp.",
+                        "Thiết kế, bản in hoặc ngoại ngữ theo phạm vi."
+                    ],
+                    "cta": "NHẬN ƯU ĐÃI NGAY"
+                }
+            ]
+        },
+        "promotion": {
+            "eyebrow": "ƯU ĐÃI THÁNG 9",
+            "badge": "ƯU ĐÃI THÁNG 9 · GIẢM 50.000Đ/TRANG",
+            "headline_lead": "Giảm ngay",
+            "discount": "50.000đ/trang",
+            "headline_tail": "trong thời gian ưu đãi",
+            "body": "Khi liên hệ qua Zalo, THT sẽ trao đổi phạm vi phù hợp và giữ ưu đãi cho dự án của anh/chị.",
+            "deadline": "2026-09-15T23:59:59+07:00",
+            "deadline_label": "Ưu đãi tháng 9 đang diễn ra",
+            "deadline_status": "Ưu đãi tháng 9 kết thúc lúc 23:59 ngày 15/09/2026.",
+            "expired_status": "Ưu đãi tháng 9 đã kết thúc.",
+            "cta": "NHẬN ƯU ĐÃI NGAY"
+        },
+        "portfolio": {
+            "eyebrow": "SẢN PHẨM THỰC TẾ",
+            "title": "Một số profile doanh nghiệp đã triển khai theo từng lĩnh vực",
+            "items": [
+                {
+                    "label": "Nhà xưởng & bất động sản công nghiệp",
+                    "title": "Novatech — Profile nhà xưởng xây sẵn",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-novatech-factory.png",
+                    "alt": "Bìa profile nhà xưởng và văn phòng xây sẵn Novatech"
+                },
+                {
+                    "label": "Thực phẩm",
+                    "title": "Đậu Việt — Company profile thực phẩm từ đậu nành",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-dau-viet.png",
+                    "alt": "Bìa company profile Đậu Việt",
+                    "preview_url": "https://drive.google.com/file/d/1arAAb7aBGJVuJrNr4Th1jQugu3cfJq9o/view?usp=drive_link",
+                    "preview_label": "Xem profile đầy đủ"
+                },
+                {
+                    "label": "Xây dựng",
+                    "title": "Hoàng Nam — Company profile xây dựng",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-hoang-nam.png",
+                    "alt": "Bìa company profile Hoàng Nam",
+                    "preview_url": "https://drive.google.com/file/d/1k-bZ9e70kwOr6SocqC3SGgpQA2iFLtTY/view?usp=drive_link",
+                    "preview_label": "Xem profile đầy đủ"
+                },
+                {
+                    "label": "Sản xuất",
+                    "title": "Novatech Vina — Profile doanh nghiệp song ngữ",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-novatech-vina.png",
+                    "alt": "Bìa profile Novatech Vina",
+                    "preview_url": "https://drive.google.com/file/d/1Xju2H22Cp-r6rMY5exCJTDFHatV7jW59/view?usp=drive_link",
+                    "preview_label": "Xem profile đầy đủ"
+                },
+                {
+                    "label": "Marketing",
+                    "title": "SEODO — Company profile agency SEO",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-seodo.png",
+                    "alt": "Bìa company profile SEODO",
+                    "preview_url": "https://drive.google.com/file/d/13eN0Va3mThezjwNikEQ4inpPDpnbPlXN/view",
+                    "preview_label": "Xem profile đầy đủ"
+                },
+                {
+                    "label": "Truyền thông",
+                    "title": "THT Media — Company profile",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-tht-media.png",
+                    "alt": "Bìa company profile THT Media"
+                },
+                {
+                    "label": "Bất động sản công nghiệp",
+                    "title": "Novatech — Profile giải pháp nhà xưởng",
+                    "image": "thietkeprofiledoanhnghiep/assets/images/live/profile-novatech-industrial.png",
+                    "alt": "Bìa profile giải pháp nhà xưởng Novatech"
+                }
+            ],
+            "note": "Hình ảnh sử dụng bìa profile thực tế từ bộ tài liệu dự án được cung cấp."
+        },
+        "reasons": {
+            "eyebrow": "VÌ SAO CHỌN THT",
+            "title": "Profile là công cụ truyền thông và bán hàng, không phải sản phẩm trang trí",
+            "image": "thietkeprofiledoanhnghiep/assets/images/live/tht-media-team-profile-workshop.png",
+            "image_alt": "Đội ngũ THT Media trao đổi và hoàn thiện profile doanh nghiệp cùng khách hàng",
+            "items": [
+                {
+                    "title": "Hiểu nội dung doanh nghiệp",
+                    "text": "THT tiếp cận profile như một công cụ truyền thông và bán hàng, không phải một sản phẩm trang trí.",
+                    "icon": "fa-book-open"
+                },
+                {
+                    "title": "Tạo hình ảnh thật",
+                    "text": "Chụp văn phòng, nhà máy, con người, máy móc và dự án thay vì phụ thuộc vào ảnh stock.",
+                    "icon": "fa-camera"
+                },
+                {
+                    "title": "Một đầu mối nhiều hạng mục",
+                    "text": "Nội dung, hình ảnh, thiết kế, video profile và website có thể dùng chung một hệ thống thông tin.",
+                    "icon": "fa-diagram-project"
+                },
+                {
+                    "title": "Tối ưu nhiều định dạng",
+                    "text": "Profile có thể phát triển thành PDF, bản in, slide giới thiệu hoặc nội dung cho website.",
+                    "icon": "fa-file-lines"
+                }
+            ]
+        },
+        "faq": {
+            "eyebrow": "FAQ",
+            "title": "Trao đổi trước khi bắt đầu profile",
+            "items": [
+                {
+                    "question": "Chưa có nội dung thì THT có làm được không?",
+                    "answer": "Có. Doanh nghiệp cần cung cấp tài liệu gốc, website, hồ sơ pháp lý, sản phẩm, dự án và một đầu mối trả lời thông tin."
+                },
+                {
+                    "question": "Không có ảnh đẹp thì sao?",
+                    "answer": "THT có thể lập shot-list và chụp ảnh tại văn phòng, nhà máy, showroom hoặc công trình theo phạm vi dự án."
+                },
+                {
+                    "question": "Profile có thể làm song ngữ không?",
+                    "answer": "Có thể. Ngôn ngữ, trách nhiệm biên dịch và kiểm tra thuật ngữ cần được thống nhất trong báo giá."
+                },
+                {
+                    "question": "Có bàn giao file chỉnh sửa không?",
+                    "answer": "Định dạng bàn giao và quyền sử dụng file nguồn cần được ghi rõ trong hợp đồng."
+                },
+                {
+                    "question": "Có hỗ trợ in ấn không?",
+                    "answer": "Có thể đưa vào phạm vi dự án hoặc bàn giao file chuẩn in để doanh nghiệp chủ động lựa chọn nhà in."
+                }
+            ]
+        },
+        "contact_section": {
+            "title": "LIÊN HỆ ĐỂ NHẬN ƯU ĐÃI THÁNG 9",
+            "body": "Gửi file PDF, website hoặc tài liệu giới thiệu hiện có. THT sẽ đánh giá phạm vi và áp dụng ưu đãi 50.000đ/trang khi phù hợp.",
+            "cta": "GỬI PROFILE – NHẬN AUDIT MIỄN PHÍ"
+        }
+    }
+}

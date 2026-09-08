@@ -2,13 +2,49 @@
 
 @if ($pricingMatrix['packages'] !== [])
     <section id="goi-dich-vu" class="service-pricing-section section-space">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="service-pricing-section__header">
                 <h2 class="display-title">{{ $pricingMatrix['title'] }}</h2>
                 <p>{{ $pricingMatrix['description'] ?: 'Các gói được xây dựng theo phạm vi công việc và mục tiêu thực tế của từng dịch vụ.' }}</p>
             </header>
 
-            <div class="service-pricing-table-wrap">
+            <div class="service-package-grid">
+                @foreach ($pricingMatrix['packages'] as $package)
+                    <article class="service-package-card {{ $package['is_featured'] ? 'is-featured' : '' }}">
+                        <div class="service-package-card__intro">
+                            @if ($package['badge'])<span class="service-pricing-table__badge">{{ $package['badge'] }}</span>@endif
+                            <h3>{{ $package['name'] }}</h3>
+                            @if ($package['description'])<p>{{ $package['description'] }}</p>@endif
+                        </div>
+                        @include('frontend.services.partials.package-price')
+                        <a class="{{ $package['is_featured'] ? 'button-primary' : 'button-dark' }}" href="{{ LocalizedUrl::route('contact', ['service' => $service->id, 'plan' => $package['id']]) }}" aria-label="Nhận tư vấn gói {{ $package['name'] }}">Nhận tư vấn gói này <span aria-hidden="true">→</span></a>
+                        @if ($package['items'] !== [])
+                            <ul class="service-package-card__items">
+                                @foreach (array_slice($package['items'], 0, 4) as $item)
+                                    <li><span aria-hidden="true">✓</span><div>{{ $item['name'] }}@if ($item['description'])<small>{{ $item['description'] }}</small>@endif</div></li>
+                                @endforeach
+                            </ul>
+                            @if (count($package['items']) > 4)
+                                <details class="service-package-card__more">
+                                    <summary>Xem thêm {{ count($package['items']) - 4 }} hạng mục</summary>
+                                    <ul class="service-package-card__items">
+                                        @foreach (array_slice($package['items'], 4) as $item)
+                                            <li><span aria-hidden="true">✓</span><div>{{ $item['name'] }}@if ($item['description'])<small>{{ $item['description'] }}</small>@endif</div></li>
+                                        @endforeach
+                                    </ul>
+                                </details>
+                            @endif
+                        @endif
+                    </article>
+                @endforeach
+            </div>
+
+            @if (count($pricingMatrix['packages']) > 1 && $pricingMatrix['comparison_rows'] !== [])
+            <details class="service-pricing-comparison">
+                <summary>So sánh chi tiết các gói <span aria-hidden="true">＋</span></summary>
+                <p class="service-pricing-comparison__hint">Cuộn ngang để xem đầy đủ các gói.</p>
+            <div class="service-pricing-table-wrap" tabindex="0" role="region" aria-label="Bảng so sánh các gói dịch vụ">
+
                 <table class="service-pricing-table">
                     <caption class="sr-only">So sánh các gói trong {{ $pricingMatrix['title'] }} của {{ $service->title }}</caption>
                     <thead>
@@ -23,39 +59,26 @@
                                     @if ($package['description'])
                                         <span class="service-pricing-table__package-description">{{ $package['description'] }}</span>
                                     @endif
-                                    <span class="service-pricing-table__price">
-                                        @if ($package['has_promotion'])
-                                            <del>{{ number_format($package['list_price'], 0, ',', '.') }}đ</del>
-                                            <strong>{{ number_format($package['promotion_price'], 0, ',', '.') }}đ</strong>
-                                            <small>{{ $package['promotion_type'] === 'percent' ? 'Giảm '.$package['promotion_value'].'%' : 'Giá khuyến mại' }}</small>
-                                        @elseif ($package['list_price'] !== null)
-                                            <strong>{{ number_format($package['list_price'], 0, ',', '.') }}đ</strong>
-                                        @else
-                                            <strong>{{ $package['price_label'] ?: 'Báo giá theo yêu cầu' }}</strong>
-                                        @endif
-                                        @if ($package['price_unit'])
-                                            <small>{{ $package['price_unit'] }}</small>
-                                        @endif
-                                    </span>
+                                    @include('frontend.services.partials.package-price')
                                 </th>
                             @endforeach
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($pricingMatrix['items'] as $itemName)
+                        @foreach ($pricingMatrix['comparison_rows'] as $comparisonRow)
                             <tr>
-                                <th scope="row">{{ $itemName }}</th>
+                                <th scope="row">{{ $comparisonRow['name'] }}</th>
                                 @foreach ($pricingMatrix['packages'] as $package)
-                                    @php $packageItem = collect($package['items'])->firstWhere('name', $itemName); @endphp
+                                    @php $cell = $comparisonRow['cells'][$package['id']]; @endphp
                                     <td class="service-pricing-table__included-cell">
-                                        @if ($packageItem)
+                                        @if ($cell['included'] === true)
                                             <span class="service-pricing-table__check" aria-label="Có">✓</span>
-                                            @if ($packageItem['description'])
-                                                <small>{{ $packageItem['description'] }}</small>
-                                            @endif
+                                        @elseif ($cell['included'] === false)
+                                            <span class="service-pricing-table__not-included" aria-label="Không bao gồm">—</span>
                                         @else
-                                            <span class="service-pricing-table__not-included" aria-label="Không áp dụng">—</span>
+                                            <small>Chưa thiết lập</small>
                                         @endif
+                                        @if (filled($cell['value']))<small>{{ $cell['value'] }}</small>@endif
                                     </td>
                                 @endforeach
                             </tr>
@@ -71,6 +94,8 @@
                     </tfoot>
                 </table>
             </div>
+            </details>
+            @endif
         </div>
     </section>
 @endif

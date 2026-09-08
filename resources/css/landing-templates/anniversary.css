@@ -29,10 +29,6 @@
     background: var(--landing-primary);
 }
 
-.landing-page.landing-page--anniversary .resource-related-section#tu-van > .site-shell {
-    width: min(100% - 2rem, 76rem);
-}
-
 @media (max-width: 64rem) {
     .landing-page.landing-page--anniversary .landing-hero::before {
         background: linear-gradient(180deg, #fff 0 52%, color-mix(in srgb, var(--landing-primary) 96%, black) 52% 100%);

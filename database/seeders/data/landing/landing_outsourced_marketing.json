@@ -1,0 +1,433 @@
+{
+    "template_key": "landing_outsourced_marketing",
+    "slug": "tht-media-phong-marketing-thue-ngoai-gia-re",
+    "content": {
+        "page_class": "tht-landing-theme-enterprise",
+        "contact": {
+            "brand_name": "THT Media",
+            "hotline_1": "0973 494 999",
+            "hotline_display": "0973 494 999",
+            "zalo_url": "https://zalo.me/0973494999",
+            "email": "thtmediaqvm@gmail.com",
+            "hotline_2": "0375 433 678",
+            "address_1": "263 Bình Than, Đại Phúc, TP. Bắc Ninh",
+            "address_2": "68 Bính Hạ, Trang Hạ, Từ Sơn, Bắc Ninh",
+            "website": "https://thtmedia.com.vn",
+            "map_embed": "https://maps.google.com/maps?q=THT+Media+263+B%C3%ACnh+Than%2C+%C4%90%E1%BA%A1i+Ph%C3%BAc%2C+B%E1%BA%AFc+Ninh&t=&z=15&ie=UTF8&iwloc=&output=embed",
+            "favicon": "wp-uploads/2023/01/THT-media-favicon-150x150.png",
+            "logo_url": "wp-uploads/2023/01/THT-media-logo-2023.png",
+            "global_form_action": "https://script.google.com/macros/s/AKfycbzOVGGVT70K5jm9c2ekVzKGN0lXAaTIJbbsKenr5Q4pNVY6RqzNpYkuD1rdQfXq-Kwn/exec"
+        },
+        "brand": {
+            "name": "THT Media",
+            "logo": "logo-tht-new.png"
+        },
+        "navigation": [
+            {
+                "label": "Phù hợp",
+                "url": "#phu-hop"
+            },
+            {
+                "label": "Đội ngũ",
+                "url": "#doi-ngu"
+            },
+            {
+                "label": "30 ngày đầu",
+                "url": "#30-ngay"
+            },
+            {
+                "label": "KPI",
+                "url": "#kpi"
+            },
+            {
+                "label": "Câu hỏi",
+                "url": "#faq"
+            }
+        ],
+        "footer_text": "THT Media đồng hành như một phòng Marketing mở rộng: có kế hoạch, có người triển khai và có báo cáo để cùng quyết định bước tiếp theo.",
+        "seo": {
+            "title": "Phòng Marketing Thuê Ngoài Cho Doanh Nghiệp | THT Media",
+            "description": "Chiến lược, nội dung, thiết kế, video, quảng cáo, website và SEO trong một đội ngũ. Gửi Fanpage/Website để nhận audit và khung ưu tiên 30 ngày.",
+            "keywords": "phòng marketing thuê ngoài, marketing thuê ngoài, marketing doanh nghiệp, content, quảng cáo, website, SEO, THT Media",
+            "image": "wp-uploads/2026/08/HNP00214-1024x683.jpg"
+        },
+        "tracking_head": "",
+        "tracking_body": "",
+        "tracking_footer": "",
+        "form_action": "",
+        "hero": {
+            "eyebrow": "DỊCH VỤ MARKETING THUÊ NGOÀI",
+            "title": "PHÒNG MARKETING THUÊ NGOÀI CHO DOANH NGHIỆP",
+            "summary": "Một đội Marketing để triển khai đều đặn – không phải tuyển đủ từng vị trí. THT Media đồng hành như một bộ phận Marketing mở rộng để cùng xác định mục tiêu, xây dựng kế hoạch, sản xuất nội dung, thiết kế, video, quảng cáo, website – SEO và theo dõi hiệu quả theo từng giai đoạn.",
+            "primary": "GỬI FANPAGE/WEBSITE – NHẬN AUDIT",
+            "secondary": "NHẬN KHUNG KẾ HOẠCH 30 NGÀY",
+            "image": "wp-uploads/2026/08/HNP00214-1024x683.jpg",
+            "image_alt": "Đội ngũ THT Media trao đổi kế hoạch Marketing cùng doanh nghiệp",
+            "highlights": [
+                "Kế hoạch bám theo mục tiêu kinh doanh.",
+                "Phân rõ người phụ trách từng hạng mục.",
+                "Nội dung, media, quảng cáo và website triển khai đồng bộ.",
+                "Báo cáo đi kèm đánh giá và hành động tiếp theo."
+            ],
+            "microcopy": "THT chỉ ra điểm nghẽn và hạng mục nên ưu tiên trước, không mặc định bán toàn bộ dịch vụ."
+        },
+        "problems": {
+            "eyebrow": "ĐIỂM NGHẼN THƯỜNG GẶP",
+            "title": "Doanh nghiệp không thiếu người đăng bài. Doanh nghiệp thiếu một hệ thống tạo ra kết quả.",
+            "items": [
+                {
+                    "title": "Mỗi kênh làm một kiểu",
+                    "text": "Fanpage, website, quảng cáo và video không dùng chung một thông điệp."
+                },
+                {
+                    "title": "Một nhân sự phải làm tất cả",
+                    "text": "Viết bài, thiết kế, quay dựng, quảng cáo và báo cáo khiến phần nào cũng chỉ dừng ở mức cơ bản."
+                },
+                {
+                    "title": "Chạy quảng cáo trước nền tảng",
+                    "text": "Nội dung, ưu đãi, landing page và quy trình phản hồi lead chưa tốt nhưng ngân sách đã được sử dụng."
+                },
+                {
+                    "title": "Không có KPI theo từng tầng",
+                    "text": "Chỉ theo dõi lượt tiếp cận hoặc tương tác mà không biết chúng đóng góp thế nào vào lead và doanh thu."
+                },
+                {
+                    "title": "Báo cáo chỉ có số liệu",
+                    "text": "Có bảng số nhưng không có kết luận, nguyên nhân và việc cần làm trong tháng tiếp theo."
+                }
+            ],
+            "footer": "THT bắt đầu từ mục tiêu kinh doanh, không bắt đầu từ câu hỏi “mỗi tháng đăng bao nhiêu bài”."
+        },
+        "fit": {
+            "eyebrow": "CÓ PHÙ HỢP KHÔNG?",
+            "title": "Phòng Marketing thuê ngoài không phải lựa chọn phù hợp cho mọi doanh nghiệp",
+            "yes": [
+                "Chưa có đội Marketing nội bộ.",
+                "Chỉ có một nhân sự Marketing và cần đội sản xuất hỗ trợ.",
+                "Đang mở chi nhánh hoặc ra mắt sản phẩm mới.",
+                "Fanpage và website hoạt động rời rạc.",
+                "Có ngân sách nhưng chưa biết nên ưu tiên kênh nào.",
+                "Lãnh đạo cần theo dõi tiến độ và số liệu rõ ràng."
+            ],
+            "no": [
+                "Muốn có doanh thu ngay nhưng không cung cấp thông tin sản phẩm.",
+                "Không có nhân sự tiếp nhận và xử lý lead.",
+                "Không thống nhất được ngân sách hoặc phạm vi.",
+                "Kỳ vọng Marketing tự giải quyết vấn đề sản phẩm, giá hoặc năng lực bán hàng.",
+                "Không thể phản hồi và duyệt nội dung theo lịch."
+            ],
+            "footer": "Marketing thuê ngoài hiệu quả khi THT và doanh nghiệp cùng vận hành như một đội, không phải quan hệ “giao việc rồi chờ kết quả”."
+        },
+        "team": {
+            "eyebrow": "ĐỘI NGŨ DOANH NGHIỆP NHẬN ĐƯỢC",
+            "title": "Thay vì tìm một người biết tất cả, doanh nghiệp có một nhóm đúng chuyên môn",
+            "items": [
+                {
+                    "role": "Account / Project Manager",
+                    "text": "Tiếp nhận yêu cầu, điều phối công việc và là đầu mối trao đổi.",
+                    "icon": "fa-user-tie"
+                },
+                {
+                    "role": "Marketing Strategist",
+                    "text": "Phân tích mục tiêu, khách hàng, thông điệp, kênh và kế hoạch.",
+                    "icon": "fa-compass"
+                },
+                {
+                    "role": "Content",
+                    "text": "Xây dựng trụ cột nội dung, bài viết, kịch bản và nội dung landing page.",
+                    "icon": "fa-pen-nib"
+                },
+                {
+                    "role": "Designer",
+                    "text": "Thiết kế hệ thống hình ảnh cho social, quảng cáo và các chiến dịch.",
+                    "icon": "fa-palette"
+                },
+                {
+                    "role": "Media",
+                    "text": "Chụp ảnh, quay video, dựng nội dung ngắn và sản xuất tài nguyên.",
+                    "icon": "fa-video"
+                },
+                {
+                    "role": "Ads",
+                    "text": "Triển khai và tối ưu quảng cáo theo mục tiêu đã thống nhất.",
+                    "icon": "fa-bullhorn"
+                },
+                {
+                    "role": "Website – SEO",
+                    "text": "Landing page, nội dung website, tối ưu tìm kiếm và tài sản dài hạn.",
+                    "icon": "fa-laptop-code"
+                }
+            ],
+            "note": "Thành phần đội ngũ phụ thuộc vào gói và mục tiêu. Không phải mọi dự án đều cần đầy đủ tất cả vị trí ngay từ tháng đầu."
+        },
+        "modules": {
+            "eyebrow": "NHÓM CÔNG VIỆC",
+            "title": "Một kế hoạch chung, nhiều nhóm chuyên môn phối hợp",
+            "items": [
+                {
+                    "title": "Chiến lược và nền tảng",
+                    "text": "Phân tích hiện trạng, khách hàng, đối thủ, định vị, thông điệp, mục tiêu và KPI.",
+                    "icon": "fa-compass"
+                },
+                {
+                    "title": "Quản trị social",
+                    "text": "Lập lịch nội dung, viết bài, thiết kế, video, đăng tải và tối ưu theo phản hồi thực tế.",
+                    "icon": "fa-hashtag"
+                },
+                {
+                    "title": "Sản xuất media",
+                    "text": "Chụp ảnh, video doanh nghiệp, video quảng cáo, nội dung ngắn và tài nguyên cho chiến dịch.",
+                    "icon": "fa-camera"
+                },
+                {
+                    "title": "Quảng cáo",
+                    "text": "Facebook Ads, Google Ads hoặc TikTok Ads theo kênh phù hợp với sản phẩm và hành vi khách hàng.",
+                    "icon": "fa-bullhorn"
+                },
+                {
+                    "title": "Website – landing page – SEO",
+                    "text": "Xây dựng trang đích, nội dung bán hàng, bài viết SEO và tối ưu trải nghiệm chuyển đổi.",
+                    "icon": "fa-globe"
+                },
+                {
+                    "title": "Chăm sóc và báo cáo",
+                    "text": "Theo dõi dữ liệu, báo cáo định kỳ, phân tích điểm nghẽn và đề xuất kế hoạch tiếp theo.",
+                    "icon": "fa-chart-line"
+                }
+            ]
+        },
+        "first_30_days": {
+            "eyebrow": "30 NGÀY ĐẦU",
+            "title": "30 ngày đầu không chạy theo số lượng bài. THT ưu tiên xây đúng nền tảng.",
+            "items": [
+                {
+                    "week": "TUẦN 1",
+                    "title": "Audit và mục tiêu",
+                    "text": "Kiểm tra Fanpage, website, quảng cáo cũ, nội dung, tài nguyên thương hiệu, đối thủ và quy trình tiếp nhận khách hàng."
+                },
+                {
+                    "week": "TUẦN 2",
+                    "title": "Chiến lược và hệ thống nội dung",
+                    "text": "Xác định khách hàng, thông điệp, trụ cột nội dung, ưu đãi, kênh và kế hoạch đo lường."
+                },
+                {
+                    "week": "TUẦN 3",
+                    "title": "Sản xuất và triển khai",
+                    "text": "Hoàn thiện nội dung, thiết kế, video, landing page hoặc chiến dịch quảng cáo theo phạm vi."
+                },
+                {
+                    "week": "TUẦN 4",
+                    "title": "Đo lường và tối ưu",
+                    "text": "Đánh giá dữ liệu ban đầu, xác định phần hiệu quả, phần cần thay đổi và kế hoạch tháng tiếp theo."
+                }
+            ],
+            "cta": "NHẬN KHUNG TRIỂN KHAI 30 NGÀY QUA ZALO"
+        },
+        "plans": {
+            "eyebrow": "CÁC PHƯƠNG ÁN DỊCH VỤ",
+            "title": "Không bán bằng số lượng bài đơn thuần",
+            "items": [
+                {
+                    "number": "01",
+                    "title": "Xây nền tảng",
+                    "price_label": "10.000.000đ/tháng",
+                    "price_note": "Mức tham khảo gói quản trị Facebook tiêu chuẩn · chưa gồm VAT/ngân sách Ads",
+                    "fit": "Fanpage hoặc website chưa có hệ thống nội dung ổn định.",
+                    "items": [
+                        "Định hướng thông điệp.",
+                        "Trụ cột nội dung.",
+                        "Social content.",
+                        "Thiết kế và chuẩn hóa hình ảnh.",
+                        "Báo cáo hoạt động."
+                    ],
+                    "cta": "NHẬN TƯ VẤN GÓI NỀN TẢNG"
+                },
+                {
+                    "number": "02",
+                    "title": "Tăng trưởng",
+                    "price_label": "15.000.000đ/tháng",
+                    "price_note": "Mức tham khảo gói quản trị Facebook nâng cao · chưa gồm VAT/ngân sách Ads",
+                    "fit": "Doanh nghiệp đã có sản phẩm và nền tảng cơ bản, cần tiếp cận khách hàng mới.",
+                    "items": [
+                        "Nội dung và media.",
+                        "Landing page.",
+                        "Quảng cáo.",
+                        "Theo dõi lead.",
+                        "Tối ưu hiệu suất."
+                    ],
+                    "cta": "NHẬN CẤU HÌNH TĂNG TRƯỞNG"
+                },
+                {
+                    "number": "03",
+                    "title": "Phòng Marketing mở rộng",
+                    "price_label": "Theo scope thực tế",
+                    "price_note": "Nhiều kênh · chiến dịch · KPI · nguồn lực phối hợp",
+                    "fit": "Doanh nghiệp cần một đội ngũ phối hợp dài hạn trên nhiều kênh.",
+                    "items": [
+                        "Chiến lược và social.",
+                        "Media và Ads.",
+                        "Website – SEO.",
+                        "Chiến dịch.",
+                        "Báo cáo và kế hoạch quý."
+                    ],
+                    "cta": "ĐẶT LỊCH TRAO ĐỔI MỤC TIÊU"
+                }
+            ]
+        },
+        "kpi": {
+            "eyebrow": "KPI THEO TẦNG MỤC TIÊU",
+            "title": "KPI phải gắn với tầng mục tiêu, không gom tất cả vào một con số",
+            "items": [
+                {
+                    "level": "01",
+                    "title": "Nhận biết",
+                    "text": "Lượng tiếp cận, tần suất, lượt xem video và mức độ xuất hiện của thương hiệu.",
+                    "icon": "fa-eye"
+                },
+                {
+                    "level": "02",
+                    "title": "Quan tâm",
+                    "text": "Lượt truy cập, thời gian xem, tương tác có chất lượng, tin nhắn và hành động tìm hiểu.",
+                    "icon": "fa-heart"
+                },
+                {
+                    "level": "03",
+                    "title": "Chuyển đổi",
+                    "text": "Lead, lead đủ điều kiện, lịch hẹn, chi phí trên lead và doanh thu khi hệ thống theo dõi cho phép.",
+                    "icon": "fa-arrow-trend-up"
+                },
+                {
+                    "level": "04",
+                    "title": "Tài sản dài hạn",
+                    "text": "Website, dữ liệu khách hàng, thư viện hình ảnh, video, bài viết SEO và hệ thống nội dung có thể tái sử dụng.",
+                    "icon": "fa-database"
+                }
+            ],
+            "footer": "THT chỉ nên cam kết những chỉ số nằm trong phạm vi kiểm soát. Doanh thu cuối cùng còn phụ thuộc vào sản phẩm, mức giá, quy trình phản hồi và năng lực bán hàng."
+        },
+        "coordination": {
+            "eyebrow": "CÁCH PHỐI HỢP",
+            "title": "Doanh nghiệp luôn biết tháng này đang làm gì, ai phụ trách và kết quả ra sao",
+            "items": [
+                {
+                    "title": "Kế hoạch tháng",
+                    "text": "Mục tiêu, chiến dịch, chủ đề, đầu việc và chỉ số theo dõi.",
+                    "icon": "fa-calendar-days"
+                },
+                {
+                    "title": "Lịch nội dung",
+                    "text": "Trạng thái ý tưởng, nội dung, thiết kế, duyệt và đăng tải.",
+                    "icon": "fa-list-check"
+                },
+                {
+                    "title": "Quy trình duyệt",
+                    "text": "Chốt người có quyền duyệt, thời hạn phản hồi và số vòng điều chỉnh.",
+                    "icon": "fa-check-double"
+                },
+                {
+                    "title": "Cập nhật định kỳ",
+                    "text": "Việc đã hoàn thành, đang triển khai và vấn đề cần doanh nghiệp phối hợp.",
+                    "icon": "fa-arrows-rotate"
+                },
+                {
+                    "title": "Báo cáo",
+                    "text": "Dữ liệu, nhận xét, nguyên nhân, bài học và hành động tiếp theo.",
+                    "icon": "fa-chart-column"
+                },
+                {
+                    "title": "Quyền sở hữu tài sản",
+                    "text": "Tài khoản, nội dung, hình ảnh và dữ liệu bàn giao được quy định rõ trong hợp đồng.",
+                    "icon": "fa-shield-halved"
+                }
+            ]
+        },
+        "cases": {
+            "eyebrow": "CASE STUDY",
+            "title": "Kết quả cần được chứng minh bằng bài toán, cách làm và dữ liệu",
+            "items": [
+                {
+                    "title": "Hội nghị Thương mại Điện tử ECIM 2023 tại Bắc Ninh",
+                    "type": "Sự kiện – truyền thông",
+                    "image": "assets/images/live/marketing-01.jpg",
+                    "note": "Một case được THT Media công bố trong nhóm sản phẩm truyền thông và quảng cáo."
+                },
+                {
+                    "title": "Giải thể thao chào mừng thành lập thị xã Quế Võ",
+                    "type": "Sự kiện – nội dung",
+                    "image": "assets/images/live/marketing-02.jpg",
+                    "note": "Tư liệu truyền thông cho chương trình thể thao và hoạt động cộng đồng tại địa phương."
+                },
+                {
+                    "title": "Các dự án chăm sóc Fanpage THT Media đã thực hiện",
+                    "type": "Social content",
+                    "image": "assets/images/live/marketing-03.jpg",
+                    "note": "Danh mục được THT Media giới thiệu gồm Nhà hàng Cát Lợi, Thùy Anh Spa & Academy và các fanpage khác."
+                },
+                {
+                    "title": "THT Media: Hành trình sáng tạo TVC cho các đối tác",
+                    "type": "Video marketing",
+                    "image": "assets/images/live/marketing-04.jpg",
+                    "note": "Kết hợp ý tưởng, sản xuất video và phân phối nội dung theo mục tiêu truyền thông."
+                }
+            ],
+            "note": "Bộ ảnh được chọn từ tư liệu THT Media đã công bố; số liệu case sẽ chỉ bổ sung khi có dữ liệu được duyệt công bố."
+        },
+        "reasons": {
+            "eyebrow": "VÌ SAO CHỌN THT",
+            "title": "Marketing cần người làm, người phối hợp và người chịu trách nhiệm",
+            "items": [
+                {
+                    "title": "Có năng lực sản xuất nội dung nội bộ",
+                    "text": "THT không phụ thuộc hoàn toàn vào bên thứ ba khi cần hình ảnh, video và thiết kế.",
+                    "icon": "fa-clapperboard"
+                },
+                {
+                    "title": "Kết hợp Marketing và media",
+                    "text": "Nội dung quảng cáo, video, landing page và social có thể được xây từ cùng một chiến lược.",
+                    "icon": "fa-layer-group"
+                },
+                {
+                    "title": "Linh hoạt theo giai đoạn",
+                    "text": "Tháng đầu có thể tập trung xây nền tảng; kênh trả phí hoặc SEO được bổ sung theo mức độ sẵn sàng.",
+                    "icon": "fa-stairs"
+                },
+                {
+                    "title": "Báo cáo đi kèm đề xuất",
+                    "text": "Mục tiêu của báo cáo là giúp doanh nghiệp quyết định việc tiếp theo, không chỉ trình bày số liệu.",
+                    "icon": "fa-chart-line"
+                }
+            ]
+        },
+        "faq": {
+            "eyebrow": "FAQ",
+            "title": "Trao đổi trước khi bắt đầu",
+            "items": [
+                {
+                    "question": "Ngân sách quảng cáo có nằm trong phí dịch vụ không?",
+                    "answer": "Cần tách rõ phí vận hành và ngân sách trả trực tiếp cho nền tảng quảng cáo."
+                },
+                {
+                    "question": "THT có cam kết doanh thu không?",
+                    "answer": "Chỉ nên cam kết doanh thu khi hai bên có đủ dữ liệu, hệ thống theo dõi và thống nhất trách nhiệm của Marketing lẫn bộ phận bán hàng. Trường hợp thông thường nên cam kết đầu việc và KPI trong phạm vi kiểm soát."
+                },
+                {
+                    "question": "Tài khoản quảng cáo và dữ liệu thuộc về ai?",
+                    "answer": "Nên sử dụng tài khoản thuộc sở hữu doanh nghiệp và quy định quyền truy cập, bàn giao trong hợp đồng."
+                },
+                {
+                    "question": "Doanh nghiệp đã có nhân sự Marketing thì có thuê được không?",
+                    "answer": "Có. THT có thể bổ sung các phần còn thiếu như chiến lược, thiết kế, video, quảng cáo hoặc website."
+                },
+                {
+                    "question": "Bao lâu có thể đánh giá hiệu quả?",
+                    "answer": "Phụ thuộc kênh, dữ liệu hiện có, chu kỳ mua hàng và mục tiêu. Hai bên cần thống nhất mốc đánh giá cho từng tầng KPI, không dùng một thời hạn chung cho mọi dự án."
+                }
+            ]
+        },
+        "contact_section": {
+            "title": "ĐỪNG CHỌN GÓI MARKETING TRƯỚC KHI BIẾT ĐIỂM NGHẼN NẰM Ở ĐÂU",
+            "body": "Gửi Fanpage, website hoặc kênh đang sử dụng. THT sẽ đánh giá nhanh nội dung, thông điệp, kênh chuyển đổi và đề xuất những hạng mục nên ưu tiên trong 30 ngày đầu.",
+            "cta": "NHẬN AUDIT MARKETING"
+        }
+    }
+}

@@ -72,6 +72,7 @@ class SlugObserver
             'gioi-thieu',
             'lien-he',
             'tin-tuc',
+            'blog',
             'sitemap.xml',
             'robots.txt',
         ], true);

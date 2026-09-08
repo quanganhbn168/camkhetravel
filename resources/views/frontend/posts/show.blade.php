@@ -10,14 +10,14 @@
                 <img class="absolute inset-0 -z-20 h-full w-full object-cover opacity-30" src="{{ $post->image_url }}" alt="" aria-hidden="true">
             @endif
             <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--site-color-ink)_96%,transparent),color-mix(in_srgb,var(--site-color-ink)_68%,transparent))]"></div>
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <p class="flex max-w-3xl items-center gap-2 overflow-hidden text-sm text-slate-300"><a class="shrink-0 hover:text-white" href="{{ LocalizedUrl::route('home') }}">{{ __('site.home') }}</a><span class="text-slate-500">›</span><a class="shrink-0 hover:text-white" href="{{ LocalizedUrl::route('posts.index') }}">{{ __('site.news') }}</a><span class="text-slate-500">›</span><span class="truncate">{{ $post->title }}</span></p>
                 <p class="font-display mt-7 text-4xl leading-tight tracking-[-0.045em] md:text-5xl">Tin tức</p>
             </div>
         </header>
 
         <section class="section-space">
-            <div class="site-shell grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_17.75rem] lg:gap-9">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_17.75rem] lg:gap-9">
                 <div class="min-w-0">
                     <h1 class="display-title max-w-4xl text-3xl leading-[1.18] md:text-4xl">{{ $post->title }}</h1>
                     <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-slate-500">

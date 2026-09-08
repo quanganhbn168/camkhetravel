@@ -13,6 +13,7 @@ use App\Http\Controllers\Frontend\BniPickleballController;
 use App\Http\Controllers\Frontend\BniRegistrationController;
 use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Frontend\EventController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LandingTrackingController;
 use App\Http\Controllers\Frontend\PostController;
@@ -44,13 +45,17 @@ Route::post('/landing-page/{landingPage:id}/track', LandingTrackingController::c
 Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::get('/', HomeController::class)->name('home');
     Route::get('/dich-vu', [ServiceController::class, 'index'])->name('services.index');
-    Route::get('/dich-vu/danh-muc/{category:slug}', [ServiceController::class, 'category'])->name('services.category');
+    Route::get('/dich-vu/danh-muc/{category:slug}', [ServiceController::class, 'redirectCategory']);
+    Route::get('/dich-vu/{category:slug}', [ServiceController::class, 'category'])->name('services.category');
     Route::get('/tim-kiem', SearchController::class)->name('search');
     Route::get('/du-an', [ProjectController::class, 'index'])->name('projects.index');
     Route::get('/du-an/danh-muc/{slug}', [ProjectController::class, 'categoryBySlug'])->name('projects.category');
     Route::get('/du-an/{slug}', [ProjectController::class, 'showBySlug'])->name('projects.show');
     Route::get('/bang-gia', [PricingController::class, 'index'])->name('pricing.index');
     Route::get('/gioi-thieu', AboutController::class)->name('about');
+    Route::get('/su-kien', fn () => redirect()->route('bni.events.index'));
+    Route::get('/le-chuyen-giao/su-kien', [EventController::class, 'index'])->name('bni.events.index');
+    Route::get('/le-chuyen-giao/su-kien/{event:slug}', [EventController::class, 'show'])->name('bni.events.show');
     Route::get('/le-chuyen-giao-bni', fn () => redirect()->route('bni.handover', status: 301));
     Route::get('/le-chuyen-giao', BniHandoverController::class)->name('bni.handover');
     Route::get('/le-chuyen-giao/dang-ky', [BniRegistrationController::class, 'create'])->name('bni.registrations.create');
@@ -81,9 +86,12 @@ Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::post('/binh-luan/dich-vu/{service:id}', [CommentController::class, 'storeService'])->middleware('throttle:frontend-comment')->name('services.comments.store');
     Route::post('/binh-luan/landing-page/{landingPage:id}', [CommentController::class, 'storeLandingPage'])->middleware('throttle:frontend-comment')->name('landing-pages.comments.store');
     Route::post('/binh-luan/du-an/{project:id}', [CommentController::class, 'storeProject'])->middleware('throttle:frontend-comment')->name('projects.comments.store');
-    Route::get('/tin-tuc', [PostController::class, 'index'])->name('posts.index');
-    Route::get('/tin-tuc/danh-muc/{slug}', [PostController::class, 'categoryBySlug'])->name('posts.category');
-    Route::get('/tin-tuc/{slug}', [PostController::class, 'showBySlug'])->name('posts.show');
+    Route::get('/tin-tuc', fn () => redirect()->route('posts.index', status: 301));
+    Route::get('/tin-tuc/danh-muc/{slug}', fn (string $slug) => redirect()->route('posts.category', ['slug' => $slug], status: 301));
+    Route::get('/tin-tuc/{slug}', [PostController::class, 'showBySlug']);
+    Route::get('/blog', [PostController::class, 'index'])->name('posts.index');
+    Route::get('/blog/danh-muc/{slug}', [PostController::class, 'categoryBySlug'])->name('posts.category');
+    Route::get('/blog/{slug}', [PostController::class, 'showBySlug'])->name('posts.show');
 });
 
 Route::get('/{slug}', PublicSlugController::class)

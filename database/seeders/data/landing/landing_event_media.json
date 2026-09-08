@@ -1,0 +1,427 @@
+{
+    "template_key": "landing_event_media",
+    "slug": "quay-phim-chup-anh-su-kien-tai-bac-ninh",
+    "content": {
+        "page_class": "tht-landing-theme-enterprise",
+        "contact": {
+            "brand_name": "THT Media",
+            "hotline_1": "0973 494 999",
+            "hotline_display": "0973 494 999",
+            "zalo_url": "https://zalo.me/0973494999",
+            "email": "thtmediaqvm@gmail.com",
+            "hotline_2": "0375 433 678",
+            "address_1": "263 Bình Than, Đại Phúc, TP. Bắc Ninh",
+            "address_2": "68 Bính Hạ, Trang Hạ, Từ Sơn, Bắc Ninh",
+            "website": "https://thtmedia.com.vn",
+            "map_embed": "https://maps.google.com/maps?q=THT+Media+263+B%C3%ACnh+Than%2C+%C4%90%E1%BA%A1i+Ph%C3%BAc%2C+B%E1%BA%AFc+Ninh&t=&z=15&ie=UTF8&iwloc=&output=embed",
+            "favicon": "wp-uploads/2023/01/THT-media-favicon-150x150.png",
+            "logo_url": "wp-uploads/2023/01/THT-media-logo-2023.png",
+            "global_form_action": "https://script.google.com/macros/s/AKfycbzOVGGVT70K5jm9c2ekVzKGN0lXAaTIJbbsKenr5Q4pNVY6RqzNpYkuD1rdQfXq-Kwn/exec"
+        },
+        "brand": {
+            "name": "THT Media",
+            "logo": "logo-tht-new.png"
+        },
+        "navigation": [
+            {
+                "label": "Bộ đầu ra",
+                "url": "#bo-dau-ra"
+            },
+            {
+                "label": "Shot-list",
+                "url": "#shot-list"
+            },
+            {
+                "label": "Dự án",
+                "url": "#du-an"
+            },
+            {
+                "label": "Câu hỏi",
+                "url": "#faq"
+            }
+        ],
+        "footer_text": "THT Media chuẩn bị shot-list, ghi lại đúng khoảnh khắc và hoàn thiện bộ tài nguyên truyền thông sau sự kiện.",
+        "seo": {
+            "title": "Quay Phim Chụp Ảnh Sự Kiện Chuyên Nghiệp | THT Media",
+            "description": "Chụp ảnh, quay phim, flycam, livestream, dựng highlight và video sự kiện. Gửi lịch qua Zalo để kiểm tra ekip và nhận báo giá.",
+            "keywords": "quay phim sự kiện, chụp ảnh sự kiện, livestream sự kiện, flycam sự kiện, video highlight, THT Media",
+            "image": "assets/images/live/quay-hero.jpg"
+        },
+        "tracking_head": "",
+        "tracking_body": "",
+        "tracking_footer": "",
+        "form_action": "",
+        "hero": {
+            "eyebrow": "DỊCH VỤ QUAY CHỤP SỰ KIỆN",
+            "title": "QUAY PHIM – CHỤP ẢNH SỰ KIỆN",
+            "summary": "Sự kiện chỉ diễn ra một lần; những khoảnh khắc quan trọng không có lần quay lại. THT Media chuẩn bị shot-list, bố trí góc máy, ghi lại toàn cảnh – nghi thức – cảm xúc – nhận diện thương hiệu và hoàn thiện bộ ảnh, video phù hợp với từng kênh sử dụng.",
+            "primary": "GỬI LỊCH – KIỂM TRA EKIP",
+            "secondary": "NHẬN BÁO GIÁ THEO CẤU HÌNH",
+            "image": "assets/images/live/quay-hero.jpg",
+            "image_alt": "Sân khấu sự kiện được THT Media ghi hình với nhiều góc máy",
+            "video": "",
+            "highlights": [
+                "Chụp ảnh và quay phim theo timeline chương trình.",
+                "Flycam, nhiều góc máy hoặc livestream khi cần.",
+                "Dựng video highlight và nội dung hậu sự kiện.",
+                "Đầu ra được thống nhất trước khi ekip tới hiện trường."
+            ],
+            "microcopy": "Gửi ngày, địa điểm, thời lượng và nhu cầu ảnh/video/live."
+        },
+        "problems": {
+            "eyebrow": "ĐẦU RA ĐƯỢC TÍNH TỪ ĐẦU",
+            "title": "Quay đủ chưa chắc đã dùng được. Quan trọng là quay đúng mục tiêu.",
+            "left_title": "CÓ QUAY CHỤP",
+            "right_title": "CÓ KẾ HOẠCH TRUYỀN THÔNG",
+            "items": [
+                {
+                    "title": "Bỏ lỡ khoảnh khắc bắt buộc",
+                    "text": "Không có shot-list nên thiếu cảnh ký kết, trao giải, phát biểu hoặc tương tác với khách VIP."
+                },
+                {
+                    "title": "Nhiều ảnh nhưng thiếu ảnh có thể đăng",
+                    "text": "Hình ảnh lặp góc, thiếu nhận diện thương hiệu hoặc không phù hợp tỷ lệ fanpage, website."
+                },
+                {
+                    "title": "Video dài nhưng không có highlight",
+                    "text": "File ghi hình đầy đủ nhưng không có phiên bản ngắn đủ hấp dẫn để truyền thông."
+                },
+                {
+                    "title": "Bàn giao chậm, bỏ lỡ thời điểm",
+                    "text": "Nội dung sự kiện cần được sử dụng khi sự quan tâm vẫn còn cao, không phải nhiều tuần sau đó."
+                }
+            ],
+            "footer": "Trước khi quay, THT cần biết hình ảnh sẽ được dùng ở đâu, ai là nhân vật chính và khoảnh khắc nào tuyệt đối không được bỏ lỡ."
+        },
+        "outputs": {
+            "eyebrow": "BỘ ĐẦU RA",
+            "title": "Không chỉ giao file – giao một bộ tài nguyên có thể sử dụng ngay",
+            "items": [
+                {
+                    "icon": "fa-images",
+                    "title": "Album ảnh sự kiện",
+                    "text": "Hình ảnh đã chọn lọc, cân chỉnh màu sắc và sắp xếp theo diễn biến chương trình.",
+                    "mockup": "ẢNH",
+                    "image": "assets/images/live/quay-hero.jpg"
+                },
+                {
+                    "icon": "fa-film",
+                    "title": "Video ghi hình chương trình",
+                    "text": "Phù hợp với hội nghị, hội thảo, lễ ký kết, phát biểu và nội dung cần lưu trữ đầy đủ.",
+                    "mockup": "FULL",
+                    "image": "assets/images/live/quay-02.jpg"
+                },
+                {
+                    "icon": "fa-play",
+                    "title": "Video highlight",
+                    "text": "Tóm tắt những khoảnh khắc đáng nhớ, không khí và thông điệp của sự kiện.",
+                    "mockup": "RECAP",
+                    "image": "assets/images/live/quay-03.jpg"
+                },
+                {
+                    "icon": "fa-mobile-screen-button",
+                    "title": "Video dọc ngắn",
+                    "text": "Phiên bản phục vụ Facebook Reels, TikTok, Zalo và các nền tảng nội dung ngắn.",
+                    "mockup": "9:16",
+                    "image": "assets/images/live/quay-04.jpg"
+                },
+                {
+                    "icon": "fa-helicopter",
+                    "title": "Flycam và toàn cảnh",
+                    "text": "Ghi lại quy mô không gian, lượng khách và hoạt động ngoài trời khi điều kiện cho phép.",
+                    "mockup": "DRONE",
+                    "image": "assets/images/live/event-01.jpg"
+                },
+                {
+                    "icon": "fa-tower-broadcast",
+                    "title": "Livestream hoặc tín hiệu trình chiếu",
+                    "text": "Phục vụ phát trực tiếp hoặc đưa hình ảnh lên màn hình LED tại chương trình.",
+                    "mockup": "LIVE",
+                    "image": "assets/images/live/event-02.jpg"
+                }
+            ],
+            "note": "Bộ đầu ra cụ thể được cấu hình theo từng gói, không mặc định mọi dự án đều bao gồm toàn bộ hạng mục."
+        },
+        "plans": {
+            "eyebrow": "BA PHƯƠNG ÁN DỊCH VỤ",
+            "title": "Cấu hình ekip theo quy mô và mục tiêu sử dụng",
+            "items": [
+                {
+                    "number": "01",
+                    "title": "Chụp ảnh sự kiện",
+                    "price_label": "Báo giá theo brief",
+                    "price_note": "Thời lượng · địa điểm · số lượng ekip",
+                    "fit": "Khai trương, hội nghị, lễ ký kết, chương trình nội bộ và sự kiện cần bộ ảnh truyền thông.",
+                    "items": [
+                        "Chụp toàn cảnh.",
+                        "Khách mời và nghi thức.",
+                        "Hoạt động và ảnh thương hiệu.",
+                        "Hậu kỳ và bàn giao."
+                    ],
+                    "cta": "NHẬN PHƯƠNG ÁN CHỤP ẢNH"
+                },
+                {
+                    "number": "02",
+                    "title": "Ảnh và video highlight",
+                    "price_label": "Báo giá theo brief",
+                    "price_note": "Ảnh · video · thời lượng highlight · đầu ra",
+                    "fit": "Doanh nghiệp cần vừa lưu giữ hình ảnh vừa có video tổng kết để đăng tải sau chương trình.",
+                    "items": [
+                        "Ekip chụp ảnh.",
+                        "Quay video và thu âm cần thiết.",
+                        "Dựng highlight.",
+                        "Phiên bản phù hợp mạng xã hội."
+                    ],
+                    "cta": "NHẬN CẤU HÌNH EKIP"
+                },
+                {
+                    "number": "03",
+                    "title": "Media toàn diện",
+                    "price_label": "Báo giá theo quy mô",
+                    "price_note": "Nhiều góc máy · flycam · livestream · tín hiệu trình chiếu",
+                    "fit": "Sự kiện quy mô lớn, nhiều hoạt động, cần nhiều góc máy, flycam, trình chiếu hoặc livestream.",
+                    "items": [
+                        "Nhiều vị trí máy.",
+                        "Ekip ảnh và flycam.",
+                        "Livestream hoặc tín hiệu trình chiếu.",
+                        "Ghi hình, highlight và phiên bản truyền thông."
+                    ],
+                    "cta": "TRAO ĐỔI PHƯƠNG ÁN MEDIA"
+                }
+            ]
+        },
+        "shotlists": {
+            "eyebrow": "SHOT-LIST THEO LOẠI SỰ KIỆN",
+            "title": "Mỗi loại sự kiện có một danh sách khoảnh khắc bắt buộc khác nhau",
+            "items": [
+                {
+                    "label": "Khai trương",
+                    "title": "Khai trương – khánh thành",
+                    "items": [
+                        "Không gian trước giờ đón khách.",
+                        "Check-in và khách mời.",
+                        "Lãnh đạo phát biểu.",
+                        "Nghi thức cắt băng.",
+                        "Khách tham quan, sản phẩm và hoạt động tương tác."
+                    ]
+                },
+                {
+                    "label": "Hội nghị",
+                    "title": "Hội nghị – hội thảo",
+                    "items": [
+                        "Toàn cảnh hội trường.",
+                        "Diễn giả và slide.",
+                        "Thảo luận, hỏi đáp.",
+                        "Người tham dự và networking.",
+                        "Ảnh tập thể."
+                    ]
+                },
+                {
+                    "label": "Ký kết",
+                    "title": "Lễ ký kết",
+                    "items": [
+                        "Hai bên tham dự.",
+                        "Văn bản ký kết.",
+                        "Khoảnh khắc ký và trao hồ sơ.",
+                        "Bắt tay, phát biểu.",
+                        "Hình ảnh nhận diện của các bên."
+                    ]
+                },
+                {
+                    "label": "Gala",
+                    "title": "Gala – Year End Party",
+                    "items": [
+                        "Không gian sân khấu.",
+                        "Tiết mục và vinh danh.",
+                        "Trao thưởng.",
+                        "Biểu cảm nhân sự.",
+                        "Hoạt động tập thể và khoảnh khắc cảm xúc."
+                    ]
+                },
+                {
+                    "label": "Ra mắt",
+                    "title": "Ra mắt sản phẩm",
+                    "items": [
+                        "Sản phẩm và trải nghiệm thực tế.",
+                        "Khách mời và trình diễn.",
+                        "Phát biểu thương hiệu.",
+                        "Phản ứng của người tham dự.",
+                        "Chi tiết nhận diện tại điểm chạm."
+                    ]
+                }
+            ],
+            "cta": "NHẬN MẪU SHOT-LIST QUA ZALO"
+        },
+        "preparation": {
+            "eyebrow": "CHUẨN BỊ TRƯỚC SỰ KIỆN",
+            "title": "Một ekip chuyên nghiệp không đến hiện trường rồi mới nghĩ xem sẽ quay gì",
+            "items": [
+                {
+                    "number": "01",
+                    "title": "Xác định mục đích sử dụng",
+                    "text": "Website, fanpage, báo chí, nội bộ, tuyển dụng hay lưu trữ chương trình."
+                },
+                {
+                    "number": "02",
+                    "title": "Nhận timeline",
+                    "text": "Xác định các mốc quan trọng và thời điểm cần ưu tiên ghi hình."
+                },
+                {
+                    "number": "03",
+                    "title": "Lập shot-list",
+                    "text": "Danh sách nghi thức, nhân vật, sản phẩm, không gian và khoảnh khắc bắt buộc."
+                },
+                {
+                    "number": "04",
+                    "title": "Bố trí thiết bị",
+                    "text": "Số lượng nhân sự, góc máy, âm thanh, flycam và phương án livestream."
+                },
+                {
+                    "number": "05",
+                    "title": "Thống nhất đầu ra",
+                    "text": "Tỷ lệ video, thời lượng highlight, phiên bản dọc, album ảnh và mốc bàn giao."
+                }
+            ]
+        },
+        "capture_layers": {
+            "eyebrow": "BỐN GÓC NHÌN TRONG MỖI SỰ KIỆN",
+            "title": "Ghi đủ những gì cần dùng, giữ lại cả không khí và cảm xúc của chương trình",
+            "items": [
+                {
+                    "title": "Toàn cảnh",
+                    "text": "Quy mô không gian, sân khấu, lượng khách và bầu không khí chung.",
+                    "icon": "fa-expand",
+                    "image": "assets/images/live/event-01.jpg",
+                    "image_alt": "Toàn cảnh hội trường và sân khấu sự kiện doanh nghiệp"
+                },
+                {
+                    "title": "Nghi thức",
+                    "text": "Phát biểu, ký kết, cắt băng, trao giải, ra mắt và các thời điểm quan trọng.",
+                    "icon": "fa-star",
+                    "image": "assets/images/live/quay-04.jpg",
+                    "image_alt": "Khoảnh khắc nghi thức và sân khấu sự kiện được ghi hình"
+                },
+                {
+                    "title": "Cảm xúc",
+                    "text": "Ánh mắt, nụ cười, tương tác và những khoảnh khắc tự nhiên giữa người tham dự.",
+                    "icon": "fa-face-smile",
+                    "image": "assets/images/live/event-hero.jpg",
+                    "image_alt": "Khoảnh khắc biểu diễn và cảm xúc của người tham dự sự kiện"
+                },
+                {
+                    "title": "Thương hiệu",
+                    "text": "Logo, backdrop, sản phẩm, booth, ấn phẩm và cách thương hiệu xuất hiện trong không gian.",
+                    "icon": "fa-bullseye",
+                    "image": "assets/images/live/event-03.jpg",
+                    "image_alt": "Không gian sự kiện và nhận diện thương hiệu của khách hàng"
+                }
+            ]
+        },
+        "after_value": {
+            "eyebrow": "GIÁ TRỊ SAU SỰ KIỆN",
+            "title": "Chương trình kết thúc, nhưng nội dung vẫn tiếp tục làm việc",
+            "items": [
+                "Bài tổng kết trên fanpage.",
+                "Tin tức trên website.",
+                "Thông cáo báo chí.",
+                "Video văn hóa doanh nghiệp.",
+                "Hồ sơ năng lực.",
+                "Nội dung tuyển dụng.",
+                "Tài liệu bán hàng.",
+                "Video tổng kết cuối năm."
+            ],
+            "cta": "GỬI CÁC KÊNH DỰ KIẾN SỬ DỤNG"
+        },
+        "projects": {
+            "eyebrow": "DỰ ÁN THAM KHẢO",
+            "title": "Xem cách THT ghi lại không khí và dấu ấn của từng chương trình",
+            "items": [
+                {
+                    "title": "Lễ ra mắt Hyundai New Grand i10 2024",
+                    "type": "Lễ ra mắt sản phẩm",
+                    "scope": "Tư liệu ghi hình tại không gian thương hiệu và hoạt động của khách mời.",
+                    "video": "",
+                    "images": [
+                        "assets/images/live/quay-02.jpg"
+                    ]
+                },
+                {
+                    "title": "Sự kiện Tân Cảng",
+                    "type": "Sự kiện doanh nghiệp",
+                    "scope": "Tư liệu ekip chuẩn bị thiết bị, nhân sự và ghi lại diễn biến chương trình.",
+                    "video": "",
+                    "images": [
+                        "assets/images/live/quay-03.jpg"
+                    ]
+                },
+                {
+                    "title": "Ngân hàng Chính sách tỉnh Bắc Ninh",
+                    "type": "Hội nghị – hội thảo",
+                    "scope": "Tư liệu quay chụp phục vụ hình ảnh thương hiệu và nội dung hậu sự kiện.",
+                    "video": "",
+                    "images": [
+                        "assets/images/live/quay-04.jpg"
+                    ]
+                }
+            ],
+            "note": "Bộ ảnh được chọn từ tư liệu THT Media đã công bố; video và thông tin bàn giao chi tiết sẽ bổ sung theo từng phạm vi dự án."
+        },
+        "reasons": {
+            "eyebrow": "VÌ SAO CHỌN THT",
+            "title": "Bộ tư liệu tốt bắt đầu từ việc hiểu chương trình",
+            "items": [
+                {
+                    "title": "Hiểu timeline sự kiện",
+                    "text": "Ekip bám theo diễn biến chương trình, không ghi hình ngẫu nhiên.",
+                    "icon": "fa-timeline"
+                },
+                {
+                    "title": "Phối hợp với ekip tổ chức",
+                    "text": "Media được bố trí theo sân khấu, ánh sáng và lịch vận hành.",
+                    "icon": "fa-people-group"
+                },
+                {
+                    "title": "Đầu ra đa nền tảng",
+                    "text": "Có thể xây dựng nhiều tỷ lệ và thời lượng từ cùng một nguồn tư liệu.",
+                    "icon": "fa-layer-group"
+                },
+                {
+                    "title": "Có hậu kỳ",
+                    "text": "Không dừng ở việc giao ảnh và footage; THT có năng lực dựng video, chỉnh màu và hoàn thiện nội dung truyền thông.",
+                    "icon": "fa-sliders"
+                }
+            ]
+        },
+        "faq": {
+            "eyebrow": "CÂU HỎI THƯỜNG GẶP",
+            "title": "Chuẩn bị ekip quay chụp",
+            "items": [
+                {
+                    "question": "Có được nhận file gốc không?",
+                    "answer": "Quy định file gốc cần được thống nhất trong báo giá và hợp đồng trước khi triển khai."
+                },
+                {
+                    "question": "Sự kiện chưa có timeline thì có đặt lịch được không?",
+                    "answer": "Có. THT có thể tạm giữ thông tin và tư vấn cấu hình, nhưng timeline cần được hoàn thiện trước ngày quay để lập shot-list."
+                },
+                {
+                    "question": "Flycam có sử dụng được ở mọi địa điểm không?",
+                    "answer": "Việc sử dụng flycam phụ thuộc địa điểm, điều kiện thời tiết, không gian và các yêu cầu liên quan tại khu vực tổ chức."
+                },
+                {
+                    "question": "Livestream cần chuẩn bị gì?",
+                    "answer": "Cần xác định nền tảng phát, chất lượng đường truyền, số góc máy, âm thanh đầu vào và yêu cầu hiển thị."
+                },
+                {
+                    "question": "Có nhận riêng chụp ảnh hoặc quay phim không?",
+                    "answer": "Có. THT cấu hình dịch vụ theo nhu cầu thực tế của từng chương trình."
+                }
+            ]
+        },
+        "contact_section": {
+            "title": "ĐỪNG ĐỢI TỚI SÁT NGÀY MỚI TÌM EKIP QUAY CHỤP",
+            "body": "Gửi lịch dự kiến để THT kiểm tra nhân sự, thiết bị và đề xuất số lượng góc máy phù hợp.",
+            "cta": "KIỂM TRA LỊCH EKIP"
+        }
+    }
+}

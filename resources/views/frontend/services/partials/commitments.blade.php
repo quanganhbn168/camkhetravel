@@ -8,7 +8,7 @@
 @endphp
 
 <section id="cam-ket" class="section-space bg-mist/55">
-    <div class="site-shell">
+    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
         <div class="grid overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_16px_38px_rgba(31,43,37,0.07)] lg:grid-cols-2">
             <div class="min-h-72 bg-ink lg:min-h-full">
                 @if ($commitmentImageUrl)

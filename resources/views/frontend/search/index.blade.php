@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="border-b border-slate-200 bg-mist py-14 md:py-20">
-        <div class="site-shell max-w-4xl">
+        <div class="site-container w-full mx-auto px-4 lg:px-8 max-w-4xl">
             <h1 class="display-title text-3xl leading-tight uppercase md:text-5xl">Tìm kiếm</h1>
             <p class="mt-4 max-w-2xl text-base leading-8 text-slate-600">Tra cứu dịch vụ và bài viết phù hợp với nhu cầu của anh/chị.</p>
 
@@ -20,7 +20,7 @@
     </section>
 
     <section class="section-space bg-white">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             @if ($keyword === '')
                 <div class="rounded-[1.5rem] border border-dashed border-slate-300 bg-mist px-6 py-12 text-center">
                     <p class="font-display text-2xl text-ink">Nhập từ khóa để bắt đầu tìm kiếm.</p>

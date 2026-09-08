@@ -5,13 +5,17 @@ namespace App\Filament\Resources\Menus;
 use App\Filament\Resources\Menus\Pages\CreateMenu;
 use App\Filament\Resources\Menus\Pages\EditMenu;
 use App\Filament\Resources\Menus\Pages\ListMenus;
+use App\Models\LandingPage;
 use App\Models\Menu;
 use App\Models\MenuItem;
-use App\Models\LandingPage;
 use App\Models\Post;
+use App\Models\PostCategory;
 use App\Models\Project;
+use App\Models\ProjectCategory;
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Hidden;
@@ -19,13 +23,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Route;
 
@@ -59,57 +64,100 @@ class MenuResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->columns(1)
+            ->columns(['default' => 1, 'xl' => 3])
             ->components([
-                Section::make('Thông tin menu')
-                    ->icon(Heroicon::OutlinedBars3)
+                Section::make('Thêm vào menu')
+                    ->icon(Heroicon::OutlinedPlusCircle)
+                    ->description('Chọn nội dung có sẵn ở hệ thống hoặc thêm một liên kết riêng.')
                     ->schema([
-                        TextInput::make('name')
-                            ->label('Tên menu')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        TextInput::make('location')
-                            ->label('Vị trí hiển thị')
-                            ->maxLength(100)
-                            ->columnSpanFull(),
-                        Toggle::make('is_active')
-                            ->label('Kích hoạt menu')
-                            ->default(true)
-                            ->columnSpanFull(),
-                    ])
-                    ->columnSpanFull(),
-                Section::make('Menu item')
-                    ->icon(Heroicon::OutlinedListBullet)
-                    ->description('Chọn route hoặc nội dung có sẵn. URL chỉ xuất hiện khi chọn liên kết tuỳ chỉnh.')
-                    ->schema([
-                        Repeater::make('topLevelItems')
-                            ->label('Danh sách menu item')
-                            ->relationship()
-                            ->orderColumn('position')
-                            ->schema([
-                                ...self::menuItemFields(),
-                                Repeater::make('children')
-                                    ->label('Menu item con')
-                                    ->relationship()
-                                    ->orderColumn('position')
-                                    ->schema(self::menuItemFields())
-                                    ->columns(1)
-                                    ->addActionLabel('Thêm menu item con')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Menu item mới')
-                                    ->columnSpanFull(),
+                        ViewField::make('menu_source_picker')
+                            ->label(null)
+                            ->view('filament.resources.menus.menu-source-picker')
+                            ->viewData(fn (): array => [
+                                'sourceGroups' => self::sourceGroups(),
                             ])
-                            ->columns(1)
-                            ->addActionLabel('Thêm menu item')
-                            ->reorderable()
-                            ->collapsible()
-                            ->cloneable()
-                            ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Menu item mới')
-                            ->columnSpanFull(),
+                            ->dehydrated(false),
                     ])
-                    ->columnSpanFull(),
+                    ->columnSpan(1),
+                Group::make([
+                    Section::make('Thông tin menu')
+                        ->icon(Heroicon::OutlinedBars3)
+                        ->schema([
+                            TextInput::make('name')
+                                ->label('Tên menu')
+                                ->required()
+                                ->maxLength(255),
+                            Select::make('location')
+                                ->label('Vị trí hiển thị')
+                                ->helperText('Chỉ chọn Header hoặc Footer.')
+                                ->options([
+                                    'header' => 'Header',
+                                    'footer' => 'Footer',
+                                ])
+                                ->required()
+                                ->native(false)
+                                ->rule('in:header,footer'),
+                            Toggle::make('is_active')
+                                ->label('Kích hoạt menu')
+                                ->default(true),
+                        ])
+                        ->columns(2),
+                    Section::make('Cấu trúc menu')
+                        ->icon(Heroicon::OutlinedListBullet)
+                        ->description('Kéo thả hoặc dùng các mũi tên để sắp xếp và thay đổi cấp menu. Các mục đóng mặc định để dễ quản lý.')
+                        ->schema([
+                            Repeater::make('topLevelItems')
+                                ->label('Danh sách menu item')
+                                ->relationship()
+                                ->defaultItems(0)
+                                ->orderColumn('position')
+                                ->schema([
+                                    ...self::menuItemFields(),
+                                    Repeater::make('children')
+                                        ->label('Menu item con')
+                                        ->relationship()
+                                        ->defaultItems(0)
+                                        ->orderColumn('position')
+                                        ->schema(self::menuItemFields())
+                                        ->columns(1)
+                                        ->addActionLabel('Thêm menu item con')
+                                        ->reorderable()
+                                        ->reorderableWithButtons()
+                                        ->reorderableWithDragAndDrop()
+                                        ->collapsible()
+                                        ->collapsed()
+                                        ->extraItemActions([
+                                            Action::make('moveOutside')
+                                                ->label('Ra ngoài một cấp')
+                                                ->icon(Heroicon::ArrowLeft)
+                                                ->action(function (array $arguments, Repeater $component): void {
+                                                    self::moveItemOutside($component, (string) $arguments['item']);
+                                                }),
+                                        ])
+                                        ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Menu item mới')
+                                        ->columnSpanFull(),
+                                ])
+                                ->columns(1)
+                                ->addActionLabel('Thêm menu item')
+                                ->reorderable()
+                                ->reorderableWithButtons()
+                                ->reorderableWithDragAndDrop()
+                                ->collapsible()
+                                ->collapsed()
+                                ->cloneable()
+                                ->extraItemActions([
+                                    Action::make('moveInside')
+                                        ->label('Vào trong làm con')
+                                        ->icon(Heroicon::ArrowRight)
+                                        ->action(function (array $arguments, Repeater $component): void {
+                                            self::moveItemInside($component, (string) $arguments['item']);
+                                        }),
+                                ])
+                                ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Menu item mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->collapsible(false),
+                ])->columnSpan(2),
             ]);
     }
 
@@ -122,62 +170,8 @@ class MenuResource extends Resource
                 ->required()
                 ->maxLength(255)
                 ->columnSpanFull(),
-            Select::make('menu_link_type')
-                ->label('Loại liên kết')
-                ->options([
-                    'route' => 'Route hệ thống',
-                    'service' => 'Dịch vụ',
-                    'landing_page' => 'Landing page',
-                    'project' => 'Dự án',
-                    'post' => 'Bài viết',
-                    'custom' => 'Liên kết tuỳ chỉnh',
-                ])
-                ->default('route')
-                ->formatStateUsing(fn (?string $state, mixed $record): string => self::linkTypeFor($record))
-                ->live()
-                ->dehydrated(false)
-                ->afterStateUpdated(function (?string $state, $set): void {
-                    $set('linked_source_type', self::storedLinkType((string) $state));
-                    $set('linked_source_id', null);
-                    $set('url', null);
-                    $set('route_name', null);
-                    $set('custom_url', null);
-                })
-                ->columnSpanFull(),
             Hidden::make('url'),
-            Select::make('route_name')
-                ->label('Chọn route')
-                ->options(self::routeOptions())
-                ->searchable()
-                ->preload()
-                ->live()
-                ->dehydrated(false)
-                ->required(fn (Get $get): bool => $get('menu_link_type') === 'route')
-                ->visible(fn (Get $get): bool => $get('menu_link_type') === 'route')
-                ->formatStateUsing(fn (?string $state, mixed $record): ?string => self::routeNameFor($record, $state))
-                ->afterStateUpdated(fn (?string $state, $set) => $set('url', $state))
-                ->columnSpanFull(),
-            Select::make('linked_source_id')
-                ->label('Chọn nội dung')
-                ->options(fn (Get $get): array => self::contentOptions((string) $get('menu_link_type')))
-                ->searchable()
-                ->preload()
-                ->required(fn (Get $get): bool => self::usesContentReference((string) $get('menu_link_type')))
-                ->visible(fn (Get $get): bool => self::usesContentReference((string) $get('menu_link_type')))
-                ->columnSpanFull(),
-            TextInput::make('custom_url')
-                ->label('URL liên kết')
-                ->placeholder('https://example.com/...')
-                ->helperText('Không dùng #. Menu cha vẫn cần route hoặc URL hợp lệ dù có menu con.')
-                ->maxLength(2048)
-                ->rules(['not_in:#'])
-                ->live(onBlur: true)
-                ->dehydrated(false)
-                ->required(fn (Get $get): bool => $get('menu_link_type') === 'custom')
-                ->visible(fn (Get $get): bool => $get('menu_link_type') === 'custom')
-                ->formatStateUsing(fn (?string $state, mixed $record): ?string => self::customUrlFor($record, $state))
-                ->afterStateUpdated(fn (?string $state, $set) => $set('url', $state))
-                ->columnSpanFull(),
+            Hidden::make('linked_source_id'),
             Select::make('target')
                 ->label('Cách mở liên kết')
                 ->options([
@@ -185,19 +179,6 @@ class MenuResource extends Resource
                     '_blank' => 'Tab mới',
                 ])
                 ->default('_self')
-                ->columnSpanFull(),
-            Select::make('menu_presentation')
-                ->label('Kiểu hiển thị')
-                ->options([
-                    '' => 'Menu thông thường',
-                    'header-services' => 'Menu Dịch vụ có danh mục mở rộng',
-                ])
-                ->formatStateUsing(fn (?string $state, mixed $record): string => $record instanceof MenuItem && $record->css_classes === 'header-services'
-                    ? 'header-services'
-                    : '')
-                ->live()
-                ->dehydrated(false)
-                ->afterStateUpdated(fn (?string $state, $set) => $set('css_classes', $state ?: null))
                 ->columnSpanFull(),
             Hidden::make('linked_source_type')
                 ->default('native_route')
@@ -217,14 +198,20 @@ class MenuResource extends Resource
         return match ($record->linked_source_type) {
             'native_route' => 'route',
             'native_service' => 'service',
+            'native_service_category' => 'service_category',
             'native_landing_page' => 'landing_page',
             'native_project' => 'project',
+            'native_project_category' => 'project_category',
             'native_post' => 'post',
+            'native_post_category' => 'post_category',
             'custom' => 'custom',
             Service::class => 'service',
+            ServiceCategory::class => 'service_category',
             LandingPage::class => 'landing_page',
             Project::class => 'project',
+            ProjectCategory::class => 'project_category',
             Post::class => 'post',
+            PostCategory::class => 'post_category',
             default => self::routeNameFromValue($record->url) ? 'route' : 'custom',
         };
     }
@@ -234,15 +221,19 @@ class MenuResource extends Resource
         return match ($type) {
             'route' => 'native_route',
             'service' => 'native_service',
+            'service_category' => 'native_service_category',
             'landing_page' => 'native_landing_page',
             'project' => 'native_project',
+            'project_category' => 'native_project_category',
             'post' => 'native_post',
+            'post_category' => 'native_post_category',
             default => 'custom',
         };
     }
 
     /** @return array<string, string> */
-    private static function routeOptions(): array
+    /** @return array<string, string> */
+    public static function routeOptions(): array
     {
         return [
             'home' => 'Trang chủ',
@@ -250,28 +241,13 @@ class MenuResource extends Resource
             'services.index' => 'Tất cả dịch vụ',
             'pricing.index' => 'Bảng giá',
             'projects.index' => 'Tất cả dự án',
-            'posts.index' => 'Tin tức',
+            'posts.index' => 'Blog',
+            'bni.events.index' => 'Sự kiện',
+            'bni.handover' => 'Lễ chuyển giao BNI',
+            'bni.pickleball' => 'BNI Pickleball',
             'contact' => 'Liên hệ',
             'search' => 'Tìm kiếm',
         ];
-    }
-
-    private static function routeNameFor(mixed $record, ?string $state): ?string
-    {
-        if (! $record instanceof MenuItem || self::linkTypeFor($record) !== 'route') {
-            return $state;
-        }
-
-        return self::routeNameFromValue($record->url) ?: $state;
-    }
-
-    private static function customUrlFor(mixed $record, ?string $state): ?string
-    {
-        if (! $record instanceof MenuItem || self::linkTypeFor($record) !== 'custom') {
-            return $state;
-        }
-
-        return $record->url ?: $state;
     }
 
     private static function routeNameFromValue(?string $value): ?string
@@ -297,37 +273,181 @@ class MenuResource extends Resource
         return null;
     }
 
-    private static function usesContentReference(string $type): bool
+    /** @return array<int, array{key: string, label: string, items: array<int, array{key: string, label: string, meta: string}>}> */
+    public static function sourceGroups(): array
     {
-        return in_array($type, ['service', 'landing_page', 'project', 'post'], true);
+        $groups = [
+            [
+                'key' => 'routes',
+                'label' => 'Trang hệ thống',
+                'items' => collect(self::routeOptions())->map(fn (string $label, string $route): array => [
+                    'key' => "route:{$route}",
+                    'label' => $label,
+                    'meta' => $route,
+                ])->values()->all(),
+            ],
+            [
+                'key' => 'service-categories',
+                'label' => 'Danh mục dịch vụ',
+                'items' => ServiceCategory::query()
+                    ->where('is_active', true)
+                    ->orderBy('name')
+                    ->get(['id', 'name'])
+                    ->map(fn (ServiceCategory $category): array => [
+                        'key' => "service_category:{$category->id}",
+                        'label' => $category->name,
+                        'meta' => 'Danh mục dịch vụ',
+                    ])
+                    ->all(),
+            ],
+            [
+                'key' => 'services',
+                'label' => 'Dịch vụ',
+                'items' => Service::query()
+                    ->published()
+                    ->orderBy('title')
+                    ->get(['id', 'title'])
+                    ->map(fn (Service $service): array => [
+                        'key' => "service:{$service->id}",
+                        'label' => $service->title,
+                        'meta' => 'Dịch vụ',
+                    ])
+                    ->all(),
+            ],
+            [
+                'key' => 'landing-pages',
+                'label' => 'Landing pages',
+                'items' => LandingPage::query()->published()->orderBy('title')->get(['id', 'title'])->map(fn (LandingPage $landingPage): array => [
+                    'key' => "landing_page:{$landingPage->id}",
+                    'label' => $landingPage->title,
+                    'meta' => 'Landing page',
+                ])->all(),
+            ],
+            [
+                'key' => 'project-categories',
+                'label' => 'Danh mục dự án',
+                'items' => ProjectCategory::query()
+                    ->where('is_active', true)
+                    ->orderBy('name')
+                    ->get(['id', 'name'])
+                    ->map(fn (ProjectCategory $category): array => [
+                        'key' => "project_category:{$category->id}",
+                        'label' => $category->name,
+                        'meta' => 'Danh mục dự án',
+                    ])
+                    ->all(),
+            ],
+            [
+                'key' => 'projects',
+                'label' => 'Dự án',
+                'items' => Project::query()
+                    ->published()
+                    ->orderBy('title')
+                    ->get(['id', 'title'])
+                    ->map(fn (Project $project): array => [
+                        'key' => "project:{$project->id}",
+                        'label' => $project->title,
+                        'meta' => 'Dự án',
+                    ])
+                    ->all(),
+            ],
+            [
+                'key' => 'post-categories',
+                'label' => 'Chuyên mục blog',
+                'items' => PostCategory::query()
+                    ->where('is_active', true)
+                    ->orderBy('name')
+                    ->get(['id', 'name'])
+                    ->map(fn (PostCategory $category): array => [
+                        'key' => "post_category:{$category->id}",
+                        'label' => $category->name,
+                        'meta' => 'Chuyên mục blog',
+                    ])
+                    ->all(),
+            ],
+            [
+                'key' => 'posts',
+                'label' => 'Bài viết / blog',
+                'items' => Post::query()
+                    ->published()
+                    ->orderByDesc('published_at')
+                    ->get(['id', 'title'])
+                    ->map(fn (Post $post): array => [
+                        'key' => "post:{$post->id}",
+                        'label' => $post->title,
+                        'meta' => 'Bài viết',
+                    ])
+                    ->all(),
+            ],
+        ];
+
+        return array_values(array_filter($groups, fn (array $group): bool => $group['items'] !== []));
     }
 
-    /** @return array<int, string> */
-    private static function contentOptions(string $type): array
+    private static function moveItemInside(Repeater $component, string $itemKey): void
     {
-        return match ($type) {
-            'service' => Service::query()
-                ->published()
-                ->orderBy('title')
-                ->pluck('title', 'id')
-                ->all(),
-            'landing_page' => LandingPage::query()
-                ->published()
-                ->orderBy('title')
-                ->pluck('title', 'id')
-                ->all(),
-            'project' => Project::query()
-                ->published()
-                ->orderByDesc('published_at')
-                ->pluck('title', 'id')
-                ->all(),
-            'post' => Post::query()
-                ->published()
-                ->orderByDesc('published_at')
-                ->pluck('title', 'id')
-                ->all(),
-            default => [],
-        };
+        $state = $component->getRawState();
+
+        if (! is_array($state) || ! array_key_exists($itemKey, $state)) {
+            return;
+        }
+
+        $keys = array_keys($state);
+        $index = array_search($itemKey, array_map('strval', $keys), true);
+
+        if ($index === false || $index === 0) {
+            return;
+        }
+
+        $previousKey = $keys[$index - 1];
+        $item = $state[$itemKey];
+        unset($state[$itemKey]);
+
+        $children = is_array($state[$previousKey]['children'] ?? null)
+            ? $state[$previousKey]['children']
+            : [];
+        $children[$itemKey] = $item;
+        $state[$previousKey]['children'] = $children;
+
+        $component->rawState($state);
+        $component->callAfterStateUpdated();
+        $component->partiallyRender();
+    }
+
+    private static function moveItemOutside(Repeater $component, string $itemKey): void
+    {
+        $parentRepeater = $component->getParentRepeater();
+        $parentItem = $component->getParentRepeaterItem();
+
+        if (! $parentRepeater || ! $parentItem) {
+            return;
+        }
+
+        $parentKey = (string) $parentItem->getStatePath(isAbsolute: false);
+        $state = $parentRepeater->getRawState();
+        $children = $state[$parentKey]['children'] ?? null;
+
+        if (! is_array($children) || ! array_key_exists($itemKey, $children)) {
+            return;
+        }
+
+        $item = $children[$itemKey];
+        unset($children[$itemKey]);
+        $state[$parentKey]['children'] = $children;
+
+        $newState = [];
+
+        foreach ($state as $key => $data) {
+            $newState[$key] = $data;
+
+            if ((string) $key === $parentKey) {
+                $newState[$itemKey] = $item;
+            }
+        }
+
+        $parentRepeater->rawState($newState);
+        $parentRepeater->callAfterStateUpdated();
+        $parentRepeater->partiallyRender();
     }
 
     public static function table(Table $table): Table
@@ -337,7 +457,7 @@ class MenuResource extends Resource
                 TextColumn::make('name')->label('Menu')->searchable()->sortable(),
                 TextColumn::make('location')->label('Vị trí')->badge()->searchable()->sortable(),
                 TextColumn::make('items_count')->label('Menu item')->counts('items')->sortable(),
-                IconColumn::make('is_active')->label('Kích hoạt')->boolean(),
+                ToggleColumn::make('is_active')->label('Kích hoạt'),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->defaultSort('name')

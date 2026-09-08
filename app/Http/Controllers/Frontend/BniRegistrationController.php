@@ -24,7 +24,7 @@ class BniRegistrationController extends Controller
     {
         $event = $this->handoverEvent();
 
-        return view('frontend.bni-registration', [
+        return view('frontend.bni.registration', [
             'event' => $event,
             'heroImageUrl' => $event->bniMediaUrl('hero'),
             'chapters' => $event->chapters

@@ -1,6 +1,6 @@
 @if ($pricingMediaUrl || $pricingSourceUrl)
     <section class="service-pricing-media resource-detail-content" id="tai-lieu-bang-gia">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <div class="service-pricing-media__card">
                 <div class="service-pricing-media__header">
                     <div>

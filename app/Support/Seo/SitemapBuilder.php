@@ -3,10 +3,12 @@
 namespace App\Support\Seo;
 
 use App\Models\BniChapter;
+use App\Models\BniEvent;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
+use App\Support\Events\EventCatalog;
 use App\Support\Localization\LocalizedUrl;
 use DateTimeInterface;
 use Spatie\Sitemap\Sitemap;
@@ -25,6 +27,10 @@ class SitemapBuilder
         $this->addNativePages($sitemap);
         $this->addNativeContent($sitemap);
         $this->addBniChapters($sitemap);
+        $catalog = app(EventCatalog::class);
+        BniEvent::query()->published()->get()->each(fn (BniEvent $event) => $this->addUrl(
+            $sitemap, $catalog->url($event), $event->updated_at, Url::CHANGE_FREQUENCY_MONTHLY, 0.6,
+        ));
 
         return $sitemap;
     }
@@ -37,6 +43,7 @@ class SitemapBuilder
             ['projects.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.9],
             ['pricing.index', Url::CHANGE_FREQUENCY_MONTHLY, 0.7],
             ['posts.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.8],
+            ['bni.events.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.8],
             ['about', Url::CHANGE_FREQUENCY_MONTHLY, 0.6],
             ['bni.handover', Url::CHANGE_FREQUENCY_MONTHLY, 0.5],
             ['bni.articles.index', Url::CHANGE_FREQUENCY_WEEKLY, 0.6],

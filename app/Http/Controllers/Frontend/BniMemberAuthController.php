@@ -13,7 +13,7 @@ class BniMemberAuthController extends Controller
 {
     public function create(): View
     {
-        return view('frontend.bni-member-login');
+        return view('frontend.bni.member-login');
     }
 
     public function store(Request $request): RedirectResponse

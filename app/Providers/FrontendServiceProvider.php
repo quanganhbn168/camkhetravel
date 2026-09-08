@@ -35,6 +35,7 @@ use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\RateLimiter;
@@ -109,6 +110,7 @@ class FrontendServiceProvider extends ServiceProvider
                 $website->company_profile_media_id,
                 $website->about_image_media_id,
                 $website->contact_image_media_id,
+                $website->footer_background_media_id,
             ]))
             ->get()
             ->keyBy('id');
@@ -164,17 +166,11 @@ class FrontendServiceProvider extends ServiceProvider
                     fn (Builder $query) => $query->where('location', 'header'),
                 )
                 ->first();
-            $requestPath = trim(request()->path(), '/');
-
-            $applicationHost = parse_url((string) config('app.url'), PHP_URL_HOST);
-
             $headerNavigation = $headerMenu?->items
                 ->whereNull('parent_id')
                 ->map(fn (MenuItem $item): array => $this->menuItemData(
                     item: $item,
                     allItems: $headerMenu->items,
-                    requestPath: $requestPath,
-                    applicationHost: $applicationHost,
                 ))
                 ->values()
                 ?? collect();
@@ -182,34 +178,40 @@ class FrontendServiceProvider extends ServiceProvider
             $view->with([
                 'headerLogoUrl' => MediaUrl::versioned($media->get($website->logo_media_id)),
                 'headerNavigation' => $headerNavigation,
+                'headerPhones' => $this->headerPhones($website),
             ]);
         });
+    }
+
+    /** @return Collection<int, array{label: string, href: string}> */
+    private function headerPhones(WebsiteSettings $website): Collection
+    {
+        $phones = collect($website->phones ?? [])
+            ->filter(fn ($phone) => is_array($phone) && filled($phone['number'] ?? null));
+
+        if ($phones->isEmpty()) {
+            $phones = collect([['number' => $website->hotline], ['number' => $website->contact_phone]])
+                ->filter(fn ($phone) => filled($phone['number'] ?? null));
+        }
+
+        return $phones->map(fn (array $phone): array => [
+            'label' => trim($phone['number']),
+            'href' => 'tel:'.preg_replace('/\s+/', '', $phone['number']),
+        ])->unique('href')->take(2)->values();
     }
 
     /** @return array{label: string, url: string, target: string, is_active: bool, home: bool, has_children: bool, children: Collection<int, array<string, mixed>>} */
     private function menuItemData(
         MenuItem $item,
         Collection $allItems,
-        string $requestPath = '',
-        ?string $applicationHost = null,
     ): array {
         $link = $item->link;
-        $linkHost = parse_url($link, PHP_URL_HOST);
-        $isInternalLink = $applicationHost !== null
-            && $link !== '#'
-            && ($linkHost === null || $linkHost === $applicationHost);
-        $path = trim((string) parse_url($link, PHP_URL_PATH), '/');
-        $isHome = false;
-        $isActive = $isInternalLink
-            && $path !== ''
-            && ($requestPath === $path || str_starts_with($requestPath, $path.'/'));
+        $isActive = $this->menuItemMatchesCurrentRoute($item);
         $children = $allItems
             ->where('parent_id', $item->getKey())
             ->map(fn (MenuItem $child): array => $this->menuItemData(
                 item: $child,
                 allItems: $allItems,
-                requestPath: $requestPath,
-                applicationHost: $applicationHost,
             ))
             ->values();
 
@@ -218,9 +220,52 @@ class FrontendServiceProvider extends ServiceProvider
             'url' => $link,
             'target' => $item->target ?: '_self',
             'is_active' => $isActive || $children->contains('is_active', true),
-            'home' => $isHome,
+            'home' => false,
             'has_children' => $children->isNotEmpty(),
             'children' => $children,
         ];
+    }
+
+    private function menuItemMatchesCurrentRoute(MenuItem $item): bool
+    {
+        $linkedSourceType = (string) $item->linked_source_type;
+
+        if ($linkedSourceType === 'native_route') {
+            $routeName = trim((string) $item->getRawOriginal('url'));
+            $routePattern = match ($routeName) {
+                'bni.handover' => 'bni.*',
+                'bni.events.index' => 'bni.events.*',
+                default => $routeName,
+            };
+
+            return $routePattern !== '' && request()->routeIs($routePattern);
+        }
+
+        $target = match ($linkedSourceType) {
+            'native_service', Service::class, 'service' => [Service::class, 'slug.show'],
+            'native_service_category', ServiceCategory::class, 'service-category' => [ServiceCategory::class, 'services.category', 'category'],
+            'native_landing_page', LandingPage::class, 'landing-page' => [LandingPage::class, 'slug.show'],
+            'native_project', Project::class, 'project' => [Project::class, 'projects.show'],
+            'native_project_category', ProjectCategory::class, 'project-category' => [ProjectCategory::class, 'projects.category'],
+            'native_post', Post::class, 'post' => [Post::class, 'posts.show'],
+            'native_post_category', PostCategory::class, 'post-category' => [PostCategory::class, 'posts.category'],
+            default => null,
+        };
+
+        if ($target === null || ! request()->routeIs($target[1])) {
+            return false;
+        }
+
+        $routeParameter = $target[2] ?? 'slug';
+        $currentRouteValue = request()->route($routeParameter);
+        $currentSlug = $currentRouteValue instanceof Model
+            ? (string) ($currentRouteValue->slug ?? $currentRouteValue->getRouteKey())
+            : (string) $currentRouteValue;
+
+        if ($currentSlug === '') {
+            return false;
+        }
+
+        return (string) ($target[0]::query()->find($item->linked_source_id)?->slug ?? '') === $currentSlug;
     }
 }

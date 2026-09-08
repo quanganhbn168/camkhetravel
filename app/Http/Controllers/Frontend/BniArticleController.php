@@ -57,7 +57,7 @@ class BniArticleController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('frontend.bni-articles-index', [
+        return view('frontend.bni.articles-index', [
             'event' => $event,
             'categories' => $categories,
             'selectedCategory' => $selectedCategory,
@@ -82,7 +82,7 @@ class BniArticleController extends Controller
             'reactions',
         ]);
 
-        return view('frontend.bni-article', [
+        return view('frontend.bni.article', [
             'article' => $article,
             'imageUrl' => $article->bniMediaUrl('cover'),
             'reactionCounts' => $article->reactions->countBy('reaction'),

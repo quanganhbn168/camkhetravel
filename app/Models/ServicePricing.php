@@ -11,6 +11,11 @@ class ServicePricing extends Model
 {
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return ['comparison_rows' => 'array'];
+    }
+
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

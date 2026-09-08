@@ -4,7 +4,7 @@
             <img class="service-process__image" src="{{ $processBackgroundUrl }}" alt="" aria-hidden="true" loading="lazy">
         @endif
         <div class="service-process__overlay"></div>
-        <div class="site-shell relative">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative">
             <header class="mx-auto max-w-3xl text-center">
                 <h2 class="display-title text-3xl leading-tight text-white md:text-4xl">Quy trình</h2>
                 <p class="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-200">{{ $service->process_description ?: 'Từng bước được thống nhất rõ ràng để dịch vụ được triển khai đúng mục tiêu và tiến độ.' }}</p>

@@ -1,0 +1,11 @@
+/* Event styling stays inside its content; site header/footer use site tokens. */
+.bni-experience-main #bni-handover-overview-title { font-size: clamp(1.75rem, 3vw, 2.75rem); line-height: 1.15; }
+.bni-articles-page .bni-articles-hero { padding-block: clamp(2.5rem, 4vw, 3.5rem); background: var(--site-color-surface); color: var(--site-color-ink); }
+.bni-articles-page #bni-articles-title,
+.bni-experience-main .bni-article__header h1 { font-size: clamp(1.75rem, 2.5vw, 2.25rem); line-height: 1.2; letter-spacing: -.025em; }
+.bni-articles-page #bni-articles-title,
+.bni-articles-page .bni-articles-hero .site-container > p:last-child { color: var(--site-color-ink); }
+.bni-articles-page .bni-articles-card__body h2 { font-size: var(--site-font-size-h3); line-height: 1.35; }
+.bni-experience-main .bni-handover-page-nav { position: relative; top: auto; }
+.bni-experience-main .bni-handover-page-nav__links a { font-family: var(--site-font-display); font-size: var(--site-font-size-navigation); }
+.bni-experience-page :is(#tong-quan, #su-kien, #chapters, #lich-trinh, #tin-tuc-bni, #dang-ky, [id^='chapter-']) { scroll-margin-top: 6rem; }

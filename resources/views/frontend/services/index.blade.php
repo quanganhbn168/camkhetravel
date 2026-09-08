@@ -10,7 +10,7 @@
 
     @if ($activeCategory)
         <section class="resource-category-intro">
-            <div class="site-shell resource-category-intro__grid">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-category-intro__grid">
                 <div>
                     <h2 class="display-title text-3xl leading-tight md:text-4xl">Giải pháp {{ mb_strtolower($activeCategory->name) }} theo đúng nhu cầu thực tế.</h2>
                     <p class="mt-5 max-w-xl text-sm leading-7 text-slate-600 md:text-base md:leading-8">{{ $pageDescription }}</p>
@@ -29,7 +29,7 @@
 
     @if (! $activeCategory)
         <section class="section-space bg-white">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <header class="mx-auto max-w-2xl text-center">
                     <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Danh mục</h2>
                     <p class="mt-4 text-sm leading-7 text-slate-600 md:text-base">Chọn một nhóm giải pháp để xem các dịch vụ phù hợp với mục tiêu của doanh nghiệp.</p>
@@ -61,7 +61,7 @@
         </section>
     @else
         <section class="section-space bg-white">
-            <div class="site-shell">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 md:flex-row md:items-end md:justify-between">
                     <div>
                         <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">{{ $activeCategory->name }}</h2>
@@ -71,7 +71,7 @@
 
                 <div class="mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                     @forelse ($services as $service)
-                        @include('frontend.partials.service-card')
+                        @include('frontend.partials.service-card', ['showCategoryBadge' => false])
                     @empty
                         <p class="col-span-full rounded-2xl border border-dashed border-slate-300 p-8 text-sm leading-7 text-slate-500">Chưa có dịch vụ được xuất bản trong danh mục này.</p>
                     @endforelse
@@ -87,7 +87,7 @@
     <section class="resource-archive-cta">
         @if ($heroImageUrl)<img class="resource-archive-cta__image" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">@endif
         <div class="resource-archive-cta__overlay"></div>
-        <div class="site-shell resource-archive-cta__content">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-archive-cta__content">
             <div><h2 class="max-w-2xl font-display text-3xl leading-tight tracking-[-0.045em] text-white md:text-4xl">Cần một giải pháp truyền thông phù hợp với mục tiêu của anh/chị?</h2></div>
             <a class="button-primary shrink-0" href="{{ LocalizedUrl::route('contact') }}">Gửi yêu cầu tư vấn <span aria-hidden="true">→</span></a>
         </div>

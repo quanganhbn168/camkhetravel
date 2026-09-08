@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Support\Localization\LocalizedUrl;
-use App\Models\LandingPage;
-use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,6 +12,19 @@ use Illuminate\Support\Facades\Route;
 class MenuItem extends Model
 {
     use HasFactory;
+
+    protected static function booted(): void
+    {
+        static::creating(function (MenuItem $item): void {
+            if ($item->menu_id !== null || $item->parent_id === null) {
+                return;
+            }
+
+            $item->menu_id = static::query()
+                ->whereKey($item->parent_id)
+                ->value('menu_id');
+        });
+    }
 
     protected $guarded = [];
 
@@ -49,9 +60,12 @@ class MenuItem extends Model
         return match ($this->linkType()) {
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
+            'service-category' => $this->serviceCategoryLink(),
             'landing-page' => $this->landingPageLink(),
             'project' => $this->projectLink(),
+            'project-category' => $this->projectCategoryLink(),
             'post' => $this->postLink(),
+            'post-category' => $this->postCategoryLink(),
             'page' => $this->pageLink(),
             'custom' => $this->url ?: '#',
             default => $this->url ?: '#',
@@ -63,9 +77,12 @@ class MenuItem extends Model
         return match ($this->linked_source_type) {
             'native_route' => 'route',
             'native_service' => 'service',
+            'native_service_category' => 'service-category',
             'native_landing_page' => 'landing-page',
             'native_project' => 'project',
+            'native_project_category' => 'project-category',
             'native_post' => 'post',
+            'native_post_category' => 'post-category',
             'native_page' => 'custom',
             'custom' => 'custom',
             Service::class => 'service',
@@ -111,6 +128,9 @@ class MenuItem extends Model
             'pricing.index',
             'projects.index',
             'posts.index',
+            'bni.events.index',
+            'bni.handover',
+            'bni.pickleball',
             'contact',
             'search',
         ];
@@ -136,6 +156,15 @@ class MenuItem extends Model
         return $landingPage ? LocalizedUrl::landingPage($landingPage) : '#';
     }
 
+    private function serviceCategoryLink(): string
+    {
+        $category = ServiceCategory::query()
+            ->where('is_active', true)
+            ->find($this->linked_source_id);
+
+        return $category ? LocalizedUrl::serviceCategory($category) : '#';
+    }
+
     private function projectLink(): string
     {
         $project = Project::query()
@@ -146,6 +175,15 @@ class MenuItem extends Model
         return $project ? LocalizedUrl::project($project) : '#';
     }
 
+    private function projectCategoryLink(): string
+    {
+        $category = ProjectCategory::query()
+            ->where('is_active', true)
+            ->find($this->linked_source_id);
+
+        return $category ? LocalizedUrl::projectCategory($category) : '#';
+    }
+
     private function postLink(): string
     {
         $post = Post::query()
@@ -154,6 +192,15 @@ class MenuItem extends Model
             ->find($this->linked_source_id);
 
         return $post ? LocalizedUrl::post($post) : '#';
+    }
+
+    private function postCategoryLink(): string
+    {
+        $category = PostCategory::query()
+            ->where('is_active', true)
+            ->find($this->linked_source_id);
+
+        return $category ? LocalizedUrl::postCategory($category) : '#';
     }
 
     private function pageLink(): string

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\LandingPages\Schemas;
 
 use App\Support\Landing\LandingTemplateRegistry;
+use App\Support\Landing\LandingRegistry;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
@@ -85,7 +86,8 @@ class LandingExperienceSchema
             Section::make('Các khối nội dung')
                 ->icon(Heroicon::OutlinedSquaresPlus)
                 ->description('Kéo thả để đổi thứ tự. Danh mục dịch vụ, dịch vụ, dự án, blog và bảng giá luôn đọc từ dữ liệu liên kết.')
-                ->visible(fn ($get): bool => $get('layout_mode') !== 'standard')
+                ->visible(fn ($get): bool => $get('layout_mode') !== 'standard'
+                    && LandingRegistry::find($get('template_key')) === null)
                 ->schema([
                     Builder::make('sections')
                         ->label('Bố cục trang')

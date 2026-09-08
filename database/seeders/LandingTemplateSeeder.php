@@ -28,9 +28,9 @@ class LandingTemplateSeeder extends Seeder
                 ]);
             }
 
-            // Keep source-backed Landing07 contracts current without
+            // Keep source-backed Landing contracts current without
             // overwriting admin-owned labels, activation, or palette values.
-            if (str_starts_with((string) ($definition['source_name'] ?? ''), 'Landing07')) {
+            if (str_starts_with((string) ($definition['source_name'] ?? ''), 'Landing')) {
                 $template->fill([
                     'settings_schema' => $definition['settings_schema'],
                     'default_settings' => $definition['settings'],

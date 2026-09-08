@@ -22,7 +22,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             SourceServiceSeeder::class,
-            Landing07ContentSeeder::class,
+            LandingContentSeeder::class,
+            BrandingLandingSeeder::class,
+            EventsNavigationSeeder::class,
         ]);
     }
 }

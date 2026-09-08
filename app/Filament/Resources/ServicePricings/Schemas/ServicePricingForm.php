@@ -42,10 +42,13 @@ class ServicePricingForm
                             ->columnSpanFull(),
                         Repeater::make('packages')
                             ->label('Các gói trong bảng giá')
+                            ->helperText('Mở gói để chỉnh sửa. Kéo thả để đổi thứ tự hiển thị trên website.')
                             ->relationship('packages')
+                            ->orderColumn('sort_order')
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Tên gói')
+                                    ->live(onBlur: true)
                                     ->required()
                                     ->maxLength(255)
                                     ->columnSpanFull(),
@@ -69,6 +72,7 @@ class ServicePricingForm
                                     ->placeholder('Ví dụ: Liên hệ để nhận báo giá'),
                                 Select::make('promotion_type')
                                     ->label('Khuyến mại')
+                                    ->live()
                                     ->options([
                                         'fixed_price' => 'Giá khuyến mại cố định',
                                         'percent' => 'Giảm theo phần trăm',
@@ -89,9 +93,12 @@ class ServicePricingForm
                                 Repeater::make('items')
                                     ->label('Các đầu mục của gói')
                                     ->relationship('items')
+                                    ->orderColumn('sort_order')
+                                    ->helperText('Các nội dung này chỉ hiển thị trên thẻ gói. Thiết lập Có/Không ở phần Bảng so sánh riêng.')
                                     ->schema([
                                         TextInput::make('name')
                                             ->label('Tên đầu mục')
+                                            ->live(onBlur: true)
                                             ->required()
                                             ->maxLength(255),
                                         Toggle::make('is_active')
@@ -107,6 +114,7 @@ class ServicePricingForm
                                     ->reorderable()
                                     ->cloneable()
                                     ->collapsible()
+                                    ->collapsed()
                                     ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Đầu mục mới')
                                     ->columnSpanFull(),
                                 Toggle::make('is_featured')
@@ -114,17 +122,14 @@ class ServicePricingForm
                                 Toggle::make('is_active')
                                     ->label('Hiển thị trên website')
                                     ->default(true),
-                                TextInput::make('sort_order')
-                                    ->label('Thứ tự')
-                                    ->numeric()
-                                    ->default(1),
                             ])
                             ->columns(2)
                             ->addActionLabel('Thêm gói giá')
                             ->reorderable()
                             ->cloneable()
                             ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Gói giá mới')
+                            ->collapsed()
+                            ->itemLabel(fn (array $state): string => ($state['name'] ?? 'Gói giá mới').' · '.(filled($state['list_price'] ?? null) ? number_format((float) $state['list_price'], 0, ',', '.').'đ' : 'Báo giá theo yêu cầu').(empty($state['is_active']) ? ' · Đang ẩn' : ''))
                             ->columnSpanFull(),
                     ])
                     ->columns(2)
@@ -145,16 +150,42 @@ class ServicePricingForm
                             ->url()
                             ->maxLength(1000)
                             ->columnSpanFull(),
-                        Textarea::make('source_json')
-                            ->label('JSON đã nhập gần nhất')
-                            ->rows(12)
-                            ->readOnly()
-                            ->dehydrated(false)
-                            ->placeholder('Chưa có JSON được nhập.')
-                            ->columnSpanFull(),
+                        Section::make('Dữ liệu nhập JSON')
+                            ->collapsed()
+                            ->schema([
+                                Textarea::make('source_json')
+                                    ->label('JSON đã nhập gần nhất')
+                                    ->rows(12)
+                                    ->readOnly()
+                                    ->dehydrated(false)
+                                    ->placeholder('Chưa có JSON được nhập.')
+                                    ->columnSpanFull(),
+                            ]),
                     ])
                     ->columns(1)
                     ->columnSpan(['lg' => 1]),
+                Section::make('Bảng so sánh')
+                    ->description('Nhập từng tiêu chí và chọn Có/Không cho từng gói. Không suy ra từ mô tả, giá hoặc thứ tự. Nếu vừa thêm gói mới, lưu bảng giá trước để chọn gói đó tại đây.')
+                    ->schema([
+                        Repeater::make('comparison_rows')
+                            ->label('Các tiêu chí so sánh')
+                            ->defaultItems(0)
+                            ->schema([
+                                TextInput::make('name')->label('Tiêu chí')->required()->maxLength(255)->live(onBlur: true),
+                                Repeater::make('cells')
+                                    ->label('Giá trị của từng gói')
+                                    ->default(fn (?ServicePricing $record): array => $record?->packages->map(fn ($package): array => ['package_id' => $package->id, 'included' => null, 'value' => null])->all() ?? [])
+                                    ->schema([
+                                        Select::make('package_id')->label('Gói giá')
+                                            ->options(fn (?ServicePricing $record): array => $record?->packages->pluck('name', 'id')->all() ?? [])
+                                            ->required()->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                                        Select::make('included')->label('Có bao gồm?')
+                                            ->boolean('Có (✓)', 'Không (—)', 'Chưa thiết lập'),
+                                        TextInput::make('value')->label('Giá trị / ghi chú')->placeholder('Ví dụ: 2 ngày quay, 3 lần chỉnh sửa')->maxLength(1000)->columnSpanFull(),
+                                    ])->columns(1)->grid(['lg' => 3])->addActionLabel('Thêm gói vào tiêu chí')->reorderable(false),
+                            ])->addActionLabel('Thêm tiêu chí so sánh')->reorderable()->collapsible()->collapsed()
+                            ->itemLabel(fn (array $state): string => $state['name'] ?? 'Tiêu chí mới'),
+                    ])->columnSpanFull(),
             ]);
     }
 }

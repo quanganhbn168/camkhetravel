@@ -17,10 +17,12 @@ class PricingCatalogPresenter
                 'description' => null,
                 'packages' => [],
                 'items' => [],
+                'comparison_rows' => [],
             ];
         }
 
         $packages = collect($pricing->packages)
+            ->sortBy([['sort_order', 'asc'], ['id', 'asc']])
             ->filter(fn (PricingPackage $package): bool => $package->is_active)
             ->map(function (PricingPackage $package): array {
                 $items = collect($package->items)
@@ -54,7 +56,25 @@ class PricingCatalogPresenter
             'description' => $pricing->description,
             'packages' => $packages->all(),
             'items' => $this->uniqueItems($packages),
+            'comparison_rows' => $this->comparisonRows($pricing, $packages),
         ];
+    }
+
+    private function comparisonRows(ServicePricing $pricing, Collection $packages): array
+    {
+        return collect($pricing->comparison_rows ?? [])
+            ->filter(fn ($row) => filled($row['name'] ?? null))
+            ->map(fn ($row) => [
+                'name' => $row['name'],
+                'cells' => $packages->mapWithKeys(function ($package) use ($row) {
+                    $cell = collect($row['cells'] ?? [])->firstWhere('package_id', $package['id']);
+
+                    return [$package['id'] => [
+                        'included' => isset($cell['included']) ? (bool) $cell['included'] : null,
+                        'value' => $cell['value'] ?? null,
+                    ]];
+                })->all(),
+            ])->values()->all();
     }
 
     /** @param Collection<int, array<string, mixed>> $packages @return list<string> */

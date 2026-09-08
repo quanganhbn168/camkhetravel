@@ -4,18 +4,19 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\HeroSlide;
-use App\Models\Post;
 use App\Models\Partner;
+use App\Models\Post;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
-use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
+use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Collection;
@@ -78,6 +79,20 @@ class HomeController extends Controller
             ->orderBy('sort_order')
             ->limit(6)
             ->get();
+        $featuredServiceCategories = ServiceCategory::query()
+            ->where('is_active', true)->where('is_featured', true)->where('is_home', true)
+            ->whereHas('services', fn ($query) => $query->published()->where('is_home', true))
+            ->with([
+                'slugs',
+                'services' => fn ($query) => $query->published()->where('is_home', true)
+                    ->with(['slugs', 'curatorMedia'])->orderBy('sort_order')->orderBy('id'),
+            ])->orderBy('sort_order')->orderBy('id')->get();
+        foreach ($featuredServiceCategories as $category) {
+            $this->attachImages($category->services);
+            $imageService = $category->services->first(fn ($service) => filled($service->image_url));
+            $category->setAttribute('home_image_url', $imageService?->image_url);
+            $category->setAttribute('home_image_alt', $imageService?->title ?: $category->name);
+        }
         $showcaseProjects = Project::query()
             ->published()
             ->with(['category', 'curatorMedia'])
@@ -123,6 +138,7 @@ class HomeController extends Controller
 
         return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'googleMapsEmbedUrl', 'googleMapsUrl') + [
             'companyName' => $companyName,
+            'featuredServiceCategories' => $featuredServiceCategories,
             'marqueePartners' => Partner::query()
                 ->active()
                 ->with('curatorMedia')

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
 use App\Models\LandingPage;
+use App\Models\PricingPackage;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
 use App\Support\Landing\LandingEventRecorder;
@@ -33,7 +34,13 @@ class ContactController extends Controller
             $googleMapsEmbedUrl = 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed';
         }
 
+        $selectedPackage = PricingPackage::query()->active()
+            ->whereKey($request->integer('plan'))
+            ->whereHas('servicePricing.service', fn ($query) => $query->published()->whereKey($request->integer('service')))
+            ->first();
+
         return view('frontend.contact', [
+            'pricingMessage' => $selectedPackage ? 'Tôi muốn được tư vấn gói '.$selectedPackage->name.'.' : '',
             'services' => Service::query()->published()->orderBy('sort_order')->get(['id', 'title']),
             'contactHeroImageUrl' => MediaUrl::versioned(
                 Media::query()->find($this->website->contact_image_media_id),

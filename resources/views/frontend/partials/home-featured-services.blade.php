@@ -1,0 +1,37 @@
+@use(App\Support\Localization\LocalizedUrl)
+
+@if ($featuredServiceCategories->isNotEmpty())
+    <section class="section-space home-featured-services" id="dich-vu-media-noi-bat" aria-labelledby="home-featured-services-title">
+        <div class="site-container mx-auto w-full max-w-7xl px-4 lg:px-8">
+            <div class="flex flex-wrap items-end justify-between gap-5">
+                <h2 class="display-title uppercase" id="home-featured-services-title">Dịch vụ media nổi bật</h2>
+                <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Tất cả dịch vụ <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="home-service-groups">
+                @foreach ($featuredServiceCategories as $category)
+                    <article @class(['home-service-group', 'home-service-group--reverse' => $loop->even]) aria-labelledby="home-service-group-{{ $category->id }}">
+                        <div class="home-service-group__content">
+                            <h3 id="home-service-group-{{ $category->id }}"><a href="{{ LocalizedUrl::serviceCategory($category) }}">{{ $category->name }}</a></h3>
+                            @if ($category->description)
+                                <p class="home-service-group__description">{{ $category->description }}</p>
+                            @endif
+                            <ul class="home-service-group__links">
+                                @foreach ($category->services as $service)
+                                    <li><a href="{{ LocalizedUrl::service($service) }}"><span>{{ $service->title }}</span><span aria-hidden="true">↗</span></a></li>
+                                @endforeach
+                            </ul>
+                            <a class="section-link" href="{{ LocalizedUrl::serviceCategory($category) }}">Khám phá dịch vụ <span aria-hidden="true">→</span></a>
+                        </div>
+                        <a class="home-service-group__image" href="{{ LocalizedUrl::serviceCategory($category) }}" aria-label="Xem danh mục {{ $category->name }}">
+                            @if ($category->home_image_url)
+                                <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt }}" loading="lazy">
+                            @else
+                                <span class="image-placeholder">THT MEDIA</span>
+                            @endif
+                        </a>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+@endif

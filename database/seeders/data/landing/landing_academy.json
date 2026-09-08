@@ -1,0 +1,347 @@
+{
+    "template_key": "landing_academy",
+    "slug": "hoc-vien-nhiep-anh-va-sang-tao-noi-dung",
+    "content": {
+        "page_class": "academy-page",
+        "contact": {
+            "brand_name": "THT Media",
+            "hotline_1": "0375 433 678",
+            "hotline_display": "0375 433 678",
+            "zalo_url": "https://zalo.me/0973494999",
+            "email": "thtmediaqvm@gmail.com",
+            "hotline_2": "0973 494 999",
+            "address_1": "Số 263 đường Bình Than, Võ Cường, Bắc Ninh",
+            "address_2": "Số 68 Bính Hạ, Trang Hạ, Bắc Ninh",
+            "website": "https://thtmedia.com.vn/",
+            "map_embed": "https://maps.google.com/maps?q=THT+Media+263+B%C3%ACnh+Than%2C+%C4%90%E1%BA%A1i+Ph%C3%BAc%2C+B%E1%BA%AFc+Ninh&t=&z=15&ie=UTF8&iwloc=&output=embed",
+            "favicon": "wp-uploads/2023/01/THT-media-favicon-150x150.png",
+            "logo_url": "wp-uploads/2023/01/THT-media-logo-2023.png",
+            "global_form_action": "https://script.google.com/macros/s/AKfycbzOVGGVT70K5jm9c2ekVzKGN0lXAaTIJbbsKenr5Q4pNVY6RqzNpYkuD1rdQfXq-Kwn/exec"
+        },
+        "brand": {
+            "name": "THT Academy",
+            "logo": "logo-tht-new.png"
+        },
+        "navigation": [
+            {
+                "label": "Khóa học",
+                "url": "#noi-dung-hoc"
+            },
+            {
+                "label": "Lộ trình",
+                "url": "#lo-trinh"
+            },
+            {
+                "label": "Thành quả",
+                "url": "#thanh-qua"
+            },
+            {
+                "label": "Giảng viên",
+                "url": "#giang-vien"
+            },
+            {
+                "label": "Đăng ký",
+                "url": "#dang-ky"
+            }
+        ],
+        "footer_text": "Đào tạo nhiếp ảnh thực chiến – Đồng hành cùng học viên phát triển kỹ năng và nghề nghiệp.",
+        "seo": {
+            "title": "THT Academy - Khóa Học Nhiếp Ảnh Thực Chiến",
+            "description": "Chương trình đào tạo nhiếp ảnh thực chiến giúp học viên làm chủ máy ảnh, ánh sáng, bố cục, hậu kỳ và xây dựng Portfolio để sẵn sàng làm nghề.",
+            "keywords": "THT Academy, khóa học nhiếp ảnh thực chiến, học chụp ảnh, Lightroom, Photoshop, xây dựng Portfolio",
+            "image": "wp-uploads/2024/07/z5683582572363_c917d29d4d274771832496efc570aea1.jpg"
+        },
+        "tracking_head": "",
+        "tracking_body": "",
+        "tracking_footer": "",
+        "form_action": "",
+        "hero": {
+            "brand_line": "THT ACADEMY • HỌC VIỆN NHIẾP ẢNH",
+            "eyebrow": "KHÓA HỌC NHIẾP ẢNH THỰC CHIẾN",
+            "subline": "Từ người mới bắt đầu đến Photographer chuyên nghiệp.",
+            "title": "Đừng chỉ học cách chụp ảnh.",
+            "title_highlight": "Hãy học cách tạo ra giá trị từ từng khung hình.",
+            "summary": "Một chiếc máy ảnh không tạo nên một nhiếp ảnh gia. Điều tạo nên sự khác biệt là tư duy, kỹ năng và trải nghiệm thực tế.",
+            "summary_secondary": "THT Academy mang đến chương trình đào tạo thực chiến, giúp học viên từng bước làm chủ máy ảnh, ánh sáng, bố cục, xử lý hậu kỳ và xây dựng Portfolio để sẵn sàng làm nghề.",
+            "audience_title": "Khóa học dành cho",
+            "audiences": [
+                "Người mới bắt đầu",
+                "Content Creator",
+                "Nhân sự Marketing",
+                "Chủ Studio",
+                "Freelancer",
+                "Người yêu thích nhiếp ảnh"
+            ],
+            "primary": "ĐĂNG KÝ HỌC THỬ MIỄN PHÍ",
+            "secondary": "ĐĂNG KÝ HỌC THỬ MIỄN PHÍ",
+            "method_title": "Được đào tạo theo phương pháp",
+            "methods": [
+                "Học thực hành",
+                "Cầm máy ngay từ buổi đầu",
+                "Giảng viên đồng hành",
+                "Xây dựng Portfolio thực tế"
+            ],
+            "video": "",
+            "poster": "wp-uploads/2024/07/z5683582572363_c917d29d4d274771832496efc570aea1.jpg"
+        },
+        "positioning": {
+            "eyebrow": "BẮT ĐẦU ĐÚNG CÁCH",
+            "title": "BẠN ĐANG GẶP KHÓ KHĂN KHI BẮT ĐẦU VỚI NHIẾP ẢNH?",
+            "body": "Nhiều người yêu thích nhiếp ảnh nhưng không biết nên bắt đầu từ đâu hoặc đã học nhiều nơi nhưng vẫn chưa tự tin cầm máy. Bạn có đang gặp những vấn đề này?",
+            "items": [
+                "Không biết chọn máy ảnh và ống kính phù hợp.",
+                "Chụp ảnh nhưng hình chưa đẹp như mong muốn.",
+                "Chưa hiểu về ánh sáng và bố cục.",
+                "Không biết chỉnh sửa ảnh chuyên nghiệp.",
+                "Thiếu môi trường thực hành.",
+                "Chưa đủ tự tin để nhận job."
+            ],
+            "footer": "Học đúng phương pháp sẽ giúp bạn rút ngắn rất nhiều thời gian thử và sai."
+        },
+        "solutions": {
+            "eyebrow": "GIÁ TRỊ SAU KHÓA HỌC",
+            "title": "BẠN SẼ NHẬN ĐƯỢC GÌ SAU KHÓA HỌC?",
+            "body": "Lộ trình tập trung vào bốn nhóm năng lực quan trọng để học viên có thể tự tin thực hành và phát triển nghề nghiệp.",
+            "cta": "ĐĂNG KÝ HỌC THỬ MIỄN PHÍ",
+            "items": [
+                {
+                    "title": "Làm chủ thiết bị",
+                    "details": [
+                        "Hiểu máy ảnh",
+                        "Thiết lập thông số",
+                        "Lựa chọn thiết bị phù hợp"
+                    ],
+                    "icon": "fa-camera",
+                    "image": "khoahocnhiepanhthucchien/assets/images/academy-camera-basics.jpg"
+                },
+                {
+                    "title": "Làm chủ kỹ thuật",
+                    "details": [
+                        "Ánh sáng",
+                        "Bố cục",
+                        "Màu sắc",
+                        "Góc chụp"
+                    ],
+                    "icon": "fa-lightbulb",
+                    "image": "khoahocnhiepanhthucchien/assets/images/academy-studio-practice.jpg"
+                },
+                {
+                    "title": "Làm chủ hậu kỳ",
+                    "details": [
+                        "Lightroom",
+                        "Photoshop",
+                        "Quy trình chỉnh màu",
+                        "Xuất file chuyên nghiệp"
+                    ],
+                    "icon": "fa-wand-magic-sparkles",
+                    "image": "khoahocnhiepanhthucchien/assets/images/academy-lightroom-class.jpg"
+                },
+                {
+                    "title": "Làm chủ tư duy nghề",
+                    "details": [
+                        "Làm việc với khách hàng",
+                        "Xây dựng Portfolio",
+                        "Định giá dịch vụ",
+                        "Phát triển thương hiệu cá nhân"
+                    ],
+                    "icon": "fa-briefcase",
+                    "image": "khoahocnhiepanhthucchien/assets/images/academy-guided-practice.jpg"
+                }
+            ]
+        },
+        "process": {
+            "eyebrow": "GIÁO ÁN",
+            "title": "13 CHUYÊN ĐỀ TỪ NỀN TẢNG ĐẾN THỰC HÀNH",
+            "items": [
+                {
+                    "title": "Học thử miễn phí",
+                    "text": "Trải nghiệm lớp học, làm quen giảng viên và xác định lộ trình phù hợp trước khi đăng ký."
+                },
+                {
+                    "title": "Máy ảnh & ống kính",
+                    "text": "Phân loại máy ảnh, ống kính; cách cầm máy và tư thế cầm máy."
+                },
+                {
+                    "title": "Làm chủ Exposure",
+                    "text": "Khẩu độ, tốc độ, ISO; chế độ đo sáng và kỹ thuật lấy nét."
+                },
+                {
+                    "title": "Cài đặt máy ảnh",
+                    "text": "Nút chức năng, chế độ tự động/thủ công, menu và RAW/JPEG."
+                },
+                {
+                    "title": "Thực hành máy ảnh",
+                    "text": "Kiểm tra kiến thức về máy, ống kính, chức năng và cài đặt."
+                },
+                {
+                    "title": "Lighting",
+                    "text": "Nguồn sáng tự nhiên, nhân tạo và thiết bị ánh sáng trong studio."
+                },
+                {
+                    "title": "Bố cục & màu sắc",
+                    "text": "7 bố cục kinh điển, cách ứng dụng và quy tắc phối màu cơ bản."
+                },
+                {
+                    "title": "Chụp mẫu ngoại cảnh",
+                    "text": "Xây dựng ý tưởng, chuẩn bị, tương tác và tạo dáng ngoài hiện trường."
+                },
+                {
+                    "title": "Chụp mẫu trong studio",
+                    "text": "Thực hành ý tưởng, chuẩn bị, tương tác và tạo dáng trong studio."
+                },
+                {
+                    "title": "Lightroom cơ bản",
+                    "text": "Làm quen phần mềm, quản lý file ảnh, import và export."
+                },
+                {
+                    "title": "Lightroom/Photoshop I",
+                    "text": "Tìm hiểu các công cụ chỉnh sửa ảnh – phần 1."
+                },
+                {
+                    "title": "Lightroom/Photoshop II",
+                    "text": "Tìm hiểu các công cụ chỉnh sửa ảnh – phần 2."
+                },
+                {
+                    "title": "Tổng kết khóa học",
+                    "text": "Tổng kết chương trình và trao chứng nhận."
+                }
+            ]
+        },
+        "strategy": {
+            "eyebrow": "PHƯƠNG PHÁP ĐÀO TẠO",
+            "title": "HỌC THỰC CHIẾN – LÀM THỰC TẾ",
+            "body": "Điểm khác biệt của THT Academy không nằm ở số giờ học mà ở trải nghiệm thực tế.",
+            "items": [
+                "Đào tạo gắn liền với thực tiễn, cầm tay chỉ việc.",
+                "Đội ngũ giảng viên nhiệt tình, sát sao cùng học viên.",
+                "Giáo án và chương trình được cập nhật liên tục.",
+                "Cơ hội thử sức và làm việc tại THT Media."
+            ],
+            "image": "khoahocnhiepanhthucchien/assets/images/academy-studio-practice.jpg"
+        },
+        "showcase": {
+            "eyebrow": "THÀNH QUẢ HỌC VIÊN",
+            "title": "SỰ TIẾN BỘ ĐƯỢC THỂ HIỆN BẰNG SẢN PHẨM",
+            "body": "Gallery sản phẩm và Portfolio thực tế của học viên sau quá trình học.",
+            "items": [
+                {
+                    "title": "Học viên N.T.K",
+                    "folder": "hoc-vien-a"
+                },
+                {
+                    "title": "Học viên T.V.N",
+                    "folder": "hoc-vien-b"
+                }
+            ]
+        },
+        "instructors": {
+            "eyebrow": "GIẢNG VIÊN ĐỒNG HÀNH",
+            "title": "HỌC TỪ NHỮNG NGƯỜI\nĐANG TRỰC TIẾP LÀM NGHỀ",
+            "body": "Đội ngũ làm việc và giảng dạy tại THT Media tích lũy 10+ năm kinh nghiệm thực chiến, đồng hành sát sao để học viên nắm vững nghề.",
+            "image": "khoahocnhiepanhthucchien/assets/images/academy-camera-basics.jpg",
+            "items": [
+                {
+                    "number": "10+",
+                    "title": "Năm làm nghề",
+                    "text": "Kinh nghiệm thực chiến trong nhiếp ảnh và sản xuất nội dung."
+                },
+                {
+                    "number": "500+",
+                    "title": "Job doanh nghiệp",
+                    "text": "Dự án đã thực hiện cùng các thương hiệu và doanh nghiệp."
+                },
+                {
+                    "number": "1.000+",
+                    "title": "Giờ hướng dẫn",
+                    "text": "Đứng lớp, cầm tay chỉ việc và phản hồi bài thực hành."
+                },
+                {
+                    "number": "100+",
+                    "title": "Học viên đồng hành",
+                    "text": "Cùng phát triển kỹ năng và hoàn thiện Portfolio cá nhân."
+                }
+            ]
+        },
+        "faq": {
+            "eyebrow": "HỌC VIÊN NÓI GÌ?",
+            "title": "TRẢI NGHIỆM THỰC TẾ TẠI THT ACADEMY",
+            "body": "Những cảm nhận được trích từ tài liệu chương trình đào tạo Nhiếp Ảnh.",
+            "items": [
+                {
+                    "title": "Tien Nguyen",
+                    "text": "Bài học rất hữu ích, không chỉ cho người mới bắt đầu học về ngành Nhiếp ảnh mà còn cả cho người đang trong quá trình luyện tập. Em xin chân thành gửi lời cảm ơn đến thầy.",
+                    "icon": "fa-star"
+                },
+                {
+                    "title": "Lê Ngọc Tùng",
+                    "text": "Cảm ơn thầy, khóa học của thầy rất hay, nó giúp bản thân em thay đổi rất nhiều trong cuộc sống và công việc.",
+                    "icon": "fa-star"
+                },
+                {
+                    "title": "Trương Minh Tâm",
+                    "text": "Rất hay, chi tiết, dễ hiểu, dễ thực hành.",
+                    "icon": "fa-star"
+                },
+                {
+                    "title": "Nguyễn Đăng Khoa",
+                    "text": "Rất dễ hiểu, chi tiết. Xin cảm ơn!",
+                    "icon": "fa-star"
+                }
+            ]
+        },
+        "pricing": {
+            "eyebrow": "THÔNG TIN KHÓA HỌC",
+            "title": "HỌC PHÍ & LỊCH HỌC",
+            "price": 12000000,
+            "unit": "/trọn khóa",
+            "facts": [
+                {
+                    "label": "Số buổi học",
+                    "value": "12 buổi / 10 tuần"
+                },
+                {
+                    "label": "Sĩ số",
+                    "value": "3–5 học viên"
+                },
+                {
+                    "label": "Thời gian học",
+                    "value": "Linh động theo lịch học viên"
+                },
+                {
+                    "label": "Địa điểm chính",
+                    "value": "263 Bình Than, Võ Cường, Bắc Ninh"
+                }
+            ],
+            "promotions": [
+                {
+                    "value": "Liên hệ",
+                    "title": "Học thử buổi đầu tiên",
+                    "condition": "Liên hệ để kiểm tra lịch học thử gần nhất",
+                    "is_text": true
+                },
+                {
+                    "value": "15%",
+                    "title": "Đăng ký cá nhân",
+                    "condition": "Ưu đãi dành cho học viên đăng ký cá nhân"
+                },
+                {
+                    "value": "20%",
+                    "title": "Đăng ký từ 2 người",
+                    "condition": "Ưu đãi khi đăng ký cùng bạn học"
+                }
+            ],
+            "cta": "ĐĂNG KÝ HỌC THỬ MIỄN PHÍ"
+        },
+        "contact_section": {
+            "eyebrow": "ĐĂNG KÝ KHÓA HỌC",
+            "title": "BẮT ĐẦU HÀNH TRÌNH TRỞ THÀNH PHOTOGRAPHER CHUYÊN NGHIỆP",
+            "body": "Để lại thông tin, đội ngũ THT Academy sẽ liên hệ tư vấn khóa học phù hợp với trình độ và mục tiêu của bạn.",
+            "cta": "ĐĂNG KÝ HỌC THỬ MIỄN PHÍ",
+            "fields": {
+                "fullname": "Họ và tên",
+                "phone": "Số điện thoại",
+                "goal": "Mô tả qua về trình độ cũng như mục tiêu học tập của bạn"
+            }
+        }
+    }
+}

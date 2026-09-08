@@ -1,6 +1,6 @@
 @if ($benefitItems !== [])
     <section id="loi-ich" class="section-space bg-mist/55">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="mx-auto max-w-3xl text-center">
                 <h2 class="display-title text-3xl leading-tight md:text-5xl">{{ $service->benefit_title ?: 'Lợi ích của '.$service->title }}</h2>
                 @if ($service->benefit_description)

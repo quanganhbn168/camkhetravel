@@ -22,7 +22,7 @@ class BniChapterController extends Controller
         $chapter->loadMissing('event');
         abort_if($chapter->event && $chapter->event->status !== 'published', 404);
 
-        return view('frontend.bni-chapter', $this->experience->chapter($chapter) + [
+        return view('frontend.bni.chapter', $this->experience->chapter($chapter) + [
             'seo' => $this->seo->bniChapter(
                 $chapter,
                 $chapter->bniMediaUrl('cover') ?: $chapter->bniMediaUrl('logo'),

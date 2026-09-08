@@ -50,7 +50,8 @@ class BniExperienceRoutesTest extends TestCase
         $navEnd = strpos($body, '</nav>', $navStart);
         $navigation = substr($body, $navStart, $navEnd - $navStart);
 
-        $this->assertStringContainsString('Video giới thiệu', $navigation);
+        $this->assertStringNotContainsString('Video giới thiệu', $navigation);
+        $this->assertStringContainsString(route('bni.events.index'), $navigation);
         $this->assertStringContainsString(route('bni.articles.index'), $navigation);
         $this->assertStringNotContainsString('KINHBAC', $navigation);
         $this->assertStringNotContainsString('KBG', $navigation);
@@ -264,7 +265,7 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Phát video: Video đầu trang Lễ chuyển giao');
     }
 
-    public function test_overview_media_comes_from_chapters_while_the_intro_video_keeps_its_own_section(): void
+    public function test_overview_keeps_chapter_media_while_the_intro_section_is_hidden_without_deleting_its_data(): void
     {
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
         $chapter = $event->chapters()->where('is_active', true)->orderBy('sort_order')->firstOrFail();
@@ -278,14 +279,12 @@ class BniExperienceRoutesTest extends TestCase
         $overviewStart = strpos($body, '<aside class="bni-overview__video"');
         $overviewEnd = strpos($body, '</aside>', $overviewStart);
         $overview = substr($body, $overviewStart, $overviewEnd - $overviewStart);
-        $introStart = strpos($body, '<section class="bni-section bni-intro-video"');
-        $introEnd = strpos($body, '</section>', $introStart);
-        $intro = substr($body, $introStart, $introEnd - $introStart);
 
         $this->assertStringContainsString('chapter-video', $overview);
         $this->assertStringNotContainsString('intro-video', $overview);
-        $this->assertStringContainsString('intro-video', $intro);
-        $this->assertStringNotContainsString('chapter-video', $intro);
+        $this->assertStringNotContainsString('id="video-gioi-thieu"', $body);
+        $this->assertStringNotContainsString('https://www.youtube.com/watch?v=intro-video', $body);
+        $this->assertDatabaseHas('bni_event_videos', ['bni_event_id' => $event->id, 'external_url' => 'https://www.youtube.com/watch?v=intro-video']);
     }
 
     public function test_a_new_handover_slide_is_bound_without_an_event_field_in_the_admin_form(): void
@@ -306,6 +305,7 @@ class BniExperienceRoutesTest extends TestCase
 
     public function test_handover_slider_uses_the_bni_key_visual_when_no_slide_image_exists(): void
     {
+        Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
         $event->clearMediaCollection('hero');
         $event->slides->each(function (BniEventSlide $slide): void {

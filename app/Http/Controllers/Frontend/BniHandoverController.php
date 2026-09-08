@@ -17,7 +17,7 @@ class BniHandoverController extends Controller
 
     public function __invoke(): View
     {
-        return view('frontend.bni-handover', $this->experience->handover() + [
+        return view('frontend.bni.handover', $this->experience->handover() + [
             'seo' => $this->seo->listing(
                 'Lễ chuyển giao BNI | '.$this->seo->siteName(),
                 'Lễ chuyển giao BNI, kết nối 4 chapter KINHBAC, KBG, IMPACT và FAMOUS.',

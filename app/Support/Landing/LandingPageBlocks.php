@@ -13,23 +13,23 @@ class LandingPageBlocks
 {
     /** @var array<string, string> */
     private const VIEWS = [
-        'hero' => 'frontend.landing-pages.blocks.hero',
-        'countdown' => 'frontend.landing-pages.blocks.countdown',
-        'benefits' => 'frontend.landing-pages.blocks.benefits',
-        'content_grid' => 'frontend.landing-pages.blocks.content-grid',
-        'process' => 'frontend.landing-pages.blocks.process',
-        'stats' => 'frontend.landing-pages.blocks.stats',
-        'testimonials' => 'frontend.landing-pages.blocks.testimonials',
-        'projects' => 'frontend.landing-pages.blocks.projects',
-        'service_categories' => 'frontend.landing-pages.blocks.service-categories',
-        'services' => 'frontend.landing-pages.blocks.services',
-        'posts' => 'frontend.landing-pages.blocks.posts',
-        'pricing' => 'frontend.landing-pages.blocks.pricing',
-        'rich_text' => 'frontend.landing-pages.blocks.rich-text',
-        'gallery' => 'frontend.landing-pages.blocks.gallery',
-        'faqs' => 'frontend.landing-pages.blocks.faqs',
-        'lead_form' => 'frontend.landing-pages.blocks.lead-form',
-        'cta' => 'frontend.landing-pages.blocks.cta',
+        'hero' => 'frontend.landing.blocks.hero',
+        'countdown' => 'frontend.landing.blocks.countdown',
+        'benefits' => 'frontend.landing.blocks.benefits',
+        'content_grid' => 'frontend.landing.blocks.content-grid',
+        'process' => 'frontend.landing.blocks.process',
+        'stats' => 'frontend.landing.blocks.stats',
+        'testimonials' => 'frontend.landing.blocks.testimonials',
+        'projects' => 'frontend.landing.blocks.projects',
+        'service_categories' => 'frontend.landing.blocks.service-categories',
+        'services' => 'frontend.landing.blocks.services',
+        'posts' => 'frontend.landing.blocks.posts',
+        'pricing' => 'frontend.landing.blocks.pricing',
+        'rich_text' => 'frontend.landing.blocks.rich-text',
+        'gallery' => 'frontend.landing.blocks.gallery',
+        'faqs' => 'frontend.landing.blocks.faqs',
+        'lead_form' => 'frontend.landing.blocks.lead-form',
+        'cta' => 'frontend.landing.blocks.cta',
     ];
 
     /** @return list<array<string, mixed>> */
@@ -124,10 +124,10 @@ class LandingPageBlocks
     {
         if ($landingPage->layout_mode === 'custom_template') {
             return LandingTemplateRegistry::find($landingPage->template_key)['view']
-                ?? 'frontend.landing-pages.builder';
+                ?? 'frontend.landing.builder';
         }
 
-        return 'frontend.landing-pages.builder';
+        return 'frontend.landing.builder';
     }
 
     /** @return array<string, mixed>|null */

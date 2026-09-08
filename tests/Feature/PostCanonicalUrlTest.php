@@ -11,6 +11,20 @@ class PostCanonicalUrlTest extends TestCase
 {
     use DatabaseTransactions;
 
+    public function test_posts_listing_uses_blog_path_and_legacy_listing_redirects(): void
+    {
+        $blogUrl = LocalizedUrl::route('posts.index');
+
+        $this->assertSame(url('/blog'), $blogUrl);
+
+        $this->get($blogUrl)
+            ->assertOk();
+
+        $this->get('/tin-tuc')
+            ->assertMovedPermanently()
+            ->assertRedirect($blogUrl);
+    }
+
     public function test_post_detail_uses_the_root_slug_and_news_listing_url_redirects_to_it(): void
     {
         $post = Post::query()->published()->firstOrFail();

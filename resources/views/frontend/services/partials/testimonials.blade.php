@@ -1,5 +1,5 @@
 <section class="home-testimonials section-space" id="khach-hang-noi-gi">
-    <div class="site-shell home-testimonials__layout">
+    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-testimonials__layout">
         <div class="home-testimonials__intro">
             <h2>Khách hàng nói về chúng tôi</h2>
             <p class="mt-4 text-sm leading-7 text-slate-300">Những chia sẻ từ các hành trình đã đồng hành.</p>

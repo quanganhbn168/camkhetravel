@@ -1,6 +1,6 @@
 @if ($statsItems->isNotEmpty())
     <section class="section-space bg-ink text-white">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="mx-auto max-w-3xl text-center">
                 <h2 class="display-title text-3xl leading-tight text-white md:text-5xl">{{ $service->stats_title ?: 'Những con số đáng chú ý' }}</h2>
                 @if ($service->stats_description)

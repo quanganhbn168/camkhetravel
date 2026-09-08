@@ -7,7 +7,7 @@
         @else
             <span class="image-placeholder">THT</span>
         @endif
-        @if ($service->category)
+        @if (($showCategoryBadge ?? true) && $service->category)
             <span class="resource-card__badge">{{ $service->category->name }}</span>
         @endif
     </a>

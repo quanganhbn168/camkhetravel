@@ -108,6 +108,7 @@ class BniExperienceService
 
         return [
             'event' => $event,
+            'overviewTitleLines' => preg_split('/\s+(?=Ban\s+Điều\s+hành\s+BNI)/iu', $event?->title ?: 'Lễ chuyển giao Ban Điều hành BNI', 2),
             'heroImageUrl' => $heroImageUrl,
             'heroSlides' => $heroSlides,
             'eventVideo' => [

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\LandingPage;
 use App\Support\Frontend\MediaUrl;
 use App\Support\Landing\LandingPageBlocks;
+use App\Support\Landing\LandingRegistry;
+use App\Support\Landing\LandingPresenter;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\View\View;
@@ -16,6 +18,7 @@ class LandingController extends Controller
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
         private readonly LandingPageBlocks $landingPageBlocks,
+        private readonly LandingPresenter $landingPresenter,
     ) {}
 
     public function show(LandingPage $landingPage): View
@@ -46,19 +49,42 @@ class LandingController extends Controller
 
         $landingPage->setAttribute('image_url', MediaUrl::resolve($landingPage->curatorMedia));
 
-        $templateView = $this->landingPageBlocks->templateView($landingPage);
+        $landingTemplateKey = LandingRegistry::templateForSlug($landingPage->slug) ?: $landingPage->template_key;
+        $usesLanding = LandingRegistry::find($landingTemplateKey) !== null;
+        $templateView = $usesLanding
+            ? (LandingRegistry::find($landingTemplateKey)['shell'] ?? 'frontend.landing.shell')
+            : $this->landingPageBlocks->templateView($landingPage);
         $templateDefinition = $this->landingPageBlocks->templateDefinition($landingPage);
-        $usesBuilderLayout = collect($landingPage->sections)->isNotEmpty();
+        $usesBuilderLayout = ! $usesLanding && collect($landingPage->sections)->isNotEmpty();
+        $landingTemplateSettings = $this->landingPageBlocks->templateSettings($landingPage);
+        $landingTheme = $this->landingPageBlocks->theme($landingPage);
 
         return view($templateView, [
             'landingPage' => $landingPage,
             'landingBlocks' => $usesBuilderLayout ? $this->landingPageBlocks->prepare($landingPage) : [],
-            'landingTheme' => $this->landingPageBlocks->theme($landingPage),
+            'landingTheme' => $landingTheme,
+            'landingViewModel' => $usesLanding
+                ? $this->landingPresenter->present($landingTemplateKey, $landingPage)
+                : [],
             'landingTemplateView' => $templateView,
             'landingTemplateDefinition' => $templateDefinition,
-            'landingTemplateSettings' => $this->landingPageBlocks->templateSettings($landingPage),
+            'landingLayout' => 'layouts.landing',
+            'landingTemplateSettings' => $landingTemplateSettings,
             'landingTemplateMedia' => $this->landingPageBlocks->templateMedia($landingPage),
             'landingCampaignState' => $this->landingPageBlocks->campaignState($landingPage),
+            'landingTracking' => [
+                'head' => data_get($landingTemplateSettings, 'tracking_head')
+                    ?: data_get($landingTemplateSettings, 'communications_source.tracking_head'),
+                'body' => data_get($landingTemplateSettings, 'tracking_body')
+                    ?: data_get($landingTemplateSettings, 'communications_source.tracking_body'),
+                'footer' => data_get($landingTemplateSettings, 'tracking_footer')
+                    ?: data_get($landingTemplateSettings, 'communications_source.tracking_footer'),
+            ],
+            'landingAssets' => [
+                'vite' => $usesLanding
+                    ? LandingRegistry::viteAssets($landingTemplateKey)
+                    : ['resources/css/app.css', 'resources/js/app.js'],
+            ],
             'landingTrackingUrl' => route('landing-pages.track', ['landingPage' => $landingPage->id]),
             'hideHeader' => ! $landingPage->show_header,
             'hideFooter' => ! $landingPage->show_footer,

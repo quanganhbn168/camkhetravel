@@ -11,7 +11,7 @@ use App\Models\Project;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
-use App\Support\Landing\Landing07Catalog;
+use App\Support\Landing\LandingRegistry;
 use App\Support\Landing\LandingTemplateRegistry;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -157,10 +157,10 @@ class LandingBuilderTest extends TestCase
 
         $options = LandingTemplateRegistry::options();
         $this->assertSame('Tri ân / Sự kiện', $options[LandingTemplateRegistry::ANNIVERSARY]);
-        $this->assertSame('Landing07 / Phim doanh nghiệp', $options[LandingTemplateRegistry::CORPORATE_FILM]);
-        $this->assertSame('Landing07 / Quay chụp sự kiện', $options[LandingTemplateRegistry::EVENT_MEDIA]);
-        $this->assertCount(13, $options);
-        foreach (array_keys(Landing07Catalog::templates()) as $key) {
+        $this->assertSame('Landing / Sản xuất phim doanh nghiệp', $options[LandingRegistry::CORPORATE_FILM]);
+        $this->assertSame('Landing / Quay phim, chụp ảnh sự kiện', $options[LandingRegistry::EVENT_MEDIA]);
+        $this->assertCount(14, $options);
+        foreach (array_keys(LandingRegistry::pages()) as $key) {
             $this->assertArrayHasKey($key, $options);
         }
 
@@ -171,12 +171,12 @@ class LandingBuilderTest extends TestCase
             ->set('data.template_key', LandingTemplateRegistry::PORTFOLIO)
             ->assertSee('Thiết lập template Dự án / Hồ sơ năng lực')
             ->assertDontSee('Thiết lập template Chuyển đổi / Báo giá')
-            ->set('data.template_key', LandingTemplateRegistry::CORPORATE_FILM)
-            ->assertSee('Thiết lập Landing07 / Phim doanh nghiệp')
+            ->set('data.template_key', LandingRegistry::CORPORATE_FILM)
+            ->assertSee('Thiết lập Sản xuất phim doanh nghiệp')
             ->assertDontSee('Thiết lập template Dự án / Hồ sơ năng lực')
-            ->set('data.template_key', LandingTemplateRegistry::EVENT_MEDIA)
-            ->assertSee('Thiết lập Landing07 / Quay chụp sự kiện')
-            ->assertDontSee('Thiết lập Landing07 / Phim doanh nghiệp');
+            ->set('data.template_key', LandingRegistry::EVENT_MEDIA)
+            ->assertSee('Thiết lập Quay phim, chụp ảnh sự kiện')
+            ->assertDontSee('Thiết lập Sản xuất phim doanh nghiệp');
 
         $this->actingAs($user)
             ->get('/admin/landing-events')
@@ -184,7 +184,7 @@ class LandingBuilderTest extends TestCase
             ->assertSee('Tracking landing');
     }
 
-    public function test_each_template_resolves_its_own_schema_view_and_css_source(): void
+    public function test_builder_templates_and_native_landings_resolve_distinct_contracts(): void
     {
         $landing = $this->createBuilderLanding(Media::query()->firstOrFail());
         $cases = [
@@ -195,14 +195,6 @@ class LandingBuilderTest extends TestCase
             LandingTemplateRegistry::PORTFOLIO => [
                 'class' => 'landing-page--portfolio',
                 'copy' => 'THT MEDIA / SELECTED WORKS',
-            ],
-            LandingTemplateRegistry::CORPORATE_FILM => [
-                'class' => 'landing-page--landing07-film',
-                'copy' => 'THT FILMS',
-            ],
-            LandingTemplateRegistry::EVENT_MEDIA => [
-                'class' => 'landing-page--landing07-event',
-                'copy' => 'THT EVENT MEDIA',
             ],
         ];
 
@@ -224,37 +216,23 @@ class LandingBuilderTest extends TestCase
             $this->assertFileExists(base_path($definition['css_source']));
         }
 
-        $landing->update([
-            'template_key' => LandingTemplateRegistry::CORPORATE_FILM,
-            'template_settings' => array_replace(
-                LandingTemplateRegistry::defaultSettings(LandingTemplateRegistry::CORPORATE_FILM),
-                ['film_showreel_url' => 'javascript:alert(1)'],
-            ),
-        ]);
+        foreach (LandingRegistry::pages() as $key => $page) {
+            $definition = LandingTemplateRegistry::find($key);
 
-        $this->get('/'.$landing->slug)
-            ->assertOk()
-            ->assertDontSee('javascript:alert', false);
+            $this->assertSame('frontend.landing.shell', $definition['view']);
+            $this->assertSame($page['css'], $definition['css_source']);
+        }
     }
 
-    public function test_landing07_templates_provide_source_backed_builder_blueprints(): void
+    public function test_native_landing_templates_use_database_content_not_builder_blueprints(): void
     {
-        $filmSections = LandingTemplateRegistry::defaultSections(LandingTemplateRegistry::CORPORATE_FILM);
-        $eventSections = LandingTemplateRegistry::defaultSections(LandingTemplateRegistry::EVENT_MEDIA);
-
-        $this->assertSame(
-            ['hero', 'benefits', 'projects', 'pricing', 'gallery', 'faqs', 'lead_form'],
-            array_column($filmSections, 'type'),
-        );
-        $this->assertSame(
-            ['hero', 'benefits', 'gallery', 'pricing', 'projects', 'faqs', 'lead_form'],
-            array_column($eventSections, 'type'),
-        );
-        $this->assertSame('Các sản phẩm tiêu biểu', $filmSections[2]['data']['title']);
-        $this->assertSame('Không chỉ giao file – giao bộ tài nguyên có thể sử dụng ngay', $eventSections[1]['data']['title']);
+        $this->assertSame([], LandingTemplateRegistry::defaultSections(LandingRegistry::CORPORATE_FILM));
+        $this->assertSame([], LandingTemplateRegistry::defaultSections(LandingRegistry::EVENT_MEDIA));
+        $this->assertNotEmpty($this->service('san-xuat-phim-doanh-nghiep')->landing_content);
+        $this->assertNotEmpty($this->service('quay-chup-live-su-kien-chuong-trinh')->landing_content);
     }
 
-    public function test_selecting_a_landing07_template_seeds_only_an_empty_builder(): void
+    public function test_selecting_a_landing_template_seeds_only_an_empty_builder(): void
     {
         $user = User::factory()->create();
         $user->assignRole(Role::findOrCreate('super_admin'));
@@ -264,9 +242,8 @@ class LandingBuilderTest extends TestCase
         $this->actingAs($user);
 
         Livewire::test(EditLandingPage::class, ['record' => $landing->id])
-            ->set('data.template_key', LandingTemplateRegistry::CORPORATE_FILM)
-            ->assertSet('data.sections.0.type', 'hero')
-            ->assertSet('data.sections.2.data.title', 'Các sản phẩm tiêu biểu');
+            ->set('data.template_key', LandingRegistry::CORPORATE_FILM)
+            ->assertSet('data.sections', []);
 
         $landing->update([
             'sections' => [[
@@ -276,7 +253,7 @@ class LandingBuilderTest extends TestCase
         ]);
 
         Livewire::test(EditLandingPage::class, ['record' => $landing->id])
-            ->set('data.template_key', LandingTemplateRegistry::EVENT_MEDIA)
+            ->set('data.template_key', LandingRegistry::EVENT_MEDIA)
             ->assertSet('data.sections', fn (mixed $sections): bool => str_contains(
                 json_encode($sections, JSON_UNESCAPED_UNICODE),
                 'Nội dung đang quản lý',
@@ -327,5 +304,12 @@ class LandingBuilderTest extends TestCase
                 ['type' => 'lead_form', 'data' => ['block_id' => 'tu-van', 'title' => 'Đăng ký']],
             ],
         ]);
+    }
+
+    private function service(string $slug): Service
+    {
+        return Service::query()
+            ->whereHas('slugs', fn ($query) => $query->where('slug', $slug))
+            ->firstOrFail();
     }
 }

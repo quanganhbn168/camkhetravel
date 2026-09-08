@@ -19,7 +19,7 @@
         ->values();
 @endphp
 
-@section('body_class', 'min-h-screen bg-white')
+@section('body_class', 'home-page min-h-screen bg-white')
 
 @section('content')
     <section class="brand-gradient-dark relative isolate w-full overflow-hidden text-white" data-hero-section>
@@ -44,7 +44,7 @@
                 @endif
 
                 @if ($slide['has_content'])
-                    <div class="site-shell relative z-10 grid items-end py-16 md:py-24 lg:py-28">
+                    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative z-10 grid items-end py-16 md:py-24 lg:py-28">
                         <div class="max-w-4xl pb-24 lg:pb-16">
                             @if ($slide['title'])
                                 <h2 class="font-display max-w-4xl text-3xl leading-[1.12] tracking-[-0.045em] text-white sm:text-4xl lg:text-6xl">{{ $slide['title'] }}</h2>
@@ -75,7 +75,7 @@
             @endif
         @empty
             <div class="hero-brand-glow absolute inset-0"></div>
-            <div class="site-shell relative grid items-end py-24 md:py-32 lg:py-40">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative grid items-end py-24 md:py-32 lg:py-40">
                 <div class="max-w-4xl pb-16">
                     <h2 class="font-display max-w-4xl text-4xl leading-[1.12] tracking-[-0.045em] text-white lg:text-6xl">Biến câu chuyện thương hiệu thành trải nghiệm đáng nhớ.</h2>
                 </div>
@@ -106,7 +106,7 @@
                 </div>
             </div>
         @else
-            <div class="site-shell flex items-center gap-4 text-sm text-slate-500">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex items-center gap-4 text-sm text-slate-500">
                 <span class="size-2 rounded-full bg-primary"></span>
                 Thông tin khách hàng và đối tác sẽ xuất hiện tại đây sau khi được thêm trong quản trị.
             </div>
@@ -114,7 +114,7 @@
     </section>
 
     <section class="section-space" id="gioi-thieu">
-        <div class="site-shell grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
             <div class="aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-mist shadow-[0_20px_48px_color-mix(in_srgb,var(--site-color-ink)_12%,transparent)]" data-aos="fade-right">
                 @if ($aboutImageUrl)
                     <img class="h-full w-full object-cover" src="{{ $aboutImageUrl }}" alt="{{ $about['title'] }}" loading="lazy">
@@ -139,7 +139,7 @@
             </div>
         </div>
 
-        <div class="site-shell mt-12 grid gap-7 md:grid-cols-4 md:gap-10" data-aos="fade-up">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-12 grid gap-7 md:grid-cols-4 md:gap-10" data-aos="fade-up">
             @foreach ($stats as $stat)
                 <div class="home-stat" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
                     <p class="home-stat__value" aria-label="{{ $stat['prefix'] }}{{ collect($stat['segments'])->pluck('value')->join('') }}{{ $stat['suffix'] }}">
@@ -155,15 +155,17 @@
         </div>
     </section>
 
+    @include('frontend.partials.home-featured-services')
+
     <section class="section-space border-t border-slate-100" id="dich-vu">
-        <div class="site-shell flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-                <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Hệ sinh thái dịch vụ</h2>
-                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">Một hệ sinh thái để thương hiệu đi từ định hướng đến điểm chạm.</p>
+                <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Các dịch vụ khác</h2>
+                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">Khám phá thêm các dịch vụ của THT Media.</p>
             </div>
             <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">{{ __('site.all_services') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </div>
-        <div class="site-shell mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($services as $service)
                 @include('frontend.partials.service-card')
             @empty
@@ -173,7 +175,7 @@
     </section>
 
     <section class="home-projects section-space" id="du-an" x-data="{ activeTab: '{{ $projectTabs->first()['id'] ?? 'all' }}' }">
-        <div class="site-shell flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div>
                 <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Dự án</h2>
                 <p class="mt-4 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">Những dự án được kể bằng kết quả và trải nghiệm.</p>
@@ -182,12 +184,12 @@
         </div>
 
         @if ($projectTabs->isNotEmpty())
-            <div class="site-shell mt-8 flex gap-2 overflow-x-auto pb-2">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-8 flex gap-2 overflow-x-auto pb-2">
                 @foreach ($projectTabs as $tab)
                     <button class="project-tab shrink-0" type="button" :class="{ 'is-active': activeTab === '{{ $tab['id'] }}' }" x-on:click="activeTab = '{{ $tab['id'] }}'">{{ $tab['label'] }}</button>
                 @endforeach
             </div>
-            <div class="site-shell mt-7">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-7">
                 @foreach ($projectTabs as $tab)
                     <div x-cloak x-show="activeTab === '{{ $tab['id'] }}'" x-transition.opacity.duration.250ms>
                         <div class="grid gap-4 lg:grid-cols-[1.18fr_1fr]">
@@ -240,12 +242,12 @@
                 @endforeach
             </div>
         @else
-            <div class="site-shell mt-10"><p class="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500">Dự án sẽ được cập nhật sớm.</p></div>
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-10"><p class="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500">Dự án sẽ được cập nhật sớm.</p></div>
         @endif
     </section>
 
     <section class="home-testimonials section-space" id="phan-hoi">
-        <div class="site-shell home-testimonials__layout">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-testimonials__layout">
             <div class="home-testimonials__intro" data-aos="fade-up">
                 <h2 class="uppercase">Khách hàng nói về chúng tôi</h2>
                 <p class="mt-4 text-sm leading-7 text-slate-300">Những chia sẻ từ các hành trình đã đồng hành.</p>
@@ -292,11 +294,11 @@
     </section>
 
     <section class="home-news section-space" id="tin-tuc">
-        <div class="site-shell home-news__header">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-news__header">
             <div data-aos="fade-up"><h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Tin tức & kiến thức</h2><p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Cập nhật mới nhất từ THT Media.</p></div>
             <a class="section-link" href="{{ LocalizedUrl::route('posts.index') }}">{{ __('site.view_news') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </div>
-        <div class="site-shell home-news__slider" data-aos="fade-up" data-aos-delay="100">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-news__slider" data-aos="fade-up" data-aos-delay="100">
             <div class="swiper" data-post-swiper>
                 <div class="swiper-wrapper">
                     @forelse ($posts as $post)
@@ -317,7 +319,7 @@
     </section>
 
     <section class="home-consultation section-space" id="tu-van">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="mx-auto mb-8 max-w-2xl text-center md:mb-10" data-aos="fade-up">
                 <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Liên hệ với chúng tôi</h2>
             </header>

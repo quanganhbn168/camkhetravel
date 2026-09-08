@@ -1,0 +1,386 @@
+/*
+ * Shared visual layer for the newer service landings.
+ *
+ * These pages keep their service-specific sections, but share the same
+ * spacing, type scale, image treatment and CTA language as the approved
+ * THT Landing landings. Keep this file loaded after each service stylesheet.
+ */
+
+.tht-landing-event-page,
+.tht-landing-event-media-page,
+.tht-landing-marketing-page,
+.tht-landing-profile-page {
+    --new-service-page: var(--tht-landing-page, #f8fafc);
+    --new-service-surface: var(--tht-landing-surface, #ffffff);
+    --new-service-ink: var(--tht-landing-ink, #0f172a);
+    --new-service-muted: var(--tht-landing-muted, #475569);
+    --new-service-line: var(--tht-landing-line, #cbd5e1);
+    --new-service-accent: var(--tht-landing-primary, #5cb811);
+    --new-service-orange: var(--tht-landing-accent-orange, #f97316);
+    color: var(--new-service-ink);
+}
+
+.tht-landing-event-page h1,
+.tht-landing-event-page h2,
+.tht-landing-event-page h3,
+.tht-landing-event-media-page h1,
+.tht-landing-event-media-page h2,
+.tht-landing-event-media-page h3,
+.tht-landing-marketing-page h1,
+.tht-landing-marketing-page h2,
+.tht-landing-marketing-page h3,
+.tht-landing-profile-page h1,
+.tht-landing-profile-page h2,
+.tht-landing-profile-page h3 {
+    text-wrap: balance;
+}
+
+.tht-landing-event-page .tht-landing-event-kicker,
+.tht-landing-event-media-page .tht-landing-media-kicker,
+.tht-landing-marketing-page .tht-landing-marketing-kicker,
+.tht-landing-profile-page .tht-landing-profile-kicker {
+    margin-bottom: 18px;
+    color: var(--new-service-orange);
+    font-size: clamp(12px, 1vw, 15px);
+    font-weight: 800;
+    letter-spacing: .12em;
+    line-height: 1.35;
+}
+
+.tht-landing-event-page .tht-landing-event-kicker::before,
+.tht-landing-event-media-page .tht-landing-media-kicker::before,
+.tht-landing-marketing-page .tht-landing-marketing-kicker::before,
+.tht-landing-profile-page .tht-landing-profile-kicker::before {
+    width: 32px;
+    height: 2px;
+}
+
+.tht-landing-event-page .tht-landing-event-button,
+.tht-landing-event-media-page .tht-landing-media-button,
+.tht-landing-marketing-page .tht-landing-marketing-button,
+.tht-landing-profile-page .tht-landing-profile-button {
+    border-radius: 12px;
+    letter-spacing: .04em;
+}
+
+/* Section hierarchy: the eyebrow is the section title; the former H2 is its description. */
+.tht-landing-event-page .tht-landing-event-section,
+.tht-landing-event-media-page .tht-landing-media-section,
+.tht-landing-marketing-page .tht-landing-marketing-section,
+.tht-landing-profile-page .tht-landing-profile-section {
+    padding-block: clamp(44px, 5.2vw, 74px);
+}
+
+.tht-landing-event-page .tht-landing-event-section__heading,
+.tht-landing-event-media-page .tht-landing-media-section__heading,
+.tht-landing-marketing-page .tht-landing-marketing-section__heading,
+.tht-landing-profile-page .tht-landing-profile-section__heading {
+    max-width: none;
+    margin-bottom: clamp(26px, 3.4vw, 42px);
+}
+
+.tht-landing-event-page .tht-landing-event-section__heading h2.tht-landing-event-section__title,
+.tht-landing-event-media-page .tht-landing-media-section__heading h2.tht-landing-media-section__title,
+.tht-landing-marketing-page .tht-landing-marketing-section__heading h2.tht-landing-marketing-section__title,
+.tht-landing-profile-page .tht-landing-profile-section__heading h2.tht-landing-profile-section__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: none;
+    margin: 0 0 14px;
+    color: var(--new-service-orange);
+    font-size: clamp(25px, 3vw, 42px);
+    font-weight: 800;
+    letter-spacing: -.035em;
+    line-height: 1.05;
+}
+
+.tht-landing-event-page .tht-landing-event-section__heading h2.tht-landing-event-section__title::before,
+.tht-landing-event-media-page .tht-landing-media-section__heading h2.tht-landing-media-section__title::before,
+.tht-landing-marketing-page .tht-landing-marketing-section__heading h2.tht-landing-marketing-section__title::before,
+.tht-landing-profile-page .tht-landing-profile-section__heading h2.tht-landing-profile-section__title::before {
+    width: 32px;
+    height: 2px;
+    flex: 0 0 32px;
+    background: currentColor;
+    content: '';
+}
+
+.tht-landing-event-page .tht-landing-event-section__heading p.tht-landing-event-section__description,
+.tht-landing-event-media-page .tht-landing-media-section__heading p.tht-landing-media-section__description,
+.tht-landing-marketing-page .tht-landing-marketing-section__heading p.tht-landing-marketing-section__description,
+.tht-landing-profile-page .tht-landing-profile-section__heading p.tht-landing-profile-section__description {
+    max-width: 820px;
+    margin: 0;
+    color: var(--new-service-muted);
+    font-size: clamp(15px, 1.25vw, 18px);
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.65;
+}
+
+.tht-landing-event-page .tht-landing-event-section__heading--split,
+.tht-landing-event-media-page .tht-landing-media-section__heading--split {
+    align-items: start;
+    gap: clamp(28px, 6vw, 80px);
+}
+
+.tht-landing-event-page .tht-landing-event-services__content h2.tht-landing-event-section__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: none;
+    margin: 0 0 14px;
+    color: var(--new-service-orange);
+    font-size: clamp(25px, 3vw, 42px);
+    font-weight: 800;
+    letter-spacing: -.035em;
+    line-height: 1.05;
+}
+
+.tht-landing-event-page .tht-landing-event-services__content h2.tht-landing-event-section__title::before {
+    width: 32px;
+    height: 2px;
+    flex: 0 0 32px;
+    background: currentColor;
+    content: '';
+}
+
+.tht-landing-event-page .tht-landing-event-services__content p.tht-landing-event-section__description {
+    max-width: 820px;
+    margin: 0 0 22px;
+    color: var(--new-service-muted);
+    font-size: clamp(15px, 1.25vw, 18px);
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.65;
+}
+
+/* Final CTA/audit blocks: keep supporting copy readable against the dark/orange panels. */
+.tht-landing-event-page .tht-landing-event-final-cta h2,
+.tht-landing-event-media-page .tht-landing-media-final h2,
+.tht-landing-marketing-page .tht-landing-marketing-final h2,
+.tht-landing-profile-page .tht-landing-profile-final h2 {
+    color: #ffffff;
+}
+
+.tht-landing-event-page .tht-landing-event-final-cta__inner > div:first-child > p:last-child,
+.tht-landing-event-media-page .tht-landing-media-final__inner > div:first-child > p:last-child,
+.tht-landing-marketing-page .tht-landing-marketing-final__inner > div:first-child > p:last-child,
+.tht-landing-profile-page .tht-landing-profile-final__inner > div:first-child > p:last-child {
+    color: rgba(255, 255, 255, .94);
+    font-weight: 500;
+}
+
+.tht-landing-event-page .tht-landing-event-final-cta__message,
+.tht-landing-event-media-page .tht-landing-media-final__message,
+.tht-landing-marketing-page .tht-landing-marketing-final__message,
+.tht-landing-profile-page .tht-landing-profile-final__message {
+    border-top-color: rgba(255, 255, 255, .55);
+    color: rgba(255, 255, 255, .9);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Published price/quote line shared by the four newer service cards. */
+.tht-landing-price {
+    display: grid;
+    gap: 4px;
+    margin: 18px 0 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--new-service-line);
+}
+
+.tht-landing-price strong {
+    color: var(--new-service-accent);
+    font-size: clamp(17px, 1.35vw, 21px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+}
+
+.tht-landing-price small {
+    color: var(--new-service-muted);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+/* Event organisation: one strong image, one clear brief, no artificial hero art. */
+.tht-landing-event-page .tht-landing-event-hero {
+    min-height: 0;
+    padding: clamp(104px, 10vw, 142px) 0 clamp(54px, 7vw, 86px);
+    background: var(--new-service-page);
+    color: var(--new-service-ink);
+}
+
+.tht-landing-event-page .tht-landing-event-hero__glow {
+    display: none;
+}
+
+.tht-landing-event-page .tht-landing-event-hero__grid {
+    align-items: center;
+    gap: clamp(36px, 6vw, 84px);
+}
+
+.tht-landing-event-page .tht-landing-event-hero__copy {
+    padding-top: 0;
+}
+
+.tht-landing-event-page .tht-landing-event-hero h1 {
+    max-width: none;
+    font-size: clamp(38px, 4.2vw, 60px);
+    line-height: 1;
+    letter-spacing: -.035em;
+}
+
+.tht-landing-event-page .tht-landing-event-hero h1 span {
+    color: var(--new-service-accent);
+}
+
+.tht-landing-event-page .tht-landing-event-hero__summary,
+.tht-landing-event-page .tht-landing-event-hero__highlights li {
+    color: var(--new-service-muted);
+}
+
+.tht-landing-event-page .tht-landing-event-hero__highlights i {
+    color: var(--new-service-accent);
+}
+
+.tht-landing-event-page .tht-landing-event-brief-card {
+    border: 1px solid var(--new-service-line);
+    border-radius: 18px;
+    background: var(--new-service-surface);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+}
+
+.tht-landing-event-page .tht-landing-event-hero__media {
+    margin-top: clamp(38px, 5vw, 64px);
+}
+
+.tht-landing-event-page .tht-landing-event-media-image,
+.tht-landing-event-page .tht-landing-event-hero__video {
+    display: block;
+    width: 100%;
+    height: clamp(250px, 32vw, 430px);
+    border-radius: 18px;
+    object-fit: cover;
+}
+
+.tht-landing-event-page .tht-landing-event-media-image {
+    background-position: center;
+    background-size: cover;
+}
+
+.tht-landing-event-page .tht-landing-event-hero__media-caption {
+    color: var(--new-service-muted);
+}
+
+/* Event media: retain the cinematic hero, simplify the frame and form. */
+.tht-landing-event-media-page .tht-landing-media-hero {
+    min-height: 720px;
+    padding: clamp(112px, 11vw, 155px) 0 70px;
+}
+
+.tht-landing-event-media-page .tht-landing-media-hero__content h1 {
+    max-width: none;
+    font-size: clamp(38px, 4.2vw, 60px);
+    line-height: 1;
+    letter-spacing: -.035em;
+}
+
+.tht-landing-event-media-page .tht-landing-media-hero__brief {
+    border-radius: 18px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, .18);
+}
+
+.tht-landing-event-media-page .tht-landing-media-video-poster {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+
+/* Marketing and profile: real-image-led heroes instead of dashboard/paper mockups. */
+.tht-landing-marketing-page .tht-landing-marketing-hero,
+.tht-landing-profile-page .tht-landing-profile-hero {
+    padding: clamp(106px, 10vw, 145px) 0 clamp(60px, 8vw, 100px);
+    background: var(--new-service-page);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero h1,
+.tht-landing-profile-page .tht-landing-profile-hero h1 {
+    max-width: none;
+    font-size: clamp(38px, 4.2vw, 60px);
+    line-height: 1;
+    letter-spacing: -.035em;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__image,
+.tht-landing-profile-page .tht-landing-profile-hero__image {
+    position: relative;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    background: var(--new-service-surface);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, .12);
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__image img,
+.tht-landing-profile-page .tht-landing-profile-hero__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__image::after,
+.tht-landing-profile-page .tht-landing-profile-hero__image::after {
+    position: absolute;
+    inset: auto 0 0;
+    height: 34%;
+    background: linear-gradient(transparent, rgba(15, 23, 42, .72));
+    content: '';
+    pointer-events: none;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__image figcaption,
+.tht-landing-profile-page .tht-landing-profile-hero__image figcaption {
+    position: absolute;
+    z-index: 1;
+    right: 20px;
+    bottom: 18px;
+    left: 20px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-dashboard,
+.tht-landing-profile-page .tht-landing-profile-hero__mockup {
+    min-height: 0;
+}
+
+.tht-landing-marketing-page .tht-landing-marketing-hero__highlights,
+.tht-landing-profile-page .tht-landing-profile-hero__highlights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 767.98px) {
+    .tht-landing-event-page .tht-landing-event-hero,
+    .tht-landing-event-media-page .tht-landing-media-hero,
+    .tht-landing-marketing-page .tht-landing-marketing-hero,
+    .tht-landing-profile-page .tht-landing-profile-hero {
+        padding-top: 90px;
+    }
+
+    .tht-landing-marketing-page .tht-landing-marketing-hero__highlights,
+    .tht-landing-profile-page .tht-landing-profile-hero__highlights {
+        grid-template-columns: 1fr;
+    }
+}

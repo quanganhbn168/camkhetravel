@@ -12,7 +12,7 @@
     @endif
     <div class="absolute inset-0 -z-10 bg-[linear-gradient(115deg,color-mix(in_srgb,var(--site-color-ink)_93%,transparent),color-mix(in_srgb,var(--site-color-green-dark)_78%,transparent))]"></div>
 
-    <div class="site-shell relative grid gap-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] lg:items-stretch">
+    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative grid gap-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] lg:items-stretch">
         <aside class="flex min-h-[29rem] max-w-sm flex-col px-1 py-9 text-white md:py-12">
                 <h2 class="display-title text-3xl leading-tight text-white uppercase md:text-4xl">{{ $heading }}</h2>
                 <p class="mt-4 text-sm leading-7 text-slate-200">{{ $description ?: 'Trao đổi nhanh về hạng mục '.mb_strtolower($content->title).' cùng đội ngũ THT Media.' }}</p>

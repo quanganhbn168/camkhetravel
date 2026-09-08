@@ -84,6 +84,15 @@ class BniMediaService
         $conversion = $preferWebp && $media->hasGeneratedConversion(self::WEBP_CONVERSION)
             ? self::WEBP_CONVERSION
             : '';
+
+        if ($conversion !== '' && ! Storage::disk($media->conversions_disk ?: $media->disk)->exists($media->getPathRelativeToRoot($conversion))) {
+            $conversion = '';
+        }
+
+        if ($conversion === '' && ! Storage::disk($media->disk)->exists($media->getPathRelativeToRoot())) {
+            return null;
+        }
+
         $url = $media->getUrl($conversion);
 
         if ($url === '') {

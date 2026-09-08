@@ -29,7 +29,7 @@ class BniInvitationController extends Controller
         $invitationContent = BniInvitationContent::resolve(event: $event);
         $canonical = LocalizedUrl::route('bni.invitations.template');
 
-        return view('frontend.bni-invitation', [
+        return view('frontend.bni.invitation', [
             'invitation' => null,
             'event' => $event,
             'chapter' => null,
@@ -60,7 +60,7 @@ class BniInvitationController extends Controller
         $guestName = $invitation->displayGuestName((string) $invitationContent['default_guest_name']);
         $heroImageUrl = $event->bniMediaUrl('hero');
 
-        return view('frontend.bni-invitation', [
+        return view('frontend.bni.invitation', [
             'invitation' => $invitation,
             'event' => $event,
             'chapter' => $chapter,

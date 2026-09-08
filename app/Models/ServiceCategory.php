@@ -15,7 +15,7 @@ class ServiceCategory extends Model
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return ['is_active' => 'boolean', 'is_featured' => 'boolean', 'is_home' => 'boolean'];
     }
 
     public function services(): HasMany

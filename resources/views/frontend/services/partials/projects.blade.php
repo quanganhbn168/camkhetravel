@@ -2,7 +2,7 @@
 
 @if ($backstageProjects->isNotEmpty())
     <section id="du-an-noi-bat" class="resource-related-section">
-        <div class="site-shell">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             <header class="mx-auto max-w-3xl text-center">
                 <h2 class="display-title text-3xl leading-tight md:text-5xl">{{ $service->projects_title ?: 'Các dự án nổi bật' }}</h2>
                 <p class="mx-auto mt-4 max-w-2xl text-base leading-8 text-slate-600">Những dự án đã được triển khai và gắn với dịch vụ này.</p>

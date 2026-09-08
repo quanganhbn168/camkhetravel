@@ -25,12 +25,12 @@
             <img class="contact-page-hero__image" src="{{ $contactHeroImageUrl }}" alt="" aria-hidden="true">
         @endif
         <div class="contact-page-hero__overlay"></div>
-        <div class="site-shell contact-page-hero__content">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 contact-page-hero__content">
             <h1>LIÊN HỆ</h1>
         </div>
     </section>
     <section class="section-space">
-        <div class="site-shell grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 grid gap-8 lg:grid-cols-[0.7fr_1.3fr] lg:gap-12">
             <div class="contact-page__details">
                 <aside class="p-8 md:p-10">
                     <h2 class="font-display text-3xl leading-tight text-ink">Thông tin kết nối</h2>
@@ -77,7 +77,7 @@
                     <label class="text-sm font-semibold text-ink">Dịch vụ quan tâm<select class="form-field" name="service_id"><option value="">Chọn dịch vụ</option>@foreach ($services as $service)<option value="{{ $service->id }}" @selected(old('service_id') == $service->id || request('service') == $service->id)>{{ $service->title }}</option>@endforeach</select></label>
                     <label class="text-sm font-semibold text-ink">Ngân sách dự kiến<input class="form-field" name="budget" value="{{ old('budget') }}"></label>
                     <label class="text-sm font-semibold text-ink">Thời gian dự kiến<input class="form-field" name="timeline" value="{{ old('timeline') }}"></label>
-                    <label class="text-sm font-semibold text-ink md:col-span-2">Nhu cầu của bạn<textarea class="form-field" name="message" rows="7" required>{{ old('message') }}</textarea></label>
+                    <label class="text-sm font-semibold text-ink md:col-span-2">Nhu cầu của bạn<textarea class="form-field" name="message" rows="7" required>{{ old('message', $pricingMessage ?? '') }}</textarea></label>
                 </div>
                 @if ($errors->any())<p class="mt-5 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{{ $errors->first() }}</p>@endif
                 <button class="button-primary mt-7" type="submit">Gửi yêu cầu <span aria-hidden="true">↗</span></button>
