@@ -7,8 +7,10 @@ use App\Filament\Resources\LandingPages\Pages\CreateLandingPage;
 use App\Filament\Resources\LandingPages\Pages\EditLandingPage;
 use App\Filament\Resources\LandingPages\Pages\ListLandingPages;
 use App\Filament\Resources\LandingPages\Schemas\LandingExperienceSchema;
+use App\Filament\Resources\LandingPages\Schemas\TiktokLandingSchema;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\LandingPage;
+use App\Support\Landing\LandingTemplateRegistry;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\ContentSeoFallbacks;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
@@ -105,6 +107,7 @@ class LandingPageResource extends Resource
                         ])
                         ->columns(2),
                     ...LandingExperienceSchema::components(),
+                    ...TiktokLandingSchema::components(),
                 ])->columnSpan(['lg' => 2]),
                 Section::make('Trạng thái')
                     ->icon(Heroicon::OutlinedCog6Tooth)
@@ -133,7 +136,7 @@ class LandingPageResource extends Resource
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('template_key')->label('Template')->options(fn (): array => \App\Support\Landing\LandingTemplateRegistry::options()),
+                SelectFilter::make('template_key')->label('Template')->options(fn (): array => LandingTemplateRegistry::options()),
                 SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư']),
             ])
             ->defaultSort('sort_order')

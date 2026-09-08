@@ -159,7 +159,7 @@ class LandingBuilderTest extends TestCase
         $this->assertSame('Tri ân / Sự kiện', $options[LandingTemplateRegistry::ANNIVERSARY]);
         $this->assertSame('Landing / Sản xuất phim doanh nghiệp', $options[LandingRegistry::CORPORATE_FILM]);
         $this->assertSame('Landing / Quay phim, chụp ảnh sự kiện', $options[LandingRegistry::EVENT_MEDIA]);
-        $this->assertCount(14, $options);
+        $this->assertCount(15, $options);
         foreach (array_keys(LandingRegistry::pages()) as $key) {
             $this->assertArrayHasKey($key, $options);
         }

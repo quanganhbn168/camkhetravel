@@ -46,7 +46,7 @@
             <x-landing.container class="py-24 text-center"><p>Landing page chưa có template.</p></x-landing.container>
         @endif
 
-        @unless (in_array($templateKey, ['landing_ads', 'landing_academy', 'landing_academy_v2'], true))
+        @unless (in_array($templateKey, ['landing_ads', 'landing_academy', 'landing_academy_v2', 'landing_tiktok'], true))
             <x-landing.contact-modal :contact="$contact" :section="$content['contact_section'] ?? []" :zalo-url="$zaloUrl" />
         @endunless
     </div>

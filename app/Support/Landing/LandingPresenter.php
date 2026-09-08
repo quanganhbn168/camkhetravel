@@ -19,6 +19,9 @@ final class LandingPresenter
         $definition = LandingRegistry::find($templateKey) ?? [];
         $storedContent = $landingPage?->landing_content ?? $service?->landing_content ?? [];
         $content = $this->mapMedia(is_array($storedContent) ? $storedContent : []);
+        if ($templateKey === LandingRegistry::TIKTOK) {
+            $content = TiktokLandingContent::resolveMedia($content);
+        }
         $contact = array_replace([
             'hotline_1' => $this->website->hotline ?: $this->website->contact_phone,
             'hotline_display' => $this->website->hotline ?: $this->website->contact_phone,

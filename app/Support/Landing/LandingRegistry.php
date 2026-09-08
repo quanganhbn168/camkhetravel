@@ -27,8 +27,17 @@ final class LandingRegistry
 
     public const BRANDING = 'landing_branding';
 
+    public const TIKTOK = 'landing_tiktok';
+
     /** @var array<string, array{slug: string, label: string, view: string, css: string, js?: string, aliases?: list<string>}> */
     private const PAGES = [
+        self::TIKTOK => [
+            'slug' => 'xay-kenh-tiktok',
+            'label' => 'Xây kênh TikTok',
+            'view' => 'frontend.landing.pages.tiktok',
+            'css' => 'resources/css/landing/pages/tiktok.css',
+            'js' => 'resources/js/landing/pages/tiktok.js',
+        ],
         self::BRANDING => [
             'slug' => 'bo-nhan-dien-thuong-hieu',
             'label' => 'Bộ nhận diện thương hiệu',
@@ -121,6 +130,13 @@ final class LandingRegistry
 
     /** @var array<string, array{description: string, use_case: string, palette: array{primary: string, accent: string, surface: string, ink: string}, icon: string, sort_order: int}> */
     private const TEMPLATE_META = [
+        self::TIKTOK => [
+            'description' => 'Xây kênh TikTok với dự án, video theo ngành và bảng giá điện thoại / máy quay.',
+            'use_case' => 'Xây kênh · Nội dung · Quay dựng · Quản trị',
+            'palette' => ['primary' => '#fe2c55', 'accent' => '#25f4ee', 'surface' => '#1a1a1a', 'ink' => '#ffffff'],
+            'icon' => 'heroicon-o-play-circle',
+            'sort_order' => 140,
+        ],
         self::BRANDING => [
             'description' => 'Bộ nhận diện thương hiệu giai đoạn 1: profile, website, hình ảnh và phim doanh nghiệp.',
             'use_case' => 'Profile · Website · Hình ảnh · Video',
@@ -309,6 +325,7 @@ final class LandingRegistry
             self::PROFILE,
             self::WEDDING,
             self::ADS,
+            self::TIKTOK,
         ];
 
         return array_map(static fn (string $key): array => [

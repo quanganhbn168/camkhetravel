@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             SourceServiceSeeder::class,
             LandingContentSeeder::class,
             BrandingLandingSeeder::class,
+            TiktokLandingSeeder::class,
             EventsNavigationSeeder::class,
         ]);
     }

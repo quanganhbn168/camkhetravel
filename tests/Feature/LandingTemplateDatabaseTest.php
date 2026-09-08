@@ -25,7 +25,7 @@ class LandingTemplateDatabaseTest extends TestCase
 
     public function test_template_catalog_is_database_backed_with_source_and_schema(): void
     {
-        $this->assertSame(14, LandingTemplate::query()->count());
+        $this->assertSame(15, LandingTemplate::query()->count());
 
         $film = LandingTemplate::query()
             ->where('key', LandingRegistry::CORPORATE_FILM)
@@ -40,7 +40,7 @@ class LandingTemplateDatabaseTest extends TestCase
         $this->assertCount(4, $film->settings_schema['fields']);
         $this->assertSame($film->id, LandingTemplateRegistry::id($film->key));
 
-        $this->assertSame(11, LandingTemplate::query()->where('source_name', 'like', 'Landing%')->count());
+        $this->assertSame(12, LandingTemplate::query()->where('source_name', 'like', 'Landing%')->count());
         foreach (LandingRegistry::templateDefinitions() as $key => $definition) {
             $template = LandingTemplate::query()->where('key', $key)->firstOrFail();
 
