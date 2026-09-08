@@ -10,6 +10,13 @@
             <div class="home-service-groups">
                 @foreach ($featuredServiceCategories as $category)
                     <article @class(['home-service-group', 'home-service-group--reverse' => $loop->even]) aria-labelledby="home-service-group-{{ $category->id }}">
+                        <a class="home-service-group__image" href="{{ LocalizedUrl::serviceCategory($category) }}" aria-label="Xem danh mục {{ $category->name }}">
+                            @if ($category->home_image_url)
+                                <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt }}" loading="lazy">
+                            @else
+                                <span class="image-placeholder">THT MEDIA</span>
+                            @endif
+                        </a>
                         <div class="home-service-group__content">
                             <h3 id="home-service-group-{{ $category->id }}"><a href="{{ LocalizedUrl::serviceCategory($category) }}">{{ $category->name }}</a></h3>
                             @if ($category->description)
@@ -22,13 +29,6 @@
                             </ul>
                             <a class="section-link" href="{{ LocalizedUrl::serviceCategory($category) }}">Khám phá dịch vụ <span aria-hidden="true">→</span></a>
                         </div>
-                        <a class="home-service-group__image" href="{{ LocalizedUrl::serviceCategory($category) }}" aria-label="Xem danh mục {{ $category->name }}">
-                            @if ($category->home_image_url)
-                                <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt }}" loading="lazy">
-                            @else
-                                <span class="image-placeholder">THT MEDIA</span>
-                            @endif
-                        </a>
                     </article>
                 @endforeach
             </div>
