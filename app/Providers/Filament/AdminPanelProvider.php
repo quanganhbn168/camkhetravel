@@ -56,6 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Nội dung website'),
+                NavigationGroup::make('Landingpage'),
                 NavigationGroup::make('Nội dung trang chủ'),
                 NavigationGroup::make('Khách hàng & liên hệ'),
                 NavigationGroup::make('SEO & media'),

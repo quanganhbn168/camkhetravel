@@ -40,27 +40,27 @@
             <p class="branding-heading-note">Đồng bộ – Chuyên nghiệp – Hiệu quả – Tiết kiệm</p>
         </div>
         <div class="branding-solutions-layout">
-        <div class="branding-four-grid branding-solutions-grid grid grid-cols-1 sm:grid-cols-2">
-            @foreach ($content['services'] as $service)
-                <article class="branding-service-card">
-                    <x-landing.branding-icon :name="$service['icon']" class="branding-service-icon" />
-                    <h3 class="branding-multiline">{{ $service['title'] }}</h3>
-                    <p class="branding-service-price">{{ number_format($service['price'], 0, ',', '.') }}đ</p>
-                    <ul>@foreach ($service['features'] as $feature)<li>{{ $feature }}</li>@endforeach</ul>
-                </article>
-            @endforeach
-        </div>
-        <aside class="branding-solutions-offer" aria-label="Ưu đãi trọn gói">
-            <p class="branding-kicker">ĐẦU TƯ MỘT LẦN · ĐỒNG BỘ THƯƠNG HIỆU</p>
-            <h3>Trọn bộ 4 giải pháp</h3>
-            <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }} VNĐ</s></div>
-            <div class="branding-gold-card">
-                @if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif
-                <span>CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }} <small>VNĐ</small></strong>
+            <aside class="branding-solutions-offer" aria-label="Ưu đãi trọn gói">
+                <p class="branding-kicker">ĐẦU TƯ MỘT LẦN · ĐỒNG BỘ THƯƠNG HIỆU</p>
+                <h3>Trọn bộ 4 giải pháp</h3>
+                <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }} VNĐ</s></div>
+                <div class="branding-gold-card">
+                    @if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif
+                    <span>CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }} <small>VNĐ</small></strong>
+                </div>
+                <p>{{ $content['offer']['note'] }}</p>
+                <a class="branding-button" href="#lien-he" data-landing-event="cta_click" data-block-id="services-offer">Nhận tư vấn ngay <x-landing.branding-icon /></a>
+            </aside>
+            <div class="branding-four-grid branding-solutions-grid grid grid-cols-1 sm:grid-cols-2">
+                @foreach ($content['services'] as $service)
+                    <article class="branding-service-card">
+                        <x-landing.branding-icon :name="$service['icon']" class="branding-service-icon" />
+                        <h3 class="branding-multiline">{{ $service['title'] }}</h3>
+                        <p class="branding-service-price">{{ number_format($service['price'], 0, ',', '.') }}đ</p>
+                        <ul>@foreach ($service['features'] as $feature)<li>{{ $feature }}</li>@endforeach</ul>
+                    </article>
+                @endforeach
             </div>
-            <p>{{ $content['offer']['note'] }}</p>
-            <a class="branding-button" href="#lien-he" data-landing-event="cta_click" data-block-id="services-offer">Nhận tư vấn ngay <x-landing.branding-icon /></a>
-        </aside>
         </div>
     </div>
 </section>

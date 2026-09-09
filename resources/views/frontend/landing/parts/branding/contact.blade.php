@@ -3,7 +3,11 @@
         <div class="branding-contact-offer">
             <p>{{ $content['contact_section']['eyebrow'] }}</p>
             <h2>{{ $content['contact_section']['title'] }}</h2>
-            <strong class="branding-final-price">{{ number_format($content['offer']['price'], 0, ',', '.') }}đ</strong>
+            <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }} VNĐ</s></div>
+            <div class="branding-gold-card">
+                @if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif
+                <strong>{{ number_format($content['offer']['price'], 0, ',', '.') }} <small>VNĐ</small></strong>
+            </div>
             <p>{{ $content['contact_section']['description'] }}</p>
         </div>
         <form id="branding-lead-form" class="branding-lead-form" method="POST" action="{{ route('contact.store') }}">
@@ -20,7 +24,6 @@
             @if ($errors->any())<div class="branding-form-errors" role="alert">@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
             <label><span class="sr-only">Họ tên của bạn</span><input name="name" type="text" placeholder="Họ tên của bạn *" value="{{ old('name') }}" autocomplete="name" maxlength="255" required></label>
             <label><span class="sr-only">Số điện thoại</span><input name="phone" type="tel" placeholder="Số điện thoại *" value="{{ old('phone') }}" autocomplete="tel" inputmode="tel" maxlength="32" required></label>
-            <label><span class="sr-only">Tên doanh nghiệp</span><input name="company" type="text" placeholder="Tên doanh nghiệp *" value="{{ old('company') }}" autocomplete="organization" maxlength="255" required></label>
             <label><span class="sr-only">Nhu cầu của bạn</span><textarea name="message" rows="3" placeholder="Nhu cầu của bạn (tùy chọn)" maxlength="5000">{{ old('message') }}</textarea></label>
             <button class="branding-button" type="submit">Gửi thông tin ngay <x-landing.branding-icon /></button>
         </form>

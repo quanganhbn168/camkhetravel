@@ -2,10 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\ContactRequests\Pages\ListContactRequests;
+use App\Models\ContactRequest;
 use App\Models\LandingPage;
+use App\Models\User;
 use App\Support\Landing\LandingRegistry;
 use Database\Seeders\BrandingLandingSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class BrandingLandingTest extends TestCase
@@ -29,6 +34,8 @@ class BrandingLandingTest extends TestCase
             ->assertSee('site-design-tokens', false)
             ->assertSee('hero-branding.webp', false)
             ->assertSee('branding-lead-form', false)
+            ->assertSee('aria-label="Liên hệ nhanh"', false)
+            ->assertDontSee('name="company"', false)
             ->assertDontSee('cdn.tailwindcss.com', false)
             ->assertDontSee('images.unsplash.com', false)
             ->assertDontSee('Form demo');
@@ -48,7 +55,6 @@ class BrandingLandingTest extends TestCase
             'landing_block_id' => 'branding-contact',
             'name' => 'Kiểm thử landing thương hiệu',
             'phone' => '0900000000',
-            'company' => 'Dữ liệu kiểm thử trong transaction',
             'message' => 'Tư vấn bộ nhận diện thương hiệu',
             'return_to' => '/bo-nhan-dien-thuong-hieu#lien-he',
         ])->assertRedirect('/bo-nhan-dien-thuong-hieu#lien-he')->assertSessionHas('success');
@@ -58,6 +64,17 @@ class BrandingLandingTest extends TestCase
             'landing_block_id' => 'branding-contact',
             'name' => 'Kiểm thử landing thương hiệu',
         ]);
+
+        $lead = ContactRequest::where('name', 'Kiểm thử landing thương hiệu')->latest('id')->firstOrFail();
+        $this->assertNull($lead->company);
+        $this->assertTrue($lead->landingPage->is($page));
+        $user = User::factory()->create();
+        $user->assignRole(Role::findOrCreate('super_admin'));
+        $this->actingAs($user);
+        Livewire::test(ListContactRequests::class)
+            ->filterTable('landing_page_id', $page->id)
+            ->assertCanSeeTableRecords([$lead])
+            ->assertSee($page->title);
 
         $this->post(route('contact.store'), ['from_landing_page' => '1'])
             ->assertSessionHasErrors('phone');

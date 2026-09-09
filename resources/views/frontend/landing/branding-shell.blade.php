@@ -28,4 +28,5 @@
 
 @section('landing_footer')
     @include('frontend.landing.parts.branding.footer')
+    @include('partials.floating-actions')
 @endsection

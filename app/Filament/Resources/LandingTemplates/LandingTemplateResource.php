@@ -27,7 +27,7 @@ class LandingTemplateResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung website';
+        return 'Landingpage';
     }
 
     public static function getModelLabel(): string

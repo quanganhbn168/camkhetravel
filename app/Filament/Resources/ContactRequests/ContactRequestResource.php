@@ -95,7 +95,7 @@ class ContactRequestResource extends Resource
                 TextColumn::make('name')->label('Khách hàng')->searchable()->sortable(),
                 TextColumn::make('phone')->label('Điện thoại')->copyable(),
                 TextColumn::make('service.title')->label('Dịch vụ')->toggleable(),
-                TextColumn::make('landingPage.title')->label('Landing page')->toggleable(),
+                TextColumn::make('landingPage.title')->label('Landingpage nguồn')->searchable()->placeholder('Không có landingpage')->wrap()->toggleable(),
                 TextColumn::make('utm_source')->label('Nguồn')->badge()->toggleable(),
                 TextColumn::make('utm_campaign')->label('Chiến dịch')->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
