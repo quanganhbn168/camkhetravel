@@ -120,7 +120,7 @@ class AboutPageTest extends TestCase
             ->assertDontSee('youtube-nocookie.com/embed', false);
     }
 
-    public function test_about_page_uses_section_images_before_the_shared_fallback(): void
+    public function test_about_page_uses_section_images_before_its_own_fallback(): void
     {
         Storage::fake('public');
         $fallback = $this->createImage('media/tests/about-fallback.jpg');
@@ -130,11 +130,8 @@ class AboutPageTest extends TestCase
         $office = $this->createImage('media/tests/about-office.jpg');
         $officeSecond = $this->createImage('media/tests/about-office-second.jpg');
 
-        $website = app(WebsiteSettings::class);
-        $website->about_image_media_id = $fallback->id;
-        $website->save();
-
         $settings = app(AboutSettings::class);
+        $settings->default_image_media_id = $fallback->id;
         $settings->video_source = '';
         $settings->story_image_media_id = $story->id;
         $settings->core_values_image_media_id = $coreValues->id;

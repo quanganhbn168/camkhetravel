@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -43,30 +44,9 @@ class ManageWebsiteSettings extends Page
         return false;
     }
 
-    public function mount(WebsiteSettings $settings): void
+    public function mount(): void
     {
-        $this->form->fill([
-            'site_name' => $settings->site_name,
-            'tagline' => $settings->tagline,
-            'company_name' => $settings->company_name,
-            'contact_email' => $settings->contact_email,
-            'hotline' => $settings->hotline,
-            'contact_phone' => $settings->contact_phone,
-            'address' => $settings->address,
-            'phones' => $this->contactPhonesForForm($settings),
-            'branches' => $this->contactBranchesForForm($settings),
-            'facebook_url' => $settings->facebook_url,
-            'zalo_url' => $settings->zalo_url,
-            'youtube_url' => $settings->youtube_url,
-            'seo_title' => $settings->seo_title,
-            'seo_description' => $settings->seo_description,
-            'seo_keywords' => $settings->seo_keywords,
-            'logo_media_id' => $settings->logo_media_id,
-            'favicon_media_id' => $settings->favicon_media_id,
-            'seo_image_media_id' => $settings->seo_image_media_id,
-            'google_maps_embed_url' => $settings->google_maps_embed_url,
-            'google_maps_url' => $settings->google_maps_url,
-        ]);
+        $this->redirect(ManageSettings::getUrl());
     }
 
     public function form(Schema $schema): Schema
@@ -96,35 +76,35 @@ class ManageWebsiteSettings extends Page
                         Tab::make('Liên hệ & mạng xã hội')
                             ->schema([
                                 Section::make('Liên hệ và mạng xã hội')
-                                        ->icon(Heroicon::OutlinedPhone)
-                                        ->schema([
-                                            TextInput::make('contact_email')->label('Email')->email(),
-                                            Repeater::make('phones')
-                                                ->label('Danh sách số điện thoại')
-                                                ->schema([
-                                                    TextInput::make('label')->label('Nhãn')->placeholder('Hotline / Kinh doanh')->maxLength(100),
-                                                    TextInput::make('number')->label('Số điện thoại')->tel()->required()->placeholder('0982 123 456')->maxLength(30),
-                                                    \Filament\Forms\Components\Toggle::make('is_primary')->label('Số chính')->default(false),
-                                                ])
-                                                ->columns(3)
-                                                ->addActionLabel('Thêm số điện thoại')
-                                                ->reorderable()
-                                                ->collapsible()
-                                                ->itemLabel(fn (array $state): ?string => $state['number'] ?? 'Số điện thoại mới')
-                                                ->columnSpanFull(),
-                                            Repeater::make('branches')
-                                                ->label('Danh sách địa chỉ / chi nhánh')
-                                                ->schema([
-                                                    TextInput::make('name')->label('Tên địa điểm')->required()->placeholder('Trụ sở chính')->maxLength(150),
-                                                    Textarea::make('address')->label('Địa chỉ')->required()->rows(2)->maxLength(500),
-                                                    \Filament\Forms\Components\Toggle::make('is_active')->label('Hiển thị')->default(true),
-                                                ])
-                                                ->columns(2)
-                                                ->addActionLabel('Thêm địa chỉ')
-                                                ->reorderable()
-                                                ->collapsible()
-                                                ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Địa điểm mới')
-                                                ->columnSpanFull(),
+                                    ->icon(Heroicon::OutlinedPhone)
+                                    ->schema([
+                                        TextInput::make('contact_email')->label('Email')->email(),
+                                        Repeater::make('phones')
+                                            ->label('Danh sách số điện thoại')
+                                            ->schema([
+                                                TextInput::make('label')->label('Nhãn')->placeholder('Hotline / Kinh doanh')->maxLength(100),
+                                                TextInput::make('number')->label('Số điện thoại')->tel()->required()->placeholder('0982 123 456')->maxLength(30),
+                                                Toggle::make('is_primary')->label('Số chính')->default(false),
+                                            ])
+                                            ->columns(3)
+                                            ->addActionLabel('Thêm số điện thoại')
+                                            ->reorderable()
+                                            ->collapsible()
+                                            ->itemLabel(fn (array $state): ?string => $state['number'] ?? 'Số điện thoại mới')
+                                            ->columnSpanFull(),
+                                        Repeater::make('branches')
+                                            ->label('Danh sách địa chỉ / chi nhánh')
+                                            ->schema([
+                                                TextInput::make('name')->label('Tên địa điểm')->required()->placeholder('Trụ sở chính')->maxLength(150),
+                                                Textarea::make('address')->label('Địa chỉ')->required()->rows(2)->maxLength(500),
+                                                Toggle::make('is_active')->label('Hiển thị')->default(true),
+                                            ])
+                                            ->columns(2)
+                                            ->addActionLabel('Thêm địa chỉ')
+                                            ->reorderable()
+                                            ->collapsible()
+                                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Địa điểm mới')
+                                            ->columnSpanFull(),
                                         TextInput::make('facebook_url')->label('Facebook')->url(),
                                         TextInput::make('zalo_url')->label('Zalo')->url(),
                                         TextInput::make('youtube_url')->label('YouTube')->url(),

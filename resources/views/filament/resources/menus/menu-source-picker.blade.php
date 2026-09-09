@@ -6,14 +6,16 @@
         <input
             type="search"
             x-model="query"
+            wire:model.live.debounce.350ms="menuSourceSearch"
             placeholder="Tìm nội dung..."
             class="fi-input block w-full rounded-lg border-none bg-gray-50 px-3 py-2 text-sm text-gray-950 shadow-sm ring-1 ring-gray-950/10 outline-none placeholder:text-gray-400 focus:ring-2 focus:ring-primary-600 dark:bg-white/5 dark:text-white dark:ring-white/20"
         >
     </div>
 
+    <p class="text-xs text-gray-500">Tối đa 50 mục mỗi nhóm. Nhập từ khóa để tìm trong toàn bộ nội dung.</p>
     <div class="space-y-2">
         @foreach ($sourceGroups as $group)
-            <details class="group rounded-xl border border-gray-950/10 bg-white dark:border-white/10 dark:bg-white/[0.02]" @if ($loop->first) open @endif>
+            <details x-bind:open="query.length > 0 || {{ $loop->first ? 'true' : 'false' }}" class="group rounded-xl border border-gray-950/10 bg-white dark:border-white/10 dark:bg-white/[0.02]" @if ($loop->first) open @endif>
                 <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-3 text-sm font-semibold text-gray-950 marker:hidden dark:text-white">
                     <span>{{ $group['label'] }}</span>
                     <span class="text-xs font-normal text-gray-500 dark:text-gray-400">{{ count($group['items']) }}</span>
@@ -66,12 +68,12 @@
                 wire:loading.attr="disabled"
                 wire:target="addCustomMenuItem"
             >
-                Thêm link custom
+                Thêm liên kết
             </button>
         </div>
     </div>
 
     <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">
-        Mục được thêm vào cuối danh sách. Anh có thể mở từng mục ở bên phải để chỉnh nhãn và target rồi lưu một lần.
+        Mục được thêm vào cuối danh sách. Mở từng mục ở bên phải để chỉnh nhãn và cách mở liên kết rồi lưu một lần.
     </p>
 </div>

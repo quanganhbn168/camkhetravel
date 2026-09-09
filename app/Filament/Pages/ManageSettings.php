@@ -2,10 +2,9 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Forms\TrackingSchema;
-use App\Support\Tracking\TrackingScripts;
-
+use App\Filament\Concerns\PreservesUnchangedSettings;
 use App\Filament\Forms\Components\GalleryPicker;
+use App\Filament\Forms\TrackingSchema;
 use App\Models\Language;
 use App\Models\Menu;
 use App\Settings\AboutSettings;
@@ -17,6 +16,7 @@ use App\Support\Branding\FaviconService;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Maps\GoogleMapsShareResolver;
 use App\Support\Maps\GoogleMapsUrl;
+use App\Support\Tracking\TrackingScripts;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
@@ -27,6 +27,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
@@ -44,6 +45,7 @@ use UnitEnum;
 class ManageSettings extends Page
 {
     use InteractsWithFormActions;
+    use PreservesUnchangedSettings;
 
     protected static ?string $slug = 'settings';
 
@@ -68,7 +70,7 @@ class ManageSettings extends Page
         AboutSettings $about,
         DesignSettings $design,
     ): void {
-        $this->form->fill([
+        $this->fillSettingsForm([
             ...app(TrackingScripts::class)->formData(),
             'site_name' => $website->site_name,
             'tagline' => $website->tagline,
@@ -114,6 +116,8 @@ class ManageSettings extends Page
             'page_intro' => $about->page_intro,
             'story_title' => $about->story_title,
             'story' => $about->story,
+            'page_stats' => $about->page_stats,
+            'default_image_media_id' => $about->default_image_media_id,
             'story_image_media_id' => $about->story_image_media_id,
             'video_source' => $about->video_source,
             'video_youtube_url' => $about->video_youtube_url,
@@ -176,9 +180,11 @@ class ManageSettings extends Page
                         Tab::make('Doanh nghiệp')
                             ->icon(Heroicon::OutlinedBuildingOffice2)
                             ->schema($this->companySchema()),
-                        Tab::make('Giới thiệu')
+                        Tab::make('Trang Giới thiệu')
                             ->icon(Heroicon::OutlinedInformationCircle)
                             ->schema($this->aboutSchema()),
+                        Tab::make('Liên hệ')->icon(Heroicon::OutlinedPhone)->schema($this->contactSchema()),
+                        Tab::make('SEO')->icon(Heroicon::OutlinedMagnifyingGlass)->schema($this->seoSchema()),
                         Tab::make('Tracking')
                             ->icon(Heroicon::OutlinedChartBar)
                             ->schema(TrackingSchema::make()),
@@ -209,7 +215,7 @@ class ManageSettings extends Page
                 Actions::make($this->getFormActions())
                     ->alignment($this->getFormActionsAlignment())
                     ->fullWidth($this->hasFullWidthFormActions())
-                    ->sticky($this->areFormActionsSticky())
+                    ->sticky()
                     ->key('form-actions'),
             ]);
     }
@@ -223,7 +229,7 @@ class ManageSettings extends Page
         FaviconService $favicons,
         GoogleMapsShareResolver $maps,
     ): void {
-        $data = $this->form->getState();
+        $data = $this->settingsFormData();
 
         $this->saveWebsite($website, $data, $favicons, $maps);
         $this->saveHomepage($homepage, $data);
@@ -231,6 +237,8 @@ class ManageSettings extends Page
         $this->saveAbout($about, $data);
         $this->saveDesign($design, $data);
         app(TrackingScripts::class)->save($data);
+
+        app()->call([$this, 'mount']);
 
         Notification::make()
             ->title('Đã lưu cài đặt website')
@@ -255,54 +263,6 @@ class ManageSettings extends Page
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
                         ->helperText('Khi lưu, hệ thống chuyển đổi file upload và ghi đè trực tiếp bộ favicon cố định trong public.'),
-                ])
-                ->columns(2),
-            Section::make('Liên hệ và mạng xã hội')
-                ->icon(Heroicon::OutlinedPhone)
-                ->schema([
-                    TextInput::make('contact_email')->label('Email')->email()->maxLength(255),
-                    Repeater::make('phones')
-                        ->label('Danh sách số điện thoại')
-                        ->schema([
-                            TextInput::make('label')->label('Nhãn')->placeholder('Hotline / Kinh doanh')->maxLength(100),
-                            TextInput::make('number')->label('Số điện thoại')->tel()->required()->placeholder('0982 123 456')->maxLength(30),
-                            \Filament\Forms\Components\Toggle::make('is_primary')->label('Số chính')->default(false),
-                        ])
-                        ->columns(3)
-                        ->addActionLabel('Thêm số điện thoại')
-                        ->reorderable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['number'] ?? 'Số điện thoại mới')
-                        ->columnSpanFull(),
-                    Repeater::make('branches')
-                        ->label('Danh sách địa chỉ / chi nhánh')
-                        ->schema([
-                            TextInput::make('name')->label('Tên địa điểm')->required()->placeholder('Trụ sở chính')->maxLength(150),
-                            Textarea::make('address')->label('Địa chỉ')->required()->rows(2)->maxLength(500),
-                            \Filament\Forms\Components\Toggle::make('is_active')->label('Hiển thị')->default(true),
-                        ])
-                        ->columns(2)
-                        ->addActionLabel('Thêm địa chỉ')
-                        ->reorderable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Địa điểm mới')
-                        ->columnSpanFull(),
-                    Textarea::make('google_maps_embed_url')
-                        ->label('Google Maps embed URL')
-                        ->helperText('Dán URL embed hoặc nguyên thẻ <iframe>. Nếu chỉ có link share bên dưới, hệ thống sẽ lấy tọa độ từ link khi lưu và tạo embed cố định.')
-                        ->rules([GoogleMapsUrl::embedValidationRule()])
-                        ->maxLength(10000)
-                        ->rows(5)
-                        ->columnSpanFull(),
-                    TextInput::make('google_maps_url')
-                        ->label('Google Maps link')
-                        ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ https://maps.app.goo.gl/M1iQjB52X9NqzBYd7.')
-                        ->url()
-                        ->maxLength(2048)
-                        ->columnSpanFull(),
-                    TextInput::make('facebook_url')->label('Facebook')->url()->maxLength(2048),
-                    TextInput::make('zalo_url')->label('Zalo')->url()->maxLength(2048),
-                    TextInput::make('youtube_url')->label('YouTube')->url()->maxLength(2048),
                 ])
                 ->columns(2),
             Section::make('Banner')
@@ -336,6 +296,12 @@ class ManageSettings extends Page
                         ->placeholder('Chọn menu cho footer'),
                 ])
                 ->columns(2),
+        ];
+    }
+
+    private function seoSchema(): array
+    {
+        return [
             Section::make('SEO mặc định')
                 ->icon(Heroicon::OutlinedMagnifyingGlass)
                 ->description('Dùng khi một trang chưa có metadata riêng.')
@@ -350,10 +316,64 @@ class ManageSettings extends Page
     }
 
     /** @return array<int, Section|Tabs> */
+    private function contactSchema(): array
+    {
+        return [
+            Section::make('Liên hệ và mạng xã hội')
+                ->icon(Heroicon::OutlinedPhone)
+                ->schema([
+                    TextInput::make('contact_email')->label('Email')->email()->maxLength(255),
+                    Repeater::make('phones')
+                        ->label('Danh sách số điện thoại')
+                        ->schema([
+                            TextInput::make('label')->label('Nhãn')->placeholder('Hotline / Kinh doanh')->maxLength(100),
+                            TextInput::make('number')->label('Số điện thoại')->tel()->required()->placeholder('0982 123 456')->maxLength(30),
+                            Toggle::make('is_primary')->label('Số chính')->default(false),
+                        ])
+                        ->columns(3)
+                        ->addActionLabel('Thêm số điện thoại')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn (array $state): ?string => $state['number'] ?? 'Số điện thoại mới')
+                        ->columnSpanFull(),
+                    Repeater::make('branches')
+                        ->label('Danh sách địa chỉ / chi nhánh')
+                        ->schema([
+                            TextInput::make('name')->label('Tên địa điểm')->required()->placeholder('Trụ sở chính')->maxLength(150),
+                            Textarea::make('address')->label('Địa chỉ')->required()->rows(2)->maxLength(500),
+                            Toggle::make('is_active')->label('Hiển thị')->default(true),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('Thêm địa chỉ')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Địa điểm mới')
+                        ->columnSpanFull(),
+                    Textarea::make('google_maps_embed_url')
+                        ->label('Google Maps embed URL')
+                        ->helperText('Dán URL embed hoặc nguyên thẻ <iframe>. Nếu chỉ có link share bên dưới, hệ thống sẽ lấy tọa độ từ link khi lưu và tạo embed cố định.')
+                        ->rules([GoogleMapsUrl::embedValidationRule()])
+                        ->maxLength(10000)
+                        ->rows(5)
+                        ->columnSpanFull(),
+                    TextInput::make('google_maps_url')
+                        ->label('Google Maps link')
+                        ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ https://maps.app.goo.gl/M1iQjB52X9NqzBYd7.')
+                        ->url()
+                        ->maxLength(2048)
+                        ->columnSpanFull(),
+                    TextInput::make('facebook_url')->label('Facebook')->url()->maxLength(2048),
+                    TextInput::make('zalo_url')->label('Zalo')->url()->maxLength(2048),
+                    TextInput::make('youtube_url')->label('YouTube')->url()->maxLength(2048),
+                ])
+                ->columns(2),
+        ];
+    }
+
     private function homepageSchema(): array
     {
         return [
-            Section::make('Ảnh phần giới thiệu')
+            Section::make('Giới thiệu trên trang chủ')->description('Chỉ áp dụng cho trang chủ. Trang Giới thiệu có nội dung và hình ảnh riêng ở tab Trang Giới thiệu.')
                 ->icon(Heroicon::OutlinedPhoto)
                 ->schema([
                     CuratorPicker::make('about_image_media_id')
@@ -507,10 +527,19 @@ class ManageSettings extends Page
                     ->all())
                 ->contained(false)
                 ->columnSpanFull(),
+            Section::make('Chỉ số trang Giới thiệu')->description('Độc lập với chỉ số trên trang chủ.')->schema([
+                Repeater::make('page_stats')->label('Chỉ số')->schema([
+                    TextInput::make('value')->label('Giá trị')->required(),
+                    TextInput::make('prefix')->label('Tiền tố'),
+                    TextInput::make('suffix')->label('Hậu tố'),
+                    TextInput::make('label')->label('Nhãn')->required(),
+                ])->columns(2)->maxItems(4)->reorderable()->collapsible()->defaultItems(0),
+            ]),
             Section::make('Hình ảnh riêng từng khu vực')
                 ->icon(Heroicon::OutlinedPhoto)
                 ->description('Mỗi khu vực dùng media riêng. Chỉ khi để trống, frontend mới dùng ảnh giới thiệu chung làm fallback.')
                 ->schema([
+                    CuratorPicker::make('default_image_media_id')->label('Ảnh mặc định trang Giới thiệu')->helperText('Độc lập với ảnh giới thiệu trên trang chủ.'),
                     CuratorPicker::make('story_image_media_id')
                         ->label('Ảnh Câu chuyện THT Media')
                         ->disk('public')
@@ -770,6 +799,7 @@ class ManageSettings extends Page
     protected function getFormActions(): array
     {
         return [
+            Action::make('discard')->label('Hủy thay đổi')->color('gray')->action(fn () => app()->call([$this, 'mount'])),
             Action::make('save')
                 ->label('Lưu cài đặt')
                 ->submit('save')
@@ -934,7 +964,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveAbout(AboutSettings $about, array $data): void
     {
-        foreach (['page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'team_title', 'team_description', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
+        foreach (['page_stats', 'page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'team_title', 'team_description', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
             $about->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
         }
 
@@ -946,7 +976,7 @@ class ManageSettings extends Page
             ? (int) $data['video_media_id']
             : null;
 
-        foreach (['story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id', 'team_image_media_id'] as $key) {
+        foreach (['default_image_media_id', 'story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id', 'team_image_media_id'] as $key) {
             $about->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 

@@ -58,6 +58,7 @@ class MenuItem extends Model
     public function getLinkAttribute(): string
     {
         return match ($this->linkType()) {
+            'intro' => Intro::query()->published()->find($this->linked_source_id)?->url ?? '#',
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
             'service-category' => $this->serviceCategoryLink(),
@@ -75,6 +76,7 @@ class MenuItem extends Model
     private function linkType(): string
     {
         return match ($this->linked_source_type) {
+            'native_intro' => 'intro',
             'native_route' => 'route',
             'native_service' => 'service',
             'native_service_category' => 'service-category',

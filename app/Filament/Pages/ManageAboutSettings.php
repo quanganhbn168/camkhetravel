@@ -41,17 +41,9 @@ class ManageAboutSettings extends Page
         return false;
     }
 
-    public function mount(HomepageSettings $homepage, WebsiteSettings $website): void
+    public function mount(): void
     {
-        $this->form->fill([
-            'about_eyebrow' => $homepage->about_eyebrow,
-            'about_title' => $homepage->about_title,
-            'about_content' => $homepage->about_content,
-            'commitments' => $homepage->commitments,
-            'capabilities' => $homepage->capabilities,
-            'about_image_media_id' => $website->about_image_media_id,
-            'company_profile_media_id' => $website->company_profile_media_id,
-        ]);
+        $this->redirect(ManageSettings::getUrl());
     }
 
     public function form(Schema $schema): Schema

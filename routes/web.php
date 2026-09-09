@@ -22,10 +22,13 @@ use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\PublicSlugController;
 use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\ServiceController;
+use App\Http\Controllers\IntroController;
 use App\Http\Controllers\SeoController;
 use App\Http\Middleware\SetFrontendLocale;
 use App\Support\Branding\FaviconService;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/bai-gioi-thieu/{slug}', IntroController::class)->name('intros.show');
 
 Route::get('/favicon.ico', function (FaviconService $favicons) {
     return response()->file($favicons->primaryPath(), [

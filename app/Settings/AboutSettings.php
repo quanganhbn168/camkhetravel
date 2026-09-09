@@ -6,6 +6,10 @@ use Spatie\LaravelSettings\Settings;
 
 class AboutSettings extends Settings
 {
+    public ?int $default_image_media_id = null;
+
+    public array $page_stats = [];
+
     public array $page_label;
 
     public array $page_title;

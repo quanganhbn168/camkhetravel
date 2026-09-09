@@ -4,6 +4,7 @@ namespace App\Support\Seo;
 
 use App\Models\BniChapter;
 use App\Models\BniEvent;
+use App\Models\Intro;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
@@ -31,6 +32,10 @@ class SitemapBuilder
         BniEvent::query()->published()->get()->each(fn (BniEvent $event) => $this->addUrl(
             $sitemap, $catalog->url($event), $event->updated_at, Url::CHANGE_FREQUENCY_MONTHLY, 0.6,
         ));
+
+        foreach (Intro::query()->published()->get() as $intro) {
+            $sitemap->add(Url::create($intro->url)->setLastModificationDate($intro->updated_at)->setPriority(0.6));
+        }
 
         return $sitemap;
     }

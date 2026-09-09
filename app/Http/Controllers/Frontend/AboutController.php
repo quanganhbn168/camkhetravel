@@ -65,7 +65,7 @@ class AboutController extends Controller
             ->unique()
             ->values();
         $mediaIds = collect([
-            $this->website->about_image_media_id,
+            $this->settings->default_image_media_id,
             $this->settings->story_image_media_id,
             $this->settings->video_poster_media_id,
             $this->settings->core_values_image_media_id,
@@ -79,7 +79,7 @@ class AboutController extends Controller
         $media = $mediaIds->isEmpty()
             ? collect()
             : Media::query()->whereIn('id', $mediaIds)->get()->keyBy('id');
-        $fallbackImageUrl = $this->sectionImageUrl($media, $this->website->about_image_media_id);
+        $fallbackImageUrl = $this->sectionImageUrl($media, $this->settings->default_image_media_id);
         $about = $managed;
         $about['title'] = $managed['title'] ?: $this->website->company_name;
         $about['image_url'] = $fallbackImageUrl;
@@ -186,7 +186,7 @@ class AboutController extends Controller
 
     private function stats(): Collection
     {
-        $configured = collect($this->homepage->stats ?? [])
+        $configured = collect($this->settings->page_stats ?? [])
             ->filter(fn (mixed $stat): bool => is_array($stat) && filled($stat['value'] ?? null) && filled($stat['label'] ?? null))
             ->take(4)
             ->map(fn (array $stat): array => [

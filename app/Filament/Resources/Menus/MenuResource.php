@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Menus;
 use App\Filament\Resources\Menus\Pages\CreateMenu;
 use App\Filament\Resources\Menus\Pages\EditMenu;
 use App\Filament\Resources\Menus\Pages\ListMenus;
+use App\Models\Intro;
 use App\Models\LandingPage;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -73,8 +74,8 @@ class MenuResource extends Resource
                         ViewField::make('menu_source_picker')
                             ->label(null)
                             ->view('filament.resources.menus.menu-source-picker')
-                            ->viewData(fn (): array => [
-                                'sourceGroups' => self::sourceGroups(),
+                            ->viewData(fn ($livewire): array => [
+                                'sourceGroups' => self::sourceGroups($livewire->menuSourceSearch ?? ''),
                             ])
                             ->dehydrated(false),
                     ])
@@ -104,7 +105,7 @@ class MenuResource extends Resource
                         ->columns(2),
                     Section::make('Cấu trúc menu')
                         ->icon(Heroicon::OutlinedListBullet)
-                        ->description('Kéo thả hoặc dùng các mũi tên để sắp xếp và thay đổi cấp menu. Các mục đóng mặc định để dễ quản lý.')
+                        ->description('Kéo thả để sắp xếp; dùng thao tác vào trong / ra ngoài để thay đổi cấp menu. Các mục đóng mặc định để dễ quản lý.')
                         ->schema([
                             Repeater::make('topLevelItems')
                                 ->label('Danh sách menu item')
@@ -118,11 +119,11 @@ class MenuResource extends Resource
                                         ->relationship()
                                         ->defaultItems(0)
                                         ->orderColumn('position')
-                                        ->schema(self::menuItemFields())
+                                        ->schema([...self::menuItemFields(), self::descendantItems(3)])
                                         ->columns(1)
                                         ->addActionLabel('Thêm menu item con')
                                         ->reorderable()
-                                        ->reorderableWithButtons()
+
                                         ->reorderableWithDragAndDrop()
                                         ->collapsible()
                                         ->collapsed()
@@ -140,7 +141,7 @@ class MenuResource extends Resource
                                 ->columns(1)
                                 ->addActionLabel('Thêm menu item')
                                 ->reorderable()
-                                ->reorderableWithButtons()
+
                                 ->reorderableWithDragAndDrop()
                                 ->collapsible()
                                 ->collapsed()
@@ -162,6 +163,15 @@ class MenuResource extends Resource
     }
 
     /** @return array<int, mixed> */
+    private static function descendantItems(int $depth): Repeater
+    {
+        return Repeater::make('children')->label('Menu con')->relationship()->defaultItems(0)
+            ->orderColumn('position')->schema($depth > 1 ? [...self::menuItemFields(), self::descendantItems($depth - 1)] : self::menuItemFields())
+            ->reorderableWithDragAndDrop()->collapsible()->collapsed()->addActionLabel('Thêm menu con')
+            ->itemLabel(fn (array $state): string => (string) ($state['label'] ?? 'Menu mới'))
+            ->columnSpanFull();
+    }
+
     private static function menuItemFields(): array
     {
         return [
@@ -196,6 +206,7 @@ class MenuResource extends Resource
         }
 
         return match ($record->linked_source_type) {
+            'native_intro' => 'intro',
             'native_route' => 'route',
             'native_service' => 'service',
             'native_service_category' => 'service_category',
@@ -219,6 +230,7 @@ class MenuResource extends Resource
     private static function storedLinkType(string $type): string
     {
         return match ($type) {
+            'intro' => 'native_intro',
             'route' => 'native_route',
             'service' => 'native_service',
             'service_category' => 'native_service_category',
@@ -274,9 +286,10 @@ class MenuResource extends Resource
     }
 
     /** @return array<int, array{key: string, label: string, items: array<int, array{key: string, label: string, meta: string}>}> */
-    public static function sourceGroups(): array
+    public static function sourceGroups(string $search = ''): array
     {
         $groups = [
+            ['key' => 'intros', 'label' => 'Bài giới thiệu', 'items' => Intro::query()->published()->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->orderBy('sort_order')->limit(50)->get()->map(fn (Intro $intro): array => ['key' => 'intro:'.$intro->id, 'label' => $intro->title, 'meta' => 'Bài giới thiệu'])->all()],
             [
                 'key' => 'routes',
                 'label' => 'Trang hệ thống',
@@ -292,7 +305,7 @@ class MenuResource extends Resource
                 'items' => ServiceCategory::query()
                     ->where('is_active', true)
                     ->orderBy('name')
-                    ->get(['id', 'name'])
+                    ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'name'])
                     ->map(fn (ServiceCategory $category): array => [
                         'key' => "service_category:{$category->id}",
                         'label' => $category->name,
@@ -306,7 +319,7 @@ class MenuResource extends Resource
                 'items' => Service::query()
                     ->published()
                     ->orderBy('title')
-                    ->get(['id', 'title'])
+                    ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])
                     ->map(fn (Service $service): array => [
                         'key' => "service:{$service->id}",
                         'label' => $service->title,
@@ -317,7 +330,7 @@ class MenuResource extends Resource
             [
                 'key' => 'landing-pages',
                 'label' => 'Landing pages',
-                'items' => LandingPage::query()->published()->orderBy('title')->get(['id', 'title'])->map(fn (LandingPage $landingPage): array => [
+                'items' => LandingPage::query()->published()->orderBy('title')->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])->map(fn (LandingPage $landingPage): array => [
                     'key' => "landing_page:{$landingPage->id}",
                     'label' => $landingPage->title,
                     'meta' => 'Landing page',
@@ -329,7 +342,7 @@ class MenuResource extends Resource
                 'items' => ProjectCategory::query()
                     ->where('is_active', true)
                     ->orderBy('name')
-                    ->get(['id', 'name'])
+                    ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'name'])
                     ->map(fn (ProjectCategory $category): array => [
                         'key' => "project_category:{$category->id}",
                         'label' => $category->name,
@@ -343,7 +356,7 @@ class MenuResource extends Resource
                 'items' => Project::query()
                     ->published()
                     ->orderBy('title')
-                    ->get(['id', 'title'])
+                    ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])
                     ->map(fn (Project $project): array => [
                         'key' => "project:{$project->id}",
                         'label' => $project->title,
@@ -357,7 +370,7 @@ class MenuResource extends Resource
                 'items' => PostCategory::query()
                     ->where('is_active', true)
                     ->orderBy('name')
-                    ->get(['id', 'name'])
+                    ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'name'])
                     ->map(fn (PostCategory $category): array => [
                         'key' => "post_category:{$category->id}",
                         'label' => $category->name,
@@ -371,7 +384,7 @@ class MenuResource extends Resource
                 'items' => Post::query()
                     ->published()
                     ->orderByDesc('published_at')
-                    ->get(['id', 'title'])
+                    ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])
                     ->map(fn (Post $post): array => [
                         'key' => "post:{$post->id}",
                         'label' => $post->title,

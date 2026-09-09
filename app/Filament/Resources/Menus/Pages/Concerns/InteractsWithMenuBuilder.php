@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Menus\Pages\Concerns;
 
 use App\Filament\Resources\Menus\MenuResource;
+use App\Models\Intro;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\PostCategory;
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
 
 trait InteractsWithMenuBuilder
 {
+    public string $menuSourceSearch = '';
+
     public string $customMenuLabel = '';
 
     public string $customMenuUrl = '';
@@ -64,7 +67,7 @@ trait InteractsWithMenuBuilder
             return;
         }
 
-        if (! filter_var($url, FILTER_VALIDATE_URL) && ! Str::startsWith($url, '/')) {
+        if (! preg_match('~^(?:https?://[^\s]+|/(?!/)[^\s]*)$~i', $url)) {
             Notification::make()
                 ->danger()
                 ->title('URL chưa hợp lệ')
@@ -111,6 +114,7 @@ trait InteractsWithMenuBuilder
         }
 
         $source = match ($type) {
+            'intro' => Intro::query()->published()->find($sourceId),
             'service' => Service::query()->published()->find($sourceId),
             'service_category' => ServiceCategory::query()->where('is_active', true)->find($sourceId),
             'landing_page' => LandingPage::query()->published()->find($sourceId),

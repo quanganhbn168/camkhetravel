@@ -40,15 +40,9 @@ class ManageHomepageSettings extends Page
         return false;
     }
 
-    public function mount(HomepageSettings $settings): void
+    public function mount(): void
     {
-        $this->form->fill([
-            'consultation_title' => $settings->consultation_title,
-            'consultation_content' => $settings->consultation_content,
-            'faq_title' => $settings->faq_title,
-            'faq_description' => $settings->faq_description,
-            'faq_items' => $settings->faq_items,
-        ]);
+        $this->redirect(ManageSettings::getUrl());
     }
 
     public function form(Schema $schema): Schema
