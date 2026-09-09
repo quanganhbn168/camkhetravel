@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+@include('partials.tracking.head_start')
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title', $seo['title'])</title>

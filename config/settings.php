@@ -7,6 +7,7 @@ return [
      * put them (manually) here.
      */
     'settings' => [
+        App\Settings\TrackingSettings::class,
         App\Settings\WebsiteSettings::class,
         App\Settings\HomepageSettings::class,
         App\Settings\CompanySettings::class,

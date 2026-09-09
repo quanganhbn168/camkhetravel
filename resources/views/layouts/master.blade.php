@@ -6,8 +6,10 @@
     @stack('head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <x-site-design-tokens />
+    @include('partials.tracking.head')
 </head>
 <body class="@yield('body_class', 'min-h-screen'){{ request()->routeIs('bni.*') ? ' bni-app-shell' : '' }}" data-bni-page="{{ request()->routeIs('bni.*') ? 'true' : 'false' }}">
+    @include('partials.tracking.body')
     @yield('before_header')
     @unless ($hideHeader ?? false)
         <x-site-header />
@@ -29,5 +31,6 @@
     @yield('after_footer')
     @include('partials.bni-pwa')
     @stack('scripts')
+    @include('partials.tracking.footer')
 </body>
 </html>

@@ -10,9 +10,9 @@
         <meta name="landing-template" content="{{ $landingPage->template_key }}">
     @endif
 
-    @if (filled($landingTracking['head'] ?? null)){!! $landingTracking['head'] !!}@endif
     @vite($landingAssets['vite'])
     <x-site-design-tokens />
+    @include('partials.tracking.head')
 </head>
 <body
     class="@yield('body_class', 'min-h-screen overflow-x-clip')"
@@ -24,7 +24,7 @@
         data-landing-campaign-state="{{ $landingCampaignState ?? 'active' }}"
     @endif
 >
-    @if (filled($landingTracking['body'] ?? null)){!! $landingTracking['body'] !!}@endif
+    @include('partials.tracking.body')
     @yield('before_content')
 
     @hasSection('landing_header')
@@ -51,7 +51,7 @@
     @endif
 
     @include('partials.bni-pwa')
-    @if (filled($landingTracking['footer'] ?? null)){!! $landingTracking['footer'] !!}@endif
     @stack('scripts')
+    @include('partials.tracking.footer')
 </body>
 </html>

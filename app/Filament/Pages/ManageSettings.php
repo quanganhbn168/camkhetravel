@@ -2,6 +2,9 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Forms\TrackingSchema;
+use App\Support\Tracking\TrackingScripts;
+
 use App\Filament\Forms\Components\GalleryPicker;
 use App\Models\Language;
 use App\Models\Menu;
@@ -66,6 +69,7 @@ class ManageSettings extends Page
         DesignSettings $design,
     ): void {
         $this->form->fill([
+            ...app(TrackingScripts::class)->formData(),
             'site_name' => $website->site_name,
             'tagline' => $website->tagline,
             'logo_media_id' => $website->logo_media_id,
@@ -175,6 +179,9 @@ class ManageSettings extends Page
                         Tab::make('Giới thiệu')
                             ->icon(Heroicon::OutlinedInformationCircle)
                             ->schema($this->aboutSchema()),
+                        Tab::make('Tracking')
+                            ->icon(Heroicon::OutlinedChartBar)
+                            ->schema(TrackingSchema::make()),
                         Tab::make('Giao diện')
                             ->icon(Heroicon::OutlinedSwatch)
                             ->schema($this->designSchema()),
@@ -223,6 +230,7 @@ class ManageSettings extends Page
         $this->saveCompany($company, $data);
         $this->saveAbout($about, $data);
         $this->saveDesign($design, $data);
+        app(TrackingScripts::class)->save($data);
 
         Notification::make()
             ->title('Đã lưu cài đặt website')
