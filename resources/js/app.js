@@ -1,4 +1,5 @@
 import './bootstrap';
+import './landing/header';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
 import GLightbox from 'glightbox';

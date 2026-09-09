@@ -83,39 +83,6 @@
             });
         });
 
-        // 5. Header Scroll Behavior: transparent -> sticky, hide on scroll down, show on scroll up
-        const header = root.querySelector('.tht-landing-header');
-        if (header) {
-            let lastScrollTop = 0;
-            const threshold = 80; // pixels scrolled before behavior starts
-
-            window.addEventListener('scroll', function () {
-                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-                // Add scrolled class for background styling
-                if (scrollTop > 20) {
-                    header.classList.add('is-scrolled');
-                } else {
-                    header.classList.remove('is-scrolled');
-                }
-
-                // Hide on scroll down, show on scroll up
-                if (scrollTop > threshold) {
-                    if (scrollTop > lastScrollTop) {
-                        // Scrolling down -> hide
-                        header.classList.add('is-hidden');
-                    } else {
-                        // Scrolling up -> show
-                        header.classList.remove('is-hidden');
-                    }
-                } else {
-                    header.classList.remove('is-hidden');
-                }
-
-                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-            }, { passive: true });
-        }
-
         // 6. Film package details reuse the page's single contact modal.
         if (root.classList.contains('tht-landing-theme-film')) {
             const filmModal = root.querySelector('#tht-landing-contact-modal');

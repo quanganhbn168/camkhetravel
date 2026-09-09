@@ -1,5 +1,5 @@
 <a class="branding-skip" href="#branding-hero-title">Đến nội dung chính</a>
-<header class="branding-header" id="branding-header">
+<header class="branding-header" id="branding-header" data-landing-scroll-header>
     <div class="branding-container mx-auto w-full max-w-7xl px-4 lg:px-8 relative flex items-center justify-between gap-4">
         <a href="#top" class="branding-logo" aria-label="THT Media – đầu trang">
             <img src="{{ $page['logo_url'] }}" alt="THT Media" width="180" height="60">

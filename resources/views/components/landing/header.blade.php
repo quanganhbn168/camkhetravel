@@ -7,7 +7,7 @@
     'zaloUrl' => null,
 ])
 
-<header class="tht-landing-header" x-data="{ navOpen: false }" :class="{ 'is-open': navOpen }" @keydown.escape.window="navOpen = false">
+<header class="tht-landing-header" data-landing-scroll-header x-data="{ navOpen: false }" :class="{ 'is-open': navOpen }" @keydown.escape.window="navOpen = false">
     <x-landing.container class="tht-landing-header__inner">
         <a class="tht-landing-brand" href="#tht-landing-main" aria-label="{{ $brand }}">
             @if ($logo)
