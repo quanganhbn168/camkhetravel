@@ -136,15 +136,6 @@
     </div>
 </section>
 
-<section class="branding-section branding-reasons">
-    <div class="branding-container mx-auto w-full max-w-7xl px-4 lg:px-8 relative">
-        <div class="branding-section-heading"><div><p class="branding-kicker">VÌ SAO CHỌN THT MEDIA?</p><h2>ĐỐI TÁC ĐỒNG HÀNH ĐÁNG TIN CẬY</h2></div></div>
-        <div class="branding-four-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            @foreach ($content['reasons'] as $reason)
-                <article class="branding-reason-card"><span><x-landing.branding-icon :name="$reason['icon']" /></span><div><h3>{{ $reason['title'] }}</h3><p>{{ $reason['description'] }}</p></div></article>
-            @endforeach
-        </div>
-    </div>
-</section>
+@include('frontend.landing.parts.branding.partners')
 
 @include('frontend.landing.parts.branding.contact')

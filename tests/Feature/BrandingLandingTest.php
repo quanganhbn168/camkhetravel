@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Filament\Resources\ContactRequests\Pages\ListContactRequests;
 use App\Models\ContactRequest;
 use App\Models\LandingPage;
+use App\Models\Partner;
 use App\Models\User;
 use App\Support\Landing\LandingRegistry;
+use Awcodes\Curator\Models\Media;
 use Database\Seeders\BrandingLandingSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
@@ -16,6 +18,37 @@ use Tests\TestCase;
 class BrandingLandingTest extends TestCase
 {
     use DatabaseTransactions;
+
+    public function test_partner_section_uses_active_logos_and_hides_when_none_are_available(): void
+    {
+        $this->seed(BrandingLandingSeeder::class);
+        Partner::query()->update(['is_active' => false]);
+        $this->get('/bo-nhan-dien-thuong-hieu')->assertOk()
+            ->assertDontSee('id="branding-partners-title"', false);
+
+        Partner::create(['name' => 'Partner without logo', 'is_active' => true, 'curator_media_id' => null]);
+        $this->get('/bo-nhan-dien-thuong-hieu')->assertOk()
+            ->assertDontSee('id="branding-partners-title"', false);
+
+        $media = Media::query()->create([
+            'disk' => 'public', 'directory' => 'qa', 'name' => 'partner-logo',
+            'path' => 'qa/partner-logo.webp', 'type' => 'image/webp', 'ext' => 'webp',
+            'width' => 176, 'height' => 80, 'size' => 100,
+        ]);
+        $partner = Partner::create(['name' => 'Managed branding partner', 'is_active' => true, 'curator_media_id' => $media->id]);
+        Partner::create(['name' => 'Hidden branding partner', 'is_active' => false, 'curator_media_id' => $media->id]);
+        $response = $this->get('/bo-nhan-dien-thuong-hieu')->assertOk()
+            ->assertSee('id="branding-partners-title"', false)
+            ->assertSee('Managed branding partner')
+            ->assertDontSee('Hidden branding partner')
+            ->assertDontSee('Partner without logo')
+            ->assertDontSee('branding-reasons');
+        $this->assertSame(2, substr_count($response->getContent(), 'class="branding-partner-row"'));
+
+        $partner->update(['is_active' => false]);
+        $this->get('/bo-nhan-dien-thuong-hieu')->assertOk()
+            ->assertDontSee('id="branding-partners-title"', false);
+    }
 
     public function test_branding_page_uses_managed_content_and_its_own_assets(): void
     {

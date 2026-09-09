@@ -3,6 +3,7 @@
 namespace App\Support\Landing;
 
 use App\Models\LandingPage;
+use App\Models\Partner;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
 use App\Support\Media\MediaUrl;
@@ -32,6 +33,7 @@ final class LandingPresenter
             $content['offer']['discount_label'] = $discount > 0
                 ? ($discount > floor($discount) ? '>' : '').(int) floor($discount).'%'
                 : null;
+            $content['partner_rows'] = $this->partnerRows();
         }
         $contact = array_replace([
             'hotline_1' => $this->website->hotline ?: $this->website->contact_phone,
@@ -73,6 +75,40 @@ final class LandingPresenter
             'logo_url' => $this->logoUrl() ?: $this->pageLogo($content),
             'services' => LandingRegistry::footerLinks(),
         ];
+    }
+
+    /** @return list<list<array{name: string, image: string, repeated: bool}>> */
+    private function partnerRows(): array
+    {
+        $partners = Partner::query()->active()->with('curatorMedia')
+            ->orderBy('sort_order')->orderBy('id')->get()
+            ->map(fn (Partner $partner): array => [
+                'name' => (string) $partner->name,
+                'image' => MediaUrl::versioned($partner->curatorMedia),
+                'repeated' => false,
+            ])
+            ->filter(fn (array $partner): bool => filled($partner['image']))
+            ->values();
+
+        if ($partners->isEmpty()) {
+            return [];
+        }
+
+        return collect([0, 1])->map(function (int $row) use ($partners): array {
+            $items = $partners->filter(fn (array $partner, int $index): bool => $index % 2 === $row)->values();
+            if ($items->isEmpty()) {
+                $items = $partners;
+            }
+            $originals = $items->all();
+            // Keep each group wider than the container, even with only a few logos.
+            while ($items->count() < 8) {
+                foreach ($originals as $partner) {
+                    $items->push(array_replace($partner, ['repeated' => true]));
+                }
+            }
+
+            return $items->all();
+        })->all();
     }
 
     /** @param array<string, mixed> $content @return array<string, mixed> */
