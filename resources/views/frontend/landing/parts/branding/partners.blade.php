@@ -3,7 +3,6 @@
         <div class="branding-container mx-auto w-full max-w-7xl px-4 lg:px-8 relative">
             <div class="branding-section-heading">
                 <h2 id="branding-partners-title">ĐỐI TÁC ĐỒNG HÀNH TIN CẬY</h2>
-                <button class="branding-partners-toggle" type="button" aria-pressed="false" aria-controls="branding-partner-rows">Tạm dừng chuyển động</button>
             </div>
             <div id="branding-partner-rows" class="branding-partner-rows">
                 @foreach ($content['partner_rows'] as $partners)

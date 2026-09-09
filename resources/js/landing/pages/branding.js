@@ -24,11 +24,3 @@ const form = document.getElementById('branding-lead-form');
 if (form?.querySelector('[role="alert"], .branding-form-success')) {
     form.scrollIntoView({ block: 'center', behavior: 'instant' });
 }
-
-const partners = document.querySelector('.branding-partners');
-const partnersToggle = partners?.querySelector('.branding-partners-toggle');
-partnersToggle?.addEventListener('click', () => {
-    const paused = partners.classList.toggle('is-paused');
-    partnersToggle.setAttribute('aria-pressed', String(paused));
-    partnersToggle.textContent = paused ? 'Tiếp tục chuyển động' : 'Tạm dừng chuyển động';
-});
