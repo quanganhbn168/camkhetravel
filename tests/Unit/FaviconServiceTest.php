@@ -7,6 +7,7 @@ use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
 use Tests\TestCase;
 
 class FaviconServiceTest extends TestCase
@@ -86,6 +87,28 @@ class FaviconServiceTest extends TestCase
         foreach ($links as $link) {
             $this->assertStringNotContainsString('favicon-assets', $link['href']);
             $this->assertStringNotContainsString('/storage/', $link['href']);
+        }
+    }
+
+    public function test_it_checks_all_destinations_before_overwriting_any_favicon(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('favicon-source.png', base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+            true,
+        ));
+        File::put(public_path('favicon-16x16.png'), 'original favicon');
+        // A directory at a later destination is unwritable as a file on every OS.
+        File::makeDirectory(public_path('site.webmanifest'));
+        $media = new Media;
+        $media->forceFill(['disk' => 'public', 'path' => 'favicon-source.png', 'ext' => 'png']);
+
+        try {
+            app(FaviconService::class)->sync($media);
+            $this->fail('Expected the invalid destination to stop synchronization.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('site.webmanifest', $exception->getMessage());
+            $this->assertSame('original favicon', File::get(public_path('favicon-16x16.png')));
         }
     }
 }

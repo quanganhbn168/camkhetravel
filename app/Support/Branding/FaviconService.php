@@ -136,6 +136,14 @@ final class FaviconService
 
         $this->ensureDirectory($directory);
 
+        foreach ([...array_keys(self::PNG_FILES), 'favicon.svg', 'favicon.ico', 'site.webmanifest'] as $filename) {
+            $path = $directory.DIRECTORY_SEPARATOR.$filename;
+            clearstatcache(true, $path);
+            if (file_exists($path) ? (! is_file($path) || ! is_writable($path)) : ! is_writable($directory)) {
+                throw new RuntimeException("PHP không có quyền ghi file favicon tĩnh: {$path}");
+            }
+        }
+
         $pngs = [];
         $files = [];
 

@@ -10,6 +10,8 @@ use App\Filament\Resources\Menus\Pages\EditMenu;
 use App\Models\Intro;
 use App\Models\User;
 use App\Settings\HomepageSettings;
+use App\Settings\WebsiteSettings;
+use Awcodes\Curator\Models\Media;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +21,48 @@ use Tests\TestCase;
 class WebsiteStandardTest extends TestCase
 {
     use DatabaseTransactions;
+
+    public function test_saving_other_settings_does_not_read_or_rewrite_unchanged_favicon(): void
+    {
+        $panel = Filament::getPanel('admin');
+        Filament::setCurrentPanel($panel);
+        $panel->boot();
+        $media = Media::query()->firstOrFail()->replicate();
+        $media->path = 'missing-favicon-'.uniqid().'.png';
+        $media->save();
+        $website = app(WebsiteSettings::class);
+        $website->favicon_media_id = $media->id;
+        $website->save();
+
+        Livewire::actingAs(User::query()->firstOrFail(), $panel->getAuthGuard())
+            ->test(ManageSettings::class)
+            ->set('data.site_name', 'QA unchanged favicon')
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('QA unchanged favicon', json_decode(DB::table('settings')->where('group', 'website')->where('name', 'site_name')->value('payload'), true));
+    }
+
+    public function test_invalid_new_favicon_reports_a_form_error_before_saving_settings(): void
+    {
+        $panel = Filament::getPanel('admin');
+        Filament::setCurrentPanel($panel);
+        $panel->boot();
+        $media = Media::query()->firstOrFail()->replicate();
+        $media->path = 'missing-favicon-'.uniqid().'.png';
+        $media->save();
+        $snapshot = fn () => DB::table('settings')->where('group', 'website')->orderBy('name')->pluck('payload', 'name')->all();
+        $before = $snapshot();
+
+        Livewire::actingAs(User::query()->firstOrFail(), $panel->getAuthGuard())
+            ->test(ManageSettings::class)
+            ->set('data.site_name', 'Must not save')
+            ->set('data.favicon_media_id', [$media->toArray()])
+            ->call('save')
+            ->assertHasFormErrors(['favicon_media_id']);
+
+        $this->assertSame($before, $snapshot());
+    }
 
     private function intro(array $data = []): Intro
     {

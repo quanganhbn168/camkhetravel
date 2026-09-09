@@ -20,6 +20,7 @@ use App\Support\Tracking\TrackingScripts;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
+use ErrorException;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Repeater;
@@ -40,6 +41,8 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Validation\ValidationException;
+use RuntimeException;
 use UnitEnum;
 
 class ManageSettings extends Page
@@ -809,6 +812,22 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveWebsite(WebsiteSettings $website, array $data, FaviconService $favicons, GoogleMapsShareResolver $maps): void
     {
+        $faviconId = filled($data['favicon_media_id'] ?? null) ? (int) $data['favicon_media_id'] : null;
+        if ($faviconId !== $website->favicon_media_id && $faviconId !== null) {
+            try {
+                $media = Media::query()->find($faviconId);
+                if (! $media) {
+                    throw new RuntimeException('Không tìm thấy favicon đã chọn trong kho media.');
+                }
+                $favicons->sync($media);
+            } catch (RuntimeException | ErrorException $exception) {
+                report($exception);
+                throw ValidationException::withMessages([
+                    'data.favicon_media_id' => 'Chưa lưu được favicon. Kiểm tra file nguồn và quyền ghi bộ favicon trong public, sau đó lưu lại.',
+                ]);
+            }
+        }
+
         foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
@@ -830,7 +849,6 @@ class ManageSettings extends Page
             $website->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 
-        $favicons->sync(Media::query()->find($website->favicon_media_id));
         $website->save();
     }
 
