@@ -24,7 +24,7 @@ class BrandingLandingTest extends TestCase
             ->assertOk()
             ->assertSee('Nội dung thương hiệu được quản lý')
             ->assertSee('19.900.000đ')
-            ->assertSee('GIẢM 50,25%')
+            ->assertSee('GIẢM >50%')
             ->assertSee('40.000.000 VNĐ')
             ->assertSee('site-design-tokens', false)
             ->assertSee('hero-branding.webp', false)

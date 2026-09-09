@@ -12,7 +12,7 @@
             <div class="branding-hero-pricing">
                 <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }}đ</s></div>
                 <x-landing.branding-icon class="branding-price-arrow" />
-                <div class="branding-gold-card">@if ($content['offer']['discount_percent'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_percent'] }}%</small>@endif<span>ƯU ĐÃI CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }}đ</strong></div>
+                <div class="branding-gold-card">@if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif<span>ƯU ĐÃI CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }}đ</strong></div>
             </div>
             <div class="branding-hero-actions flex flex-wrap gap-4">
                 <a class="branding-button" href="#lien-he" data-landing-event="cta_click" data-block-id="hero">Nhận tư vấn ngay <x-landing.branding-icon /></a>
@@ -55,7 +55,7 @@
             <h3>Trọn bộ 4 giải pháp</h3>
             <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }} VNĐ</s></div>
             <div class="branding-gold-card">
-                @if ($content['offer']['discount_percent'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_percent'] }}%</small>@endif
+                @if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif
                 <span>CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }} <small>VNĐ</small></strong>
             </div>
             <p>{{ $content['offer']['note'] }}</p>
@@ -76,7 +76,7 @@
                 <div class="branding-table-total"><span>Tổng giá trị</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }}đ</s></div>
             </div>
             <div class="branding-combo-offer">
-                <div class="branding-gold-card">@if ($content['offer']['discount_percent'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_percent'] }}%</small>@endif<span>ƯU ĐÃI ĐẶC BIỆT CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }}đ</strong></div>
+                <div class="branding-gold-card">@if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif<span>ƯU ĐÃI ĐẶC BIỆT CHỈ CÒN</span><strong>{{ number_format($content['offer']['price'], 0, ',', '.') }}đ</strong></div>
                 <a class="branding-button branding-button-white" href="#lien-he" data-landing-event="cta_click" data-block-id="combo">Nhận tư vấn ngay <x-landing.branding-icon /></a>
                 <p>{{ $content['offer']['note'] }}</p>
             </div>

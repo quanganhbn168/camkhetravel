@@ -26,8 +26,11 @@ final class LandingPresenter
             $originalPrice = array_sum(array_column($content['services'] ?? [], 'price'));
             $offerPrice = (int) ($content['offer']['price'] ?? 0);
             $content['offer']['original_price'] = $originalPrice;
-            $content['offer']['discount_percent'] = $originalPrice > 0 && $offerPrice < $originalPrice
-                ? number_format(($originalPrice - $offerPrice) / $originalPrice * 100, 2, ',', '.')
+            $discount = $originalPrice > 0 && $offerPrice < $originalPrice
+                ? round(($originalPrice - $offerPrice) / $originalPrice * 100, 2)
+                : 0;
+            $content['offer']['discount_label'] = $discount > 0
+                ? ($discount > floor($discount) ? '>' : '').(int) floor($discount).'%'
                 : null;
         }
         $contact = array_replace([
