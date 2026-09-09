@@ -1,8 +1,8 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 <section class="resource-archive-hero">
-    @if ($heroImageUrl)
-        <img class="resource-archive-hero__image" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">
+    @if (($heroImageUrl ?: $defaultBannerUrl))
+        <img class="resource-archive-hero__image" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">
     @endif
     <div class="resource-archive-hero__overlay"></div>
     <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-archive-hero__content">

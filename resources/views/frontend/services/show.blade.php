@@ -8,8 +8,8 @@
             <video class="resource-detail-hero__video" autoplay muted loop playsinline preload="metadata" @if ($service->image_url) poster="{{ $service->image_url }}" @endif>
                 <source src="{{ $bannerVideoUrl }}" @if ($bannerVideoType) type="{{ $bannerVideoType }}" @endif>
             </video>
-        @elseif ($service->image_url)
-            <img class="resource-detail-hero__image" src="{{ $service->image_url }}" alt="" aria-hidden="true">
+        @elseif ($service->image_url ?: $defaultBannerUrl)
+            <img class="resource-detail-hero__image" src="{{ $service->image_url ?: $defaultBannerUrl }}" alt="" aria-hidden="true">
         @endif
         <div class="resource-detail-hero__overlay"></div>
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-detail-hero__content">

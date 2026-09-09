@@ -282,3 +282,14 @@
     .branding-hero-pricing .branding-gold-card { min-width: 9rem; }
     .branding-hero-pricing .branding-gold-card span { font-size: var(--branding-small); }
 }
+
+.branding-discount { display: table; margin: 0 auto .55rem; padding: .3rem .8rem; border-radius: 999px; background: var(--branding-green); color: #fff; font-size: .875rem; font-weight: 800; letter-spacing: .03em; }
+.branding-solutions-layout { display: grid; gap: 1.5rem; align-items: center; }
+.branding-solutions-offer { display: grid; gap: 1.25rem; padding: clamp(1.25rem, 3vw, 2.5rem); border: 1px solid #d8aa5070; border-radius: 1.25rem; background: linear-gradient(145deg, #f0f7f2, #fff8e7); text-align: center; }
+.branding-solutions-offer .branding-gold-card { padding: 1.25rem .75rem; }
+.branding-solutions-offer .branding-gold-card strong { font-size: clamp(2rem, 3.2vw, 3rem); }
+.branding-solutions-offer .branding-gold-card strong small { font-size: .875rem; }
+.branding-solutions-offer > p:not(.branding-kicker) { font-size: var(--branding-small); }
+@media (min-width: 64rem) { .branding-solutions-layout { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 2rem; } }
+@media (prefers-reduced-motion: no-preference) { .branding-discount { animation: branding-discount-glow 2.8s ease-in-out infinite; } }
+@keyframes branding-discount-glow { 0%, 100% { box-shadow: 0 0 0 0 #07533300; } 50% { box-shadow: 0 0 0 .35rem #07533318; } }

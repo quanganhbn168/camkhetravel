@@ -22,6 +22,14 @@ final class LandingPresenter
         if ($templateKey === LandingRegistry::TIKTOK) {
             $content = TiktokLandingContent::resolveMedia($content);
         }
+        if ($templateKey === LandingRegistry::BRANDING) {
+            $originalPrice = array_sum(array_column($content['services'] ?? [], 'price'));
+            $offerPrice = (int) ($content['offer']['price'] ?? 0);
+            $content['offer']['original_price'] = $originalPrice;
+            $content['offer']['discount_percent'] = $originalPrice > 0 && $offerPrice < $originalPrice
+                ? number_format(($originalPrice - $offerPrice) / $originalPrice * 100, 2, ',', '.')
+                : null;
+        }
         $contact = array_replace([
             'hotline_1' => $this->website->hotline ?: $this->website->contact_phone,
             'hotline_display' => $this->website->hotline ?: $this->website->contact_phone,

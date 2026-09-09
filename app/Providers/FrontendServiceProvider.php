@@ -110,12 +110,14 @@ class FrontendServiceProvider extends ServiceProvider
                 $website->company_profile_media_id,
                 $website->about_image_media_id,
                 $website->contact_image_media_id,
+                $website->banner_media_id,
                 $website->footer_background_media_id,
             ]))
             ->get()
             ->keyBy('id');
         View::share([
             'website' => $website,
+            'defaultBannerUrl' => MediaUrl::versioned($media->get($website->banner_media_id)),
             'websiteMedia' => $media,
             'websiteMediaUrls' => $media->mapWithKeys(
                 fn (Media $media): array => [$media->getKey() => MediaUrl::versioned($media)],

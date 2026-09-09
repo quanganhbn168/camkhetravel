@@ -4,8 +4,8 @@
 
 @section('content')
     <section class="relative isolate overflow-hidden bg-ink py-16 text-white md:py-20">
-        @if ($heroImageUrl)
-            <img class="absolute inset-0 -z-20 h-full w-full object-cover opacity-30" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">
+        @if (($heroImageUrl ?: $defaultBannerUrl))
+            <img class="absolute inset-0 -z-20 h-full w-full object-cover opacity-30" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">
         @endif
         <div class="absolute inset-0 -z-10 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--site-color-ink)_96%,transparent),color-mix(in_srgb,var(--site-color-ink)_68%,transparent))]"></div>
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">

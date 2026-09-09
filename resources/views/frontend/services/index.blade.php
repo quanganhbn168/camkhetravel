@@ -17,8 +17,8 @@
                     <a class="button-dark mt-7" href="{{ LocalizedUrl::route('contact') }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="resource-category-intro__visual">
-                    @if ($heroImageUrl)
-                        <img src="{{ $heroImageUrl }}" alt="{{ $activeCategory->name }}">
+                    @if (($heroImageUrl ?: $defaultBannerUrl))
+                        <img src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="{{ $activeCategory->name }}">
                     @else
                         <span class="image-placeholder">THT</span>
                     @endif
@@ -85,7 +85,7 @@
     @endif
 
     <section class="resource-archive-cta">
-        @if ($heroImageUrl)<img class="resource-archive-cta__image" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">@endif
+        @if (($heroImageUrl ?: $defaultBannerUrl))<img class="resource-archive-cta__image" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">@endif
         <div class="resource-archive-cta__overlay"></div>
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-archive-cta__content">
             <div><h2 class="max-w-2xl font-display text-3xl leading-tight tracking-[-0.045em] text-white md:text-4xl">Cần một giải pháp truyền thông phù hợp với mục tiêu của anh/chị?</h2></div>

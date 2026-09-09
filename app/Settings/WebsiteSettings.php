@@ -44,6 +44,8 @@ class WebsiteSettings extends Settings
 
     public ?int $contact_image_media_id = null;
 
+    public ?int $banner_media_id = null;
+
     public ?int $header_menu_id = null;
 
     public ?int $footer_menu_id = null;

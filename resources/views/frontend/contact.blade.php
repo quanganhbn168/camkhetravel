@@ -21,8 +21,8 @@
 
 @section('content')
     <section class="contact-page-hero">
-        @if ($contactHeroImageUrl)
-            <img class="contact-page-hero__image" src="{{ $contactHeroImageUrl }}" alt="" aria-hidden="true">
+        @if (($contactHeroImageUrl ?: $defaultBannerUrl))
+            <img class="contact-page-hero__image" src="{{ ($contactHeroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">
         @endif
         <div class="contact-page-hero__overlay"></div>
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 contact-page-hero__content">

@@ -1,6 +1,6 @@
 @use(App\Support\Localization\LocalizedUrl)
 
-<aside class="grid gap-7 lg:sticky lg:top-24">
+<aside class="news-sidebar grid gap-7 lg:sticky lg:top-24">
     <nav class="overflow-hidden rounded-2xl border border-slate-200 bg-white" aria-label="Danh mục tin tức">
         <p class="border-b border-slate-200 px-5 py-4 text-sm font-bold tracking-[0.04em] text-ink uppercase">Danh mục tin tức</p>
         <div class="px-5">
@@ -13,7 +13,7 @@
 
     @if (isset($featuredPosts) && $featuredPosts->isNotEmpty())
         <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white" aria-labelledby="featured-posts-heading">
-            <h2 class="border-b border-slate-200 px-5 py-4 text-sm font-bold tracking-[0.04em] text-ink uppercase" id="featured-posts-heading">Bài viết nổi bật</h2>
+            <h2 class="border-b border-slate-200 px-5 py-4 text-xs font-bold tracking-[0.04em] text-ink uppercase" id="featured-posts-heading">Bài viết nổi bật</h2>
             <div class="px-5">
                 @foreach ($featuredPosts as $featuredPost)
                     <a class="group flex gap-3 border-b border-slate-100 py-3 last:border-b-0" href="{{ LocalizedUrl::post($featuredPost) }}">
@@ -33,10 +33,10 @@
     @endif
 
     <div class="relative isolate min-h-60 overflow-hidden rounded-2xl bg-ink p-6 text-white">
-        @if ($heroImageUrl)<img class="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" src="{{ $heroImageUrl }}" alt="" aria-hidden="true">@endif
+        @if (($heroImageUrl ?: $defaultBannerUrl))<img class="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">@endif
         <div class="absolute inset-0 -z-10 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--site-color-ink)_92%,transparent),color-mix(in_srgb,var(--site-color-ink)_68%,transparent))]"></div>
         <p class="text-xs font-bold tracking-[0.15em] text-primary-soft uppercase">Tư vấn dự án</p>
-        <h2 class="font-display mt-4 text-2xl leading-tight">Cùng THT Media triển khai ý tưởng của bạn.</h2>
+        <h2 class="news-sidebar__cta-title font-display mt-4 text-lg leading-snug">Cùng THT Media triển khai ý tưởng của bạn.</h2>
         <a class="button-primary mt-7 min-h-10 px-4 py-2 text-xs" href="{{ LocalizedUrl::route('contact') }}">Liên hệ ngay <span aria-hidden="true">↗</span></a>
     </div>
 </aside>

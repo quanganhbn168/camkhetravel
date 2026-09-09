@@ -139,7 +139,7 @@
             </div>
         </div>
 
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-12 grid gap-7 md:grid-cols-4 md:gap-10" data-aos="fade-up">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-12 grid grid-cols-2 gap-7 md:grid-cols-4 md:gap-10" data-aos="fade-up">
             @foreach ($stats as $stat)
                 <div class="home-stat" data-aos="fade-up" data-aos-delay="{{ $loop->index * 80 }}">
                     <p class="home-stat__value" aria-label="{{ $stat['prefix'] }}{{ collect($stat['segments'])->pluck('value')->join('') }}{{ $stat['suffix'] }}">

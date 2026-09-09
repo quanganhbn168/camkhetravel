@@ -88,6 +88,8 @@ class ManageSettings extends Page
             'header_menu_id' => $website->header_menu_id,
             'footer_menu_id' => $website->footer_menu_id,
             'footer_background_media_id' => $website->footer_background_media_id,
+            'banner_media_id' => $website->banner_media_id,
+            'contact_image_media_id' => $website->contact_image_media_id,
             'about_eyebrow' => $homepage->about_eyebrow,
             'about_title' => $homepage->about_title,
             'about_content' => $homepage->about_content,
@@ -295,6 +297,11 @@ class ManageSettings extends Page
                     TextInput::make('youtube_url')->label('YouTube')->url()->maxLength(2048),
                 ])
                 ->columns(2),
+            Section::make('Banner')
+                ->schema([
+                    CuratorPicker::make('banner_media_id')->label('Banner chung')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Dùng cho các banner chưa có ảnh riêng.'),
+                    CuratorPicker::make('contact_image_media_id')->label('Banner trang liên hệ')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Để trống sẽ dùng banner chung. Ảnh hiển thị theo tỷ lệ gốc.'),
+                ])->columns(2),
             Section::make('Nền footer')
                 ->schema([
                     CuratorPicker::make('footer_background_media_id')
@@ -782,7 +789,7 @@ class ManageSettings extends Page
         $website->google_maps_embed_url = GoogleMapsUrl::normalizeEmbed($data['google_maps_embed_url'] ?? null)
             ?? $maps->resolveEmbed($website->google_maps_url);
 
-        foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id'] as $key) {
+        foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id', 'contact_image_media_id'] as $key) {
             $website->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 
