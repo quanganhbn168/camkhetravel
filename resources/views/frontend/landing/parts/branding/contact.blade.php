@@ -2,12 +2,8 @@
     <div class="branding-container mx-auto w-full max-w-7xl px-4 lg:px-8 relative branding-contact-grid">
         <div class="branding-contact-offer">
             <p>{{ $content['contact_section']['eyebrow'] }}</p>
-            <h2>{{ $content['contact_section']['title'] }}</h2>
             <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }} VNĐ</s></div>
-            <div class="branding-gold-card">
-                @if ($content['offer']['discount_label'])<small class="branding-discount">GIẢM {{ $content['offer']['discount_label'] }}</small>@endif
-                <strong>{{ number_format($content['offer']['price'], 0, ',', '.') }} <small>VNĐ</small></strong>
-            </div>
+            @include('frontend.landing.parts.branding.offer-price', ['offer' => $content['offer'], 'isHeading' => true, 'offerLabel' => $content['contact_section']['title']])
             <p>{{ $content['contact_section']['description'] }}</p>
         </div>
         <form id="branding-lead-form" class="branding-lead-form" method="POST" action="{{ route('contact.store') }}">

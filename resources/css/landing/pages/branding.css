@@ -56,7 +56,7 @@
 .branding-old-price s { display: block; font-family: var(--site-font-display); font-size: var(--site-font-size-price); font-weight: 750; text-decoration-color: #a9453b; }
 .branding-price-arrow { color: var(--branding-green); width: 1.5rem; }
 .branding-gold-card { padding: .6rem 1.25rem; background: var(--branding-gold-gradient); border: 1px solid #f5df9e; border-radius: .75rem; text-align: center; color: #222014; }
-.branding-gold-card span { display: block; font-family: var(--site-font-display); font-size: var(--site-font-size-h3); font-weight: 750; line-height: 1.2; }
+.branding-gold-card .branding-offer-label { margin: 0 0 .35rem; color: inherit; display: block; font-family: var(--site-font-display); font-size: var(--site-font-size-h3); font-weight: 750; line-height: 1.2; }
 .branding-gold-card strong { display: block; font-family: var(--site-font-display); font-size: var(--site-font-size-stat); letter-spacing: -.025em; font-weight: 850; line-height: 1.06; white-space: nowrap; }
 .branding-hero-benefits { display: flex; align-items: center; flex-wrap: wrap; gap: .7rem; padding: 0; margin-top: 2rem; font-size: var(--branding-small); list-style: none; }
 .branding-hero-benefits li { display: flex; align-items: center; gap: .3rem; }
@@ -227,7 +227,7 @@
     .branding-hero-pricing .branding-gold-card { flex: 1; min-width: 0; padding-inline: .45rem; }
     .branding-gold-card strong { font-size: var(--site-font-size-stat); }
     .branding-hero-pricing .branding-gold-card strong { font-size: var(--site-font-size-price); }
-    .branding-gold-card span { font-size: var(--site-font-size-lead); }
+    .branding-gold-card .branding-offer-label { margin: 0 0 .35rem; color: inherit; font-size: var(--site-font-size-lead); }
     .branding-old-price s { font-size: var(--site-font-size-price); }
     .branding-hero-actions .branding-button { flex: 1; padding-inline: .6rem; }
     .branding-hero-benefits { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 1.25rem; max-width: none; }
@@ -280,7 +280,7 @@
     .branding-hero-pricing .branding-price-arrow { display: none; }
     .branding-hero-pricing .branding-old-price s { font-size: var(--site-font-size-h3); }
     .branding-hero-pricing .branding-gold-card { min-width: 9rem; }
-    .branding-hero-pricing .branding-gold-card span { font-size: var(--branding-small); }
+    .branding-hero-pricing .branding-gold-card .branding-offer-label { margin: 0 0 .35rem; color: inherit; font-size: var(--branding-small); }
 }
 
 .branding-discount { display: table; margin: 0 auto .55rem; padding: .3rem .8rem; border-radius: 999px; background: var(--branding-green); color: #fff; font-size: .875rem; font-weight: 800; letter-spacing: .03em; }
@@ -314,3 +314,11 @@
 .branding-contact-offer .branding-gold-card { padding: 1rem .75rem; }
 .branding-contact-offer .branding-gold-card strong { font-size: clamp(2rem, 3vw, 3rem); }
 .branding-contact-offer .branding-gold-card strong small { font-size: .875rem; }
+
+.branding-gold-card strong small { font-size: .875rem; letter-spacing: normal; }
+
+@media (max-width: 39.99rem) {
+    .branding-hero-pricing { flex-wrap: wrap; }
+    .branding-hero-pricing .branding-gold-card { flex: 0 0 100%; }
+    .branding-hero-pricing .branding-gold-card strong { font-size: 2rem; }
+}

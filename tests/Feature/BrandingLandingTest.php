@@ -28,7 +28,7 @@ class BrandingLandingTest extends TestCase
         $this->get('/bo-nhan-dien-thuong-hieu')
             ->assertOk()
             ->assertSee('Nội dung thương hiệu được quản lý')
-            ->assertSee('19.900.000đ')
+            ->assertSee('19.900.000 <small>VNĐ</small>', false)
             ->assertSee('GIẢM >50%')
             ->assertSee('40.000.000 VNĐ')
             ->assertSee('site-design-tokens', false)
