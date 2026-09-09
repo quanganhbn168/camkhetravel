@@ -3,7 +3,7 @@
         <div class="branding-contact-offer">
             <p>{{ $content['contact_section']['eyebrow'] }}</p>
             <div class="branding-old-price"><span>TỔNG GIÁ TRỊ</span><s>{{ number_format($content['offer']['original_price'], 0, ',', '.') }} VNĐ</s></div>
-            @include('frontend.landing.parts.branding.offer-price', ['offer' => $content['offer'], 'isHeading' => true, 'offerLabel' => $content['contact_section']['title']])
+            @include('frontend.landing.parts.branding.offer-price', ['offer' => $content['offer'], 'isHeading' => true])
             <p>{{ $content['contact_section']['description'] }}</p>
         </div>
         <form id="branding-lead-form" class="branding-lead-form" method="POST" action="{{ route('contact.store') }}">
