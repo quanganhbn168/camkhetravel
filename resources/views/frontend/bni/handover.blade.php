@@ -274,7 +274,7 @@
 
         <section class="bni-section bni-news" id="tin-tuc-bni" aria-labelledby="bni-news-title">
             <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
-                <div class="bni-news__heading">
+                <div class="bni-news__heading bni-news__heading--articles">
                     <div>
                         <h2 id="bni-news-title">Tin tức</h2>
                         <p class="bni-section-heading__description">Bài viết mới nhất được cập nhật theo từng chuyên mục.</p>
@@ -307,13 +307,19 @@
                         x-transition.opacity
                     >
                         @foreach ($category['articles'] as $article)
-                            <article class="bni-news-card {{ $loop->first ? 'bni-news-card--featured' : '' }}">
-                                @if ($article['image_url'])<img src="{{ $article['image_url'] }}" alt="{{ $article['title'] }}" loading="lazy">@endif
-                                <div>
-                                    <p>{{ $category['label'] }}</p>
+                            <article class="bni-news-card {{ $loop->first ? 'bni-news-card--featured' : '' }} {{ $article['image_url'] ? 'bni-news-card--with-media' : 'bni-news-card--text-only' }}">
+                                @if ($article['image_url'])
+                                    <div class="bni-news-card__media">
+                                        <img src="{{ $article['image_url'] }}" alt="{{ $article['title'] }}" loading="lazy" decoding="async">
+                                    </div>
+                                @endif
+                                <div class="bni-news-card__body">
+                                    <div class="bni-news-card__meta">
+                                        <p>{{ $category['label'] }}</p>
+                                        @if ($article['published_at'])<time datetime="{{ $article['published_at']->toDateString() }}">{{ $article['published_at']->translatedFormat('d/m/Y') }}</time>@endif
+                                    </div>
                                     <h3><a href="{{ $article['url'] }}">{{ $article['title'] }}</a></h3>
-                                    @if ($article['excerpt'])<span>{{ $article['excerpt'] }}</span>@endif
-                                    @if ($article['published_at'])<time datetime="{{ $article['published_at']->toDateString() }}">{{ $article['published_at']->translatedFormat('d/m/Y') }}</time>@endif
+                                    @if ($article['excerpt'])<p class="bni-news-card__summary">{{ $article['excerpt'] }}</p>@endif
                                 </div>
                             </article>
                         @endforeach
