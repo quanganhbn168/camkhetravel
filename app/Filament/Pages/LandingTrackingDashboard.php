@@ -4,15 +4,18 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\ContactRequests\ContactRequestResource;
 use App\Filament\Resources\LandingEvents\LandingEventResource;
+use App\Filament\Widgets\LandingTrackingComparison;
 use App\Models\ContactRequest;
 use App\Models\LandingEvent;
 use App\Models\LandingPage;
+use App\Services\LandingTracking\LandingTrackingComparisonService;
 use BackedEnum;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
@@ -65,6 +68,19 @@ class LandingTrackingDashboard extends Page
         ];
     }
 
+    /** @return array<int, class-string> */
+    protected function getHeaderWidgets(): array
+    {
+        return app(LandingTrackingComparisonService::class)->hasNewEvents()
+            ? [LandingTrackingComparison::class]
+            : [];
+    }
+
+    public function getHeaderWidgetsColumns(): int|array
+    {
+        return 1;
+    }
+
     public function getLeadsUrl(): string
     {
         return ContactRequestResource::getUrl('index');
@@ -104,14 +120,16 @@ class LandingTrackingDashboard extends Page
     /**
      * @return array{
      *     date_label: string,
+     *     total_events: int,
      *     views: int,
      *     sessions: int,
      *     leads: int,
+     *     intentional_interactions: int,
      *     conversion_rate: float,
-     *     event_breakdown: list<array{label: string, total: int, width: float, color: string}>,
+     *     event_breakdown: list<array{event_name: string, label: string, description: string, total: int, share: float, color: string}>,
      *     source_breakdown: list<array{label: string, total: int, width: float}>,
      *     landing_breakdown: list<array{title: string, views: int, leads: int, conversion_rate: float}>,
-     *     recent_leads: \Illuminate\Database\Eloquent\Collection<int, ContactRequest>,
+     *     recent_leads: Collection<int, ContactRequest>,
      * }
      */
     public function getDashboardData(): array
@@ -125,26 +143,15 @@ class LandingTrackingDashboard extends Page
             ->distinct()
             ->count('session_id');
         $leads = (clone $events)->where('event_name', 'lead_submit')->count();
-
-        $eventBreakdown = (clone $events)
-            ->select('event_name', DB::raw('COUNT(*) as total'))
-            ->groupBy('event_name')
-            ->orderByDesc('total')
-            ->get()
-            ->map(fn (LandingEvent $event): array => [
-                'label' => $this->eventLabel((string) $event->event_name),
-                'total' => (int) $event->total,
-                'width' => 0,
-                'color' => $this->eventColor((string) $event->event_name),
-            ]);
-        $maxEventTotal = max(1, (int) $eventBreakdown->max('total'));
-        $eventBreakdown = $eventBreakdown
-            ->map(fn (array $row): array => [
-                ...$row,
-                'width' => round(((int) $row['total'] / $maxEventTotal) * 100, 1),
-            ])
-            ->values()
-            ->all();
+        $intentionalInteractions = (clone $events)
+            ->whereIn('event_name', ['cta_click', 'pricing_view', 'project_click', 'phone_click', 'zalo_click'])
+            ->count();
+        $eventBreakdown = app(LandingTrackingComparisonService::class)->eventBreakdown(
+            $from,
+            $to,
+            filled($this->landingPageId) ? (int) $this->landingPageId : null,
+            $this->utmSource,
+        );
 
         $sourceBreakdown = (clone $events)
             ->where('event_name', 'page_view')
@@ -223,9 +230,11 @@ class LandingTrackingDashboard extends Page
 
         return [
             'date_label' => $from->format('d/m/Y').' - '.$to->format('d/m/Y'),
+            'total_events' => (clone $events)->count(),
             'views' => $views,
             'sessions' => $sessions,
             'leads' => $leads,
+            'intentional_interactions' => $intentionalInteractions,
             'conversion_rate' => $views > 0 ? round(($leads / $views) * 100, 1) : 0.0,
             'event_breakdown' => $eventBreakdown,
             'source_breakdown' => $sourceBreakdown,
@@ -275,31 +284,5 @@ class LandingTrackingDashboard extends Page
                 filled($this->utmSource),
                 fn (Builder $query): Builder => $query->where('utm_source', $this->utmSource),
             );
-    }
-
-    private function eventLabel(string $eventName): string
-    {
-        return match ($eventName) {
-            'page_view' => 'Lượt xem trang',
-            'cta_click' => 'Bấm CTA',
-            'pricing_view' => 'Xem bảng giá',
-            'project_click' => 'Xem dự án',
-            'phone_click' => 'Bấm gọi điện',
-            'zalo_click' => 'Bấm Zalo',
-            'countdown_view' => 'Xem countdown',
-            'countdown_expired' => 'Countdown hết hạn',
-            'lead_submit' => 'Gửi lead thành công',
-            default => $eventName,
-        };
-    }
-
-    private function eventColor(string $eventName): string
-    {
-        return match ($eventName) {
-            'page_view' => '#3b82f6',
-            'lead_submit' => '#16a34a',
-            'cta_click', 'phone_click', 'zalo_click' => '#f59e0b',
-            default => '#64748b',
-        };
     }
 }

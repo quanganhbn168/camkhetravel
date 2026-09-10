@@ -26,7 +26,7 @@
                                         $slideImageUrl = $slide['image_url'] ?: Vite::asset('resources/images/bni/bni-kv-milk-red.webp');
                                     @endphp
                                     @if ($slide['video_media_url'])
-                                        <video class="bni-event-slide__video" autoplay muted loop playsinline preload="metadata" poster="{{ $slideImageUrl }}" aria-label="{{ $slide['alt_text'] }}">
+                                        <video class="bni-event-slide__video" controls playsinline preload="metadata" poster="{{ $slideImageUrl }}" aria-label="{{ $slide['alt_text'] }}" data-bni-hero-video>
                                             <source src="{{ $slide['video_media_url'] }}">
                                             Trình duyệt của bạn chưa hỗ trợ phát video.
                                         </video>
@@ -47,6 +47,7 @@
                     <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 bni-event-slider__controls" aria-label="Điều khiển slide">
                         <button type="button" data-bni-hero-swiper-prev aria-label="Slide trước">←</button>
                         <span>{{ $heroSlides->count() }} slide</span>
+                        <button type="button" data-bni-hero-swiper-toggle aria-pressed="true">Dừng tự động</button>
                         <button type="button" data-bni-hero-swiper-next aria-label="Slide tiếp theo">→</button>
                     </div>
                 @endif

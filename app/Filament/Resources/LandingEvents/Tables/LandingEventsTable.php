@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\LandingEvents\Tables;
 
+use App\Models\LandingEvent;
+use App\Services\LandingTracking\LandingTrackingComparisonService;
 use App\Support\Landing\LandingEventRecorder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
@@ -22,24 +24,19 @@ class LandingEventsTable
                 TextColumn::make('event_name')
                     ->label('Sự kiện')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'page_view' => 'Xem trang',
-                        'cta_click' => 'Bấm CTA',
-                        'pricing_view' => 'Xem gói giá',
-                        'project_click' => 'Xem dự án',
-                        'phone_click' => 'Bấm gọi',
-                        'zalo_click' => 'Bấm Zalo',
-                        'countdown_view' => 'Xem countdown',
-                        'countdown_expired' => 'Countdown hết hạn',
-                        'lead_submit' => 'Gửi lead',
-                        default => $state,
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        'lead_submit' => 'success',
-                        'cta_click', 'phone_click', 'zalo_click' => 'warning',
-                        'page_view' => 'info',
-                        default => 'gray',
-                    }),
+                    ->formatStateUsing(fn (string $state): string => app(LandingTrackingComparisonService::class)->eventDefinition($state)['label'])
+                    ->color(fn (LandingEvent $record): string => app(LandingTrackingComparisonService::class)->eventDefinition((string) $record->event_name)['filament_color']),
+                TextColumn::make('event_name_code')
+                    ->label('Mã event')
+                    ->getStateUsing(fn (LandingEvent $record): string => (string) $record->event_name)
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('event_detail')
+                    ->label('Chi tiết')
+                    ->getStateUsing(fn (LandingEvent $record): string => app(LandingTrackingComparisonService::class)->eventDetail($record))
+                    ->limit(48)
+                    ->tooltip(fn (LandingEvent $record): string => app(LandingTrackingComparisonService::class)->eventDetail($record))
+                    ->toggleable(),
                 TextColumn::make('block_id')->label('Khối')->toggleable(),
                 TextColumn::make('utm_source')->label('Nguồn')->badge()->toggleable(),
                 TextColumn::make('utm_campaign')->label('Chiến dịch')->toggleable(),
@@ -50,24 +47,13 @@ class LandingEventsTable
             ->filters([
                 SelectFilter::make('landing_page_id')->label('Landing page')->relationship('landingPage', 'title')->searchable()->preload(),
                 SelectFilter::make('service_id')->label('Dịch vụ')->relationship('service', 'title')->searchable()->preload(),
-                SelectFilter::make('event_name')->label('Sự kiện')->options(array_combine(
-                    LandingEventRecorder::EVENT_NAMES,
-                    array_map(
-                        fn (string $event): string => match ($event) {
-                            'page_view' => 'Xem trang',
-                            'cta_click' => 'Bấm CTA',
-                            'pricing_view' => 'Xem gói giá',
-                            'project_click' => 'Xem dự án',
-                            'phone_click' => 'Bấm gọi',
-                            'zalo_click' => 'Bấm Zalo',
-                            'countdown_view' => 'Xem countdown',
-                            'countdown_expired' => 'Countdown hết hạn',
-                            'lead_submit' => 'Gửi lead',
-                            default => $event,
-                        },
-                        LandingEventRecorder::EVENT_NAMES,
-                    ),
-                )),
+                SelectFilter::make('event_name')
+                    ->label('Sự kiện')
+                    ->options(collect(LandingEventRecorder::EVENT_NAMES)
+                        ->mapWithKeys(fn (string $event): array => [
+                            $event => app(LandingTrackingComparisonService::class)->eventDefinition($event)['label'],
+                        ])
+                        ->all()),
                 Filter::make('occurred_at')
                     ->label('Khoảng thời gian')
                     ->schema([

@@ -2,8 +2,8 @@
 
 namespace App\Support\Landing;
 
-use App\Models\LandingPage;
 use App\Models\LandingEvent;
+use App\Models\LandingPage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -14,6 +14,7 @@ class LandingEventRecorder
     public const EVENT_NAMES = [
         'page_view',
         'cta_click',
+        'nav_click',
         'pricing_view',
         'project_click',
         'phone_click',

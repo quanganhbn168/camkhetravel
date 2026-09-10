@@ -63,11 +63,13 @@
             </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
             @foreach ([
-                ['label' => 'Lượt xem ghi nhận', 'value' => $data['views'], 'hint' => 'page_view trong khoảng '.$data['date_label'], 'color' => 'blue'],
+                ['label' => 'Tổng event', 'value' => $data['total_events'], 'hint' => 'Tất cả loại event trong khoảng '.$data['date_label'], 'color' => 'gray'],
+                ['label' => 'Lượt xem ghi nhận', 'value' => $data['views'], 'hint' => 'event: page_view · lượt mở trang', 'color' => 'blue'],
                 ['label' => 'Phiên có mã', 'value' => $data['sessions'], 'hint' => 'distinct session_id', 'color' => 'violet'],
-                ['label' => 'Lead thành công', 'value' => $data['leads'], 'hint' => 'lead_submit sau khi lưu form', 'color' => 'green'],
+                ['label' => 'Gửi form thành công', 'value' => $data['leads'], 'hint' => 'event: lead_submit', 'color' => 'green'],
+                ['label' => 'Tương tác chủ đích', 'value' => $data['intentional_interactions'], 'hint' => 'CTA · gói giá · dự án · gọi · Zalo', 'color' => 'orange'],
                 ['label' => 'Tỷ lệ chuyển đổi', 'value' => number_format($data['conversion_rate'], 1, ',', '.').'%', 'hint' => 'lead / lượt xem', 'color' => 'orange'],
             ] as $stat)
                 <div class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
@@ -82,8 +84,8 @@
             <section class="fi-section rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6">
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <h2 class="text-base font-semibold text-gray-950 dark:text-white">Hành trình tương tác</h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Các sự kiện được ghi nhận trong khoảng đã chọn.</p>
+                        <h2 class="text-base font-semibold text-gray-950 dark:text-white">Chi tiết theo loại event</h2>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Không cộng dồn chung: mỗi dòng cho biết chính xác khách đã làm gì.</p>
                     </div>
                     <span class="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-medium text-primary-700 dark:bg-primary-500/10 dark:text-primary-300">{{ $data['date_label'] }}</span>
                 </div>
@@ -91,18 +93,35 @@
                 @if ($data['event_breakdown'] === [])
                     <p class="mt-6 rounded-lg bg-gray-50 px-4 py-5 text-sm text-gray-500 dark:bg-white/5 dark:text-gray-400">Chưa có sự kiện trong bộ lọc này.</p>
                 @else
-                    <div class="mt-6 space-y-4">
+                    <div class="mt-5 overflow-x-auto">
+                        <table class="w-full min-w-[42rem] text-left text-sm">
+                            <thead class="border-b border-gray-200 text-xs uppercase text-gray-500 dark:border-white/10 dark:text-gray-400">
+                                <tr>
+                                    <th class="pb-3 pr-4 font-medium">Loại event</th>
+                                    <th class="pb-3 pr-4 font-medium">Ý nghĩa</th>
+                                    <th class="pb-3 pr-4 text-right font-medium">Số lượt</th>
+                                    <th class="pb-3 text-right font-medium">Tỷ trọng</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                         @foreach ($data['event_breakdown'] as $event)
-                            <div>
-                                <div class="mb-1.5 flex items-center justify-between gap-4 text-sm">
-                                    <span class="font-medium text-gray-700 dark:text-gray-200">{{ $event['label'] }}</span>
-                                    <span class="tabular-nums text-gray-500 dark:text-gray-400">{{ number_format($event['total']) }}</span>
-                                </div>
-                                <div class="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-                                    <div class="h-full rounded-full" style="width: {{ $event['width'] }}%; background-color: {{ $event['color'] }}"></div>
-                                </div>
-                            </div>
+                                <tr>
+                                    <td class="py-3 pr-4 align-top">
+                                        <p class="font-semibold text-gray-800 dark:text-gray-200">{{ $event['label'] }}</p>
+                                        <code class="text-[11px] text-gray-500 dark:text-gray-400">{{ $event['event_name'] }}</code>
+                                    </td>
+                                    <td class="py-3 pr-4 align-top text-xs leading-5 text-gray-500 dark:text-gray-400">{{ $event['description'] }}</td>
+                                    <td class="py-3 pr-4 text-right align-top font-semibold tabular-nums text-gray-900 dark:text-white">{{ number_format($event['total']) }}</td>
+                                    <td class="py-3 text-right align-top">
+                                        <span class="font-medium tabular-nums text-primary-700 dark:text-primary-300">{{ number_format($event['share'], 1, ',', '.') }}%</span>
+                                        <div class="mt-1 h-1.5 min-w-16 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
+                                            <div class="h-full rounded-full" style="width: {{ $event['share'] }}%; background-color: {{ $event['color'] }}"></div>
+                                        </div>
+                                    </td>
+                                </tr>
                         @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 @endif
             </section>
@@ -198,7 +217,7 @@
 
         <div class="rounded-xl border border-primary-200 bg-primary-50/70 p-4 text-sm text-primary-900 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-100">
             <p class="font-semibold">Cách đọc số liệu</p>
-            <p class="mt-1 leading-6">Lượt xem là các sự kiện <code class="rounded bg-white/60 px-1 py-0.5 text-xs dark:bg-white/10">page_view</code> đã ghi nhận. Trình duyệt hiện không gửi lại lượt xem khi anh chỉ bấm F5 trong cùng tab và session; dashboard vẫn giữ số liệu theo phiên, nguồn UTM và landing page để đối chiếu với GA4/GTM sau này.</p>
+            <p class="mt-1 leading-6">Tổng event là tổng mọi hành vi đã ghi nhận. <code class="rounded bg-white/60 px-1 py-0.5 text-xs dark:bg-white/10">page_view</code> là mở trang, còn <code class="rounded bg-white/60 px-1 py-0.5 text-xs dark:bg-white/10">lead_submit</code> chỉ được ghi sau khi form lưu thành công. Trình duyệt không gửi lại page view khi anh chỉ bấm F5 trong cùng tab và session.</p>
         </div>
     </div>
 </x-filament-panels::page>

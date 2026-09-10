@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Filament\Pages\LandingTrackingDashboard;
 use App\Filament\Resources\LandingEvents\LandingEventResource;
 use App\Filament\Resources\LandingEvents\Pages\ListLandingEvents;
 use App\Filament\Widgets\LandingTrackingComparison;
@@ -50,6 +51,36 @@ class LandingTrackingComparisonServiceTest extends TestCase
         $this->assertSame(3, $summary['month']['previous']);
     }
 
+    public function test_it_breaks_comparisons_down_by_event_type(): void
+    {
+        $landing = LandingPage::query()->firstOrFail();
+        $reference = CarbonImmutable::create(2033, 9, 12, 14, 30, 0, config('app.timezone'));
+
+        $this->record($landing, '2033-09-12 09:00:00', 'page_view');
+        $this->record($landing, '2033-09-12 10:00:00', 'page_view');
+        $this->record($landing, '2033-09-12 11:00:00', 'lead_submit');
+        $this->record($landing, '2033-09-12 12:00:00', 'cta_click');
+        $this->record($landing, '2033-09-11 09:00:00', 'page_view');
+        $this->record($landing, '2033-09-11 10:00:00', 'cta_click');
+
+        $summary = app(LandingTrackingComparisonService::class)->summary($reference);
+        $events = collect($summary['event_breakdown'])->keyBy('event_name');
+
+        $this->assertSame(2, $events['page_view']['today']['current']);
+        $this->assertSame(1, $events['page_view']['today']['previous']);
+        $this->assertSame(1, $events['lead_submit']['today']['current']);
+        $this->assertSame(0, $events['lead_submit']['today']['previous']);
+        $this->assertSame('Gửi form thành công', $events['lead_submit']['label']);
+        $this->assertSame('Bấm CTA', $events['cta_click']['label']);
+        $this->assertSame(
+            'Yêu cầu tư vấn #42',
+            app(LandingTrackingComparisonService::class)->eventDetail(new LandingEvent([
+                'event_name' => 'lead_submit',
+                'payload' => ['contact_request_id' => 42],
+            ])),
+        );
+    }
+
     public function test_it_reports_no_new_events_for_an_empty_day_and_hides_navigation_badge(): void
     {
         $reference = CarbonImmutable::create(2031, 9, 10, 14, 30, 0, config('app.timezone'));
@@ -76,18 +107,24 @@ class LandingTrackingComparisonServiceTest extends TestCase
 
             $pageMethod = new ReflectionMethod(ListLandingEvents::class, 'getHeaderWidgets');
             $pageMethod->setAccessible(true);
-            $widgetMethod = new ReflectionMethod(LandingTrackingComparison::class, 'getStats');
+            $widgetMethod = new ReflectionMethod(LandingTrackingComparison::class, 'getViewData');
             $widgetMethod->setAccessible(true);
+            $dashboardMethod = new ReflectionMethod(LandingTrackingDashboard::class, 'getHeaderWidgets');
+            $dashboardMethod->setAccessible(true);
 
             $this->assertSame(
                 [LandingTrackingComparison::class],
                 $pageMethod->invoke(new ListLandingEvents),
             );
 
-            $stats = $widgetMethod->invoke(new LandingTrackingComparison);
-            $this->assertCount(3, $stats);
-            $this->assertSame('Lượt tracking hôm nay', $stats[0]->getLabel());
-            $this->assertStringContainsString('so với hôm qua', (string) $stats[0]->getDescription());
+            $widgetData = $widgetMethod->invoke(new LandingTrackingComparison);
+            $this->assertCount(1, $widgetData['summary']['event_breakdown']);
+            $this->assertSame('page_view', $widgetData['summary']['event_breakdown'][0]['event_name']);
+            $this->assertSame('Lượt tracking hôm nay', $widgetData['summary']['today']['label']);
+            $this->assertSame(
+                [LandingTrackingComparison::class],
+                $dashboardMethod->invoke(new LandingTrackingDashboard),
+            );
 
             CarbonImmutable::setTestNow($reference->addDay());
 
@@ -97,11 +134,11 @@ class LandingTrackingComparisonServiceTest extends TestCase
         }
     }
 
-    private function record(LandingPage $landing, string $occurredAt): void
+    private function record(LandingPage $landing, string $occurredAt, string $eventName = 'page_view'): void
     {
         LandingEvent::query()->create([
             'landing_page_id' => $landing->id,
-            'event_name' => 'page_view',
+            'event_name' => $eventName,
             'occurred_at' => $occurredAt,
         ]);
     }

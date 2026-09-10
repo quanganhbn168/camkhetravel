@@ -122,7 +122,7 @@ const initialiseBniHeroSwipers = () => {
         const section = element.closest('.bni-event-slider');
         const slideCount = element.querySelectorAll('.swiper-slide').length;
 
-        new Swiper(element, {
+        const swiper = new Swiper(element, {
             modules: [A11y, Autoplay, Keyboard, Navigation],
             slidesPerView: 1,
             autoHeight: true,
@@ -140,6 +140,49 @@ const initialiseBniHeroSwipers = () => {
                 nextEl: section?.querySelector('[data-bni-hero-swiper-next]'),
             },
         });
+
+        const autoplayToggle = section?.querySelector('[data-bni-hero-swiper-toggle]');
+        const updateAutoplayToggle = () => {
+            if (!autoplayToggle) {
+                return;
+            }
+
+            const isRunning = Boolean(swiper.autoplay?.running);
+            autoplayToggle.textContent = isRunning ? 'Dừng tự động' : 'Chạy tự động';
+            autoplayToggle.setAttribute('aria-pressed', isRunning ? 'true' : 'false');
+        };
+        const stopAutoplayForVideo = () => {
+            swiper.autoplay?.stop();
+            updateAutoplayToggle();
+        };
+
+        autoplayToggle?.addEventListener('click', () => {
+            if (swiper.autoplay?.running) {
+                swiper.autoplay.stop();
+            } else {
+                swiper.autoplay?.start();
+            }
+
+            updateAutoplayToggle();
+        });
+
+        element.querySelectorAll('[data-bni-hero-video]').forEach((video) => {
+            video.addEventListener('pointerdown', stopAutoplayForVideo);
+            video.addEventListener('play', stopAutoplayForVideo);
+        });
+
+        const pauseInactiveVideos = () => {
+            element.querySelectorAll('[data-bni-hero-video]').forEach((video) => {
+                const slide = video.closest('.swiper-slide');
+
+                if (slide && !slide.classList.contains('swiper-slide-active')) {
+                    video.pause();
+                }
+            });
+        };
+
+        swiper.on('slideChange', pauseInactiveVideos);
+        updateAutoplayToggle();
     });
 };
 

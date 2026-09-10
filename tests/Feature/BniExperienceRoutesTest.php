@@ -397,6 +397,58 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Phát video: Video đầu trang Lễ chuyển giao');
     }
 
+    public function test_a_handover_slide_upload_renders_native_audio_and_pause_controls(): void
+    {
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $event->slides()->update(['is_active' => false]);
+        $slide = BniEventSlide::query()->create([
+            'bni_event_id' => $event->id,
+            'alt_text' => 'Video tải lên cho slide đầu trang',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+        $image = $slide->addMedia(UploadedFile::fake()->image('video-slide-cover.jpg', 1600, 900))
+            ->toMediaCollection('image', 'public');
+        $videoPath = tempnam(sys_get_temp_dir(), 'bni-slide-video-');
+        file_put_contents($videoPath, "\x00\x00\x00\x18ftypmp42\x00\x00\x00\x00mp42isom");
+
+        try {
+            $video = $slide->addMedia($videoPath)
+                ->usingFileName('video-slide.mp4')
+                ->toMediaCollection('video', 'public');
+        } finally {
+            @unlink($videoPath);
+        }
+
+        $secondarySlide = BniEventSlide::query()->create([
+            'bni_event_id' => $event->id,
+            'alt_text' => 'Ảnh phụ của slide đầu trang',
+            'is_active' => true,
+            'sort_order' => 2,
+        ]);
+        $secondarySlide->addMedia(UploadedFile::fake()->image('video-slide-secondary.jpg', 1600, 900))
+            ->toMediaCollection('image', 'public');
+
+        $body = $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('data-bni-hero-video', false)
+            ->assertSee('data-bni-hero-swiper-toggle', false)
+            ->getContent();
+        $sliderStart = strpos($body, '<section class="bni-event-slider"');
+        $sliderEnd = strpos($body, '</section>', $sliderStart);
+        $slider = substr($body, $sliderStart, $sliderEnd - $sliderStart);
+
+        $this->assertStringContainsString(
+            'class="bni-event-slide__video" controls playsinline preload="metadata" poster="'.$image->getUrl('webp'),
+            $slider,
+        );
+        $this->assertStringContainsString($video->getUrl(), $slider);
+        $this->assertStringNotContainsString('autoplay', $slider);
+        $this->assertStringNotContainsString('muted', $slider);
+        $this->assertStringNotContainsString(' loop', $slider);
+    }
+
     public function test_overview_keeps_chapter_media_while_the_intro_section_is_hidden_without_deleting_its_data(): void
     {
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
