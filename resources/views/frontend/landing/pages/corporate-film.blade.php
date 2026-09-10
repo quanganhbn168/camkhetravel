@@ -8,4 +8,4 @@
 @include('frontend.landing.parts.communications.strategy', ['args' => ['landing' => $landingContent]])
 @include('frontend.landing.parts.communications.process', ['args' => ['landing' => $landingContent]])
 @include('frontend.landing.parts.communications.faq', ['args' => ['landing' => $landingContent]])
-@include('frontend.landing.parts.communications.contact', ['args' => ['landing' => $landingContent]])
+@include('frontend.landing.parts.communications.contact', ['args' => ['landing' => $landingContent, 'success_class' => 'film-form-success']])

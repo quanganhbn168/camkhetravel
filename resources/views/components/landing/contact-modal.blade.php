@@ -5,6 +5,7 @@
     'landingPage' => null,
     'service' => null,
     'blockId' => 'contact-modal',
+    'successClass' => null,
 ])
 
 <div class="tht-landing-contact-modal modal" id="tht-landing-contact-modal" tabindex="-1" aria-labelledby="tht-landing-contact-modal-title" aria-hidden="true">
@@ -28,7 +29,7 @@
                 </div>
                 <div class="tht-landing-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
                 <form class="tht-landing-contact__form" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" method="POST" autocomplete="on" data-landing-lead-form>
-                    <x-landing.lead-fields :landing-page="$landingPage" :service="$service" :block-id="$blockId" return-anchor="lien-he" />
+                    <x-landing.lead-fields :landing-page="$landingPage" :service="$service" :block-id="$blockId" return-anchor="lien-he" :success-class="$successClass" />
                     @if ($errors->any())
                         <div class="tht-landing-form-errors" role="alert">
                             @foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach

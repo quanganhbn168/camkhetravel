@@ -6,6 +6,7 @@ $contact = $landing['contact'] ?? [];
 $phone1 = preg_replace('/[^0-9+]/', '', (string) ($contact['hotline_1'] ?? ''));
 $phone2 = preg_replace('/[^0-9+]/', '', (string) ($contact['hotline_2'] ?? ''));
 $zalo_url = \App\Support\Landing\LandingView::zaloUrl($contact);
+$success_class = $args['success_class'] ?? null;
 
 // Background image check
 $bg_image = !empty($section['bg_image']) ? \App\Support\Landing\LandingRegistry::assetUrl($section['bg_image']) : '';
@@ -79,7 +80,7 @@ $form_action = \App\Support\Localization\LocalizedUrl::route('contact.store');
                 </div>
                 <div class="tht-landing-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
                 <form class="tht-landing-contact__form" action="<?php echo e($form_action); ?>" method="POST" autocomplete="on" data-landing-lead-form>
-                    <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="communications-contact" return-anchor="lien-he" />
+                    <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="communications-contact" return-anchor="lien-he" :success-class="$success_class" />
                     <?php if ($errors->any()) : ?>
                         <div class="tht-landing-form-errors" role="alert">
                             <?php foreach ($errors->all() as $error) : ?><p><?php echo e($error); ?></p><?php endforeach; ?>

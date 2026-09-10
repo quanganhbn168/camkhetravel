@@ -6,6 +6,11 @@
     $contact = (array) ($page['contact'] ?? ($content['contact'] ?? []));
     $pageClass = \App\Support\Landing\LandingView::className((string) ($content['page_class'] ?? 'tht-landing-theme-enterprise'));
     $templateKey = (string) ($page['template_key'] ?? ($landingPage->template_key ?? ''));
+    $leadSuccessClass = match ($templateKey) {
+        'landing_corporate_film' => 'film-form-success',
+        'landing_event_media' => 'media-form-success',
+        default => null,
+    };
     $pageView = (string) ($page['view'] ?? '');
     $zaloUrl = \App\Support\Landing\LandingView::zaloUrl($contact);
     if (isset($processItems) && is_array($processItems) && $processItems !== []) {
@@ -47,7 +52,7 @@
         @endif
 
         @unless (in_array($templateKey, ['landing_ads', 'landing_academy', 'landing_academy_v2', 'landing_tiktok'], true))
-            <x-landing.contact-modal :contact="$contact" :section="$content['contact_section'] ?? []" :zalo-url="$zaloUrl" :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="contact-modal" />
+            <x-landing.contact-modal :contact="$contact" :section="$content['contact_section'] ?? []" :zalo-url="$zaloUrl" :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="contact-modal" :success-class="$leadSuccessClass" />
         @endunless
     </div>
 @endsection

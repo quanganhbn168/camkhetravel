@@ -87,6 +87,17 @@ class LandingArchitectureTest extends TestCase
             ->assertDontSee('data-bs-', false);
     }
 
+    public function test_film_and_media_landings_expose_stable_success_classes(): void
+    {
+        $this->get('/dich-vu-san-xuat-phim-doanh-nghiep')
+            ->assertOk()
+            ->assertSee('film-form-success', false);
+
+        $this->get('/quay-phim-chup-anh-su-kien-tai-bac-ninh')
+            ->assertOk()
+            ->assertSee('media-form-success', false);
+    }
+
     public function test_production_profile_slug_renders_its_own_design_and_remains_scrollable(): void
     {
         $this->get('/thiet-ke-profile-doanh-nghiep-ho-so-nang-luc')
