@@ -184,6 +184,7 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Logo silver')
             ->assertSee('Logo co_sponsor')
             ->assertSee('href="https://diamond.example.test"', false)
+            ->assertDontSee('class="bni-sponsor-card__name"', false)
             ->assertDontSee($hidden->name);
 
         foreach ($sponsors as $sponsor) {

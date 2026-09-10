@@ -258,7 +258,6 @@
                                                 <span aria-hidden="true">Chưa có logo</span>
                                             @endif
                                         </span>
-                                        <span class="bni-sponsor-card__name">{{ $sponsor['name'] }}</span>
                                         @if ($sponsor['url'])
                                             </a>
                                         @else
