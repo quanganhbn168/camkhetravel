@@ -19,6 +19,14 @@ window.Swiper = Swiper;
 window.GLightbox = GLightbox;
 window.Swal = Swal;
 
+const landingToast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+});
+
 const openLandingModal = (modal) => {
     if (!modal) {
         return;
@@ -429,11 +437,12 @@ const initialiseLandingLeadForms = () => {
                 submitButton.setAttribute('aria-busy', 'true');
             }
 
-            Swal.fire({
+            landingToast.fire({
                 title: 'Đang gửi thông tin...',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                showConfirmButton: false,
+                timer: false,
+                timerProgressBar: false,
                 didOpen: () => Swal.showLoading(),
             });
 
@@ -469,12 +478,10 @@ const initialiseLandingLeadForms = () => {
                     successMessage.hidden = false;
                 }
 
-                await Swal.fire({
+                landingToast.fire({
                     icon: 'success',
                     title: 'Đã nhận thông tin',
                     text: successCopy,
-                    confirmButtonText: 'Đóng',
-                    confirmButtonColor: '#5cb811',
                 });
 
                 const modal = form.closest('.modal');
@@ -483,12 +490,10 @@ const initialiseLandingLeadForms = () => {
                 }
             } catch (error) {
                 Swal.close();
-                await Swal.fire({
+                landingToast.fire({
                     icon: 'error',
                     title: 'Gửi chưa thành công',
                     text: error.message || 'Không thể gửi thông tin lúc này. Anh/chị vui lòng thử lại.',
-                    confirmButtonText: 'Đóng',
-                    confirmButtonColor: '#dc2626',
                 });
             } finally {
                 if (submitButton) {
