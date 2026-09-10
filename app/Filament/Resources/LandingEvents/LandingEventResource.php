@@ -5,6 +5,7 @@ namespace App\Filament\Resources\LandingEvents;
 use App\Filament\Resources\LandingEvents\Pages\ListLandingEvents;
 use App\Filament\Resources\LandingEvents\Tables\LandingEventsTable;
 use App\Models\LandingEvent;
+use App\Services\LandingTracking\LandingTrackingComparisonService;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
@@ -36,7 +37,9 @@ class LandingEventResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return (string) LandingEvent::query()->whereDate('occurred_at', today())->count();
+        $count = app(LandingTrackingComparisonService::class)->newEventCount();
+
+        return $count > 0 ? (string) $count : null;
     }
 
     public static function getPages(): array
