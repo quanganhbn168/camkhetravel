@@ -10,9 +10,8 @@
 @section('content')
     @php
         $chapterMedia = $chapters;
-        $activeChapterSlug = data_get($chapterMedia->first(), 'slug');
     @endphp
-    <div x-data="{ activeChapter: @js($activeChapterSlug), scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: @js($newsInitialCategory), galleryTab: @js($galleryInitialGroup) }">
+    <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: @js($newsInitialCategory), galleryTab: @js($galleryInitialGroup) }">
         @include('frontend.bni.partials.navigation')
 
         <section class="bni-event-slider" id="tong-quan" aria-label="Trình chiếu Lễ chuyển giao BNI">
@@ -67,7 +66,7 @@
                                 @if ($chapter['cover_url'])
                                     <img src="{{ $chapter['cover_url'] }}" alt="Ảnh chapter {{ $chapter['name'] }}" loading="lazy">
                                 @else
-                                    <div class="bni-database-media-placeholder"><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh cover / poster video trong quản trị Chapter</small></div>
+                                    <div class="bni-database-media-placeholder"><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh cover trong quản trị Chapter</small></div>
                                 @endif
                                 @if ($chapter['logo_url'])
                                     <span class="bni-chapter-widget__logo"><img src="{{ $chapter['logo_url'] }}" alt="Logo {{ $chapter['name'] }}" loading="lazy"></span>
@@ -110,58 +109,58 @@
                         @endforelse
                     </div>
                 </div>
-                <aside class="bni-overview__video" aria-label="Video và hình ảnh từ các chapter">
+                <aside class="bni-overview__video" aria-label="Video sự kiện và hình ảnh các Chapter">
                     <div class="bni-overview__featured-media">
-                        @forelse ($chapterMedia as $chapter)
-                            @php
-                                $chapterPosterUrl = $chapter['video_poster_url'];
-                                $chapterVideoUrl = $chapter['video_media_url'] ?: $chapter['video_external_url'];
-                                $chapterLightboxUrl = $chapterVideoUrl ?: $chapterPosterUrl;
-                            @endphp
-                            @if ($chapterLightboxUrl)
-                                <a class="bni-video-card glightbox" href="{{ $chapterLightboxUrl }}" data-type="{{ $chapterVideoUrl ? 'video' : 'image' }}" data-gallery="bni-chapter-videos" data-title="{{ $chapter['name'] }}" x-show="activeChapter === @js($chapter['slug'])" x-cloak aria-label="{{ $chapterVideoUrl ? 'Xem video' : 'Xem hình ảnh' }} {{ $chapter['name'] }}">
-                                    @if ($chapterPosterUrl)
-                                        <img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}">
-                                    @else
-                                        <span class="bni-database-media-placeholder"><strong>{{ $chapter['short_name'] }}</strong><small>Chapter chưa gắn ảnh cover / poster video</small></span>
-                                    @endif
-                                    @if ($chapterVideoUrl)<span class="bni-video-card__play" aria-hidden="true">▶</span>@endif
-                                </a>
-                            @else
-                                <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder" x-show="activeChapter === @js($chapter['slug'])" x-cloak><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn video hoặc ảnh cover / poster video trong quản trị Chapter</small></div>
-                            @endif
-                        @empty
-                            <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder"><span>Video Chapter</span><small>Chưa gắn video hoặc ảnh cover trong quản trị Chapter</small></div>
-                        @endforelse
+                        @php
+                            $eventVideoMediaUrl = $eventVideo['media_url'] ?? null;
+                            $eventVideoExternalUrl = $eventVideo['external_url'] ?? null;
+                            $eventVideoPosterUrl = $eventVideo['poster_url'] ?? null;
+                        @endphp
+                        @if ($eventVideoMediaUrl)
+                            <div class="bni-video-frame" data-bni-event-video>
+                                <video class="bni-event-slide__video" controls playsinline preload="metadata" @if ($eventVideoPosterUrl) poster="{{ $eventVideoPosterUrl }}" @endif aria-label="Video sự kiện Lễ chuyển giao">
+                                    <source src="{{ $eventVideoMediaUrl }}">
+                                    Trình duyệt của bạn chưa hỗ trợ phát video.
+                                </video>
+                            </div>
+                        @elseif ($eventVideoExternalUrl)
+                            <a class="bni-video-card glightbox" href="{{ $eventVideoExternalUrl }}" data-type="video" data-gallery="bni-event-videos" data-title="Video sự kiện Lễ chuyển giao" target="_blank" rel="noopener" aria-label="Mở video sự kiện Lễ chuyển giao">
+                                @if ($eventVideoPosterUrl)
+                                    <img src="{{ $eventVideoPosterUrl }}" alt="Ảnh cover Video sự kiện Lễ chuyển giao">
+                                @else
+                                    <span class="bni-database-media-placeholder"><strong>Video sự kiện</strong><small>Chưa gắn ảnh cover riêng trong quản trị Video sự kiện</small></span>
+                                @endif
+                                <span class="bni-video-card__play" aria-hidden="true">▶</span>
+                            </a>
+                        @elseif ($eventVideoPosterUrl)
+                            <a class="bni-video-card glightbox" href="{{ $eventVideoPosterUrl }}" data-type="image" data-gallery="bni-event-videos" data-title="Ảnh cover Video sự kiện" target="_blank" rel="noopener" aria-label="Mở ảnh cover Video sự kiện">
+                                <img src="{{ $eventVideoPosterUrl }}" alt="Ảnh cover Video sự kiện Lễ chuyển giao">
+                            </a>
+                        @else
+                            <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder">
+                                <span>Video sự kiện</span>
+                                <small>Chưa gắn ảnh cover hoặc video trong quản trị Video sự kiện</small>
+                            </div>
+                        @endif
                     </div>
 
-                    <div class="bni-chapter-video-list" id="chapters" aria-label="Video của bốn chapter">
+                    <div class="bni-chapter-video-list" id="chapters" aria-label="Hình ảnh và video của bốn Chapter">
                         @foreach ($chapterMedia as $chapter)
                             @php
-                                $chapterPosterUrl = $chapter['video_poster_url'];
+                                $chapterPosterUrl = $chapter['cover_url'];
                                 $chapterVideoUrl = $chapter['video_media_url'] ?: $chapter['video_external_url'];
                                 $chapterLightboxUrl = $chapterVideoUrl ?: $chapterPosterUrl;
                             @endphp
                             <article class="bni-chapter-video-item" id="chapter-{{ $chapter['slug'] }}">
                                 @if ($chapterLightboxUrl)
-                                    <button type="button"
-                                            class="bni-chapter-video-item__link"
-                                            @click="activeChapter = @js($chapter['slug'])"
-                                            :class="activeChapter === @js($chapter['slug']) && 'is-active'"
-                                            :aria-pressed="(activeChapter === @js($chapter['slug'])).toString()"
-                                            aria-label="Chọn {{ $chapter['name'] }} để xem ở khung lớn">
-                                        @if ($chapterPosterUrl)<img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}" loading="lazy">@else<span class="bni-database-media-placeholder"><small>Chưa có ảnh cover / poster video</small></span>@endif
+                                    <a class="bni-chapter-video-item__link glightbox" href="{{ $chapterLightboxUrl }}" data-type="{{ $chapterVideoUrl ? 'video' : 'image' }}" data-gallery="bni-chapter-videos" data-title="{{ $chapter['name'] }}" aria-label="Mở {{ $chapterVideoUrl ? 'video' : 'ảnh cover' }} {{ $chapter['name'] }}">
+                                        @if ($chapterPosterUrl)<img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}" loading="lazy">@else<span class="bni-database-media-placeholder"><small>Chưa có ảnh cover Chapter</small></span>@endif
                                         <span class="bni-chapter-video-item__overlay" aria-hidden="true"><strong>{{ $chapter['short_name'] }}</strong></span>
-                                    </button>
+                                    </a>
                                 @else
-                                    <button type="button"
-                                            class="bni-chapter-video-item__link bni-database-media-placeholder"
-                                            @click="activeChapter = @js($chapter['slug'])"
-                                            :class="activeChapter === @js($chapter['slug']) && 'is-active'"
-                                            :aria-pressed="(activeChapter === @js($chapter['slug'])).toString()"
-                                            aria-label="Chọn {{ $chapter['name'] }} để xem ở khung lớn">
-                                        <span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh cover / video trong quản trị Chapter</small>
-                                    </button>
+                                    <div class="bni-chapter-video-item__link bni-database-media-placeholder">
+                                        <span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh cover hoặc video trong quản trị Chapter</small>
+                                    </div>
                                 @endif
                             </article>
                         @endforeach

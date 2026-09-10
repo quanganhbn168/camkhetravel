@@ -65,7 +65,13 @@ class BniExperienceService
             ]]);
         }
 
-        $videoPosterUrl = $video?->bniMediaUrl('poster') ?: $heroImageUrl;
+        $videoExternalUrl = trim((string) $video?->external_url);
+
+        if ($videoExternalUrl !== '' && ! Str::startsWith($videoExternalUrl, ['http://', 'https://'])) {
+            $videoExternalUrl = '';
+        }
+
+        $videoPosterUrl = $video?->bniMediaUrl('poster');
         $registrationUrl = trim((string) $video?->registration_url);
 
         if ($registrationUrl === '' || $registrationUrl === '#dang-ky') {
@@ -128,7 +134,7 @@ class BniExperienceService
             'heroSlides' => $heroSlides,
             'eventVideo' => [
                 'media_url' => $video?->bniMediaUrl('video', false),
-                'external_url' => $video?->external_url,
+                'external_url' => $videoExternalUrl ?: null,
                 'poster_url' => $videoPosterUrl,
             ],
             'registration' => [
@@ -137,6 +143,11 @@ class BniExperienceService
             ],
             'chapters' => $chapters->map(function ($chapter): array {
                 $chapterCoverUrl = $chapter->bniMediaUrl('cover');
+                $chapterExternalVideoUrl = trim((string) $chapter->video_url);
+
+                if ($chapterExternalVideoUrl !== '' && ! Str::startsWith($chapterExternalVideoUrl, ['http://', 'https://'])) {
+                    $chapterExternalVideoUrl = '';
+                }
 
                 return [
                     'name' => $chapter->name,
@@ -146,9 +157,8 @@ class BniExperienceService
                     'description' => $chapter->description,
                     'logo_url' => $chapter->bniMediaUrl('logo'),
                     'cover_url' => $chapterCoverUrl,
-                    'video_poster_url' => $chapterCoverUrl,
                     'video_media_url' => $chapter->bniMediaUrl('video', false),
-                    'video_external_url' => $chapter->video_url,
+                    'video_external_url' => $chapterExternalVideoUrl ?: null,
                 ];
             }),
             'purposes' => $event?->purposes->map(fn ($purpose): array => [

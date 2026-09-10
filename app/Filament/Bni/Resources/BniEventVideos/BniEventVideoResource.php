@@ -27,7 +27,7 @@ class BniEventVideoResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-video-camera';
 
-    protected static ?string $navigationLabel = 'Video giới thiệu';
+    protected static ?string $navigationLabel = 'Video sự kiện';
 
     protected static ?string $modelLabel = 'video sự kiện';
 
@@ -48,9 +48,9 @@ class BniEventVideoResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Video giới thiệu sự kiện')
+            Section::make('Video sự kiện')
                 ->icon('heroicon-o-video-camera')
-                ->description('Video hiển thị tại phần Video giới thiệu trên trang sự kiện. Video tải lên được ưu tiên trước URL YouTube hoặc Vimeo.')
+                ->description('Cấu hình riêng cho khung Video sự kiện ở phần Tổng quan của trang Lễ chuyển giao. Không dùng ảnh từ Slide đầu trang hoặc Chapter. Video tải lên được ưu tiên trước URL YouTube hoặc Vimeo.')
                 ->schema([
                     Select::make('bni_event_id')
                         ->label('Sự kiện')
@@ -67,7 +67,7 @@ class BniEventVideoResource extends Resource
                         ->disk('public')
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                        ->helperText('Nếu để trống, trang sẽ dùng ảnh banner của sự kiện.')
+                        ->helperText('Ảnh này là poster riêng của Video sự kiện. Nếu để trống, trang không tự lấy ảnh Slide hoặc ảnh banner.')
                         ->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('video')
                         ->label('Video tải lên')

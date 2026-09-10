@@ -422,7 +422,6 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-chapter-video-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
     .bni-chapter-video-item { position: relative; min-width: 0; overflow: hidden; border: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); border-radius: var(--bni-radius); background: var(--bni-red); box-shadow: 0 0.65rem 1.5rem color-mix(in srgb, var(--bni-red) 9%, transparent); aspect-ratio: 16 / 9; }
     .bni-chapter-video-item__link { position: relative; display: block; width: 100%; height: 100%; overflow: hidden; border: 0; padding: 0; background: transparent; color: var(--bni-white); font: inherit; text-align: left; cursor: pointer; }
-    .bni-chapter-video-item__link[aria-pressed="true"] { box-shadow: inset 0 0 0 0.16rem var(--bni-white); }
     .bni-chapter-video-item__link > img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 450ms ease; }
     .bni-chapter-video-item__link::after { position: absolute; z-index: 0; inset: 0; background: linear-gradient(0deg, color-mix(in srgb, var(--bni-red) 82%, transparent), transparent 72%); content: ''; opacity: 0; transition: opacity 220ms ease; }
     .bni-chapter-video-item__overlay { position: absolute; z-index: 1; right: 0.7rem; bottom: 0.6rem; left: 0.7rem; color: var(--bni-white); opacity: 0; transform: translateY(0.45rem); transition: opacity 220ms ease, transform 220ms ease; }

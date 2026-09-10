@@ -53,8 +53,8 @@ class BniHandoverPageTest extends TestCase
             ->assertSee('bni-handover-overview-section')
             ->assertSee('bni-countdown__cta')
             ->assertSee('Đăng ký ngay')
-            ->assertSee('Chưa gắn ảnh cover / poster video trong quản trị Chapter')
-            ->assertDontSee('Chưa gắn video hoặc ảnh cover trong mục Video giới thiệu')
+            ->assertSee('Chưa gắn ảnh cover trong quản trị Chapter')
+            ->assertSee('Chưa gắn ảnh cover hoặc video trong quản trị Video sự kiện')
             ->assertDontSee('border-t border-white/15 bg-midnight')
             ->assertDontSee('bni-handover-chapter-nav')
             ->assertSee('KINHBAC')
@@ -68,8 +68,8 @@ class BniHandoverPageTest extends TestCase
         $chapterListStart = strpos($body, 'class="bni-chapter-video-list"');
 
         $this->assertSame(4, substr_count($body, 'class="bni-chapter-video-item"'));
-        $this->assertStringContainsString('activeChapter:', $body);
-        $this->assertSame(4, substr_count($body, '@click="activeChapter ='));
+        $this->assertStringNotContainsString('activeChapter:', $body);
+        $this->assertSame(0, substr_count($body, '@click="activeChapter ='));
         $this->assertSame(0, substr_count($body, 'class="bni-chapter-video-item__link glightbox"'));
         $this->assertSame(0, substr_count($body, 'class="bni-chapter-video-item__overlay"'));
         $this->assertSame(4, substr_count($body, 'class="bni-chapter-widget"'));

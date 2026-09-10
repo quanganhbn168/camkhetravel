@@ -52,6 +52,7 @@ class BniAdminArchitectureTest extends TestCase
         $invitationSettings = File::get(app_path('Filament/Bni/Pages/ManageBniInvitationSettings.php'));
         $galleryResource = File::get(app_path('Filament/Bni/Resources/BniGalleryItems/BniGalleryItemResource.php'));
         $slideResource = File::get(app_path('Filament/Bni/Resources/BniEventSlides/BniEventSlideResource.php'));
+        $eventVideoResource = File::get(app_path('Filament/Bni/Resources/BniEventVideos/BniEventVideoResource.php'));
 
         $this->assertStringNotContainsString("TextInput::make('schedule_title')", $invitationSettings);
         $this->assertStringContainsString('Thông báo chung: thời gian & địa điểm', $eventResource);
@@ -61,10 +62,14 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('logo')", $sponsorResource);
         $this->assertStringContainsString('BniSponsor::tierOptions()', $sponsorResource);
         $this->assertStringContainsString("->reorderable('sort_order')", $chapterResource);
-        $this->assertStringContainsString("->label('Ảnh cover / poster video')", $chapterResource);
-        $this->assertStringContainsString('khung video lớn trên /le-chuyen-giao', $chapterResource);
+        $this->assertStringContainsString("->label('Ảnh cover')", $chapterResource);
+        $this->assertStringNotContainsString('poster video', $chapterResource);
         $this->assertStringContainsString("->label('Ảnh slide / ảnh cover video')", $slideResource);
         $this->assertStringContainsString('được dùng làm poster khi slide có video', $slideResource);
+        $this->assertStringContainsString('protected static ?string $navigationLabel = \'Video sự kiện\';', $eventVideoResource);
+        $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('poster')", $eventVideoResource);
+        $this->assertStringContainsString('Cấu hình riêng cho khung Video sự kiện', $eventVideoResource);
+        $this->assertStringContainsString('Không dùng ảnh từ Slide đầu trang hoặc Chapter', $eventVideoResource);
 
         foreach (['starts_at', 'ends_at', 'venue', 'address', 'directions_url', 'landing_url'] as $field) {
             $this->assertStringContainsString("::make('{$field}')", $eventResource, $field);

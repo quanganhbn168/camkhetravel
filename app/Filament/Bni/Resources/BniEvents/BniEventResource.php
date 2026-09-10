@@ -62,7 +62,7 @@ class BniEventResource extends Resource
         return $schema->components([
             Section::make('Thông tin sự kiện')
                 ->icon('heroicon-o-calendar-days')
-                ->description('Chỉ quản lý thông tin chung của sự kiện. Slide, video, chapter và lịch trình có khu quản trị riêng ở menu bên trái.')
+                ->description('Chỉ quản lý thông tin chung của sự kiện. Slide đầu trang, Video sự kiện, Chapter và lịch trình có khu quản trị riêng ở menu bên trái.')
                 ->schema([
                     TextInput::make('title')->label('Tên sự kiện')->required()->maxLength(255)->columnSpanFull(),
                     Select::make('type')->label('Loại sự kiện')->options([
