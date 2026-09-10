@@ -40,11 +40,11 @@ class HeroSlideResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung trang chủ';
+        return 'Trang chủ';
     }
 
     public static function getModelLabel(): string

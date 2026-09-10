@@ -206,6 +206,17 @@ class LandingBuilderTest extends TestCase
             ->assertSee('Bộ lọc báo cáo')
             ->assertSee('Lượt xem ghi nhận')
             ->assertSee('Nguồn traffic');
+
+        $this->actingAs($user)
+            ->get('/admin')
+            ->assertOk()
+            ->assertSee('Tổng quan quản trị')
+            ->assertSee('Lượt xem ghi nhận')
+            ->assertSee('Tổng quan', false)
+            ->assertSee('Khách hàng & tracking')
+            ->assertSee('Trang chủ', false)
+            ->assertDontSee('Nội dung trang chủ')
+            ->assertDontSee('Khách hàng & liên hệ');
     }
 
     public function test_builder_templates_and_native_landings_resolve_distinct_contracts(): void

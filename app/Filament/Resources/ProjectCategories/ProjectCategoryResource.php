@@ -18,7 +18,7 @@ class ProjectCategoryResource extends CategoryResource
 
     protected static ?string $navigationLabel = 'Danh mục dự án';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function getModelLabel(): string
     {

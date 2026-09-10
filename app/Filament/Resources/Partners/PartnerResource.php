@@ -31,11 +31,11 @@ class PartnerResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung trang chủ';
+        return 'Trang chủ';
     }
 
     public static function getModelLabel(): string

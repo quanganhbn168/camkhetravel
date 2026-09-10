@@ -32,11 +32,11 @@ class TestimonialResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'client_name';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung trang chủ';
+        return 'Trang chủ';
     }
 
     public static function getModelLabel(): string

@@ -18,7 +18,7 @@ class PostCategoryResource extends CategoryResource
 
     protected static ?string $navigationLabel = 'Chuyên mục bài viết';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
 
     public static function getModelLabel(): string
     {

@@ -29,7 +29,7 @@ class IntroResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Nội dung website';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 8;
 
     public static function form(Schema $schema): Schema
     {

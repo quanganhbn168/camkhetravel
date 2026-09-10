@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\AdminDashboard;
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
 use App\Support\Media\MediaUrl;
@@ -13,7 +14,6 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -56,12 +56,17 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->navigationGroups([
                 NavigationGroup::make('Nội dung website'),
-                NavigationGroup::make('Landingpage'),
-                NavigationGroup::make('Nội dung trang chủ'),
-                NavigationGroup::make('Khách hàng & liên hệ'),
-                NavigationGroup::make('SEO & media'),
-                NavigationGroup::make('Hệ thống'),
-                NavigationGroup::make('Cài đặt website'),
+                NavigationGroup::make('Landingpage')
+                    ->collapsed(),
+                NavigationGroup::make('Trang chủ')
+                    ->collapsed(),
+                NavigationGroup::make('Khách hàng & tracking'),
+                NavigationGroup::make('SEO & media')
+                    ->collapsed(),
+                NavigationGroup::make('Hệ thống')
+                    ->collapsed(),
+                NavigationGroup::make('Cài đặt website')
+                    ->collapsed(),
             ])
             ->plugins([
                 FilamentShieldPlugin::make()
@@ -78,7 +83,7 @@ class AdminPanelProvider extends PanelProvider
                     ->fileSwap(true),
             ])
             ->pages([
-                Dashboard::class,
+                AdminDashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([

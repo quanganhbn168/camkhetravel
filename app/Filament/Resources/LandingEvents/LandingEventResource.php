@@ -22,11 +22,11 @@ class LandingEventResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Tracking landing';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Khách hàng & liên hệ';
+        return 'Khách hàng & tracking';
     }
 
     public static function table(Table $table): Table

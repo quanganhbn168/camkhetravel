@@ -24,11 +24,11 @@ class PricingPlanResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung website';
+        return 'Landingpage';
     }
 
     public static function getModelLabel(): string

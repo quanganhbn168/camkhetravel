@@ -26,7 +26,7 @@ class LandingTrackingDashboard extends Page
 
     protected static ?string $title = 'Tổng quan tracking nội bộ';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Khách hàng & liên hệ';
+    protected static string|UnitEnum|null $navigationGroup = 'Khách hàng & tracking';
 
     protected static ?int $navigationSort = 0;
 
@@ -39,6 +39,8 @@ class LandingTrackingDashboard extends Page
     public ?string $landingPageId = null;
 
     public ?string $utmSource = null;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function canAccess(): bool
     {
