@@ -22,19 +22,19 @@
 @section('body_class', 'home-page min-h-screen bg-white')
 
 @section('content')
-    <section class="brand-gradient-dark relative isolate w-full overflow-hidden text-white" data-hero-section>
+    <section class="pccc-hero brand-gradient-dark relative isolate w-full overflow-hidden text-white" data-hero-section>
         @forelse ($heroSlides as $slide)
             @if ($loop->first)
                 <div class="swiper hero-swiper w-full" data-hero-swiper>
                     <div class="swiper-wrapper">
             @endif
 
-            <article class="swiper-slide relative h-auto overflow-hidden">
+            <article class="pccc-hero__slide swiper-slide relative h-auto overflow-hidden">
                 @if ($slide['has_content'])
-                    <div class="hero-brand-glow absolute inset-0"></div>
+                    <div class="pccc-hero__veil hero-brand-glow absolute inset-0"></div>
                 @endif
                 @if ($slide['image_url'])
-                    <img src="{{ $slide['image_url'] }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                    <img class="pccc-hero__image" src="{{ $slide['image_url'] }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                 @endif
 
                 @if ($slide['video_url'])
@@ -44,8 +44,8 @@
                 @endif
 
                 @if ($slide['has_content'])
-                    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative z-10 grid items-end py-16 md:py-24 lg:py-28">
-                        <div class="max-w-4xl pb-24 lg:pb-16">
+                    <div class="pccc-hero__inner site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative z-10 grid items-end py-16 md:py-24 lg:py-28">
+                        <div class="pccc-hero__copy max-w-4xl pb-24 lg:pb-16">
                             @if ($slide['title'])
                                 <h2 class="font-display max-w-4xl text-3xl leading-[1.12] tracking-[-0.045em] text-white sm:text-4xl lg:text-6xl">{{ $slide['title'] }}</h2>
                             @endif
@@ -74,9 +74,9 @@
                 </div>
             @endif
         @empty
-            <div class="hero-brand-glow absolute inset-0"></div>
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative grid items-end py-24 md:py-32 lg:py-40">
-                <div class="max-w-4xl pb-16">
+            <div class="pccc-hero__veil hero-brand-glow absolute inset-0"></div>
+            <div class="pccc-hero__inner site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative grid items-end py-24 md:py-32 lg:py-40">
+                <div class="pccc-hero__copy max-w-4xl pb-16">
                     <h2 class="font-display max-w-4xl text-4xl leading-[1.12] tracking-[-0.045em] text-white lg:text-6xl">Kiến tạo hệ thống PCCC an toàn, đồng bộ và bền vững.</h2>
                 </div>
             </div>

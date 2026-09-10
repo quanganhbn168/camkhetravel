@@ -26,12 +26,4 @@
         </div>
     </section>
 
-    <section class="resource-archive-cta">
-        @if (($heroImageUrl ?: $defaultBannerUrl))<img class="resource-archive-cta__image" src="{{ $heroImageUrl ?: $defaultBannerUrl }}" alt="" aria-hidden="true">@endif
-        <div class="resource-archive-cta__overlay"></div>
-        <div class="site-container mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-12 md:flex-row md:items-center md:justify-between lg:px-8">
-            <div><h2 class="max-w-2xl font-display text-3xl leading-tight tracking-[-0.045em] text-white md:text-4xl">Cần thiết bị PCCC phù hợp?</h2><p class="mt-3 max-w-xl text-sm leading-7 text-white/75">Gửi thông tin công trình để DVTEC tư vấn cấu hình đồng bộ.</p></div>
-            <a class="button-primary shrink-0" href="{{ LocalizedUrl::route('contact') }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
-        </div>
-    </section>
 @endsection

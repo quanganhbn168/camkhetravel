@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Partner;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
@@ -154,7 +155,18 @@ class ProjectController extends Controller
             'categories' => $this->categories(),
             'projects' => $projects,
             'heroImageUrl' => $heroProject ? MediaUrl::resolve($heroProject->curatorMedia) : null,
-            'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án'),
+            'archiveStats' => [
+                ['value' => (string) Project::query()->published()->count(), 'label' => 'công trình đã triển khai'],
+                ['value' => (string) ProjectCategory::query()->where('is_active', true)->count(), 'label' => 'nhóm công trình'],
+                ['value' => '100%', 'label' => 'quy trình minh bạch'],
+                ['value' => '24/7', 'label' => 'đồng hành kỹ thuật'],
+            ],
+            'marqueePartners' => Partner::query()
+                ->active()
+                ->with('curatorMedia')
+                ->orderBy('sort_order')
+                ->get(),
+            'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án PCCC'),
             'pageDescription' => $activeCategory?->description ?: ($backstageService
                 ? 'Các dự án đã được gắn với dịch vụ '.$backstageService->title.'.'
                 : 'Những công trình DVTEC đã đồng hành từ khảo sát ban đầu đến khi hệ thống PCCC vận hành ổn định.'),

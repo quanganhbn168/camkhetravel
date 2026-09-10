@@ -27,6 +27,20 @@
     @resize.window="if (window.innerWidth >= 1280) open = false"
     @keydown.escape.window="open = false; searchOpen = false">
     <header class="site-header" aria-label="Đầu trang DVTEC">
+        <div class="pccc-topbar">
+            <div class="site-container pccc-topbar__inner">
+                <span>Giải pháp PCCC toàn diện - Đồng hành cùng công trình an toàn</span>
+                <div class="pccc-topbar__links">
+                    <span>Thứ 2 - Thứ 7: 8:00 - 17:00</span>
+                    @if ($headerPhones->isNotEmpty())
+                        <a href="{{ $headerPhones->first()['href'] }}">Hotline: {{ $headerPhones->first()['label'] }}</a>
+                    @endif
+                    @if ($website->contact_email)
+                        <a href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a>
+                    @endif
+                </div>
+            </div>
+        </div>
         <div class="site-container mx-auto w-full max-w-7xl px-4 lg:px-8 site-header__inner">
             @include('partials.header.brand')
             <div class="hidden min-w-0 flex-1 xl:block">

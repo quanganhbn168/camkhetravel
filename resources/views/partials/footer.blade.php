@@ -17,11 +17,20 @@
         ->values();
 @endphp
 
-<footer class="site-footer bg-ink pt-14 text-slate-300 md:pt-18">
-    @if ($websiteMediaUrls->get($website->footer_background_media_id))
-        <img class="site-footer__background" src="{{ $websiteMediaUrls->get($website->footer_background_media_id) }}" alt="" aria-hidden="true" loading="lazy">
-        <div class="site-footer__overlay" aria-hidden="true"></div>
-    @endif
+<footer class="site-footer bg-ink text-slate-300">
+    <section class="pccc-footer-cta">
+        @if ($websiteMediaUrls->get($website->footer_background_media_id))
+            <img class="site-footer__background" src="{{ $websiteMediaUrls->get($website->footer_background_media_id) }}" alt="" aria-hidden="true" loading="lazy">
+            <div class="site-footer__overlay" aria-hidden="true"></div>
+        @endif
+        <div class="site-container pccc-footer-cta__inner">
+            <div>
+                <h2>Giải pháp PCCC an toàn cho công trình của anh/chị</h2>
+                <p>DVTEC đồng hành từ khảo sát, thiết kế đến thi công và bảo trì hệ thống.</p>
+            </div>
+            <a class="button-primary" href="{{ LocalizedUrl::route('contact') }}">Nhận tư vấn ngay <span aria-hidden="true">→</span></a>
+        </div>
+    </section>
     <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 grid gap-10 pb-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1.35fr] lg:gap-8">
         <div class="lg:pr-7">
             <a class="inline-flex items-center" href="{{ LocalizedUrl::route('home') }}" aria-label="{{ $website->site_name }}">

@@ -26,7 +26,14 @@
         @endif
         <div class="contact-page-hero__overlay"></div>
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 contact-page-hero__content">
-            <h1>LIÊN HỆ</h1>
+            <nav class="contact-page-hero__breadcrumb" aria-label="Breadcrumb">
+                <a href="{{ LocalizedUrl::route('home') }}">Trang chủ</a>
+                <span aria-hidden="true">/</span>
+                <span aria-current="page">Liên hệ</span>
+            </nav>
+            <p class="contact-page-hero__eyebrow">Thông tin liên hệ</p>
+            <h1>Liên hệ với chúng tôi</h1>
+            <p class="contact-page-hero__intro">DVTEC luôn sẵn sàng lắng nghe và tư vấn giải pháp PCCC phù hợp cho công trình của anh/chị.</p>
         </div>
     </section>
     <section class="section-space">
