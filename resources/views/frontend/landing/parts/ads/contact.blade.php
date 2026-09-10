@@ -22,7 +22,7 @@ $zalo_url = \App\Support\Landing\LandingView::zaloUrl($contact);
                 <a class="tht-landing-zalo-cta" href="<?php echo e($zalo_url); ?>" target="_blank" rel="noopener noreferrer"><span class="tht-landing-zalo-icon" aria-hidden="true"></span><span>NHẮN ZALO TƯ VẤN</span></a>
             </div>
             <div class="ads-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
-            <form action="<?php echo e($action); ?>" method="POST" autocomplete="on">
+            <form action="<?php echo e($action); ?>" method="POST" autocomplete="on" data-landing-lead-form>
                 <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="ads-contact" return-anchor="lien-he" />
                 <div class="ads-form-grid">
                     <input type="text" name="name" value="{{ old('name') }}" required autocomplete="name" maxlength="255" placeholder="Họ và tên *">

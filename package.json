@@ -22,6 +22,7 @@
         "alpinejs": "^3.16.1",
         "aos": "^2.3.4",
         "glightbox": "^3.3.1",
+        "sweetalert2": "^11.26.25",
         "swiper": "^14.1.0"
     }
 }

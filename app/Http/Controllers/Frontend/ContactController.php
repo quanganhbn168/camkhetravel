@@ -15,6 +15,7 @@ use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -57,7 +58,7 @@ class ContactController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
         $isLandingSubmission = $request->boolean('from_landing_page');
         $data = $request->validate([
@@ -95,6 +96,12 @@ class ContactController extends Controller
             $this->landingEvents->record($landingPage, 'lead_submit', $request, [
                 'block_id' => $contactRequest->landing_block_id,
                 'payload' => ['contact_request_id' => $contactRequest->id],
+            ]);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => __('site.contact_success'),
             ]);
         }
 

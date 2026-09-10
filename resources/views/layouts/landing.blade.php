@@ -34,11 +34,6 @@
     @endif
 
     <main id="@yield('main_id', 'landing-main')" class="@yield('main_class', 'overflow-x-clip')">
-        @if (session('success'))
-            <div class="fixed right-4 top-24 z-50 max-w-md rounded-2xl bg-emerald-700 px-5 py-4 text-sm font-medium text-white shadow-xl" role="status">
-                {{ session('success') }}
-            </div>
-        @endif
         @yield('content')
     </main>
 

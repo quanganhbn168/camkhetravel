@@ -21,6 +21,6 @@ if (menuButton && mobileMenu) {
 }
 
 const form = document.getElementById('branding-lead-form');
-if (form?.querySelector('[role="alert"], .branding-form-success')) {
+if (form?.querySelector('[role="alert"]')) {
     form.scrollIntoView({ block: 'center', behavior: 'instant' });
 }

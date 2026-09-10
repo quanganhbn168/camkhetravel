@@ -27,7 +27,7 @@
                     </a>
                 </div>
                 <div class="tht-landing-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
-                <form class="tht-landing-contact__form" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" method="POST" autocomplete="on">
+                <form class="tht-landing-contact__form" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" method="POST" autocomplete="on" data-landing-lead-form>
                     <x-landing.lead-fields :landing-page="$landingPage" :service="$service" :block-id="$blockId" return-anchor="lien-he" />
                     @if ($errors->any())
                         <div class="tht-landing-form-errors" role="alert">

@@ -113,4 +113,30 @@ class BrandingLandingTest extends TestCase
         $this->post(route('contact.store'), ['from_landing_page' => '1'])
             ->assertSessionHasErrors('phone');
     }
+
+    public function test_branding_form_accepts_json_without_redirecting_the_landing_page(): void
+    {
+        $this->seed(BrandingLandingSeeder::class);
+        $page = LandingPage::query()->where('template_key', LandingRegistry::BRANDING)->firstOrFail();
+
+        $this->withHeaders([
+            'Accept' => 'application/json',
+            'X-Requested-With' => 'XMLHttpRequest',
+        ])->post(route('contact.store'), [
+            'from_landing_page' => '1',
+            'landing_page_id' => $page->id,
+            'landing_block_id' => 'branding-contact',
+            'name' => 'Kiểm thử AJAX landing thương hiệu',
+            'phone' => '0900000001',
+            'message' => 'Tư vấn bộ nhận diện qua SweetAlert2',
+            'return_to' => '/bo-nhan-dien-thuong-hieu#lien-he',
+        ])->assertOk()
+            ->assertJsonPath('message', __('site.contact_success'));
+
+        $this->assertDatabaseHas('contact_requests', [
+            'landing_page_id' => $page->id,
+            'landing_block_id' => 'branding-contact',
+            'name' => 'Kiểm thử AJAX landing thương hiệu',
+        ]);
+    }
 }

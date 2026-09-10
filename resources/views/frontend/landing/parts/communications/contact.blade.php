@@ -78,7 +78,7 @@ $form_action = \App\Support\Localization\LocalizedUrl::route('contact.store');
                     </a>
                 </div>
                 <div class="tht-landing-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
-                <form class="tht-landing-contact__form" action="<?php echo e($form_action); ?>" method="POST" autocomplete="on">
+                <form class="tht-landing-contact__form" action="<?php echo e($form_action); ?>" method="POST" autocomplete="on" data-landing-lead-form>
                     <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="communications-contact" return-anchor="lien-he" />
                     <?php if ($errors->any()) : ?>
                         <div class="tht-landing-form-errors" role="alert">

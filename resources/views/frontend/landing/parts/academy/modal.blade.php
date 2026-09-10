@@ -20,7 +20,7 @@ $zalo_url = \App\Support\Landing\LandingView::zaloUrl($contact);
             <div class="modal-body">
                 <div class="academy-zalo-contact"><p class="academy-zalo-contact__copy">Nhắn Zalo để nhận phản hồi nhanh từ THT Academy.</p><a class="academy-zalo-cta" href="<?php echo e($zalo_url); ?>" target="_blank" rel="noopener noreferrer"><span class="tht-landing-zalo-icon" aria-hidden="true"></span><span>NHẮN ZALO TƯ VẤN</span></a></div>
                 <div class="academy-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
-                <form class="academy-modal-form" action="<?php echo e($action); ?>" method="POST" autocomplete="on">
+                <form class="academy-modal-form" action="<?php echo e($action); ?>" method="POST" autocomplete="on" data-landing-lead-form>
                     <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="academy-modal" return-anchor="dang-ky" />
                     <div class="academy-modal-form__grid">
                         <label for="academy-modal-name"><span>Họ và tên <b>*</b></span><input id="academy-modal-name" type="text" name="name" value="{{ old('name') }}" required autocomplete="name" maxlength="255" placeholder="Nguyễn Văn A"></label>

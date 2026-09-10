@@ -29,6 +29,9 @@ importers:
       glightbox:
         specifier: ^3.3.1
         version: 3.3.1
+      sweetalert2:
+        specifier: ^11.26.25
+        version: 11.26.25
       swiper:
         specifier: ^14.1.0
         version: 14.1.0
@@ -840,6 +843,9 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
+  sweetalert2@11.26.25:
+    resolution: {integrity: sha512-+hunCOJdJ6FLj04T9YSLvvZXRjsvIkTeTKP2e4VF8CaBias961BTnWiSFAy7F/CM5eq3QK2Rraoc5Gzftslvkg==}
+
   swiper@14.1.0:
     resolution: {integrity: sha512-ppit/AqmGvThKlXy4I1/9N/gEyb9s/BDHWciWNeIxbfteFKUhPQXrYuOMKszomXKd9WiLd+/0vKdPHW+0N0mhA==}
     engines: {node: '>= 4.7.0'}
@@ -1536,6 +1542,8 @@ snapshots:
   supports-color@8.1.1:
     dependencies:
       has-flag: 4.0.0
+
+  sweetalert2@11.26.25: {}
 
   swiper@14.1.0: {}
 

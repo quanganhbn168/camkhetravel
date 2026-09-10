@@ -3,10 +3,12 @@ import './landing/header';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
 import GLightbox from 'glightbox';
+import Swal from 'sweetalert2';
 import Swiper from 'swiper';
 import { A11y, Autoplay, EffectFade, Keyboard, Navigation } from 'swiper/modules';
 import 'aos/dist/aos.css';
 import 'glightbox/dist/css/glightbox.css';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
@@ -15,6 +17,7 @@ window.Alpine = Alpine;
 window.AOS = AOS;
 window.Swiper = Swiper;
 window.GLightbox = GLightbox;
+window.Swal = Swal;
 
 const openLandingModal = (modal) => {
     if (!modal) {
@@ -397,6 +400,108 @@ const initialiseBniAjaxForms = () => {
     });
 };
 
+const initialiseLandingLeadForms = () => {
+    document.querySelectorAll('form[data-landing-lead-form]').forEach((form) => {
+        if (form.dataset.landingLeadReady === 'true') {
+            return;
+        }
+
+        form.dataset.landingLeadReady = 'true';
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!form.reportValidity()) {
+                return;
+            }
+
+            const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+            const originalButtonContent = submitButton?.innerHTML;
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.setAttribute('aria-busy', 'true');
+            }
+
+            Swal.fire({
+                title: 'Đang gửi thông tin...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            try {
+                const response = await window.fetch(form.action, {
+                    method: (form.getAttribute('method') || 'POST').toUpperCase(),
+                    body: new FormData(form),
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                const contentType = response.headers.get('content-type') || '';
+                const payload = contentType.includes('application/json')
+                    ? await response.json().catch(() => ({}))
+                    : {};
+
+                if (!response.ok || !contentType.includes('application/json')) {
+                    const validationMessages = Object.values(payload.errors || {})
+                        .flat()
+                        .filter(Boolean)
+                        .join('\n');
+
+                    throw new Error(validationMessages || payload.message || 'Không thể gửi thông tin lúc này. Anh/chị vui lòng thử lại.');
+                }
+
+                Swal.close();
+                preserveHiddenFieldsWhileResetting(form);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Đã nhận thông tin',
+                    text: payload.message || 'THT Media sẽ liên hệ tư vấn trong thời gian sớm nhất.',
+                    confirmButtonText: 'Đóng',
+                    confirmButtonColor: '#5cb811',
+                });
+
+                const modal = form.closest('.modal');
+                if (modal) {
+                    window.landingCloseModal?.(modal);
+                }
+            } catch (error) {
+                Swal.close();
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Gửi chưa thành công',
+                    text: error.message || 'Không thể gửi thông tin lúc này. Anh/chị vui lòng thử lại.',
+                    confirmButtonText: 'Đóng',
+                    confirmButtonColor: '#dc2626',
+                });
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.removeAttribute('aria-busy');
+                    if (originalButtonContent !== undefined) {
+                        submitButton.innerHTML = originalButtonContent;
+                    }
+                }
+            }
+        });
+    });
+};
+
+const preserveHiddenFieldsWhileResetting = (form) => {
+    const hiddenFields = Array.from(form.querySelectorAll('input[type="hidden"]'))
+        .map((input) => [input, input.value]);
+
+    form.reset();
+
+    hiddenFields.forEach(([input, value]) => {
+        input.value = value;
+    });
+};
+
 const initialiseBniPwa = () => {
     if (document.body.dataset.bniPage !== 'true' || !('serviceWorker' in navigator)) {
         return;
@@ -725,6 +830,7 @@ if (document.readyState === 'loading') {
         initialiseBniAjaxForms();
         initialiseBniPwa();
         initialiseLandingPages();
+        initialiseLandingLeadForms();
         initialiseLightboxes();
         initialiseLandingModals();
     }, { once: true });
@@ -741,6 +847,7 @@ if (document.readyState === 'loading') {
     initialiseBniAjaxForms();
     initialiseBniPwa();
     initialiseLandingPages();
+    initialiseLandingLeadForms();
     initialiseLightboxes();
     initialiseLandingModals();
 }
