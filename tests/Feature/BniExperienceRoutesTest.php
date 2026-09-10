@@ -215,6 +215,10 @@ class BniExperienceRoutesTest extends TestCase
     {
         Role::findOrCreate('bni_member', 'web');
         $article = BniArticle::query()->published()->firstOrFail();
+        $relatedArticle = BniArticle::query()
+            ->published()
+            ->whereKeyNot($article->getKey())
+            ->firstOrFail();
         $user = User::factory()->create();
         $user->assignRole('bni_member');
 
@@ -225,6 +229,11 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('id="bni-reactions-title"', false)
             ->assertSee('id="bni-comments-title"', false)
             ->assertSee('bni-comment-form', false)
+            ->assertSee('bni-related-articles', false)
+            ->assertSee('Bài viết khác')
+            ->assertSee($relatedArticle->title)
+            ->assertDontSee('Thông tin bài viết')
+            ->assertDontSee('ĐÃ ĐĂNG')
             ->assertSee('maxlength="3000"', false)
             ->assertSee('Bình luận sẽ hiển thị sau khi được Ban quản trị duyệt.')
             ->assertSee('Đang đăng nhập với', false);

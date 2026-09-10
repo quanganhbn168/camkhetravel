@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniEvent;
+use App\Support\Bni\BniExperienceService;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\Http\Request;
@@ -13,7 +14,10 @@ use Illuminate\View\View;
 
 class BniArticleController extends Controller
 {
-    public function __construct(private readonly FrontendSeoBuilder $seo) {}
+    public function __construct(
+        private readonly FrontendSeoBuilder $seo,
+        private readonly BniExperienceService $experience,
+    ) {}
 
     public function index(Request $request): View
     {
@@ -86,6 +90,7 @@ class BniArticleController extends Controller
             'article' => $article,
             'imageUrl' => $article->bniMediaUrl('cover'),
             'reactionCounts' => $article->reactions->countBy('reaction'),
+            'relatedArticles' => $this->experience->relatedArticles($article),
             'seo' => $this->seo->listing(
                 $article->title.' | BNI',
                 $article->excerpt ?: $article->title,

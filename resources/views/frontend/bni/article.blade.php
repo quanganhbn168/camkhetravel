@@ -118,23 +118,34 @@
                 </section>
             </div>
 
-            <aside class="bni-article__aside">
-                <div class="bni-article__aside-card">
-                    <p class="bni-article__aside-label">Thông tin bài viết</p>
-                    <dl>
-                        <div>
-                            <dt>Đã đăng</dt>
-                            <dd>{{ $article->published_at?->translatedFormat('d/m/Y') ?: 'Đang cập nhật' }}</dd>
-                        </div>
-                        @if ($article->chapter)
-                            <div>
-                                <dt>Chapter</dt>
-                                <dd>{{ $article->chapter->name }}</dd>
-                            </div>
-                        @endif
-                    </dl>
+            <aside class="bni-article__aside" aria-labelledby="bni-related-articles-title">
+                <div class="bni-article__aside-heading">
+                    <p class="bni-article__aside-label">Tin tức BNI</p>
+                    <h2 id="bni-related-articles-title">Bài viết khác</h2>
                 </div>
-                <a class="bni-article__aside-link" href="#binh-luan">Xem bình luận <span aria-hidden="true">↘</span></a>
+
+                <div class="bni-related-articles">
+                    @foreach ($relatedArticles as $relatedArticle)
+                        <article class="bni-related-article">
+                            <a class="bni-related-article__media" href="{{ $relatedArticle['url'] }}">
+                                @if ($relatedArticle['image_url'])
+                                    <img src="{{ $relatedArticle['image_url'] }}" alt="{{ $relatedArticle['title'] }}" loading="lazy">
+                                @else
+                                    <span><img src="{{ asset('bni-logo-red.svg') }}" alt="BNI"></span>
+                                @endif
+                            </a>
+                            <div class="bni-related-article__body">
+                                <p>{{ $relatedArticle['chapter'] ?: 'Tin tức BNI' }}</p>
+                                <h3><a href="{{ $relatedArticle['url'] }}">{{ $relatedArticle['title'] }}</a></h3>
+                                @if ($relatedArticle['published_at'])
+                                    <time datetime="{{ $relatedArticle['published_at']->toDateString() }}">{{ $relatedArticle['published_at']->translatedFormat('d/m/Y') }}</time>
+                                @endif
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+
+                <a class="bni-article__aside-link" href="{{ LocalizedUrl::route('bni.articles.index') }}">Xem tất cả tin tức <span aria-hidden="true">→</span></a>
             </aside>
         </div>
     </article>

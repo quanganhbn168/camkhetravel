@@ -243,6 +243,29 @@ class BniExperienceService
         ];
     }
 
+    /** @return Collection<int, array<string, mixed>> */
+    public function relatedArticles(BniArticle $article, int $limit = 3): Collection
+    {
+        $articles = BniArticle::query()
+            ->published()
+            ->with(['chapter', 'media'])
+            ->whereKeyNot($article->getKey())
+            ->whereIn('type', ['event', 'chapter'])
+            ->when($article->bni_event_id, fn ($query) => $query->where(fn ($query) => $query
+                ->where('bni_event_id', $article->bni_event_id)
+                ->orWhereNull('bni_event_id')))
+            ->when(! $article->bni_event_id, fn ($query) => $query->whereNull('bni_event_id'))
+            ->orderByDesc('is_featured')
+            ->latest('published_at')
+            ->latest('id')
+            ->limit($limit)
+            ->get();
+
+        return $articles->map(fn (BniArticle $relatedArticle): array => $this->articleCard($relatedArticle) + [
+            'url' => LocalizedUrl::route('bni.articles.show', ['article' => $relatedArticle->slug]),
+        ])->values();
+    }
+
     /** @return array<string, mixed> */
     public function pickleball(): array
     {
