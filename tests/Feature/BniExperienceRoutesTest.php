@@ -854,6 +854,17 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee($activity->title)
             ->assertSee($gallery->title)
             ->assertSee($path, false);
+
+        $detailResponse = $this->get(route('bni.articles.show', ['article' => $article]))
+            ->assertOk()
+            ->assertSee('bni-article__featured-image', false)
+            ->assertSee($article->bniMediaUrl('cover'), false);
+        $detailBody = $detailResponse->getContent();
+        $featuredImagePosition = strpos($detailBody, 'bni-article__featured-image');
+        $articleBodyPosition = strpos($detailBody, 'bni-rich-copy--article');
+        $this->assertNotFalse($featuredImagePosition);
+        $this->assertNotFalse($articleBodyPosition);
+        $this->assertLessThan($articleBodyPosition, $featuredImagePosition);
     }
 
     public function test_the_pickleball_landing_and_bni_panel_login_routes_are_available(): void

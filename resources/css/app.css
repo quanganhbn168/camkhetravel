@@ -892,6 +892,8 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-article__header .site-container > p:last-child { max-width: 43rem; margin: 0; color: color-mix(in srgb, var(--bni-white) 90%, transparent); font-size: 1rem; line-height: 1.75; }
     .bni-article__layout { display: grid; gap: 2.5rem; padding-top: clamp(3.5rem, 7vw, 6rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
     .bni-article__content { min-width: 0; }
+    .bni-article__featured-image { overflow: hidden; max-width: 54rem; margin: 0 0 1.5rem; border: 1px solid color-mix(in srgb, var(--bni-red) 13%, var(--bni-white)); border-radius: var(--bni-radius-lg); background: color-mix(in srgb, var(--bni-red) 6%, var(--bni-white)); box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--bni-red) 8%, transparent); }
+    .bni-article__featured-image img { display: block; width: 100%; height: auto; max-height: 36rem; object-fit: contain; }
     .bni-rich-copy--article { max-width: 54rem; margin-top: 0; border: 1px solid color-mix(in srgb, var(--bni-red) 13%, var(--bni-white)); border-radius: var(--bni-radius-lg); padding: clamp(1.35rem, 3vw, 2.75rem); background: var(--bni-white); box-shadow: 0 1rem 2.5rem color-mix(in srgb, var(--bni-red) 8%, transparent); font-size: 1.03rem; }
     .bni-rich-copy--article > :first-child { margin-top: 0; }
     .bni-rich-copy--article :is(h2, h3, h4) { margin: 2.1rem 0 0.75rem; color: var(--bni-black); font-family: var(--font-display); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; }
@@ -941,7 +943,7 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-article__aside { position: sticky; top: 1.5rem; align-self: start; border: 1px solid color-mix(in srgb, var(--bni-red) 16%, var(--bni-white)); border-top: 3px solid var(--bni-red); border-radius: var(--bni-radius-lg); padding: 1.25rem; background: var(--bni-white); box-shadow: 0 0.9rem 2.2rem color-mix(in srgb, var(--bni-red) 7%, transparent); }
     .bni-article__aside-heading { display: grid; gap: 0.35rem; }
     .bni-article__aside-label { margin: 0; color: var(--bni-red); font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-    .bni-article__aside h2 { margin: 0; color: var(--bni-black); font-family: var(--font-display); font-size: clamp(1.45rem, 2.4vw, 1.8rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.035em; }
+    .bni-article .bni-article__aside h2 { margin: 0; color: var(--bni-black); font-family: var(--font-display); font-size: clamp(1.35rem, 1.8vw, 1.75rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.035em; }
     .bni-related-articles { display: grid; gap: 0.85rem; margin-top: 1.25rem; }
     .bni-related-article { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 0.75rem; align-items: start; border-top: 1px solid color-mix(in srgb, var(--bni-red) 12%, var(--bni-white)); padding-top: 0.85rem; }
     .bni-related-article:first-child { border-top: 0; padding-top: 0; }
@@ -952,7 +954,7 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-related-article:hover .bni-related-article__media > img, .bni-related-article:focus-within .bni-related-article__media > img { transform: scale(1.06); }
     .bni-related-article__body { min-width: 0; }
     .bni-related-article__body > p { overflow: hidden; margin: 0; color: var(--bni-red); font-size: 0.58rem; font-weight: 850; letter-spacing: 0.08em; line-height: 1.35; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
-    .bni-related-article__body h3 { display: -webkit-box; overflow: hidden; margin: 0.3rem 0 0; color: var(--bni-black); font-family: var(--font-display); font-size: 0.9rem; font-weight: 800; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+    .bni-article .bni-related-article__body h3 { display: -webkit-box; overflow: hidden; margin: 0.3rem 0 0; color: var(--bni-black); font-family: var(--font-display); font-size: 0.9rem; font-weight: 800; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
     .bni-related-article__body h3 a:hover, .bni-related-article__body h3 a:focus-visible { color: var(--bni-red); }
     .bni-related-article__body time { display: block; margin-top: 0.35rem; color: color-mix(in srgb, var(--bni-black) 54%, var(--bni-white)); font-size: 0.64rem; line-height: 1.3; }
     .bni-article__aside-link { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 1.1rem; border-top: 1px solid color-mix(in srgb, var(--bni-red) 12%, var(--bni-white)); padding-top: 0.9rem; color: var(--bni-red); font-size: 0.7rem; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; }
@@ -1033,7 +1035,9 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
         .bni-chapter-detail__contact-actions { justify-content: flex-end; }
         .bni-chapter-detail__news-grid, .bni-chapter-detail__siblings-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .bni-sponsors-grid { grid-template-columns: repeat(auto-fit, minmax(12rem, 16rem)); justify-content: center; }
-        .bni-article__layout { grid-template-columns: minmax(0, 1fr) 15rem; }
+        .bni-article__layout { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(1.5rem, 3vw, 2.5rem); }
+        .bni-article__content { grid-column: span 9; }
+        .bni-article__aside { grid-column: span 3; }
     }
 
     @media (min-width: 1024px) {

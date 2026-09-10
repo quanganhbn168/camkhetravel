@@ -12,10 +12,6 @@
 
     <article class="bni-article">
         <header class="bni-article__header">
-            @if ($imageUrl)
-                <img src="{{ $imageUrl }}" alt="" aria-hidden="true" loading="eager">
-            @endif
-
             <div class="site-container w-full mx-auto max-w-4xl px-4 lg:px-8">
                 <a class="bni-back-link" href="{{ LocalizedUrl::route('bni.articles.index') }}">← Tin tức Lễ chuyển giao</a>
                 <div class="bni-article__header-meta">
@@ -33,6 +29,12 @@
 
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 bni-article__layout">
             <div class="bni-article__content">
+                @if ($imageUrl)
+                    <figure class="bni-article__featured-image">
+                        <img src="{{ $imageUrl }}" alt="{{ $article->title }}" loading="eager">
+                    </figure>
+                @endif
+
                 <div class="bni-rich-copy bni-rich-copy--article">{!! $article->body !!}</div>
 
                 <section class="bni-reactions" aria-labelledby="bni-reactions-title">
