@@ -27,6 +27,12 @@ const landingToast = Swal.mixin({
     timerProgressBar: true,
 });
 
+const showLandingValidationToast = () => landingToast.fire({
+    icon: 'warning',
+    title: 'Anh/chị kiểm tra lại thông tin',
+    text: 'Vui lòng điền đủ các trường bắt buộc trước khi gửi.',
+});
+
 const openLandingModal = (modal) => {
     if (!modal) {
         return;
@@ -415,11 +421,15 @@ const initialiseLandingLeadForms = () => {
         }
 
         form.dataset.landingLeadReady = 'true';
+        form.noValidate = true;
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            if (!form.reportValidity()) {
+            if (!form.checkValidity()) {
+                form.querySelector(':invalid')?.focus();
+                showLandingValidationToast();
+
                 return;
             }
 
