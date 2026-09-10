@@ -30,20 +30,24 @@
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                var fullname = form.querySelector('[name="fullname"]');
+                var name = form.querySelector('[name="name"]');
                 var phone = form.querySelector('[name="phone"]');
                 var message = form.querySelector('[name="message"]');
+                var eventType = form.querySelector('[name="event_type"]');
 
-                if (fullname && phone && message) {
-                    message.value = message.value || 'Tôi muốn được tư vấn tổ chức sự kiện trọn gói.';
+                if (name && phone && message) {
+                    var eventDetails = eventType && eventType.value ? 'Loại sự kiện: ' + eventType.value : '';
+                    message.value = [message.value, eventDetails, 'Tôi muốn được tư vấn tổ chức sự kiện trọn gói.']
+                        .filter(function (value) { return value; })
+                        .join('\n');
                 }
 
                 var modal = document.getElementById('tht-landing-contact-modal');
                 if (modal && window.landingOpenModal) {
                     window.landingOpenModal(modal);
 
-                    if (fullname && modal.querySelector('[name="fullname"]')) {
-                        modal.querySelector('[name="fullname"]').value = fullname.value;
+                    if (name && modal.querySelector('[name="name"]')) {
+                        modal.querySelector('[name="name"]').value = name.value;
                     }
                     if (phone && modal.querySelector('[name="phone"]')) {
                         modal.querySelector('[name="phone"]').value = phone.value;

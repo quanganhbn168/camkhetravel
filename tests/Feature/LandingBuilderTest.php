@@ -131,6 +131,22 @@ class LandingBuilderTest extends TestCase
         ]);
     }
 
+    public function test_service_native_landing_modal_uses_the_shared_lead_contract(): void
+    {
+        $service = Service::query()->where('title', 'Tổ chức sự kiện trọn gói')->firstOrFail();
+
+        $this->get('/to-chuc-su-kien-tron-goi-chuyen-nghiep')
+            ->assertOk()
+            ->assertSee('action="'.\App\Support\Localization\LocalizedUrl::route('contact.store').'"', false)
+            ->assertSee('name="_token"', false)
+            ->assertSee('name="from_landing_page"', false)
+            ->assertSee('name="service_id" value="'.$service->id.'"', false)
+            ->assertSee('name="landing_block_id"', false)
+            ->assertSee('name="name"', false)
+            ->assertDontSee('name="fullname"', false)
+            ->assertDontSee('script.google.com', false);
+    }
+
     public function test_super_admin_can_open_builder_and_tracking_management(): void
     {
         $user = User::factory()->create();

@@ -1,21 +1,6 @@
 (function () {
     'use strict';
 
-    function showSuccess() {
-        if (typeof window.Swal !== 'undefined') {
-            window.Swal.fire({
-                title: 'Đã nhận yêu cầu',
-                text: 'THT Media sẽ liên hệ lại với anh/chị trong thời gian sớm nhất.',
-                icon: 'success',
-                confirmButtonText: 'Đóng',
-                confirmButtonColor: '#5cb811'
-            });
-            return;
-        }
-
-        window.alert('THT Media đã nhận được thông tin. Bộ phận tư vấn sẽ liên hệ lại với anh/chị trong thời gian sớm nhất.');
-    }
-
     function initAddonSelector() {
         var selector = document.querySelector('.wedding-addon-selector');
 
@@ -112,18 +97,6 @@
     }
 
     function initWeddingLanding() {
-        document.querySelectorAll('.wedding-lead-form').forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                var action = form.getAttribute('action');
-
-                if (!action || action === '#') {
-                    event.preventDefault();
-                    form.reset();
-                    showSuccess();
-                }
-            });
-        });
-
         initAddonSelector();
         initInvitationScrollPreviews();
 

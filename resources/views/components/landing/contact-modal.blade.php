@@ -2,11 +2,10 @@
     'contact' => [],
     'section' => [],
     'zaloUrl' => null,
+    'landingPage' => null,
+    'service' => null,
+    'blockId' => 'contact-modal',
 ])
-
-@php
-    $formAction = (string) (($section['form_action'] ?? null) ?: ($contact['global_form_action'] ?? '#'));
-@endphp
 
 <div class="tht-landing-contact-modal modal" id="tht-landing-contact-modal" tabindex="-1" aria-labelledby="tht-landing-contact-modal-title" aria-hidden="true">
     <div class="tht-landing-contact-modal__dialog">
@@ -28,12 +27,17 @@
                     </a>
                 </div>
                 <div class="tht-landing-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
-                <form class="tht-landing-contact__form" action="{{ $formAction }}" method="POST" autocomplete="on">
-                    <input type="hidden" name="source_url" value="{{ url()->current() }}">
+                <form class="tht-landing-contact__form" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" method="POST" autocomplete="on">
+                    <x-landing.lead-fields :landing-page="$landingPage" :service="$service" :block-id="$blockId" return-anchor="lien-he" />
+                    @if ($errors->any())
+                        <div class="tht-landing-form-errors" role="alert">
+                            @foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach
+                        </div>
+                    @endif
                     <div class="grid gap-4">
-                        <label class="tht-landing-form-group">Họ và tên <input type="text" name="fullname" required autocomplete="name" placeholder="Nguyễn Văn A"></label>
-                        <label class="tht-landing-form-group">Số điện thoại <input type="tel" name="phone" required autocomplete="tel" placeholder="0987 654 321"></label>
-                        <label class="tht-landing-form-group">Mô tả nhu cầu <textarea name="message" rows="4" required placeholder="Mô tả sơ lược nhu cầu cần tư vấn..."></textarea></label>
+                        <label class="tht-landing-form-group">Họ và tên <input type="text" name="name" value="{{ old('name') }}" required autocomplete="name" maxlength="255" placeholder="Nguyễn Văn A"></label>
+                        <label class="tht-landing-form-group">Số điện thoại <input type="tel" name="phone" value="{{ old('phone') }}" required autocomplete="tel" maxlength="32" placeholder="0987 654 321"></label>
+                        <label class="tht-landing-form-group">Mô tả nhu cầu <textarea name="message" rows="4" maxlength="5000" placeholder="Mô tả sơ lược nhu cầu cần tư vấn...">{{ old('message') }}</textarea></label>
                     </div>
                     <button type="submit" class="tht-landing-button tht-landing-button--primary w-full">{{ $section['cta'] ?? 'NHẬN TƯ VẤN MIỄN PHÍ' }}</button>
                 </form>

@@ -92,13 +92,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const leadForm = document.querySelector('.tvc-lead-form');
-
-    if (leadForm) {
-        leadForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            alert('Cảm ơn anh/chị. THT Media sẽ liên hệ tư vấn trong thời gian sớm nhất.');
-        });
-    }
 });

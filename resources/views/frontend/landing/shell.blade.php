@@ -47,7 +47,7 @@
         @endif
 
         @unless (in_array($templateKey, ['landing_ads', 'landing_academy', 'landing_academy_v2', 'landing_tiktok'], true))
-            <x-landing.contact-modal :contact="$contact" :section="$content['contact_section'] ?? []" :zalo-url="$zaloUrl" />
+            <x-landing.contact-modal :contact="$contact" :section="$content['contact_section'] ?? []" :zalo-url="$zaloUrl" :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="contact-modal" />
         @endunless
     </div>
 @endsection

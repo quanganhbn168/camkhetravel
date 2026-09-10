@@ -11,8 +11,7 @@ $zalo_url = \App\Support\Landing\LandingView::zaloUrl($contact);
 $bg_image = !empty($section['bg_image']) ? \App\Support\Landing\LandingRegistry::assetUrl($section['bg_image']) : '';
 $bg_style = !empty($bg_image) ? ' style="background-image: linear-gradient(rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.93)), url(' . e($bg_image) . '); background-size: cover; background-position: center;"' : '';
 
-// Form action configuration
-$form_action = !empty($landing['form_action']) ? $landing['form_action'] : (!empty($contact['global_form_action']) ? $contact['global_form_action'] : '#');
+$form_action = \App\Support\Localization\LocalizedUrl::route('contact.store');
 ?>
 
 <section class="tht-landing-section tht-landing-contact" id="lien-he" aria-labelledby="tht-landing-contact-title"<?php echo $bg_style; ?>>
@@ -80,24 +79,29 @@ $form_action = !empty($landing['form_action']) ? $landing['form_action'] : (!emp
                 </div>
                 <div class="tht-landing-contact__form-divider"><span>Hoặc để lại thông tin</span></div>
                 <form class="tht-landing-contact__form" action="<?php echo e($form_action); ?>" method="POST" autocomplete="on">
-                    <input type="hidden" name="source_url" value="<?php echo e(url()->current()); ?>">
+                    <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="communications-contact" return-anchor="lien-he" />
+                    <?php if ($errors->any()) : ?>
+                        <div class="tht-landing-form-errors" role="alert">
+                            <?php foreach ($errors->all() as $error) : ?><p><?php echo e($error); ?></p><?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                     <div class="tht-landing-form-group">
                         <label for="tht-landing-fullname">Họ và tên <span class="text-red-600">*</span></label>
-                        <input type="text" id="tht-landing-fullname" name="fullname" required placeholder="Nguyễn Văn A">
+                        <input type="text" id="tht-landing-fullname" name="name" value="{{ old('name') }}" required autocomplete="name" maxlength="255" placeholder="Nguyễn Văn A">
                     </div>
 
 
 
                     <div class="tht-landing-form-group">
                         <label for="tht-landing-phone">Số điện thoại <span class="text-red-600">*</span></label>
-                        <input type="tel" id="tht-landing-phone" name="phone" required placeholder="0987654321">
+                        <input type="tel" id="tht-landing-phone" name="phone" value="{{ old('phone') }}" required autocomplete="tel" maxlength="32" placeholder="0987654321">
                     </div>
 
 
 
                     <div class="tht-landing-form-group">
-                        <label for="tht-landing-message">Mô tả nhu cầu <span class="text-red-600">*</span></label>
-                        <textarea id="tht-landing-message" name="message" rows="4" required placeholder="Mô tả sơ lược nhu cầu cần tư vấn..."></textarea>
+                        <label for="tht-landing-message">Mô tả nhu cầu</label>
+                        <textarea id="tht-landing-message" name="message" rows="4" maxlength="5000" placeholder="Mô tả sơ lược nhu cầu cần tư vấn...">{{ old('message') }}</textarea>
                     </div>
 
                     <button type="submit" class="tht-landing-button tht-landing-button--primary tht-landing-contact__btn">

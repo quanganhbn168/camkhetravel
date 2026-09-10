@@ -45,10 +45,10 @@ $hero_image = ! empty($hero['image']) ? \App\Support\Landing\LandingRegistry::as
                     </div>
                     <h2><?php echo e($hero['brief_title'] ?? 'GỬI BRIEF NHANH'); ?></h2>
                     <p><?php echo e($hero['brief_note'] ?? ''); ?></p>
-                    <form class="tht-landing-event-brief-form" action="<?php echo e($landingContent['form_action'] ?: '#'); ?>" method="post">
+                    <form class="tht-landing-event-brief-form" action="#" method="post">
                         <label>
                             <span>Họ và tên</span>
-                            <input type="text" name="fullname" placeholder="Anh/chị là..." required>
+                            <input type="text" name="name" placeholder="Anh/chị là..." required>
                         </label>
                         <label>
                             <span>Số điện thoại</span>

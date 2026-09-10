@@ -131,13 +131,12 @@
         <x-landing.container>
             <div class="tt-about-grid"><div><h2>{{ $content['contact_section']['title'] }}</h2><p class="tt-intro">{{ $content['contact_section']['description'] }}</p><div class="tt-actions"><a class="tt-button" href="tel:{{ $contact['hotline_1'] }}">{{ $contact['hotline_display'] }}</a><a class="tt-button tt-button--outline" href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer">Chat Zalo ↗</a></div></div>
                 <form class="tt-lead-form" action="{{ LocalizedUrl::route('contact.store') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="from_landing_page" value="1"><input type="hidden" name="landing_page_id" value="{{ $landingPage->id }}"><input type="hidden" name="landing_block_id" value="tiktok-contact"><input type="hidden" name="return_to" value="{{ LocalizedUrl::landingPage($landingPage) }}#lien-he">
+                    <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="tiktok-contact" return-anchor="lien-he" />
                     @if(session('success'))<p class="tt-form-message" role="status">{{ session('success') }}</p>@endif
                     @if($errors->any())<ul class="tt-form-errors" role="alert">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>@endif
                     <label>Họ và tên<input name="name" value="{{ old('name') }}" autocomplete="name" required></label>
                     <label>Số điện thoại<input name="phone" type="tel" value="{{ old('phone') }}" autocomplete="tel" required></label>
-                    <label>Nhu cầu xây kênh<textarea name="message" rows="4" required>{{ old('message') }}</textarea></label>
+                    <label>Nhu cầu xây kênh<textarea name="message" rows="4" maxlength="5000">{{ old('message') }}</textarea></label>
                     <button class="tt-button" type="submit">Nhận tư vấn miễn phí →</button>
                 </form>
             </div>

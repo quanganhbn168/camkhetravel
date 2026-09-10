@@ -7,14 +7,7 @@
             <p>{{ $content['contact_section']['description'] }}</p>
         </div>
         <form id="branding-lead-form" class="branding-lead-form" method="POST" action="{{ route('contact.store') }}">
-            @csrf
-            <input type="hidden" name="from_landing_page" value="1">
-            <input type="hidden" name="landing_page_id" value="{{ $landingPage->id }}">
-            <input type="hidden" name="landing_block_id" value="branding-contact">
-            <input type="hidden" name="return_to" value="{{ request()->getPathInfo() }}#lien-he">
-            @foreach (['visitor_id', 'session_id', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'first_url', 'referrer'] as $field)
-                <input type="hidden" name="{{ $field }}" data-attribution-field="{{ $field }}">
-            @endforeach
+            <x-landing.lead-fields :landing-page="$landingPage" block-id="branding-contact" return-anchor="lien-he" />
             <h3>ĐĂNG KÝ TƯ VẤN MIỄN PHÍ</h3>
             @if (session('success'))<p class="branding-form-success" role="status">{{ session('success') }}</p>@endif
             @if ($errors->any())<div class="branding-form-errors" role="alert">@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
