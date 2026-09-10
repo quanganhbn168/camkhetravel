@@ -210,12 +210,17 @@ class LandingBuilderTest extends TestCase
         $this->actingAs($user)
             ->get('/admin')
             ->assertOk()
-            ->assertSee('Tổng quan quản trị')
-            ->assertSee('Lượt xem ghi nhận')
+            ->assertSee('Tổng quan website')
+            ->assertSee('Dịch vụ đang hiển thị')
+            ->assertSee('Yêu cầu tư vấn mới')
+            ->assertSee('Nội dung cập nhật gần đây')
             ->assertSee('Tổng quan', false)
+            ->assertSee('Tổng quan tracking')
             ->assertSee('Khách hàng & tracking')
             ->assertSee('Trang chủ', false)
             ->assertDontSee('Nội dung trang chủ')
+            ->assertDontSee('Bộ lọc báo cáo')
+            ->assertDontSee('Lượt xem ghi nhận')
             ->assertDontSee('Khách hàng & liên hệ');
     }
 

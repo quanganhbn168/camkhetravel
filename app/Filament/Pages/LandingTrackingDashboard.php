@@ -28,7 +28,7 @@ class LandingTrackingDashboard extends Page
 
     protected static string|UnitEnum|null $navigationGroup = 'Khách hàng & tracking';
 
-    protected static ?int $navigationSort = 0;
+    protected static ?int $navigationSort = 3;
 
     protected string $view = 'filament.pages.landing-tracking-dashboard';
 
@@ -39,8 +39,6 @@ class LandingTrackingDashboard extends Page
     public ?string $landingPageId = null;
 
     public ?string $utmSource = null;
-
-    protected static bool $shouldRegisterNavigation = false;
 
     public static function canAccess(): bool
     {
