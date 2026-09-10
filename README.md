@@ -1,15 +1,15 @@
-# THT Media Laravel
+# DVTEC
 
-Ứng dụng website độc lập chạy hoàn toàn trên Laravel, MySQL và media do Curator quản lý.
+Website doanh nghiệp cơ bản chạy độc lập trên Laravel 13, MySQL, Filament và Curator. Nội dung public, media, SEO và cài đặt website đều thuộc về database Laravel; không có BNI, WordPress hay lớp CMS bên ngoài.
 
-## Kiến trúc nội dung
+## Phạm vi nội dung
 
-- `service_categories` và `services` là danh mục/dịch vụ chính. Các nội dung legacy có bản chất dịch vụ được lưu tại đây; không dùng `LandingPage` để đại diện cho dịch vụ.
-- `posts` và `post_categories` là hệ tin tức/blog.
-- `landing_pages` là hệ landing page riêng, dùng `landing_templates`, builder schema và các quan hệ database tới danh mục dịch vụ, dịch vụ, dự án và bài viết.
-- `projects` là hệ dự án; liên kết dịch vụ dùng `project_service`, liên kết landing page dùng `landing_page_project`.
-- `slugs` là bảng morph duy nhất cho URL public của service, service category, landing page, project và post.
-- Ảnh đại diện, gallery và bảng giá dùng media ID của Curator; file nằm trong storage Laravel, không tham chiếu CMS bên ngoài.
+- `services` và `service_categories`: dịch vụ và nhóm dịch vụ.
+- `projects` và `project_categories`: dự án và nhóm dự án.
+- `posts` và `post_categories`: tin tức/blog.
+- `landing_pages`: landing page dùng builder block lấy từ database, không dùng template/campaign hard-code.
+- `slugs`: nguồn duy nhất cho URL public của nội dung.
+- Ảnh, gallery, video và ảnh SEO dùng media ID của Curator trong Laravel storage.
 
 ## Khởi tạo
 
@@ -20,30 +20,31 @@ php artisan key:generate
 php artisan migrate
 php artisan storage:link
 php artisan db:seed
-pnpm install
+pnpm install --frozen-lockfile
 pnpm run build
 ```
 
-`APP_URL`, kết nối MySQL và disk `public` phải được cấu hình theo môi trường. Nội dung, quan hệ, slug, SEO và media được quản lý từ database Laravel và Filament.
+Cấu hình `APP_URL`, MySQL, `FILESYSTEM_DISK=public` và token Glide của Curator theo môi trường. Database mới được seed với ngôn ngữ tiếng Việt, menu cơ bản và tài khoản local/testing `admin@dvtec.test` với mật khẩu `password`; đổi thông tin này trước khi dùng thật.
 
 ## Media và quản trị
 
-File media nằm trong `storage/app/public` và được phục vụ qua `public/storage`. Media upload và media đã có đều quản lý tại `/admin/media`.
+Media được quản lý tại `/admin/media`. Các khu vực chính trong Filament:
 
-Các khu vực quản trị chính:
+- `/admin/services`, `/admin/service-categories`: dịch vụ và danh mục.
+- `/admin/projects`, `/admin/project-categories`: dự án và danh mục.
+- `/admin/posts`, `/admin/post-categories`: tin tức và danh mục.
+- `/admin/landing-pages`: landing page và builder block database.
+- `/admin/settings`: nhận diện, trang chủ, doanh nghiệp, giới thiệu, liên hệ, SEO và giao diện.
 
-- `/admin/services`: danh mục và nội dung dịch vụ.
-- `/admin/landing-pages`: landing page, template, builder schema và nội dung liên kết.
-- `/admin/posts`: tin tức/blog.
-- `/admin/projects`: dự án và dịch vụ liên quan.
-- `/admin/service-pricings`: bảng giá và các gói được quản lý riêng theo từng dịch vụ.
+Các resource dùng cấu trúc chuẩn `Pages`, `Schemas` và `Tables`; file upload chỉ đi qua Curator. Tracking nội bộ, event collector, dashboard so sánh và dữ liệu hành vi đã được loại bỏ. Nếu cần tích hợp dịch vụ bên ngoài, các đoạn mã đầy đủ vẫn có thể được dán thủ công trong phần cài đặt Tracking, không dùng ID tự sinh.
 
 ## Kiểm tra
 
 ```powershell
-php artisan test --compact
+php artisan test --no-ansi
 php artisan route:list
 php artisan view:cache
+pnpm run build
 ```
 
-Landing page public dùng template và dữ liệu trong `landing_pages`; form, tracking, SEO, sitemap và URL đều chạy bằng Laravel. Không có runtime dependency hoặc fallback sang hệ quản trị nội dung khác.
+Khi cần tạo lại một database local rỗng, chạy `php artisan migrate:fresh --seed` sau khi đã chọn đúng database; lệnh này sẽ xóa toàn bộ dữ liệu của database đó.

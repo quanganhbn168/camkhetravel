@@ -6,6 +6,11 @@ use Awcodes\Curator\Models\Media;
 
 class MediaUrl
 {
+    public static function resolve(?Media $media): ?string
+    {
+        return $media?->url;
+    }
+
     public static function versioned(?Media $media): ?string
     {
         if (! $media?->url) {

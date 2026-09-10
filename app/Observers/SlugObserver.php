@@ -14,6 +14,12 @@ class SlugObserver
             return;
         }
 
+        if (method_exists($model, 'shouldSyncSlug') && ! $model->shouldSyncSlug()) {
+            $model->slugs()->delete();
+
+            return;
+        }
+
         $requestedSlug = method_exists($model, 'pullRequestedSlug')
             ? $model->pullRequestedSlug()
             : null;

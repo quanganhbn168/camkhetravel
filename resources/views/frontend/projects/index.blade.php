@@ -20,7 +20,7 @@
                     @if (($heroImageUrl ?: $defaultBannerUrl))
                         <img src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="{{ $activeCategory->name }}">
                     @else
-                        <span class="image-placeholder">THT</span>
+                        <span class="image-placeholder">DV</span>
                     @endif
                 </div>
             </div>

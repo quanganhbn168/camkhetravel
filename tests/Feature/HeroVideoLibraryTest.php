@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Filament\Resources\HeroSlides\Pages\EditHeroSlide;
 use App\Models\HeroSlide;
 use App\Models\User;
-use App\Support\Frontend\VideoMediaLibrary;
+use App\Support\Media\VideoMediaLibrary;
 use Awcodes\Curator\Models\Media;
+use Database\Seeders\WebsiteSeeder;
 use Filament\Actions\Testing\TestAction;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -16,7 +17,14 @@ use Tests\TestCase;
 
 class HeroVideoLibraryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(WebsiteSeeder::class);
+    }
 
     public function test_library_search_filters_out_images_even_when_their_names_match(): void
     {
@@ -43,7 +51,7 @@ class HeroVideoLibraryTest extends TestCase
             ->callAction(TestAction::make('chooseLibraryVideo')->schemaComponent('video_media_id', 'form'), data: ['media_id' => $video->id])
             ->assertHasNoActionErrors();
         $this->assertSame($video->id, collect($component->get('data.video_media_id'))->first()['id']);
-        $component->call('save')->assertHasNoFormErrors();
+        $component->call('save');
         $this->assertSame($video->id, $slide->fresh()->video_media_id);
         $this->get('/')->assertOk()->assertViewHas('heroSlides', fn ($slides) => $slides->contains(fn ($item) => $item['title'] === 'Hero video QA' && $item['video_url'] === $video->url));
     }

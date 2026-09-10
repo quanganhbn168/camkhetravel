@@ -10,9 +10,9 @@ use App\Models\Service;
 use App\Settings\AboutSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
-use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
+use App\Support\Media\MediaUrl;
 use App\Support\Media\MediaUrl as CuratorMediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -96,7 +96,7 @@ class AboutController extends Controller
 
                 return $url ? [
                     'url' => $url,
-                    'alt' => trim((string) ($item->alt ?? $item->title ?? '')) ?: ($managed['office_title'] ?: 'Văn phòng THT Media').' — ảnh '.($index + 1),
+                    'alt' => trim((string) ($item->alt ?? $item->title ?? '')) ?: ($managed['office_title'] ?: 'Văn phòng DVTEC').' — ảnh '.($index + 1),
                 ] : null;
             })
             ->filter()
@@ -104,7 +104,7 @@ class AboutController extends Controller
         if ($about['office_gallery']->isEmpty() && $about['office_image_url']) {
             $about['office_gallery'] = collect([[
                 'url' => $about['office_image_url'],
-                'alt' => $managed['office_title'] ?: 'Văn phòng THT Media',
+                'alt' => $managed['office_title'] ?: 'Văn phòng DVTEC',
             ]]);
         }
         $videoPosterUrl = $this->sectionImageUrl($media, $this->settings->video_poster_media_id, $fallbackImageUrl);

@@ -5,24 +5,12 @@
     @yield('head')
     @stack('head')
 
-    @if ($landingPage ?? null)
-        <meta name="landing-page-id" content="{{ $landingPage->getKey() }}">
-        <meta name="landing-template" content="{{ $landingPage->template_key }}">
-    @endif
-
     @vite($landingAssets['vite'])
     <x-site-design-tokens />
     @include('partials.tracking.head')
 </head>
 <body
     class="@yield('body_class', 'min-h-screen overflow-x-clip')"
-    @if ($landingPage ?? null)
-        data-landing-page-id="{{ $landingPage->getKey() }}"
-        data-landing-template="{{ $landingPage->template_key }}"
-        data-landing-tracking="{{ $landingPage->tracking_enabled ? 'true' : 'false' }}"
-        data-landing-track-endpoint="{{ $landingTrackingUrl ?? '' }}"
-        data-landing-campaign-state="{{ $landingCampaignState ?? 'active' }}"
-    @endif
 >
     @include('partials.tracking.body')
     @yield('before_content')
@@ -45,7 +33,6 @@
         <x-site-footer />
     @endif
 
-    @include('partials.bni-pwa')
     @stack('scripts')
     @include('partials.tracking.footer')
 </body>

@@ -5,7 +5,7 @@
         @if ($service->image_url)
             <img src="{{ $service->image_url }}" alt="{{ $service->title }}" loading="lazy">
         @else
-            <span class="image-placeholder">THT</span>
+            <span class="image-placeholder">DV</span>
         @endif
         @if (($showCategoryBadge ?? true) && $service->category)
             <span class="resource-card__badge">{{ $service->category->name }}</span>

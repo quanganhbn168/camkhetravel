@@ -24,7 +24,7 @@
                         @if (collect($plan->features)->filter()->isNotEmpty())
                             <ul>@foreach (collect($plan->features)->filter() as $feature)<li>{{ $feature }}</li>@endforeach</ul>
                         @endif
-                        <a class="landing-button landing-button--primary" href="#tu-van" data-landing-event="pricing_view" data-block-id="{{ $block['id'] }}" data-pricing-plan-id="{{ $plan->id }}">Đăng ký hỗ trợ <span aria-hidden="true">↗</span></a>
+                        <a class="landing-button landing-button--primary" href="#tu-van">Đăng ký hỗ trợ <span aria-hidden="true">↗</span></a>
                     </article>
                 @endforeach
             </div>

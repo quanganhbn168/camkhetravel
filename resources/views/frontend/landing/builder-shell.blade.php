@@ -1,5 +1,5 @@
 @extends('layouts.landing')
 
 @section('content')
-    @include($landingTemplateView)
+    @include('frontend.landing.builder')
 @endsection

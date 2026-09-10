@@ -2,17 +2,16 @@
 
 namespace App\Filament\Resources\Comments\Schemas;
 
-use App\Models\BniArticle;
 use App\Models\Comment;
+use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
-use App\Models\LandingPage;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -28,7 +27,6 @@ class CommentForm
                     MorphToSelect::make('commentable')
                         ->label('Nội dung được bình luận')
                         ->types([
-                            MorphToSelect\Type::make(BniArticle::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Project::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Service::class)->titleAttribute('title'),

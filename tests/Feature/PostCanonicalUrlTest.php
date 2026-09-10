@@ -4,12 +4,20 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use App\Support\Localization\LocalizedUrl;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Database\Seeders\WebsiteSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PostCanonicalUrlTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(WebsiteSeeder::class);
+    }
 
     public function test_posts_listing_uses_blog_path_and_legacy_listing_redirects(): void
     {
@@ -27,7 +35,14 @@ class PostCanonicalUrlTest extends TestCase
 
     public function test_post_detail_uses_the_root_slug_and_news_listing_url_redirects_to_it(): void
     {
-        $post = Post::query()->published()->firstOrFail();
+        $post = Post::query()->create([
+            'title' => 'Bài viết kiểm thử',
+            'slug' => 'bai-viet-kiem-thu',
+            'excerpt' => 'Mô tả bài viết kiểm thử.',
+            'body' => '<p>Nội dung bài viết kiểm thử.</p>',
+            'status' => 'published',
+            'published_at' => now()->subMinute(),
+        ]);
         $canonicalUrl = LocalizedUrl::post($post);
         $listingUrl = LocalizedUrl::route('posts.show', ['slug' => $post->slug]);
 

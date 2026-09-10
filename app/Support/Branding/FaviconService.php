@@ -248,8 +248,8 @@ final class FaviconService
     private function manifest(): string
     {
         return (string) json_encode([
-            'name' => 'THT Media',
-            'short_name' => 'THT Media',
+            'name' => 'DVTEC',
+            'short_name' => 'DVTEC',
             'start_url' => '/',
             'display' => 'standalone',
             'background_color' => '#10233e',

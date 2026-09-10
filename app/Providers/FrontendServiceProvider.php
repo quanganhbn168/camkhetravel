@@ -2,15 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\BniActivity;
-use App\Models\BniArticle;
-use App\Models\BniChapter;
-use App\Models\BniEvent;
-use App\Models\BniEventSlide;
-use App\Models\BniEventVideo;
-use App\Models\BniGalleryItem;
-use App\Models\BniSponsor;
 use App\Models\HeroSlide;
+use App\Models\Intro;
 use App\Models\LandingPage;
 use App\Models\Language;
 use App\Models\Menu;
@@ -54,6 +47,7 @@ class FrontendServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::enforceMorphMap([
+            'intro' => Intro::class,
             'post' => Post::class,
             'post-category' => PostCategory::class,
             'project' => Project::class,
@@ -61,48 +55,49 @@ class FrontendServiceProvider extends ServiceProvider
             'service' => Service::class,
             'service-category' => ServiceCategory::class,
             'landing-page' => LandingPage::class,
-            'bni-article' => BniArticle::class,
-            'bni-activity' => BniActivity::class,
-            'bni-chapter' => BniChapter::class,
-            'bni-event' => BniEvent::class,
-            'bni-event-slide' => BniEventSlide::class,
-            'bni-event-video' => BniEventVideo::class,
-            'bni-gallery-item' => BniGalleryItem::class,
-            'bni-sponsor' => BniSponsor::class,
             'user' => User::class,
         ]);
 
-        Post::observe(SlugObserver::class);
-        PostCategory::observe(SlugObserver::class);
-        Project::observe(SlugObserver::class);
-        ProjectCategory::observe(SlugObserver::class);
-        Service::observe(SlugObserver::class);
-        ServiceCategory::observe(SlugObserver::class);
-        LandingPage::observe(SlugObserver::class);
+        foreach ([
+            Post::class,
+            PostCategory::class,
+            Intro::class,
+            Project::class,
+            ProjectCategory::class,
+            Service::class,
+            ServiceCategory::class,
+            LandingPage::class,
+        ] as $model) {
+            $model::observe(SlugObserver::class);
+        }
 
-        HeroSlide::observe(AssignNextOrderObserver::class);
-        Language::observe(AssignNextOrderObserver::class);
-        Partner::observe(AssignNextOrderObserver::class);
-        PostCategory::observe(AssignNextOrderObserver::class);
-        PricingPlan::observe(AssignNextOrderObserver::class);
-        Project::observe(AssignNextOrderObserver::class);
-        ProjectCategory::observe(AssignNextOrderObserver::class);
-        Service::observe(AssignNextOrderObserver::class);
-        ServiceCategory::observe(AssignNextOrderObserver::class);
-        LandingPage::observe(AssignNextOrderObserver::class);
-        Testimonial::observe(AssignNextOrderObserver::class);
+        foreach ([
+            HeroSlide::class,
+            Language::class,
+            Partner::class,
+            PostCategory::class,
+            PricingPlan::class,
+            Project::class,
+            ProjectCategory::class,
+            Service::class,
+            ServiceCategory::class,
+            LandingPage::class,
+            Testimonial::class,
+        ] as $model) {
+            $model::observe(AssignNextOrderObserver::class);
+        }
 
-        Post::observe(ContentSeoFallbackObserver::class);
-        Project::observe(ContentSeoFallbackObserver::class);
-        Service::observe(ContentSeoFallbackObserver::class);
-        LandingPage::observe(ContentSeoFallbackObserver::class);
+        foreach ([Post::class, Project::class, Service::class, LandingPage::class] as $model) {
+            $model::observe(ContentSeoFallbackObserver::class);
+        }
 
         RateLimiter::for('frontend-contact', fn ($request) => Limit::perMinute(5)->by((string) $request->ip()));
         RateLimiter::for('frontend-comment', fn ($request) => Limit::perMinute(3)->by((string) $request->ip()));
-        RateLimiter::for('bni-gallery-upload', fn ($request) => Limit::perHour(2)->by((string) $request->ip()));
-        RateLimiter::for('landing-tracking', fn ($request) => Limit::perMinute(120)->by(
-            (string) data_get($request->route('landingPage'), 'id', $request->route('landingPage')).'|'.(string) $request->ip(),
-        ));
+
+        // Console commands must be able to boot before the website database exists.
+        if ($this->app->runningInConsole() && ! filter_var(env('APP_TESTING_HTTP', false), FILTER_VALIDATE_BOOL)) {
+            return;
+        }
 
         $website = app(WebsiteSettings::class);
         $media = Media::query()
@@ -117,6 +112,7 @@ class FrontendServiceProvider extends ServiceProvider
             ]))
             ->get()
             ->keyBy('id');
+
         View::share([
             'website' => $website,
             'defaultBannerUrl' => MediaUrl::versioned($media->get($website->banner_media_id)),
@@ -170,12 +166,10 @@ class FrontendServiceProvider extends ServiceProvider
                     fn (Builder $query) => $query->where('location', 'header'),
                 )
                 ->first();
+
             $headerNavigation = $headerMenu?->items
                 ->whereNull('parent_id')
-                ->map(fn (MenuItem $item): array => $this->menuItemData(
-                    item: $item,
-                    allItems: $headerMenu->items,
-                ))
+                ->map(fn (MenuItem $item): array => $this->menuItemData($item, $headerMenu->items))
                 ->values()
                 ?? collect();
 
@@ -205,18 +199,13 @@ class FrontendServiceProvider extends ServiceProvider
     }
 
     /** @return array{label: string, url: string, target: string, is_active: bool, home: bool, has_children: bool, children: Collection<int, array<string, mixed>>} */
-    private function menuItemData(
-        MenuItem $item,
-        Collection $allItems,
-    ): array {
+    private function menuItemData(MenuItem $item, Collection $allItems): array
+    {
         $link = $item->link;
         $isActive = $this->menuItemMatchesCurrentRoute($item);
         $children = $allItems
             ->where('parent_id', $item->getKey())
-            ->map(fn (MenuItem $child): array => $this->menuItemData(
-                item: $child,
-                allItems: $allItems,
-            ))
+            ->map(fn (MenuItem $child): array => $this->menuItemData($child, $allItems))
             ->values();
 
         return [
@@ -236,13 +225,8 @@ class FrontendServiceProvider extends ServiceProvider
 
         if ($linkedSourceType === 'native_route') {
             $routeName = trim((string) $item->getRawOriginal('url'));
-            $routePattern = match ($routeName) {
-                'bni.handover' => 'bni.*',
-                'bni.events.index' => 'bni.events.*',
-                default => $routeName,
-            };
 
-            return $routePattern !== '' && request()->routeIs($routePattern);
+            return $routeName !== '' && request()->routeIs($routeName);
         }
 
         $target = match ($linkedSourceType) {
@@ -266,10 +250,7 @@ class FrontendServiceProvider extends ServiceProvider
             ? (string) ($currentRouteValue->slug ?? $currentRouteValue->getRouteKey())
             : (string) $currentRouteValue;
 
-        if ($currentSlug === '') {
-            return false;
-        }
-
-        return (string) ($target[0]::query()->find($item->linked_source_id)?->slug ?? '') === $currentSlug;
+        return $currentSlug !== ''
+            && (string) ($target[0]::query()->find($item->linked_source_id)?->slug ?? '') === $currentSlug;
     }
 }

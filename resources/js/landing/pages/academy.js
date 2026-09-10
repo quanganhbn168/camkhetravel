@@ -1,1 +1,0 @@
-import './modules/academy.js';

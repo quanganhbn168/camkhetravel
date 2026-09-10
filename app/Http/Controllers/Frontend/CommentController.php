@@ -10,7 +10,6 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 
 class CommentController extends Controller
 {
@@ -52,8 +51,6 @@ class CommentController extends Controller
             'rating' => $data['rating'] ?? null,
             'body' => trim(strip_tags($data['body'])),
             'status' => Comment::STATUS_PENDING,
-            'ip_address' => $request->ip(),
-            'user_agent' => Str::limit((string) $request->userAgent(), 512, ''),
         ]);
 
         return back()->with('success', 'Cảm ơn bạn. Bình luận đã được gửi và đang chờ duyệt.');

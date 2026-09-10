@@ -4,10 +4,21 @@ namespace Tests\Feature;
 
 use App\Settings\TrackingSettings;
 use App\Support\Tracking\TrackingScripts;
+use Database\Seeders\WebsiteSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class TrackingScriptsTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(WebsiteSeeder::class);
+    }
+
     private function settings(array $values = []): TrackingSettings
     {
         return TrackingSettings::fake(array_replace(array_fill_keys(TrackingScripts::FIELDS, null), $values), false);
@@ -77,7 +88,7 @@ class TrackingScriptsTest extends TestCase
             'meta_pixel_code' => '<script data-qa="meta"></script><noscript data-qa="fallback"><img src="/qa.gif" alt=""></noscript>',
             'body_close_code' => '<script data-qa="footer"></script>',
         ]);
-        foreach (['master', 'landing', 'plan'] as $layout) {
+        foreach (['master', 'landing'] as $layout) {
             $html = view('layouts.'.$layout, [
                 'hideHeader' => true, 'hideFooter' => true,
                 'landingAssets' => ['vite' => []],

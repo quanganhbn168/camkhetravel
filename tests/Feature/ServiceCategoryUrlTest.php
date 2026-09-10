@@ -4,12 +4,20 @@ namespace Tests\Feature;
 
 use App\Models\ServiceCategory;
 use App\Support\Localization\LocalizedUrl;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Database\Seeders\WebsiteSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ServiceCategoryUrlTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(WebsiteSeeder::class);
+    }
 
     public function test_category_uses_morph_slug_and_redirects_old_urls(): void
     {

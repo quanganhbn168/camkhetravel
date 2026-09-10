@@ -26,22 +26,11 @@ class LandingPage extends Model
             'backstage_gallery' => 'array',
             'faq_items' => 'array',
             'sections' => 'array',
-            'landing_content' => 'array',
-            'template_settings' => 'array',
-            'theme_settings' => 'array',
             'is_featured' => 'boolean',
             'show_header' => 'boolean',
             'show_footer' => 'boolean',
-            'tracking_enabled' => 'boolean',
-            'campaign_starts_at' => 'datetime',
-            'campaign_ends_at' => 'datetime',
             'published_at' => 'datetime',
         ];
-    }
-
-    public function landingTemplate(): BelongsTo
-    {
-        return $this->belongsTo(LandingTemplate::class);
     }
 
     public function curatorMedia(): BelongsTo
@@ -80,11 +69,6 @@ class LandingPage extends Model
         return $this->belongsToMany(Post::class, 'landing_page_post')
             ->withPivot('sort_order')
             ->withTimestamps();
-    }
-
-    public function events(): HasMany
-    {
-        return $this->hasMany(LandingEvent::class, 'landing_page_id');
     }
 
     public function contactRequests(): HasMany

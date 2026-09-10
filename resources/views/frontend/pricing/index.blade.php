@@ -100,7 +100,7 @@
                 <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                     <div class="pricing-page-empty">
                         <h2>Bảng giá dịch vụ đang được hoàn thiện</h2>
-                        <p>Anh/chị để lại mục tiêu và ngân sách dự kiến, THT Media sẽ tư vấn phạm vi phù hợp.</p>
+                        <p>Anh/chị để lại mục tiêu và ngân sách dự kiến, DVTEC sẽ tư vấn phạm vi phù hợp.</p>
                         <a class="button-dark" href="{{ LocalizedUrl::route('contact', ['service' => $selectedService->id]) }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
 
     <section class="bg-ink py-14 text-white">
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col items-start justify-between gap-7 md:flex-row md:items-center">
-            <div><h2 class="font-display text-3xl md:text-4xl">Cần một cấu hình riêng?</h2><p class="mt-3 max-w-2xl leading-7 text-slate-300">THT Media có thể ghép phạm vi theo mục tiêu, kênh triển khai, tiến độ và ngân sách thực tế.</p></div>
+            <div><h2 class="font-display text-3xl md:text-4xl">Cần một cấu hình riêng?</h2><p class="mt-3 max-w-2xl leading-7 text-slate-300">DVTEC có thể ghép phạm vi theo mục tiêu, kênh triển khai, tiến độ và ngân sách thực tế.</p></div>
             <a class="button-primary shrink-0" href="{{ LocalizedUrl::route('contact') }}">Yêu cầu báo giá <span aria-hidden="true">→</span></a>
         </div>
     </section>

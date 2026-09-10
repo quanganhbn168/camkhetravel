@@ -2,14 +2,11 @@
 
 namespace App\Support\Seo;
 
-use App\Models\BniChapter;
-use App\Models\BniInvitation;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
-use App\Support\Events\EventCatalog;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Models\Media;
@@ -26,7 +23,6 @@ class FrontendSeoBuilder
     public function __construct(
         private readonly WebsiteSettings $website,
         private readonly LanguageCatalog $languages,
-        private readonly EventCatalog $eventCatalog,
     ) {}
 
     public function default(): array
@@ -108,90 +104,6 @@ class FrontendSeoBuilder
             ],
             robots: $indexable ? self::INDEX_ROBOTS : self::NOINDEX_ROBOTS,
             image: $image,
-        );
-    }
-
-    public function bniChapter(BniChapter $chapter, ?string $image = null): array
-    {
-        $canonical = LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]);
-        $chapterName = $chapter->short_name ?: $chapter->name;
-        $image = $chapter->bniMediaUrl('seo_image') ?: $image;
-        $title = 'BNI Chapter '.$chapterName.' | '.$this->website->site_name;
-        $description = $chapter->description ?: $chapter->name;
-
-        return $this->page(
-            title: $title,
-            description: $description,
-            canonical: $canonical,
-            image: $image,
-            schema: [
-                $this->organizationSchema(),
-                $this->webPageSchema($canonical, $title, $description),
-                $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => $chapter->event?->title ?: 'Lễ chuyển giao BNI', 'url' => LocalizedUrl::route('bni.handover')],
-                    ['name' => $chapterName, 'url' => $canonical],
-                ]),
-            ],
-        );
-    }
-
-    /** @param array<string, mixed> $content */
-    public function invitation(BniInvitation $invitation, string $guestName, array $content, ?string $image = null): array
-    {
-        $canonical = LocalizedUrl::route('bni.invitations.show', ['invitation' => $invitation]);
-        $event = $invitation->event;
-        $image = $event?->bniMediaUrl('seo_image') ?: $image;
-        $eventTitle = trim((string) ($event?->title ?: ($content['event_label'] ?? 'Sự kiện BNI')));
-        $eventUrl = $event ? $this->eventCatalog->url($event) : LocalizedUrl::route('bni.handover');
-        $title = trim(($content['label'] ?? 'THƯ MỜI').' '.$eventTitle.' – '.$guestName.' | '.$this->website->site_name);
-        $description = trim(($content['greeting'] ?? 'Trân trọng kính mời').' '.$guestName.' tham dự '.$eventTitle.'.');
-
-        $eventSchema = [
-            '@type' => 'Event',
-            '@id' => $canonical.'#event',
-            'name' => $eventTitle,
-            'description' => $this->description($description),
-            'url' => $canonical,
-            'eventStatus' => 'https://schema.org/EventScheduled',
-            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
-            'organizer' => ['@id' => $this->baseUrl().'#organization'],
-            ...$this->imageProperty($image),
-        ];
-
-        if ($event?->starts_at) {
-            $eventSchema['startDate'] = $event->starts_at->toAtomString();
-        }
-
-        if ($event?->ends_at) {
-            $eventSchema['endDate'] = $event->ends_at->toAtomString();
-        }
-
-        $locationName = collect([$event?->venue, $event?->address])->filter()->implode(', ');
-        if ($locationName !== '') {
-            $eventSchema['location'] = [
-                '@type' => 'Place',
-                'name' => $locationName,
-                'address' => $event?->address ?: $event?->venue,
-            ];
-        }
-
-        return $this->page(
-            title: $title,
-            description: $description,
-            canonical: $canonical,
-            image: $image,
-            schema: [
-                $this->organizationSchema(),
-                $this->webPageSchema($canonical, $title, $description),
-                $eventSchema,
-                $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => $eventTitle, 'url' => $eventUrl],
-                    ['name' => $guestName, 'url' => $canonical],
-                ]),
-            ],
-            robots: self::NOINDEX_ROBOTS,
         );
     }
 

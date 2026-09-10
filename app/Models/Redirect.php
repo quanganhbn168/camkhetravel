@@ -15,7 +15,6 @@ class Redirect extends Model
     {
         return [
             'is_active' => 'boolean',
-            'last_hit_at' => 'datetime',
         ];
     }
 }

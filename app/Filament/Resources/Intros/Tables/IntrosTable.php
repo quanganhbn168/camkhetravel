@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Intros\Tables;
 
+use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,7 +17,7 @@ class IntrosTable
         return $table
             ->columns([
                 TextColumn::make('sort_order')->label('STT')->numeric()->sortable()->width(60),
-                ImageColumn::make('image')->label('Ảnh')->disk('public')->circular(),
+                CuratorColumn::make('curatorMedia')->label('Ảnh')->circular(),
                 TextColumn::make('kind')->label('Loại')->formatStateUsing(fn (string $state): string => $state === 'block' ? 'Khối giới thiệu / USP' : 'Bài giới thiệu')->badge(),
                 TextColumn::make('icon')->label('Icon class')->limit(30)->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('title')->label('Tiêu đề')->searchable()->sortable()->limit(50),

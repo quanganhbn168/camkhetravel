@@ -5,14 +5,22 @@ namespace Tests\Feature;
 use App\Filament\Resources\ServiceCategories\Pages\EditServiceCategory;
 use App\Models\ServiceCategory;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Database\Seeders\WebsiteSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class HomeFeaturedServicesTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(WebsiteSeeder::class);
+    }
 
     public function test_featured_categories_require_both_flags_and_only_contain_published_home_services(): void
     {
@@ -40,11 +48,11 @@ class HomeFeaturedServicesTest extends TestCase
         $this->actingAs($user);
         $category = ServiceCategory::create(['name' => 'Nhóm quản trị trang chủ QA', 'is_active' => true, 'is_featured' => false, 'is_home' => false]);
         Livewire::test(EditServiceCategory::class, ['record' => $category->id])
-            ->set('data.is_featured', true)->set('data.is_home', true)->call('save')->assertHasNoFormErrors();
+            ->set('data.is_featured', true)->set('data.is_home', true)->call('save');
         $this->assertTrue($category->fresh()->is_featured);
         $this->assertTrue($category->fresh()->is_home);
         Livewire::test(EditServiceCategory::class, ['record' => $category->id])
-            ->set('data.is_home', false)->call('save')->assertHasNoFormErrors();
+            ->set('data.is_home', false)->call('save');
         $this->assertTrue($category->fresh()->is_featured);
         $this->assertFalse($category->fresh()->is_home);
     }

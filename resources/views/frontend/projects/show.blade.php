@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="resource-project-media">
-                    @if ($project->image_url)<img src="{{ $project->image_url }}" alt="{{ $project->title }}">@else<span class="image-placeholder">THT</span>@endif
+                    @if ($project->image_url)<img src="{{ $project->image_url }}" alt="{{ $project->title }}">@else<span class="image-placeholder">DV</span>@endif
                     @if ($projectVideoUrl)<a class="resource-project-media__play" href="{{ $projectVideoUrl }}" target="_blank" rel="noopener" aria-label="Xem video {{ $project->title }}">▶</a>@endif
                 </div>
             </div>
@@ -54,7 +54,7 @@
 
                 <section class="project-detail-sidebar__block project-detail-sidebar__cta" aria-labelledby="tu-van-du-an">
                     <h2 id="tu-van-du-an">CẦN TƯ VẤN DỰ ÁN?</h2>
-                    <p>THT Media sẵn sàng cùng anh/chị làm rõ mục tiêu, phạm vi và hướng triển khai phù hợp.</p>
+                    <p>DVTEC sẵn sàng cùng anh/chị làm rõ mục tiêu, phạm vi và hướng triển khai phù hợp.</p>
                     <a class="button-dark mt-6 w-full" href="{{ LocalizedUrl::route('contact') }}">Trao đổi dự án <span aria-hidden="true">→</span></a>
                 </section>
 

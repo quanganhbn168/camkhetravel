@@ -20,7 +20,7 @@
                     @if (($heroImageUrl ?: $defaultBannerUrl))
                         <img src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="{{ $activeCategory->name }}">
                     @else
-                        <span class="image-placeholder">THT</span>
+                        <span class="image-placeholder">DV</span>
                     @endif
                 </div>
             </div>
@@ -42,7 +42,7 @@
                                 @if ($category->image_url)
                                     <img src="{{ $category->image_url }}" alt="{{ $category->name }}" loading="lazy">
                                 @else
-                                    <span class="image-placeholder">THT</span>
+                                    <span class="image-placeholder">DV</span>
                                 @endif
                             </div>
                             <div class="service-category-card__body">

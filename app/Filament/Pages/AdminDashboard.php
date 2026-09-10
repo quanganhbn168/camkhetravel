@@ -12,15 +12,14 @@ use App\Filament\Widgets\WebsiteStatsOverview;
 use App\Models\Comment;
 use App\Models\ContactRequest;
 use App\Models\LandingPage;
-use App\Models\LandingTemplate;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Panel;
 use Filament\Pages\Page;
+use Filament\Panel;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
 use UnitEnum;
@@ -71,11 +70,6 @@ class AdminDashboard extends Page
                 ->label('Quản lý landing page')
                 ->icon(Heroicon::OutlinedRectangleGroup)
                 ->url(LandingPageResource::getUrl('index')),
-            Action::make('tracking')
-                ->label('Xem tracking')
-                ->icon(Heroicon::OutlinedChartBarSquare)
-                ->color('gray')
-                ->url(LandingTrackingDashboard::getUrl()),
         ];
     }
 
@@ -84,8 +78,6 @@ class AdminDashboard extends Page
      *     operations: list<array{label: string, value: int, hint: string, url: string}>,
      *     recent_leads: \Illuminate\Database\Eloquent\Collection<int, ContactRequest>,
      *     recent_content: Collection<int, array{label: string, title: string, status: string, status_label: string, updated_at: mixed, url: string}>,
-     *     template_count: int,
-     *     active_template_count: int,
      * }
      */
     public function getWebsiteOverviewData(): array
@@ -130,8 +122,6 @@ class AdminDashboard extends Page
                     'created_at',
                 ]),
             'recent_content' => $this->recentContent($serviceCount, $projectCount, $postCount, $landingCount),
-            'template_count' => LandingTemplate::query()->count(),
-            'active_template_count' => LandingTemplate::query()->active()->count(),
         ];
     }
 

@@ -7,7 +7,6 @@ use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -26,7 +25,6 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'bni_chapter_id',
     ];
 
     /**
@@ -54,15 +52,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return match ($panel->getId()) {
-            'admin' => $this->hasRole('super_admin'),
-            'bni' => $this->hasAnyRole(['super_admin', 'bni_admin', 'bni_chapter_manager']),
-            default => false,
-        };
-    }
-
-    public function bniChapter(): BelongsTo
-    {
-        return $this->belongsTo(BniChapter::class, 'bni_chapter_id');
+        return $panel->getId() === 'admin' && $this->hasRole('super_admin');
     }
 }

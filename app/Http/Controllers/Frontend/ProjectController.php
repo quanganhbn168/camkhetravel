@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
-use App\Support\Frontend\MediaUrl;
 use App\Support\Localization\LocalizedUrl;
+use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -157,7 +157,7 @@ class ProjectController extends Controller
             'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án'),
             'pageDescription' => $activeCategory?->description ?: ($backstageService
                 ? 'Các dự án đã được gắn với dịch vụ '.$backstageService->title.'.'
-                : 'Những dự án THT Media đã đồng hành từ định hướng ban đầu đến sản phẩm truyền thông hoàn chỉnh.'),
+                : 'Những dự án DVTEC đã đồng hành từ định hướng ban đầu đến sản phẩm truyền thông hoàn chỉnh.'),
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',

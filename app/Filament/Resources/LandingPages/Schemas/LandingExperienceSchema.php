@@ -2,92 +2,39 @@
 
 namespace App\Filament\Resources\LandingPages\Schemas;
 
-use App\Support\Landing\LandingTemplateRegistry;
-use App\Support\Landing\LandingRegistry;
+use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
-class LandingExperienceSchema
+/** The one public landing layout: an ordered, database-backed page builder. */
+final class LandingExperienceSchema
 {
     /** @return array<Section> */
     public static function components(): array
     {
         return [
-            Section::make('Bố cục landing page')
-                ->icon(Heroicon::OutlinedRectangleGroup)
-                ->description('Chọn giao diện chuẩn, page builder hoặc template chiến dịch được lập trình riêng.')
+            Section::make('Hiển thị landing page')
+                ->icon(Heroicon::OutlinedEye)
+                ->description('Landing dùng chung header và footer của website. Có thể ẩn từng phần khi cần một trang độc lập.')
                 ->schema([
-                    ToggleButtons::make('layout_mode')
-                        ->label('Chế độ hiển thị')
-                        ->options([
-                            'standard' => 'Trang chuẩn',
-                            'builder' => 'Page builder',
-                            'custom_template' => 'Template đặc thù',
-                        ])
-                        ->icons([
-                            'standard' => Heroicon::OutlinedDocumentText,
-                            'builder' => Heroicon::OutlinedRectangleGroup,
-                            'custom_template' => Heroicon::OutlinedSparkles,
-                        ])
-                        ->default('standard')
-                        ->required()
-                        ->inline()
-                        ->live()
-                        ->columnSpanFull(),
-                    Select::make('template_key')
-                        ->label('Template giao diện')
-                        ->options(fn (): array => LandingTemplateRegistry::options())
-                        ->required(fn ($get): bool => $get('layout_mode') === 'custom_template')
-                        ->visible(fn ($get): bool => $get('layout_mode') === 'custom_template')
-                        ->native(false)
-                        ->live()
-                        ->afterStateUpdated(function (?string $state, $get, $set): void {
-                            $set('landing_template_id', LandingTemplateRegistry::id($state));
-                            $set('theme_settings', LandingTemplateRegistry::palette($state));
-                            $set('template_settings', LandingTemplateRegistry::defaultSettings($state));
-
-                            if (blank($get('sections'))) {
-                                $set('sections', LandingTemplateRegistry::defaultSections($state));
-                            }
-                        })
-                        ->columnSpanFull(),
-                    Hidden::make('landing_template_id'),
-                    Placeholder::make('template_preview')
-                        ->label('Xem nhanh template')
-                        ->content(fn ($get): HtmlString => self::templatePreview($get('template_key')))
-                        ->visible(fn ($get): bool => $get('layout_mode') === 'custom_template')
-                        ->columnSpanFull(),
-                    ColorPicker::make('theme_settings.primary')->label('Màu chủ đạo')->default('#075c35'),
-                    ColorPicker::make('theme_settings.accent')->label('Màu nhấn')->default('#d6aa43'),
-                    ColorPicker::make('theme_settings.surface')->label('Màu nền nhẹ')->default('#f7f4e9'),
-                    ColorPicker::make('theme_settings.ink')->label('Màu chữ chính')->default('#10291d'),
                     Toggle::make('show_header')->label('Hiện header website')->default(true),
                     Toggle::make('show_footer')->label('Hiện footer website')->default(true),
                 ])
                 ->columns(2),
-            ...LandingTemplateSettingsSchema::sections(),
             Section::make('Các khối nội dung')
                 ->icon(Heroicon::OutlinedSquaresPlus)
-                ->description('Kéo thả để đổi thứ tự. Danh mục dịch vụ, dịch vụ, dự án, blog và bảng giá luôn đọc từ dữ liệu liên kết.')
-                ->visible(fn ($get): bool => $get('layout_mode') !== 'standard'
-                    && LandingRegistry::find($get('template_key')) === null)
+                ->description('Kéo thả để sắp xếp. Nội dung liên kết như dịch vụ, dự án, blog và bảng giá lấy trực tiếp từ CMS.')
                 ->schema([
                     Builder::make('sections')
                         ->label('Bố cục trang')
@@ -98,60 +45,7 @@ class LandingExperienceSchema
                         ->blockPickerColumns(2)
                         ->columnSpanFull(),
                 ]),
-            Section::make('Chiến dịch & tracking')
-                ->icon(Heroicon::OutlinedChartBarSquare)
-                ->visible(fn ($get): bool => $get('layout_mode') !== 'standard')
-                ->schema([
-                    DateTimePicker::make('campaign_starts_at')
-                        ->label('Bắt đầu chiến dịch')
-                        ->seconds(false),
-                    DateTimePicker::make('campaign_ends_at')
-                        ->label('Kết thúc chiến dịch')
-                        ->seconds(false)
-                        ->after('campaign_starts_at'),
-                    Select::make('expired_behavior')
-                        ->label('Khi hết hạn')
-                        ->options([
-                            'show_message' => 'Hiện thông báo hết hạn',
-                            'hide_offer' => 'Ẩn ưu đãi và bảng giá',
-                            'keep_showing' => 'Tiếp tục hiển thị',
-                        ])
-                        ->default('show_message')
-                        ->required(),
-                    Toggle::make('tracking_enabled')
-                        ->label('Ghi nhận lượt xem và chuyển đổi')
-                        ->default(true),
-                    Textarea::make('expired_message')
-                        ->label('Thông báo khi hết hạn')
-                        ->rows(3)
-                        ->maxLength(1000)
-                        ->visible(fn ($get): bool => $get('expired_behavior') === 'show_message')
-                        ->columnSpanFull(),
-                ])
-                ->columns(2),
         ];
-    }
-
-    private static function templatePreview(mixed $key): HtmlString
-    {
-        $template = LandingTemplateRegistry::find(is_string($key) ? $key : null);
-
-        if ($template === null) {
-            return new HtmlString('<div style="padding:1rem;border:1px dashed #cbd5e1;border-radius:1rem;color:#64748b">Chọn một template để xem cấu trúc và bảng màu gợi ý.</div>');
-        }
-
-        $palette = $template['palette'];
-
-        return new HtmlString(sprintf(
-            '<div style="overflow:hidden;border:1px solid #e2e8f0;border-radius:1rem;background:%1$s"><div style="height:0.55rem;background:linear-gradient(90deg,%2$s 0 72%%,%3$s 72%%)"></div><div style="display:grid;gap:0.7rem;padding:1rem 1.1rem"><strong style="font-size:1rem;color:%4$s">%5$s</strong><span style="color:#64748b;line-height:1.55">%6$s</span><small style="color:%2$s;font-weight:700">%7$s</small></div></div>',
-            e($palette['surface']),
-            e($palette['primary']),
-            e($palette['accent']),
-            e($palette['ink']),
-            e($template['label']),
-            e($template['description']),
-            e($template['use_case']),
-        ));
     }
 
     /** @return array<Block> */
@@ -159,7 +53,7 @@ class LandingExperienceSchema
     {
         return [
             Block::make('hero')
-                ->label('Hero chiến dịch')
+                ->label('Hero')
                 ->icon(Heroicon::OutlinedPhoto)
                 ->maxItems(1)
                 ->schema([
@@ -169,47 +63,13 @@ class LandingExperienceSchema
                     Textarea::make('subtitle')->label('Mô tả')->rows(3)->maxLength(1000)->columnSpanFull(),
                     CuratorPicker::make('media_id')->label('Ảnh hero')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                     TextInput::make('media_caption')->label('Chú thích ảnh')->maxLength(255)->columnSpanFull(),
-                    TextInput::make('cta_label')->label('Nút chính')->default('Nhận hỗ trợ')->maxLength(100),
+                    TextInput::make('cta_label')->label('Nút chính')->default('Nhận tư vấn')->maxLength(100),
                     TextInput::make('cta_url')->label('Liên kết nút chính')->default('#tu-van')->maxLength(2048),
                     TextInput::make('secondary_label')->label('Nút phụ')->maxLength(100),
-                    TextInput::make('secondary_url')->label('Liên kết nút phụ')->default('#uu-dai')->maxLength(2048),
+                    TextInput::make('secondary_url')->label('Liên kết nút phụ')->maxLength(2048),
                     TextInput::make('note')->label('Dòng ghi chú')->maxLength(255)->columnSpanFull(),
                 ])
                 ->columns(2),
-            Block::make('countdown')
-                ->label('Đếm ngược')
-                ->icon(Heroicon::OutlinedClock)
-                ->maxItems(1)
-                ->schema([
-                    self::blockId(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Thời gian chương trình còn lại')->maxLength(255)->columnSpanFull(),
-                    DateTimePicker::make('starts_at')->label('Bắt đầu')->seconds(false),
-                    DateTimePicker::make('ends_at')->label('Kết thúc')->seconds(false)->after('starts_at'),
-                ])
-                ->columns(2),
-            Block::make('benefits')
-                ->label('Quyền lợi / ưu đãi')
-                ->icon(Heroicon::OutlinedGift)
-                ->schema([
-                    self::blockId(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
-                    Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    Repeater::make('items')
-                        ->label('Nhóm quyền lợi')
-                        ->schema([
-                            TextInput::make('title')->label('Tên nhóm')->required()->maxLength(255)->columnSpanFull(),
-                            Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(500)->columnSpanFull(),
-                            TagsInput::make('features')->label('Các quyền lợi')->placeholder('Nhập một quyền lợi rồi nhấn Enter')->columnSpanFull(),
-                        ])
-                        ->defaultItems(2)
-                        ->reorderable()
-                        ->cloneable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhóm quyền lợi mới')
-                        ->columnSpanFull(),
-                ]),
             Block::make('content_grid')
                 ->label('Nhóm nội dung / giải pháp')
                 ->icon(Heroicon::OutlinedSquaresPlus)
@@ -218,18 +78,11 @@ class LandingExperienceSchema
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    Repeater::make('items')
-                        ->label('Các nhóm nội dung')
-                        ->schema([
-                            TextInput::make('title')->label('Tên nhóm')->required()->maxLength(255)->columnSpanFull(),
-                            Textarea::make('description')->label('Mô tả')->rows(3)->maxLength(1000)->columnSpanFull(),
-                            TagsInput::make('features')->label('Điểm chính')->placeholder('Nhập một ý rồi nhấn Enter')->columnSpanFull(),
-                        ])
-                        ->reorderable()
-                        ->cloneable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhóm nội dung mới')
-                        ->columnSpanFull(),
+                    self::itemsRepeater('Các nhóm nội dung', [
+                        TextInput::make('title')->label('Tên nhóm')->required()->maxLength(255)->columnSpanFull(),
+                        Textarea::make('description')->label('Mô tả')->rows(3)->maxLength(1000)->columnSpanFull(),
+                        TagsInput::make('features')->label('Điểm chính')->placeholder('Nhập một ý rồi nhấn Enter')->columnSpanFull(),
+                    ]),
                 ]),
             Block::make('process')
                 ->label('Quy trình / lộ trình')
@@ -239,18 +92,11 @@ class LandingExperienceSchema
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    Repeater::make('items')
-                        ->label('Các bước')
-                        ->schema([
-                            TextInput::make('step')->label('Số bước')->maxLength(20),
-                            TextInput::make('title')->label('Tên bước')->required()->maxLength(255),
-                            Textarea::make('description')->label('Mô tả')->rows(3)->maxLength(1000)->columnSpanFull(),
-                        ])
-                        ->reorderable()
-                        ->cloneable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
-                        ->columnSpanFull(),
+                    self::itemsRepeater('Các bước', [
+                        TextInput::make('step')->label('Số bước')->maxLength(20),
+                        TextInput::make('title')->label('Tên bước')->required()->maxLength(255),
+                        Textarea::make('description')->label('Mô tả')->rows(3)->maxLength(1000)->columnSpanFull(),
+                    ]),
                 ]),
             Block::make('stats')
                 ->label('Số liệu nổi bật')
@@ -267,80 +113,41 @@ class LandingExperienceSchema
                         ])
                         ->columns(2)
                         ->reorderable()
-                        ->cloneable()
+                        ->collapsible()
                         ->columnSpanFull(),
                 ]),
             Block::make('testimonials')
-                ->label('Trích dẫn / phản hồi')
+                ->label('Phản hồi khách hàng')
                 ->icon(Heroicon::OutlinedChatBubbleLeftRight)
                 ->schema([
                     self::blockId(),
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
-                    Repeater::make('items')
-                        ->label('Các trích dẫn')
-                        ->schema([
-                            Textarea::make('quote')->label('Nội dung')->required()->rows(3)->maxLength(1000)->columnSpanFull(),
-                            TextInput::make('author')->label('Người phát biểu')->maxLength(150),
-                            TextInput::make('role')->label('Vai trò / đơn vị')->maxLength(150),
-                        ])
-                        ->reorderable()
-                        ->cloneable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['author'] ?? 'Trích dẫn mới')
-                        ->columnSpanFull(),
+                    self::itemsRepeater('Các trích dẫn', [
+                        Textarea::make('quote')->label('Nội dung')->required()->rows(3)->maxLength(1000)->columnSpanFull(),
+                        TextInput::make('author')->label('Người phát biểu')->maxLength(150),
+                        TextInput::make('role')->label('Vai trò / đơn vị')->maxLength(150),
+                    ]),
                 ]),
             Block::make('projects')
                 ->label('Dự án liên quan')
                 ->icon(Heroicon::OutlinedPhoto)
-                ->schema([
-                    self::blockId(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Dự án liên quan')->maxLength(255)->columnSpanFull(),
-                    Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    TextInput::make('limit')->label('Số dự án tối đa')->numeric()->minValue(1)->maxValue(12)->default(6),
-                ])
-                ->columns(2),
-            Block::make('service_categories')
-                ->label('Danh mục dịch vụ')
-                ->icon(Heroicon::OutlinedTag)
-                ->schema([
-                    self::blockId(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Danh mục dịch vụ')->maxLength(255)->columnSpanFull(),
-                    Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    TextInput::make('limit')->label('Số danh mục tối đa')->numeric()->minValue(1)->maxValue(12)->default(6),
-                ])
-                ->columns(2),
+                ->schema(self::linkedContentFields('Dự án liên quan', 'Số dự án tối đa', 'Dự án liên quan')),
             Block::make('services')
                 ->label('Dịch vụ liên quan')
                 ->icon(Heroicon::OutlinedBriefcase)
-                ->schema([
-                    self::blockId(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Dịch vụ liên quan')->maxLength(255)->columnSpanFull(),
-                    Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    TextInput::make('limit')->label('Số dịch vụ tối đa')->numeric()->minValue(1)->maxValue(12)->default(6),
-                ])
-                ->columns(2),
+                ->schema(self::linkedContentFields('Dịch vụ liên quan', 'Số dịch vụ tối đa', 'Dịch vụ liên quan')),
             Block::make('posts')
-                ->label('Bài viết / blog liên quan')
+                ->label('Bài viết liên quan')
                 ->icon(Heroicon::OutlinedNewspaper)
-                ->schema([
-                    self::blockId(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Bài viết liên quan')->maxLength(255)->columnSpanFull(),
-                    Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    TextInput::make('limit')->label('Số bài viết tối đa')->numeric()->minValue(1)->maxValue(12)->default(6),
-                ])
-                ->columns(2),
+                ->schema(self::linkedContentFields('Bài viết / blog liên quan', 'Số bài viết tối đa', 'Bài viết liên quan')),
             Block::make('pricing')
-                ->label('Bảng giá / gói hỗ trợ')
+                ->label('Bảng giá')
                 ->icon(Heroicon::OutlinedReceiptPercent)
                 ->schema([
                     self::blockId(),
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Gói hỗ trợ')->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')->label('Tiêu đề')->default('Bảng giá dịch vụ')->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
                 ]),
             Block::make('rich_text')
@@ -350,7 +157,12 @@ class LandingExperienceSchema
                     self::blockId(),
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
                     TextInput::make('title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                    RichEditor::make('body')->label('Nội dung')->columnSpanFull(),
+                    RichEditor::make('body')
+                        ->label('Nội dung')
+                        ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                        ->enableToolbarButtons(['attachCuratorMedia'])
+                        ->disableToolbarButtons(['attachFiles'])
+                        ->columnSpanFull(),
                 ]),
             Block::make('gallery')
                 ->label('Thư viện hình ảnh')
@@ -358,7 +170,7 @@ class LandingExperienceSchema
                 ->schema([
                     self::blockId(),
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
-                    TextInput::make('title')->label('Tiêu đề')->default('Hình ảnh chương trình')->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')->label('Tiêu đề')->default('Hình ảnh')->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
                     CuratorPicker::make('media_ids')->label('Hình ảnh')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                 ]),
@@ -370,27 +182,20 @@ class LandingExperienceSchema
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
                     TextInput::make('title')->label('Tiêu đề')->default('Câu hỏi thường gặp')->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    Repeater::make('items')
-                        ->label('Danh sách câu hỏi')
-                        ->schema([
-                            TextInput::make('question')->label('Câu hỏi')->required()->maxLength(500)->columnSpanFull(),
-                            Textarea::make('answer')->label('Trả lời')->required()->rows(4)->columnSpanFull(),
-                        ])
-                        ->reorderable()
-                        ->cloneable()
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => $state['question'] ?? 'Câu hỏi mới')
-                        ->columnSpanFull(),
+                    self::itemsRepeater('Danh sách câu hỏi', [
+                        TextInput::make('question')->label('Câu hỏi')->required()->maxLength(500)->columnSpanFull(),
+                        Textarea::make('answer')->label('Trả lời')->required()->rows(4)->columnSpanFull(),
+                    ]),
                 ]),
             Block::make('lead_form')
-                ->label('Form đăng ký')
+                ->label('Form tư vấn')
                 ->icon(Heroicon::OutlinedInboxArrowDown)
                 ->maxItems(1)
                 ->schema([
                     self::blockId(),
-                    TextInput::make('title')->label('Tiêu đề')->default('Đăng ký nhận hỗ trợ')->required()->maxLength(255)->columnSpanFull(),
+                    TextInput::make('title')->label('Tiêu đề')->default('Đăng ký nhận tư vấn')->required()->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(3)->maxLength(1000)->columnSpanFull(),
-                    TextInput::make('button_label')->label('Nhãn nút gửi')->default('Gửi thông tin đăng ký')->maxLength(100),
+                    TextInput::make('button_label')->label('Nhãn nút gửi')->default('Gửi thông tin')->maxLength(100),
                 ]),
             Block::make('cta')
                 ->label('Kêu gọi hành động')
@@ -400,11 +205,36 @@ class LandingExperienceSchema
                     TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
-                    TextInput::make('cta_label')->label('Nhãn nút')->default('Đăng ký ngay')->maxLength(100),
+                    TextInput::make('cta_label')->label('Nhãn nút')->default('Liên hệ')->maxLength(100),
                     TextInput::make('cta_url')->label('Liên kết')->default('#tu-van')->maxLength(2048),
                 ])
                 ->columns(2),
         ];
+    }
+
+    /** @return array<int, mixed> */
+    private static function linkedContentFields(string $title, string $limitLabel, string $defaultTitle): array
+    {
+        return [
+            self::blockId(),
+            TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(150),
+            TextInput::make('title')->label('Tiêu đề')->default($defaultTitle)->maxLength(255)->columnSpanFull(),
+            Textarea::make('description')->label('Mô tả')->rows(2)->maxLength(1000)->columnSpanFull(),
+            TextInput::make('limit')->label($limitLabel)->numeric()->minValue(1)->maxValue(12)->default(6),
+        ];
+    }
+
+    /** @param array<int, mixed> $schema */
+    private static function itemsRepeater(string $label, array $schema): Repeater
+    {
+        return Repeater::make('items')
+            ->label($label)
+            ->schema($schema)
+            ->reorderable()
+            ->cloneable()
+            ->collapsible()
+            ->itemLabel(fn (array $state): ?string => $state['title'] ?? $state['question'] ?? $state['author'] ?? 'Mục mới')
+            ->columnSpanFull();
     }
 
     private static function blockId(): Hidden

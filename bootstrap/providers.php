@@ -1,9 +1,13 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\FrontendServiceProvider;
+use App\Providers\TrackingServiceProvider;
+
 return [
-    App\Providers\TrackingServiceProvider::class,
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\AdminPanelProvider::class,
-    App\Providers\Filament\BniPanelProvider::class,
-    App\Providers\FrontendServiceProvider::class,
+    TrackingServiceProvider::class,
+    AppServiceProvider::class,
+    AdminPanelProvider::class,
+    FrontendServiceProvider::class,
 ];

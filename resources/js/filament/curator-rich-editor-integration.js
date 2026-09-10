@@ -1,18 +1,18 @@
 /**
  * Scope Curator's media selection event to the RichEditor that opened it.
  *
- * Curator uses the same `insert-media` browser event for every CuratorPicker.
- * Without these guards, selecting a featured image can be inserted into the
- * first RichEditor on the form as well.
+ * Curator uses the same `insert-media` browser event for every picker. The
+ * event context and the editor captured when its toolbar button was clicked
+ * keep normal media fields from being inserted into a RichEditor.
  */
 (() => {
     'use strict'
 
-    if (window.__thtCuratorRichEditorInitialized) {
+    if (window.__dvtecCuratorRichEditorInitialized) {
         return
     }
 
-    window.__thtCuratorRichEditorInitialized = true
+    window.__dvtecCuratorRichEditorInitialized = true
 
     let editorContext = null
     let processing = false
@@ -72,11 +72,13 @@
             data = data[0]
         }
 
+        if (data?.context !== 'richEditor') {
+            return
+        }
+
         const { statePath, media } = data ?? {}
 
-        // CuratorPicker fields such as curator_media_id and gallery must only
-        // update themselves. This integration handles the RichEditor's body.
-        if (!/(^|\.)body$/.test(statePath ?? '') || !media) {
+        if (!statePath || !media) {
             return
         }
 

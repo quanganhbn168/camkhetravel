@@ -1,21 +1,9 @@
 <?php
 
 use App\Http\Controllers\Frontend\AboutController;
-use App\Http\Controllers\Frontend\BniArticleController;
-use App\Http\Controllers\Frontend\BniChapterController;
-use App\Http\Controllers\Frontend\BniGalleryController;
-use App\Http\Controllers\Frontend\BniHandoverController;
-use App\Http\Controllers\Frontend\BniInteractionController;
-use App\Http\Controllers\Frontend\BniInvitationController;
-use App\Http\Controllers\Frontend\BniManifestController;
-use App\Http\Controllers\Frontend\BniMemberAuthController;
-use App\Http\Controllers\Frontend\BniPickleballController;
-use App\Http\Controllers\Frontend\BniRegistrationController;
 use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\ContactController;
-use App\Http\Controllers\Frontend\EventController;
 use App\Http\Controllers\Frontend\HomeController;
-use App\Http\Controllers\Frontend\LandingTrackingController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\PricingController;
 use App\Http\Controllers\Frontend\ProjectController;
@@ -37,13 +25,8 @@ Route::get('/favicon.ico', function (FaviconService $favicons) {
     ]);
 });
 
-Route::get('/bni-manifest', BniManifestController::class)->name('bni.manifest');
-
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
-Route::post('/landing-page/{landingPage:id}/track', LandingTrackingController::class)
-    ->middleware('throttle:landing-tracking')
-    ->name('landing-pages.track');
 
 Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::get('/', HomeController::class)->name('home');
@@ -56,33 +39,6 @@ Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::get('/du-an/{slug}', [ProjectController::class, 'showBySlug'])->name('projects.show');
     Route::get('/bang-gia', [PricingController::class, 'index'])->name('pricing.index');
     Route::get('/gioi-thieu', AboutController::class)->name('about');
-    Route::get('/su-kien', fn () => redirect()->route('bni.events.index'));
-    Route::get('/le-chuyen-giao/su-kien', [EventController::class, 'index'])->name('bni.events.index');
-    Route::get('/le-chuyen-giao/su-kien/{event:slug}', [EventController::class, 'show'])->name('bni.events.show');
-    Route::get('/le-chuyen-giao-bni', fn () => redirect()->route('bni.handover', status: 301));
-    Route::get('/le-chuyen-giao', BniHandoverController::class)->name('bni.handover');
-    Route::get('/le-chuyen-giao/dang-ky', [BniRegistrationController::class, 'create'])->name('bni.registrations.create');
-    Route::post('/le-chuyen-giao/dang-ky', [BniRegistrationController::class, 'store'])->middleware('throttle:frontend-contact')->name('bni.registrations.store');
-    Route::get('/le-chuyen-giao/chapter/{chapter:slug}', [BniChapterController::class, 'show'])->name('bni.chapters.show');
-    Route::get('/le-chuyen-giao/pickleball', [BniPickleballController::class, 'index'])->name('bni.pickleball');
-    Route::post('/le-chuyen-giao/pickleball/dang-ky', [BniPickleballController::class, 'store'])->middleware('throttle:frontend-contact')->name('bni.pickleball.register');
-    Route::get('/le-chuyen-giao/thu-vien-anh', [BniGalleryController::class, 'index'])->name('bni.gallery.index');
-    Route::post('/le-chuyen-giao/thu-vien-anh/gui-anh', [BniGalleryController::class, 'store'])->middleware('throttle:bni-gallery-upload')->name('bni.gallery.store');
-    Route::get('/le-chuyen-giao/thu-vien-anh/{galleryItem}', [BniGalleryController::class, 'show'])->name('bni.gallery.show');
-    Route::post('/le-chuyen-giao/thu-vien-anh/{galleryItem}/binh-luan', [BniGalleryController::class, 'comment'])->middleware('throttle:frontend-comment')->name('bni.gallery.comments.store');
-    Route::get('/le-chuyen-giao/thu-moi', [BniInvitationController::class, 'template'])->name('bni.invitations.template');
-    Route::post('/le-chuyen-giao/thu-moi/rsvp', [BniInvitationController::class, 'templateRsvp'])->middleware('throttle:frontend-contact')->name('bni.invitations.template.rsvp');
-    Route::get('/le-chuyen-giao/thu-moi/{invitation}', [BniInvitationController::class, 'show'])->name('bni.invitations.show');
-    Route::post('/le-chuyen-giao/thu-moi/{invitation}/rsvp', [BniInvitationController::class, 'rsvp'])->middleware('throttle:frontend-contact')->name('bni.invitations.rsvp');
-    Route::get('/le-chuyen-giao/tin-tuc', [BniArticleController::class, 'index'])->name('bni.articles.index');
-    Route::get('/le-chuyen-giao/tin-tuc/{article}', [BniArticleController::class, 'show'])->name('bni.articles.show');
-    Route::post('/le-chuyen-giao/tin-tuc/{article}/binh-luan', [BniInteractionController::class, 'comment'])->middleware(['auth', 'throttle:frontend-comment'])->name('bni.articles.comments.store');
-    Route::post('/le-chuyen-giao/tin-tuc/{article}/cam-xuc', [BniInteractionController::class, 'react'])->middleware(['auth', 'throttle:frontend-comment'])->name('bni.articles.reactions.store');
-    Route::middleware('guest')->group(function (): void {
-        Route::get('/le-chuyen-giao/dang-nhap', [BniMemberAuthController::class, 'create'])->name('bni.member.login');
-        Route::post('/le-chuyen-giao/dang-nhap', [BniMemberAuthController::class, 'store'])->middleware('throttle:login')->name('bni.member.login.store');
-    });
-    Route::post('/le-chuyen-giao/dang-xuat', [BniMemberAuthController::class, 'destroy'])->middleware('auth')->name('bni.member.logout');
     Route::get('/lien-he', [ContactController::class, 'index'])->name('contact');
     Route::post('/lien-he', [ContactController::class, 'store'])->middleware('throttle:frontend-contact')->name('contact.store');
     Route::post('/binh-luan/{post:id}', [CommentController::class, 'store'])->middleware('throttle:frontend-comment')->name('comments.store');

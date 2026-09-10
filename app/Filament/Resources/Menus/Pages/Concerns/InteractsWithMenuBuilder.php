@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Menus\Pages\Concerns;
 
-use App\Filament\Resources\Menus\MenuResource;
+use App\Filament\Resources\Menus\Schemas\MenuForm;
 use App\Models\Intro;
 use App\Models\LandingPage;
 use App\Models\Post;
@@ -100,7 +100,7 @@ trait InteractsWithMenuBuilder
     private function sourceItemState(string $type, string $sourceId): ?array
     {
         if ($type === 'route') {
-            $label = MenuResource::routeOptions()[$sourceId] ?? null;
+            $label = MenuForm::routeOptions()[$sourceId] ?? null;
 
             return $label === null ? null : [
                 'label' => $label,

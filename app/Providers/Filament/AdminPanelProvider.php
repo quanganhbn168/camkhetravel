@@ -60,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed(),
                 NavigationGroup::make('Trang chủ')
                     ->collapsed(),
-                NavigationGroup::make('Khách hàng & tracking'),
+                NavigationGroup::make('Khách hàng'),
                 NavigationGroup::make('SEO & media')
                     ->collapsed(),
                 NavigationGroup::make('Hệ thống')

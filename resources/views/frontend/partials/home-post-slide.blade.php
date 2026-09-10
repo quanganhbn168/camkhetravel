@@ -6,7 +6,7 @@
             @if ($post->image_url)
                 <img class="h-full w-full object-cover transition duration-700 group-hover:scale-105" src="{{ $post->image_url }}" alt="{{ $post->title }}" loading="lazy">
             @else
-                <span class="image-placeholder">THT</span>
+                <span class="image-placeholder">DV</span>
             @endif
 
             @if ($post->categories->first())

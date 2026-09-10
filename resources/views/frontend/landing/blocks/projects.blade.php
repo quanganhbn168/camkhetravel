@@ -1,5 +1,3 @@
-@use(App\Support\Landing\LandingRegistry)
-
 @php($data = $block['data'])
 
 @if ($block['projects']->isNotEmpty())
@@ -15,10 +13,10 @@
             </header>
             <div class="landing-projects__grid">
                 @foreach ($block['projects'] as $project)
-                    <div data-landing-event="project_click" data-block-id="{{ $block['id'] }}" data-project-id="{{ $project->id }}">
+                    <div>
                         @include('frontend.partials.project-card', [
                             'project' => $project,
-                            'showVideoCue' => $landingPage->template_key === LandingRegistry::CORPORATE_FILM && filled($project->video_url),
+                        'showVideoCue' => filled($project->video_url),
                         ])
                     </div>
                 @endforeach

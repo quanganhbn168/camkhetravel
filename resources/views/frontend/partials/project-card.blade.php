@@ -5,7 +5,7 @@
         @if ($project->image_url)
             <img src="{{ $project->image_url }}" alt="{{ $project->title }}" loading="lazy">
         @else
-            <span class="image-placeholder">THT</span>
+            <span class="image-placeholder">DV</span>
         @endif
         @if ($project->category)
             <span class="resource-card__badge">{{ $project->category->name }}</span>

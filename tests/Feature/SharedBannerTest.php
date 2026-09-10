@@ -5,13 +5,21 @@ namespace Tests\Feature;
 use App\Settings\WebsiteSettings;
 use App\Support\Media\MediaUrl;
 use Awcodes\Curator\Models\Media;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Database\Seeders\WebsiteSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\View;
 use Tests\TestCase;
 
 class SharedBannerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(WebsiteSeeder::class);
+    }
 
     public function test_contact_prefers_its_own_banner_and_falls_back_when_cleared(): void
     {

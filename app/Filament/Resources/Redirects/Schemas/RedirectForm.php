@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Redirects\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -35,16 +34,6 @@ class RedirectForm
                     ->label('Nguồn')
                     ->required()
                     ->default('manual'),
-                TextInput::make('hits')
-                    ->label('Lượt truy cập')
-                    ->numeric()
-                    ->default(0)
-                    ->disabled()
-                    ->dehydrated(),
-                DateTimePicker::make('last_hit_at')
-                    ->label('Truy cập gần nhất')
-                    ->disabled()
-                    ->dehydrated(),
             ]);
     }
 }

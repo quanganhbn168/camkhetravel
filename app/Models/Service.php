@@ -31,7 +31,6 @@ class Service extends Model
             'stats_items' => 'array',
             'reference_videos' => 'array',
             'commitment_items' => 'array',
-            'landing_content' => 'array',
             'is_featured' => 'boolean',
             'is_home' => 'boolean',
             'published_at' => 'datetime',
@@ -78,11 +77,6 @@ class Service extends Model
         return $this->belongsToMany(LandingPage::class, 'landing_page_service')
             ->withPivot('sort_order')
             ->withTimestamps();
-    }
-
-    public function events(): HasMany
-    {
-        return $this->hasMany(LandingEvent::class, 'service_id');
     }
 
     public function contactRequests(): HasMany

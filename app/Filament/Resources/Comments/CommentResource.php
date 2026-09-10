@@ -25,7 +25,7 @@ class CommentResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Khách hàng & tracking';
+        return 'Khách hàng';
     }
 
     public static function getModelLabel(): string

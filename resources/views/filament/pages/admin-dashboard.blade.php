@@ -9,7 +9,7 @@
                 <div class="max-w-3xl">
                     <p class="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">Trung tâm quản trị</p>
                     <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Tổng quan website</h2>
-                    <p class="mt-3 text-sm leading-6 text-white/80 sm:text-base">Theo dõi nội dung, các kênh chuyển đổi và những việc cần xử lý trong một màn hình chung của THT Media.</p>
+                    <p class="mt-3 text-sm leading-6 text-white/80 sm:text-base">Quản lý nội dung, thư viện media và các yêu cầu tư vấn của DVTEC trong một màn hình chung.</p>
                 </div>
                 <div class="rounded-xl bg-white/10 px-4 py-3 text-sm text-white/90 ring-1 ring-inset ring-white/15">
                     <span class="block text-xs uppercase tracking-wide text-white/60">Cập nhật lúc</span>
@@ -111,14 +111,5 @@
             </x-filament::section>
         </div>
 
-        <section class="rounded-xl border border-primary-200 bg-primary-50/70 p-5 dark:border-primary-500/20 dark:bg-primary-500/10">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                    <h2 class="text-base font-semibold text-primary-950 dark:text-primary-100">Landing page và tracking</h2>
-                    <p class="mt-1 text-sm leading-6 text-primary-800 dark:text-primary-200">Hệ thống có {{ number_format($data['active_template_count']) }}/{{ number_format($data['template_count']) }} template landing đang hoạt động. Báo cáo lượt xem, nguồn traffic và chuyển đổi nằm ở khu vực tracking riêng.</p>
-                </div>
-                <a href="{{ \App\Filament\Pages\LandingTrackingDashboard::getUrl() }}" class="inline-flex shrink-0 items-center justify-center rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-500">Mở báo cáo tracking</a>
-            </div>
-        </section>
     </div>
 </x-filament-panels::page>

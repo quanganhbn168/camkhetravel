@@ -32,14 +32,6 @@ class RedirectsTable
                 IconColumn::make('is_active')
                     ->label('Bật')
                     ->boolean(),
-                TextColumn::make('hits')
-                    ->label('Lượt')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('last_hit_at')
-                    ->label('Gần nhất')
-                    ->dateTime()
-                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

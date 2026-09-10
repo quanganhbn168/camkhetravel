@@ -30,6 +30,11 @@ abstract class CategoryResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
+        return static::baseForm($schema);
+    }
+
+    public static function baseForm(Schema $schema): Schema
+    {
         return $schema->components([
             Section::make('Danh mục')
                 ->icon(Heroicon::OutlinedTag)
@@ -64,6 +69,11 @@ abstract class CategoryResource extends Resource
     }
 
     public static function table(Table $table): Table
+    {
+        return static::baseTable($table);
+    }
+
+    public static function baseTable(Table $table): Table
     {
         return $table
             ->columns([

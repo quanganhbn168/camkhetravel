@@ -38,7 +38,7 @@
                 @endif
 
                 @if ($slide['video_url'])
-                    <a class="hero-video-play glightbox" href="{{ $slide['video_url'] }}" data-type="video" data-source="{{ $slide['video_source'] === 'youtube' ? 'youtube' : 'local' }}" data-gallery="hero-video-{{ $loop->index }}" data-title="{{ $slide['title'] ?: 'Video THT Media' }}" target="_blank" rel="noopener" aria-label="Phát video {{ $slide['title'] ?: 'THT Media' }}">
+                    <a class="hero-video-play glightbox" href="{{ $slide['video_url'] }}" data-type="video" data-source="{{ $slide['video_source'] === 'youtube' ? 'youtube' : 'local' }}" data-gallery="hero-video-{{ $loop->index }}" data-title="{{ $slide['title'] ?: 'Video DVTEC' }}" target="_blank" rel="noopener" aria-label="Phát video {{ $slide['title'] ?: 'DVTEC' }}">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.1v13.8L19 12 8 5.1Z"/></svg>
                     </a>
                 @endif
@@ -119,7 +119,7 @@
                 @if ($aboutImageUrl)
                     <img class="h-full w-full object-cover" src="{{ $aboutImageUrl }}" alt="{{ $about['title'] }}" loading="lazy">
                 @else
-                    <span class="image-placeholder">THT</span>
+                    <span class="image-placeholder">DV</span>
                 @endif
             </div>
             <div data-aos="fade-left">
@@ -161,7 +161,7 @@
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
                 <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Các dịch vụ khác</h2>
-                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">Khám phá thêm các dịch vụ của THT Media.</p>
+                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">Khám phá thêm các dịch vụ của DVTEC.</p>
             </div>
             <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">{{ __('site.all_services') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </div>
@@ -295,7 +295,7 @@
 
     <section class="home-news section-space" id="tin-tuc">
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-news__header">
-            <div data-aos="fade-up"><h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Tin tức & kiến thức</h2><p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Cập nhật mới nhất từ THT Media.</p></div>
+            <div data-aos="fade-up"><h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Tin tức & kiến thức</h2><p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Cập nhật mới nhất từ DVTEC.</p></div>
             <a class="section-link" href="{{ LocalizedUrl::route('posts.index') }}">{{ __('site.view_news') }} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
         </div>
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-news__slider" data-aos="fade-up" data-aos-delay="100">

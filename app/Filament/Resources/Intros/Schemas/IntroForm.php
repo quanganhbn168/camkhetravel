@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Intros\Schemas;
 
+use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
+use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
@@ -37,8 +38,8 @@ class IntroForm
                             ->maxLength(255)
                             ->columnSpanFull(),
 
-                        TextInput::make('slug')->label('Đường dẫn bài giới thiệu')->helperText('Chữ thường, số và dấu gạch ngang. Bài có trang riêng, độc lập với giới thiệu trên trang chủ.')
-                            ->maxLength(180)->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/')->unique(ignoreRecord: true)
+                        TextInput::make('slug')->label('Đường dẫn bài giới thiệu')->helperText('Chữ thường, số và dấu gạch ngang. Slug được lưu chung trong hệ thống URL; bài có trang riêng, độc lập với giới thiệu trên trang chủ.')
+                            ->maxLength(180)->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/')
                             ->required(fn (Get $get): bool => $get('kind') === 'article')
                             ->visible(fn (Get $get): bool => $get('kind') === 'article'),
                         Textarea::make('summary')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
@@ -52,17 +53,19 @@ class IntroForm
                             ->maxLength(100)
                             ->helperText('Bỏ trống nếu dùng ảnh'),
 
-                        FileUpload::make('image')
+                        CuratorPicker::make('curator_media_id')
                             ->label('Ảnh minh họa')
-                            ->image()
+                            ->relationship('curatorMedia', 'id')
                             ->disk('public')
-                            ->directory('upload/intros')
-                            ->visibility('public')
-                            ->imagePreviewHeight('180')
+                            ->constrained()
+                            ->acceptedFileTypes(['image/*'])
                             ->columnSpanFull(),
 
-                        RichEditor::make('content')->fileAttachmentsDisk('public')->fileAttachmentsDirectory('intros/content')
+                        RichEditor::make('content')
                             ->label('Nội dung')
+                            ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                            ->enableToolbarButtons(['attachCuratorMedia'])
+                            ->disableToolbarButtons(['attachFiles'])
                             ->columnSpanFull(),    // full toolbar mặc định — không cần chỉ định
                     ])
                     ->columns(2),

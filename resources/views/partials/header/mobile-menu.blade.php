@@ -1,10 +1,10 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 <div class="fixed inset-0 z-[70] xl:hidden" x-cloak x-show="open">
-        <div class="absolute inset-0 bg-midnight/55 backdrop-blur-sm" x-transition.opacity @click="open = false"></div>
+        <div class="absolute inset-0 bg-ink/55 backdrop-blur-sm" x-transition.opacity @click="open = false"></div>
         <aside id="mobile-drawer" class="absolute inset-y-0 right-0 flex w-[min(100%-1.25rem,24rem)] flex-col bg-white shadow-[-24px_0_60px_rgba(8,26,49,0.2)]" x-transition:enter="transform transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" @click.stop role="dialog" aria-modal="true" aria-label="Menu điều hướng">
             <div class="flex min-h-20 items-center justify-between border-b border-slate-100 px-5">
-                <span class="font-display text-xl font-semibold text-ink">Khám phá THT Media</span>
+                <span class="font-display text-xl font-semibold text-ink">Khám phá DVTEC</span>
                 <button class="grid size-10 place-items-center rounded-xl border border-slate-200 text-ink transition hover:bg-slate-50" type="button" @click="open = false">
                     <span class="sr-only">Đóng menu</span>
                     <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>

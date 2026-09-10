@@ -1,5 +1,4 @@
 @forelse ($landingBlocks as $block)
-    @continue($landingCampaignState === 'expired' && $landingPage->expired_behavior === 'hide_offer' && in_array($block['type'], ['countdown', 'benefits', 'pricing'], true))
     @include($block['view'], ['block' => $block, 'landingPage' => $landingPage])
 @empty
     <section class="landing-empty-state">

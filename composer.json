@@ -1,22 +1,19 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "dvtec/website",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "The DVTEC website and content management system.",
+    "keywords": ["laravel", "filament", "curator", "cms"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
         "awcodes/filament-curator": "^5.3",
         "bezhansalleh/filament-shield": "^4.3",
         "filament/filament": "^5.7",
-        "filament/spatie-laravel-media-library-plugin": "^5.7",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",
-        "spatie/laravel-medialibrary": "^11.23",
         "spatie/laravel-permission": "^8.3",
-        "spatie/laravel-settings": "^3.9",
-        "spatie/laravel-sitemap": "^8.0"
+        "spatie/laravel-settings": "^3.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -53,7 +50,6 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
-            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
         ],
         "dev": [
@@ -62,9 +58,6 @@
         ]
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "12.x-dev"
-        },
         "laravel": {
             "dont-discover": []
         }
@@ -74,10 +67,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

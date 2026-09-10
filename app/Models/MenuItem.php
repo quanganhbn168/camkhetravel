@@ -58,7 +58,7 @@ class MenuItem extends Model
     public function getLinkAttribute(): string
     {
         return match ($this->linkType()) {
-            'intro' => Intro::query()->published()->find($this->linked_source_id)?->url ?? '#',
+            'intro' => Intro::query()->published()->with('slugs')->find($this->linked_source_id)?->url ?? '#',
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
             'service-category' => $this->serviceCategoryLink(),
@@ -130,9 +130,6 @@ class MenuItem extends Model
             'pricing.index',
             'projects.index',
             'posts.index',
-            'bni.events.index',
-            'bni.handover',
-            'bni.pickleball',
             'contact',
             'search',
         ];

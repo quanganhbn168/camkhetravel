@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Concerns\PreservesUnchangedSettings;
 use App\Filament\Forms\Components\GalleryPicker;
 use App\Filament\Forms\TrackingSchema;
+use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Language;
 use App\Models\Menu;
 use App\Settings\AboutSettings;
@@ -149,15 +150,8 @@ class ManageSettings extends Page
             'color_primary' => $design->color_primary,
             'color_primary_hover' => $design->color_primary_hover,
             'color_ink' => $design->color_ink,
-            'color_midnight' => $design->color_midnight,
             'color_surface' => $design->color_surface,
             'color_muted' => $design->color_muted,
-            'color_green_light' => $design->color_green_light,
-            'color_green_dark' => $design->color_green_dark,
-            'gradient_green_dark_start' => $design->gradient_green_dark_start,
-            'gradient_green_dark_end' => $design->gradient_green_dark_end,
-            'gradient_green_light_start' => $design->gradient_green_light_start,
-            'gradient_green_light_end' => $design->gradient_green_light_end,
             'font_size_base' => $design->font_size_base,
             'font_size_body' => $design->font_size_body,
             'font_size_small' => $design->font_size_small,
@@ -543,7 +537,7 @@ class ManageSettings extends Page
                 ->schema([
                     CuratorPicker::make('default_image_media_id')->label('Ảnh mặc định trang Giới thiệu')->helperText('Độc lập với ảnh giới thiệu trên trang chủ.'),
                     CuratorPicker::make('story_image_media_id')
-                        ->label('Ảnh Câu chuyện THT Media')
+                        ->label('Ảnh câu chuyện DVTEC')
                         ->disk('public')
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
@@ -567,7 +561,7 @@ class ManageSettings extends Page
                         ->acceptedFileTypes(['image/*'])
                         ->columnSpanFull(),
                     GalleryPicker::make('office_gallery')
-                        ->label('Gallery Văn phòng THT Media')
+                        ->label('Gallery văn phòng DVTEC')
                         ->multiple()
                         ->disk('public')
                         ->constrained()
@@ -634,6 +628,9 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
                         RichEditor::make("story.{$locale}")
                             ->label('Nội dung câu chuyện')
+                            ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                            ->enableToolbarButtons(['attachCuratorMedia'])
+                            ->disableToolbarButtons(['attachFiles'])
                             ->columnSpanFull(),
                     ])
                     ->columns(1),
@@ -646,7 +643,12 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
                         Textarea::make("mission.{$locale}")->label('Sứ mệnh')->rows(4),
                         Textarea::make("vision.{$locale}")->label('Tầm nhìn')->rows(4),
-                        RichEditor::make("core_values.{$locale}")->label('Giá trị cốt lõi')->columnSpanFull(),
+                        RichEditor::make("core_values.{$locale}")
+                            ->label('Giá trị cốt lõi')
+                            ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                            ->enableToolbarButtons(['attachCuratorMedia'])
+                            ->disableToolbarButtons(['attachFiles'])
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
                 Section::make('Lịch sử hình thành')
@@ -726,7 +728,7 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
                     ])
                     ->columns(1),
-                Section::make('Văn phòng THT Media')
+                Section::make('Văn phòng DVTEC')
                     ->icon(Heroicon::OutlinedBuildingOffice2)
                     ->schema([
                         TextInput::make("office_title.{$locale}")
@@ -760,27 +762,15 @@ class ManageSettings extends Page
         return [
             Section::make('Bảng màu frontend')
                 ->icon(Heroicon::OutlinedSwatch)
-                ->description('Cam là màu chủ đạo; xanh THT dùng cho điều hướng và điểm nhấn riêng. Màu chữ, nền sáng và nền phụ giữ trung tính để không nhuộm xanh toàn trang.')
+                ->description('Cam là màu chủ đạo; màu đậm dùng cho điều hướng và điểm nhấn. Màu chữ, nền sáng và nền phụ giữ trung tính.')
                 ->schema([
                     ColorPicker::make('color_primary')->label('Cam chủ đạo')->required(),
                     ColorPicker::make('color_primary_hover')->label('Cam khi hover')->required(),
                     ColorPicker::make('color_ink')->label('Chữ / nền đậm trung tính')->required(),
-                    ColorPicker::make('color_midnight')->label('Xanh thanh điều hướng')->required(),
                     ColorPicker::make('color_surface')->label('Nền sáng trung tính')->required(),
                     ColorPicker::make('color_muted')->label('Nền phụ trung tính')->required(),
-                    ColorPicker::make('color_green_light')->label('Xanh THT sáng')->required(),
-                    ColorPicker::make('color_green_dark')->label('Xanh THT đậm')->required(),
                 ])
-                ->columns(4),
-            Section::make('Gradient thương hiệu')
-                ->icon(Heroicon::OutlinedSparkles)
-                ->schema([
-                    ColorPicker::make('gradient_green_dark_start')->label('gradient-green-dark-start')->required(),
-                    ColorPicker::make('gradient_green_dark_end')->label('gradient-green-dark-end')->required(),
-                    ColorPicker::make('gradient_green_light_start')->label('gradient-green-light-start')->required(),
-                    ColorPicker::make('gradient_green_light_end')->label('gradient-green-light-end')->required(),
-                ])
-                ->columns(2),
+                ->columns(3),
             Section::make('Typography website')
                 ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
                 ->description('Các cỡ chữ semantic dùng xuyên suốt frontend. Có thể nhập đơn vị rem hoặc biểu thức clamp().')
@@ -820,7 +810,7 @@ class ManageSettings extends Page
                     throw new RuntimeException('Không tìm thấy favicon đã chọn trong kho media.');
                 }
                 $favicons->sync($media);
-            } catch (RuntimeException | ErrorException $exception) {
+            } catch (RuntimeException|ErrorException $exception) {
                 report($exception);
                 throw ValidationException::withMessages([
                     'data.favicon_media_id' => 'Chưa lưu được favicon. Kiểm tra file nguồn và quyền ghi bộ favicon trong public, sau đó lưu lại.',
@@ -1011,7 +1001,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveDesign(DesignSettings $design, array $data): void
     {
-        foreach (['color_primary', 'color_primary_hover', 'color_ink', 'color_midnight', 'color_surface', 'color_muted', 'color_green_light', 'color_green_dark', 'gradient_green_dark_start', 'gradient_green_dark_end', 'gradient_green_light_start', 'gradient_green_light_end', 'font_size_base', 'font_size_body', 'font_size_small', 'font_size_h1', 'font_size_h2', 'font_size_h3', 'font_size_stat'] as $key) {
+        foreach (['color_primary', 'color_primary_hover', 'color_ink', 'color_surface', 'color_muted', 'font_size_base', 'font_size_body', 'font_size_small', 'font_size_h1', 'font_size_h2', 'font_size_h3', 'font_size_stat'] as $key) {
             $design->{$key} = (string) ($data[$key] ?? '');
         }
 

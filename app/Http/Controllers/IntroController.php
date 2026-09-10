@@ -11,12 +11,18 @@ class IntroController extends Controller
 {
     public function __invoke(string $slug): View
     {
-        $intro = Intro::query()->published()->where('slug', $slug)->firstOrFail();
+        $intro = Intro::query()
+            ->with(['curatorMedia', 'slugs'])
+            ->published()
+            ->whereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug))
+            ->firstOrFail();
+
+        $content = RichContentRenderer::make($intro->content ?? '')->toHtml();
 
         return view('intros.show', [
             'intro' => $intro,
             'seo' => app(FrontendSeoBuilder::class)->listing($intro->meta_title ?: $intro->title, $intro->meta_description ?: $intro->summary ?: '', $intro->url, image: $intro->image_url),
-            'content' => RichContentRenderer::make($intro->content ?? '')->toHtml(),
+            'content' => $content,
             'seoKeywords' => $intro->keywords,
             'seoTitle' => $intro->meta_title ?: $intro->title,
             'seoDescription' => $intro->meta_description ?: $intro->summary,

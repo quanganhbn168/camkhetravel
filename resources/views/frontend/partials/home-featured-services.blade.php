@@ -14,7 +14,7 @@
                             @if ($category->home_image_url)
                                 <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt }}" loading="lazy">
                             @else
-                                <span class="image-placeholder">THT MEDIA</span>
+                                <span class="image-placeholder">DVTEC</span>
                             @endif
                         </a>
                         <div class="home-service-group__content">

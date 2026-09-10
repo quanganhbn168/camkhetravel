@@ -17,7 +17,7 @@
                             </a>
                         @else
                             <a class="service-project-card__media" href="{{ LocalizedUrl::project($project) }}" aria-label="Xem dự án {{ $project->title }}">
-                                <span class="image-placeholder">THT</span>
+                                <span class="image-placeholder">DV</span>
                             </a>
                         @endif
                         <div class="p-6">

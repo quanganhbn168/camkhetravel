@@ -12,13 +12,13 @@
         <div class="grid overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_16px_38px_rgba(31,43,37,0.07)] lg:grid-cols-2">
             <div class="min-h-72 bg-ink lg:min-h-full">
                 @if ($commitmentImageUrl)
-                    <img class="h-full min-h-72 w-full object-cover lg:min-h-[34rem]" src="{{ $commitmentImageUrl }}" alt="{{ $service->commitment_title ?: 'Cam kết của THT MEDIA' }}" loading="lazy">
+                    <img class="h-full min-h-72 w-full object-cover lg:min-h-[34rem]" src="{{ $commitmentImageUrl }}" alt="{{ $service->commitment_title ?: 'Cam kết của DVTEC' }}" loading="lazy">
                 @else
-                    <div class="image-placeholder min-h-72 lg:min-h-[34rem]">THT MEDIA</div>
+                    <div class="image-placeholder min-h-72 lg:min-h-[34rem]">DVTEC</div>
                 @endif
             </div>
             <div class="p-7 md:p-10 lg:p-14">
-                <h2 class="display-title text-3xl leading-tight md:text-4xl">{{ $service->commitment_title ?: 'Cam kết của THT MEDIA' }}</h2>
+                <h2 class="display-title text-3xl leading-tight md:text-4xl">{{ $service->commitment_title ?: 'Cam kết của DVTEC' }}</h2>
                 <p class="mt-5 text-base leading-8 text-slate-600">{{ $service->commitment_description ?: 'Một quy trình rõ ràng và một đầu mối phối hợp xuyên suốt để dịch vụ được triển khai hiệu quả.' }}</p>
                 <ul class="mt-8 grid gap-5 border-t border-slate-200 pt-7">
                     @foreach ($visibleCommitmentItems as $item)

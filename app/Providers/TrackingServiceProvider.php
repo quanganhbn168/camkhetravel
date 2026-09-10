@@ -11,7 +11,7 @@ class TrackingServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        View::composer(['layouts.master', 'layouts.landing', 'layouts.plan'], function (BladeView $view): void {
+        View::composer(['layouts.master', 'layouts.landing'], function (BladeView $view): void {
             $view->with('trackingMarkup', app(TrackingScripts::class)->render($view->getData()['landingTracking'] ?? []));
         });
     }

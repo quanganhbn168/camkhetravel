@@ -17,7 +17,7 @@
                 @if ($about['image_url'])
                     <img src="{{ $about['image_url'] }}" alt="{{ $about['title'] }}" fetchpriority="high">
                 @else
-                    <span class="image-placeholder">THT</span>
+                    <span class="image-placeholder">DV</span>
                 @endif
             </div>
         </div>
@@ -30,7 +30,7 @@
                     @if ($about['story_image_url'])
                         <img src="{{ $about['story_image_url'] }}" alt="{{ $about['story_title'] ?: $about['title'] }}" loading="lazy">
                     @else
-                        <span class="image-placeholder">THT</span>
+                    <span class="image-placeholder">DV</span>
                     @endif
                 </div>
                 <div class="about-page-story__content" data-aos="fade-left">
@@ -60,7 +60,7 @@
                             Trình duyệt của bạn chưa hỗ trợ phát video.
                         </video>
                     @else
-                        <iframe src="{{ $about['video']['url'] }}" title="Video giới thiệu THT Media" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    <iframe src="{{ $about['video']['url'] }}" title="Video giới thiệu DVTEC" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                     @endif
                 </div>
             </div>
@@ -88,7 +88,7 @@
                                 @if ($service->image_url)
                                     <img src="{{ $service->image_url }}" alt="{{ $service->title }}" loading="lazy">
                                 @else
-                                    <span class="image-placeholder">THT</span>
+                                    <span class="image-placeholder">DV</span>
                                 @endif
                             </a>
                             <div class="about-service-card__body">
@@ -140,9 +140,9 @@
                         <article class="about-principle-values" data-aos="fade-up" data-aos-delay="160">
                             <div class="about-principle-values__media">
                                 @if ($about['core_values_image_url'])
-                                    <img src="{{ $about['core_values_image_url'] }}" alt="Giá trị cốt lõi của THT Media" loading="lazy">
+                                    <img src="{{ $about['core_values_image_url'] }}" alt="Giá trị cốt lõi của DVTEC" loading="lazy">
                                 @else
-                                    <span class="image-placeholder">THT</span>
+                                    <span class="image-placeholder">DV</span>
                                 @endif
                             </div>
                             <div class="about-principle-values__content">
@@ -205,7 +205,7 @@
                                 @if ($item['image_url'])
                                     <img src="{{ $item['image_url'] }}" alt="{{ $item['title'] }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
                                 @else
-                                    <span class="image-placeholder">THT</span>
+                                    <span class="image-placeholder">DV</span>
                                 @endif
                             </div>
                             <div class="about-history__content">
@@ -291,7 +291,7 @@
                                                 @if ($member->image_url)
                                                     <img src="{{ $member->image_url }}" alt="{{ $member->name }}" loading="lazy">
                                                 @else
-                                                    <span class="image-placeholder">THT</span>
+                                                    <span class="image-placeholder">DV</span>
                                                 @endif
                                             </div>
                                             <div class="about-team-member__content">

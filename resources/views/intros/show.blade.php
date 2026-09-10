@@ -1,12 +1,12 @@
 @extends('layouts.master')
 @section('title', $seoTitle)
-@section('meta_description', $seoDescription)
-@section('meta_keywords', $seoKeywords)
+@section('meta_description'){{ $seoDescription }}@endsection
+@section('meta_keywords'){{ $seoKeywords }}@endsection
 @section('canonical', $intro->url)
 @section('og_title', $seoTitle)
-@section('og_description', $seoDescription)
+@section('og_description'){{ $seoDescription }}@endsection
 @section('og_type', 'article')
-@section('seo_image', $intro->image_url)
+@section('seo_image'){{ $intro->image_url }}@endsection
 @section('content')
 <article class="container mx-auto px-4 py-12" style="max-width: 56rem">
     <nav aria-label="Đường dẫn" class="mb-6 text-sm"><a href="{{ route('home') }}">Trang chủ</a> / <a href="{{ route('about') }}">Giới thiệu</a></nav>

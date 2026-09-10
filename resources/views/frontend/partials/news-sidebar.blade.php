@@ -20,7 +20,7 @@
                         @if ($featuredPost->image_url)
                             <img class="size-14 shrink-0 rounded-lg object-cover" src="{{ $featuredPost->image_url }}" alt="" loading="lazy">
                         @else
-                            <span class="grid size-14 shrink-0 place-items-center rounded-lg bg-mist font-display text-sm text-primary">THT</span>
+                            <span class="grid size-14 shrink-0 place-items-center rounded-lg bg-mist font-display text-sm text-primary">DV</span>
                         @endif
                         <span class="min-w-0">
                             <span class="block line-clamp-2 text-xs font-semibold leading-5 text-ink transition group-hover:text-primary">{{ $featuredPost->title }}</span>
@@ -36,7 +36,7 @@
         @if (($heroImageUrl ?: $defaultBannerUrl))<img class="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">@endif
         <div class="absolute inset-0 -z-10 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--site-color-ink)_92%,transparent),color-mix(in_srgb,var(--site-color-ink)_68%,transparent))]"></div>
         <p class="text-xs font-bold tracking-[0.15em] text-primary-soft uppercase">Tư vấn dự án</p>
-        <h2 class="news-sidebar__cta-title font-display mt-4 text-lg leading-snug">Cùng THT Media triển khai ý tưởng của bạn.</h2>
+        <h2 class="news-sidebar__cta-title font-display mt-4 text-lg leading-snug">Cùng DVTEC triển khai ý tưởng của bạn.</h2>
         <a class="button-primary mt-7 min-h-10 px-4 py-2 text-xs" href="{{ LocalizedUrl::route('contact') }}">Liên hệ ngay <span aria-hidden="true">↗</span></a>
     </div>
 </aside>

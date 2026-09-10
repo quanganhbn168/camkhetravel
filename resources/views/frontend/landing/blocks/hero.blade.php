@@ -11,9 +11,9 @@
             <h1>{{ $data['title'] ?? $landingPage->title }}</h1>
             @if (filled($data['subtitle'] ?? null))<p class="landing-hero__subtitle">{{ $data['subtitle'] }}</p>@endif
             <div class="landing-hero__actions">
-                <a class="landing-button landing-button--primary" href="{{ $data['cta_url'] ?? '#tu-van' }}" data-landing-event="cta_click" data-block-id="{{ $block['id'] }}">{{ $data['cta_label'] ?? 'Nhận tư vấn' }} <span aria-hidden="true">↗</span></a>
+                <a class="landing-button landing-button--primary" href="{{ $data['cta_url'] ?? '#tu-van' }}">{{ $data['cta_label'] ?? 'Nhận tư vấn' }} <span aria-hidden="true">↗</span></a>
                 @if (filled($data['secondary_label'] ?? null))
-                    <a class="landing-button landing-button--ghost" href="{{ $data['secondary_url'] ?? '#uu-dai' }}" data-landing-event="cta_click" data-block-id="{{ $block['id'] }}">{{ $data['secondary_label'] }} <span aria-hidden="true">↓</span></a>
+                    <a class="landing-button landing-button--ghost" href="{{ $data['secondary_url'] ?? '#uu-dai' }}">{{ $data['secondary_label'] }} <span aria-hidden="true">↓</span></a>
                 @endif
             </div>
             @if (filled($data['note'] ?? null))<p class="landing-hero__note">{{ $data['note'] }}</p>@endif

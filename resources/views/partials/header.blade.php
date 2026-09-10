@@ -26,7 +26,7 @@
     @focusin="hidden = false"
     @resize.window="if (window.innerWidth >= 1280) open = false"
     @keydown.escape.window="open = false; searchOpen = false">
-    <header class="site-header" aria-label="Đầu trang THT Media">
+    <header class="site-header" aria-label="Đầu trang DVTEC">
         <div class="site-container mx-auto w-full max-w-7xl px-4 lg:px-8 site-header__inner">
             @include('partials.header.brand')
             <div class="hidden min-w-0 flex-1 xl:block">

@@ -8,7 +8,7 @@
     <x-site-design-tokens />
     @include('partials.tracking.head')
 </head>
-<body class="@yield('body_class', 'min-h-screen'){{ request()->routeIs('bni.*') ? ' bni-app-shell' : '' }}" data-bni-page="{{ request()->routeIs('bni.*') ? 'true' : 'false' }}">
+<body class="@yield('body_class', 'min-h-screen')">
     @include('partials.tracking.body')
     @yield('before_header')
     @unless ($hideHeader ?? false)
@@ -16,7 +16,7 @@
     @endunless
 
     <main id="@yield('main_id', 'site-main')" class="@yield('main_class', 'overflow-x-clip')">
-        @if (session('success') && ! request()->routeIs('bni.*'))
+        @if (session('success'))
             <div class="fixed top-24 right-4 z-50 max-w-md rounded-2xl bg-emerald-700 px-5 py-4 text-sm font-medium text-white shadow-xl" role="status">{{ session('success') }}</div>
         @endif
 
@@ -29,7 +29,6 @@
         @include('partials.floating-actions')
     @endunless
     @yield('after_footer')
-    @include('partials.bni-pwa')
     @stack('scripts')
     @include('partials.tracking.footer')
 </body>

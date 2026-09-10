@@ -12,23 +12,9 @@ class DesignSettings extends Settings
 
     public string $color_ink;
 
-    public string $color_midnight;
-
     public string $color_surface;
 
     public string $color_muted;
-
-    public string $color_green_light = '#a4cf59';
-
-    public string $color_green_dark = '#247138';
-
-    public string $gradient_green_dark_start = '#268944';
-
-    public string $gradient_green_dark_end = '#247138';
-
-    public string $gradient_green_light_start = '#a4cf59';
-
-    public string $gradient_green_light_end = '#d8ff96';
 
     public string $font_size_base = '1rem';
 

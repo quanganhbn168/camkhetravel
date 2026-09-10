@@ -14,8 +14,6 @@ class AssignNextOrderObserver
             return;
         }
 
-        $query = $model->newQuery();
-
-        $model->setAttribute($column, ((int) $query->max($column)) + 1);
+        $model->setAttribute($column, ((int) $model->newQuery()->max($column)) + 1);
     }
 }
