@@ -23,6 +23,7 @@ class LandingController extends Controller
 
         $landingPage->load([
             'curatorMedia',
+            'faqs' => fn ($query) => $query->active()->ordered(),
             'pricingPlans' => fn ($query) => $query->active()->orderBy('sort_order'),
             'projects' => fn ($query) => $query
                 ->published()

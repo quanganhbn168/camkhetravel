@@ -21,12 +21,11 @@ class IntroController extends Controller
 
         return view('intros.show', [
             'intro' => $intro,
-            'seo' => app(FrontendSeoBuilder::class)->listing($intro->meta_title ?: $intro->title, $intro->meta_description ?: $intro->summary ?: '', $intro->url, image: $intro->image_url),
+            'seo' => app(FrontendSeoBuilder::class)->listing($intro->seo_title ?: $intro->title, $intro->seo_description ?: $intro->summary ?: '', $intro->url, image: $intro->seoImageUrl($intro->image_url)),
             'content' => $content,
-            'seoKeywords' => $intro->keywords,
-            'seoTitle' => $intro->meta_title ?: $intro->title,
-            'seoDescription' => $intro->meta_description ?: $intro->summary,
-            'seoImage' => $intro->image_url,
+            'seoTitle' => $intro->seo_title ?: $intro->title,
+            'seoDescription' => $intro->seo_description ?: $intro->summary,
+            'seoImage' => $intro->seoImageUrl($intro->image_url),
             'seoUrl' => $intro->url,
         ]);
     }

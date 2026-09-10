@@ -12,6 +12,8 @@ use App\Models\Partner;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\PricingPlan;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
@@ -50,6 +52,8 @@ class FrontendServiceProvider extends ServiceProvider
             'intro' => Intro::class,
             'post' => Post::class,
             'post-category' => PostCategory::class,
+            'product' => Product::class,
+            'product-category' => ProductCategory::class,
             'project' => Project::class,
             'project-category' => ProjectCategory::class,
             'service' => Service::class,
@@ -61,6 +65,8 @@ class FrontendServiceProvider extends ServiceProvider
         foreach ([
             Post::class,
             PostCategory::class,
+            Product::class,
+            ProductCategory::class,
             Intro::class,
             Project::class,
             ProjectCategory::class,
@@ -76,6 +82,8 @@ class FrontendServiceProvider extends ServiceProvider
             Language::class,
             Partner::class,
             PostCategory::class,
+            Product::class,
+            ProductCategory::class,
             PricingPlan::class,
             Project::class,
             ProjectCategory::class,
@@ -87,7 +95,18 @@ class FrontendServiceProvider extends ServiceProvider
             $model::observe(AssignNextOrderObserver::class);
         }
 
-        foreach ([Post::class, Project::class, Service::class, LandingPage::class] as $model) {
+        foreach ([
+            Post::class,
+            PostCategory::class,
+            Product::class,
+            ProductCategory::class,
+            Project::class,
+            ProjectCategory::class,
+            Service::class,
+            ServiceCategory::class,
+            LandingPage::class,
+            Intro::class,
+        ] as $model) {
             $model::observe(ContentSeoFallbackObserver::class);
         }
 
@@ -237,6 +256,8 @@ class FrontendServiceProvider extends ServiceProvider
             'native_project_category', ProjectCategory::class, 'project-category' => [ProjectCategory::class, 'projects.category'],
             'native_post', Post::class, 'post' => [Post::class, 'posts.show'],
             'native_post_category', PostCategory::class, 'post-category' => [PostCategory::class, 'posts.category'],
+            'native_product', Product::class, 'product' => [Product::class, 'products.show'],
+            'native_product_category', ProductCategory::class, 'product-category' => [ProductCategory::class, 'products.category'],
             default => null,
         };
 

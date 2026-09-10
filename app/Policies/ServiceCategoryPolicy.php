@@ -12,15 +12,58 @@ class ServiceCategoryPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(AuthUser $user): bool { return $user->can('ViewAny:ServiceCategory'); }
-    public function view(AuthUser $user, ServiceCategory $category): bool { return $user->can('View:ServiceCategory'); }
-    public function create(AuthUser $user): bool { return $user->can('Create:ServiceCategory'); }
-    public function update(AuthUser $user, ServiceCategory $category): bool { return $user->can('Update:ServiceCategory'); }
-    public function delete(AuthUser $user, ServiceCategory $category): bool { return $user->can('Delete:ServiceCategory'); }
-    public function restore(AuthUser $user, ServiceCategory $category): bool { return $user->can('Restore:ServiceCategory'); }
-    public function forceDelete(AuthUser $user, ServiceCategory $category): bool { return $user->can('ForceDelete:ServiceCategory'); }
-    public function forceDeleteAny(AuthUser $user): bool { return $user->can('ForceDeleteAny:ServiceCategory'); }
-    public function restoreAny(AuthUser $user): bool { return $user->can('RestoreAny:ServiceCategory'); }
-    public function replicate(AuthUser $user, ServiceCategory $category): bool { return $user->can('Replicate:ServiceCategory'); }
-    public function reorder(AuthUser $user): bool { return $user->can('Reorder:ServiceCategory'); }
+    public function viewAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ViewAny:ServiceCategory');
+    }
+
+    public function view(AuthUser $authUser, ServiceCategory $serviceCategory): bool
+    {
+        return $authUser->can('View:ServiceCategory');
+    }
+
+    public function create(AuthUser $authUser): bool
+    {
+        return $authUser->can('Create:ServiceCategory');
+    }
+
+    public function update(AuthUser $authUser, ServiceCategory $serviceCategory): bool
+    {
+        return $authUser->can('Update:ServiceCategory');
+    }
+
+    public function delete(AuthUser $authUser, ServiceCategory $serviceCategory): bool
+    {
+        return $authUser->can('Delete:ServiceCategory');
+    }
+
+    public function restore(AuthUser $authUser, ServiceCategory $serviceCategory): bool
+    {
+        return $authUser->can('Restore:ServiceCategory');
+    }
+
+    public function forceDelete(AuthUser $authUser, ServiceCategory $serviceCategory): bool
+    {
+        return $authUser->can('ForceDelete:ServiceCategory');
+    }
+
+    public function forceDeleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ForceDeleteAny:ServiceCategory');
+    }
+
+    public function restoreAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('RestoreAny:ServiceCategory');
+    }
+
+    public function replicate(AuthUser $authUser, ServiceCategory $serviceCategory): bool
+    {
+        return $authUser->can('Replicate:ServiceCategory');
+    }
+
+    public function reorder(AuthUser $authUser): bool
+    {
+        return $authUser->can('Reorder:ServiceCategory');
+    }
 }

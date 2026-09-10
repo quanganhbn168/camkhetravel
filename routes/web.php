@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\PricingController;
+use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\PublicSlugController;
 use App\Http\Controllers\Frontend\SearchController;
@@ -37,6 +38,9 @@ Route::middleware(SetFrontendLocale::class)->group(function (): void {
     Route::get('/du-an', [ProjectController::class, 'index'])->name('projects.index');
     Route::get('/du-an/danh-muc/{slug}', [ProjectController::class, 'categoryBySlug'])->name('projects.category');
     Route::get('/du-an/{slug}', [ProjectController::class, 'showBySlug'])->name('projects.show');
+    Route::get('/san-pham', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/san-pham/danh-muc/{slug}', [ProductController::class, 'categoryBySlug'])->name('products.category');
+    Route::get('/san-pham/{slug}', [ProductController::class, 'showBySlug'])->name('products.show');
     Route::get('/bang-gia', [PricingController::class, 'index'])->name('pricing.index');
     Route::get('/gioi-thieu', AboutController::class)->name('about');
     Route::get('/lien-he', [ContactController::class, 'index'])->name('contact');

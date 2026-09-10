@@ -7,7 +7,6 @@ use App\Settings\HomepageSettings;
 use App\Support\Localization\LanguageCatalog;
 use BackedEnum;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -70,6 +69,7 @@ class ManageHomepageSettings extends Page
                         Textarea::make("consultation_content.{$locale}")->label('Nội dung')->rows(3)->columnSpanFull(),
                     ]),
                 Section::make('Câu hỏi thường gặp')
+                    ->description('Câu hỏi được quản lý riêng tại mục “Câu hỏi thường gặp”, không lưu dồn trong cài đặt trang chủ.')
                     ->schema([
                         TextInput::make("faq_title.{$locale}")
                             ->label('Tiêu đề')
@@ -78,24 +78,6 @@ class ManageHomepageSettings extends Page
                         Textarea::make("faq_description.{$locale}")
                             ->label('Mô tả ngắn')
                             ->rows(2)
-                            ->columnSpanFull(),
-                        Repeater::make('faq_items')
-                            ->label('Danh sách câu hỏi')
-                            ->schema([
-                                TextInput::make("question.{$locale}")
-                                    ->label('Câu hỏi')
-                                    ->maxLength(500)
-                                    ->columnSpanFull(),
-                                Textarea::make("answer.{$locale}")
-                                    ->label('Trả lời')
-                                    ->rows(4)
-                                    ->columnSpanFull(),
-                            ])
-                            ->addActionLabel('Thêm câu hỏi')
-                            ->reorderable()
-                            ->cloneable()
-                            ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['question'][$locale] ?? 'Câu hỏi mới')
                             ->columnSpanFull(),
                     ]),
             ]);

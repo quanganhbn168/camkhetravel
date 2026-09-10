@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\ServiceCategories;
 
-use App\Filament\Resources\Concerns\CategoryResource;
+use App\Filament\Resources\Concerns\UsesPrimaryKeyForRecordRoutes;
 use App\Filament\Resources\ServiceCategories\Pages\CreateServiceCategory;
 use App\Filament\Resources\ServiceCategories\Pages\EditServiceCategory;
 use App\Filament\Resources\ServiceCategories\Pages\ListServiceCategories;
@@ -10,19 +10,29 @@ use App\Filament\Resources\ServiceCategories\Schemas\ServiceCategoryForm;
 use App\Filament\Resources\ServiceCategories\Tables\ServiceCategoriesTable;
 use App\Models\ServiceCategory;
 use BackedEnum;
+use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
-class ServiceCategoryResource extends CategoryResource
+class ServiceCategoryResource extends Resource
 {
+    use UsesPrimaryKeyForRecordRoutes;
+
     protected static ?string $model = ServiceCategory::class;
+
+    protected static ?string $recordRouteKeyName = 'id';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
     protected static ?string $navigationLabel = 'Nhóm dịch vụ';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Nội dung website';
+    }
 
     public static function form(Schema $schema): Schema
     {

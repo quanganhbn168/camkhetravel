@@ -108,7 +108,6 @@ class ManageSettings extends Page
             'capabilities' => $homepage->capabilities,
             'faq_title' => $homepage->faq_title,
             'faq_description' => $homepage->faq_description,
-            'faq_items' => $homepage->faq_items,
             'company_name' => $website->company_name,
             'company_profile_media_id' => $website->company_profile_media_id,
             'tax_code' => $company->tax_code,
@@ -448,21 +447,10 @@ class ManageSettings extends Page
                     ->columns(2),
                 Section::make('Câu hỏi thường gặp')
                     ->icon(Heroicon::OutlinedQuestionMarkCircle)
+                    ->description('Câu hỏi được quản lý riêng tại mục “Câu hỏi thường gặp”.')
                     ->schema([
                         TextInput::make("faq_title.{$locale}")->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
                         Textarea::make("faq_description.{$locale}")->label('Mô tả')->rows(2)->columnSpanFull(),
-                        Repeater::make('faq_items')
-                            ->label('Danh sách câu hỏi')
-                            ->schema([
-                                TextInput::make("question.{$locale}")->label('Câu hỏi')->maxLength(500)->columnSpanFull(),
-                                Textarea::make("answer.{$locale}")->label('Trả lời')->rows(4)->columnSpanFull(),
-                            ])
-                            ->addActionLabel('Thêm câu hỏi')
-                            ->reorderable()
-                            ->cloneable()
-                            ->collapsible()
-                            ->itemLabel(fn (array $state): ?string => $state['question'][$locale] ?? 'Câu hỏi mới')
-                            ->columnSpanFull(),
                     ]),
             ]);
     }
@@ -938,7 +926,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveHomepage(HomepageSettings $homepage, array $data): void
     {
-        foreach (['about_eyebrow', 'about_title', 'about_content', 'stats', 'commitments', 'capabilities', 'faq_title', 'faq_description', 'faq_items'] as $key) {
+        foreach (['about_eyebrow', 'about_title', 'about_content', 'stats', 'commitments', 'capabilities', 'faq_title', 'faq_description'] as $key) {
             $homepage->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
         }
 

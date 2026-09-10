@@ -27,7 +27,7 @@ class ProjectController extends Controller
         return view('frontend.projects.index', $this->listingData(backstageService: $backstageService, request: $request) + [
             'seo' => $this->seo->listing(
                 'Dự án | '.$this->seo->siteName(),
-                'Các case study và dự án truyền thông nổi bật.',
+                'Các công trình PCCC tiêu biểu đã được DVTEC triển khai.',
                 LocalizedUrl::route('projects.index'),
             ),
         ]);
@@ -54,6 +54,7 @@ class ProjectController extends Controller
         $project->load([
             'category',
             'curatorMedia',
+            'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
             'backstageServices' => fn ($query) => $query
                 ->published()
@@ -75,12 +76,11 @@ class ProjectController extends Controller
             ->orderByDesc('published_at')
             ->limit(3)
             ->get());
-        $faqItems = collect($project->faq_items ?? [])
-            ->map(fn (mixed $item): array => [
-                'question' => trim((string) (is_array($item) ? ($item['question'] ?? '') : '')),
-                'answer' => trim((string) (is_array($item) ? ($item['answer'] ?? '') : '')),
+        $faqItems = $project->faqs
+            ->map(fn ($faq): array => [
+                'question' => $faq->question,
+                'answer' => $faq->answer,
             ])
-            ->filter(fn (array $item): bool => $item['question'] !== '' && $item['answer'] !== '')
             ->values();
         $ratedComments = $project->approvedComments
             ->filter(fn ($comment): bool => $comment->rating !== null)
@@ -157,7 +157,7 @@ class ProjectController extends Controller
             'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án'),
             'pageDescription' => $activeCategory?->description ?: ($backstageService
                 ? 'Các dự án đã được gắn với dịch vụ '.$backstageService->title.'.'
-                : 'Những dự án DVTEC đã đồng hành từ định hướng ban đầu đến sản phẩm truyền thông hoàn chỉnh.'),
+                : 'Những công trình DVTEC đã đồng hành từ khảo sát ban đầu đến khi hệ thống PCCC vận hành ổn định.'),
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',

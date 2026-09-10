@@ -4,6 +4,8 @@ namespace App\Support\Seo;
 
 use App\Models\LandingPage;
 use App\Models\Post;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
@@ -280,6 +282,47 @@ class FrontendSeoBuilder
                     ['name' => $post->title, 'url' => $canonical],
                 ]),
             ],
+        );
+    }
+
+    public function product(Product $product): array
+    {
+        $canonical = LocalizedUrl::product($product);
+        $title = $product->seo_title ?: $product->title.' | '.$this->website->site_name;
+        $description = $product->seo_description ?: $product->excerpt ?: $product->title;
+
+        return $this->page(
+            title: $title,
+            description: $description,
+            canonical: $canonical,
+            image: $product->seoImageUrl($product->image_url),
+            schema: [
+                $this->organizationSchema(),
+                [
+                    '@type' => 'Product',
+                    '@id' => $canonical.'#product',
+                    'name' => $product->title,
+                    'description' => $this->description($description),
+                    'url' => $canonical,
+                    ...$this->imageProperty($product->image_url),
+                    'brand' => ['@id' => $this->baseUrl().'#organization'],
+                ],
+                $this->breadcrumb([
+                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
+                    ['name' => 'Sản phẩm', 'url' => LocalizedUrl::route('products.index')],
+                    ['name' => $product->title, 'url' => $canonical],
+                ]),
+            ],
+        );
+    }
+
+    public function productCategory(ProductCategory $category): array
+    {
+        return $this->listing(
+            $category->seo_title ?: $category->name.' | Sản phẩm',
+            $category->seo_description ?: $category->description ?: 'Sản phẩm thuộc nhóm '.$category->name.'.',
+            LocalizedUrl::productCategory($category),
+            image: $category->seoImageUrl(),
         );
     }
 

@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasComments;
+use App\Traits\HasFaqs;
 use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
+use App\Traits\HasTags;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Service extends Model
 {
-    use HasComments, HasSlug;
+    use HasComments, HasFaqs, HasSlug, HasTags;
     use HasSeoImage;
 
     protected $guarded = [];
@@ -25,7 +27,6 @@ class Service extends Model
         return [
             'gallery' => 'array',
             'backstage_gallery' => 'array',
-            'faq_items' => 'array',
             'process_items' => 'array',
             'benefit_items' => 'array',
             'stats_items' => 'array',

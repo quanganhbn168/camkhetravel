@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasComments;
+use App\Traits\HasFaqs;
 use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
+use App\Traits\HasTags;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Post extends Model
 {
-    use HasComments, HasSlug;
+    use HasComments, HasFaqs, HasSlug, HasTags;
     use HasSeoImage;
 
     protected $guarded = [];

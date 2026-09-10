@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
-use App\Filament\Forms\SeoImageField;
+use App\Filament\Forms\SeoFields;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Post;
 use App\Support\Seo\ContentSeoFallbacks;
@@ -72,17 +72,7 @@ final class PostForm
                     Section::make('SEO')
                         ->icon(Heroicon::OutlinedMagnifyingGlass)
                         ->schema([
-                            SeoImageField::make(),
-                            TextInput::make('seo_title')
-                                ->label('SEO title')
-                                ->maxLength(255)
-                                ->formatStateUsing(fn (?string $state, ?Post $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))
-                                ->columnSpanFull(),
-                            Textarea::make('seo_description')
-                                ->label('Meta description')
-                                ->rows(5)
-                                ->formatStateUsing(fn (?string $state, ?Post $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))
-                                ->columnSpanFull(),
+                            ...SeoFields::make(),
                         ])
                         ->columns(2),
                 ])
@@ -91,6 +81,15 @@ final class PostForm
                     ->icon(Heroicon::OutlinedCog6Tooth)
                     ->schema([
                         CheckboxList::make('categories')->label('Chuyên mục')->relationship('categories', 'name')->columns(1)->searchable()->bulkToggleable(),
+                        Select::make('tags')
+                            ->label('Thẻ')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name')->label('Tên thẻ')->required(),
+                            ]),
                         Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư'])->required()->default('draft'),
                         Toggle::make('is_featured')->label('Bài viết nổi bật'),
                     ])

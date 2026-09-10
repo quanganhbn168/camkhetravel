@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Intros\Schemas;
 
+use App\Filament\Forms\SeoFields;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -70,11 +71,10 @@ class IntroForm
                     ])
                     ->columns(2),
 
-                Section::make('SEO')->collapsible()->schema([
-                    TextInput::make('meta_title')->label('Tiêu đề SEO')->maxLength(255),
-                    Textarea::make('meta_description')->label('Mô tả SEO')->rows(3),
-                    TextInput::make('keywords')->label('Từ khóa')->maxLength(255),
-                ]),
+                Section::make('SEO')
+                    ->icon('heroicon-o-magnifying-glass')
+                    ->collapsible()
+                    ->schema(SeoFields::make(titleSource: 'title', descriptionSource: 'summary')),
                 // ── Liên kết ──────────────────────────────────────────────
                 Section::make('Xuất bản')
                     ->icon('heroicon-o-link')

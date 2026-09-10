@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Support\Media\MediaUrl;
+use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Intro extends Model
 {
+    use HasSeoImage;
     use HasSlug;
 
     protected $guarded = [];

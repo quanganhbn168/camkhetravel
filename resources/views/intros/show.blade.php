@@ -1,7 +1,6 @@
 @extends('layouts.master')
 @section('title', $seoTitle)
 @section('meta_description'){{ $seoDescription }}@endsection
-@section('meta_keywords'){{ $seoKeywords }}@endsection
 @section('canonical', $intro->url)
 @section('og_title', $seoTitle)
 @section('og_description'){{ $seoDescription }}@endsection

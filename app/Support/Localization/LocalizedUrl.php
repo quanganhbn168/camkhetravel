@@ -5,6 +5,8 @@ namespace App\Support\Localization;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
@@ -62,6 +64,16 @@ class LocalizedUrl
         return self::slug(self::contentSlug($service), $locale);
     }
 
+    public static function product(Product $product, ?string $locale = null): string
+    {
+        return self::route('products.show', ['slug' => self::contentSlug($product)], $locale);
+    }
+
+    public static function productCategory(ProductCategory $category, ?string $locale = null): string
+    {
+        return self::route('products.category', ['slug' => self::termSlug($category)], $locale);
+    }
+
     public static function serviceCategory(ServiceCategory $category, ?string $locale = null): string
     {
         return self::route('services.category', ['category' => self::termSlug($category)], $locale);
@@ -103,6 +115,9 @@ class LocalizedUrl
             'contact.store' => 'lien-he',
             'comments.store' => 'binh-luan/'.($parameters['post'] ?? ''),
             'services.comments.store' => 'binh-luan/dich-vu/'.($parameters['service'] ?? ''),
+            'products.index' => 'san-pham',
+            'products.category' => 'san-pham/danh-muc/'.($parameters['slug'] ?? ''),
+            'products.show' => 'san-pham/'.($parameters['slug'] ?? ''),
             'landing-pages.comments.store' => 'binh-luan/landing-page/'.($parameters['landingPage'] ?? ''),
             'projects.comments.store' => 'binh-luan/du-an/'.($parameters['project'] ?? ''),
             'posts.index' => 'blog',
@@ -128,12 +143,12 @@ class LocalizedUrl
             : $baseUrl.'/'.ltrim($path, '/');
     }
 
-    private static function contentSlug(Post|Project|Service|LandingPage $content): string
+    private static function contentSlug(Post|Project|Service|LandingPage|Product $content): string
     {
         return $content->slug ?: Str::slug($content->title);
     }
 
-    private static function termSlug(PostCategory|ProjectCategory|ServiceCategory $category): string
+    private static function termSlug(PostCategory|ProjectCategory|ServiceCategory|ProductCategory $category): string
     {
         return $category->slug ?: Str::slug($category->name);
     }

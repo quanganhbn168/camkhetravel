@@ -7,6 +7,8 @@ use App\Models\Intro;
 use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
@@ -44,6 +46,8 @@ class PublicSlugController extends Controller
             $sluggable instanceof ProjectCategory => redirect()->to(LocalizedUrl::projectCategory($sluggable), 301),
             $sluggable instanceof Post => app(PostController::class)->show($sluggable),
             $sluggable instanceof PostCategory => redirect()->to(LocalizedUrl::postCategory($sluggable), 301),
+            $sluggable instanceof Product => redirect()->to(LocalizedUrl::product($sluggable), 301),
+            $sluggable instanceof ProductCategory => redirect()->to(LocalizedUrl::productCategory($sluggable), 301),
             default => abort(404),
         };
     }

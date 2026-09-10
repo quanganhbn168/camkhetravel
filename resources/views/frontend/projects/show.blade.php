@@ -81,8 +81,8 @@
         <section class="home-faq section-space" id="cau-hoi-thuong-gap">
             <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <header class="home-faq__header">
-                    <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">{{ $project->faq_title ?: 'Câu hỏi thường gặp' }}</h2>
-                    @if ($project->faq_description)<p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">{{ $project->faq_description }}</p>@endif
+                    <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Câu hỏi thường gặp</h2>
+                    <p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Thông tin cần biết trước khi triển khai dự án PCCC.</p>
                 </header>
                 <div class="home-faq__list">
                     @foreach ($faqItems as $item)

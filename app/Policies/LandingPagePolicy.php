@@ -12,15 +12,58 @@ class LandingPagePolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(AuthUser $user): bool { return $user->can('ViewAny:LandingPage') || $user->can('ViewAny:Service'); }
-    public function view(AuthUser $user, LandingPage $landingPage): bool { return $user->can('View:LandingPage') || $user->can('View:Service'); }
-    public function create(AuthUser $user): bool { return $user->can('Create:LandingPage') || $user->can('Create:Service'); }
-    public function update(AuthUser $user, LandingPage $landingPage): bool { return $user->can('Update:LandingPage') || $user->can('Update:Service'); }
-    public function delete(AuthUser $user, LandingPage $landingPage): bool { return $user->can('Delete:LandingPage') || $user->can('Delete:Service'); }
-    public function restore(AuthUser $user, LandingPage $landingPage): bool { return $user->can('Restore:LandingPage') || $user->can('Restore:Service'); }
-    public function forceDelete(AuthUser $user, LandingPage $landingPage): bool { return $user->can('ForceDelete:LandingPage') || $user->can('ForceDelete:Service'); }
-    public function forceDeleteAny(AuthUser $user): bool { return $user->can('ForceDeleteAny:LandingPage') || $user->can('ForceDeleteAny:Service'); }
-    public function restoreAny(AuthUser $user): bool { return $user->can('RestoreAny:LandingPage') || $user->can('RestoreAny:Service'); }
-    public function replicate(AuthUser $user, LandingPage $landingPage): bool { return $user->can('Replicate:LandingPage') || $user->can('Replicate:Service'); }
-    public function reorder(AuthUser $user): bool { return $user->can('Reorder:LandingPage') || $user->can('Reorder:Service'); }
+    public function viewAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ViewAny:LandingPage');
+    }
+
+    public function view(AuthUser $authUser, LandingPage $landingPage): bool
+    {
+        return $authUser->can('View:LandingPage');
+    }
+
+    public function create(AuthUser $authUser): bool
+    {
+        return $authUser->can('Create:LandingPage');
+    }
+
+    public function update(AuthUser $authUser, LandingPage $landingPage): bool
+    {
+        return $authUser->can('Update:LandingPage');
+    }
+
+    public function delete(AuthUser $authUser, LandingPage $landingPage): bool
+    {
+        return $authUser->can('Delete:LandingPage');
+    }
+
+    public function restore(AuthUser $authUser, LandingPage $landingPage): bool
+    {
+        return $authUser->can('Restore:LandingPage');
+    }
+
+    public function forceDelete(AuthUser $authUser, LandingPage $landingPage): bool
+    {
+        return $authUser->can('ForceDelete:LandingPage');
+    }
+
+    public function forceDeleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('ForceDeleteAny:LandingPage');
+    }
+
+    public function restoreAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('RestoreAny:LandingPage');
+    }
+
+    public function replicate(AuthUser $authUser, LandingPage $landingPage): bool
+    {
+        return $authUser->can('Replicate:LandingPage');
+    }
+
+    public function reorder(AuthUser $authUser): bool
+    {
+        return $authUser->can('Reorder:LandingPage');
+    }
 }

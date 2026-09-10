@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\LandingPages\Schemas;
 
-use App\Filament\Forms\SeoImageField;
+use App\Filament\Forms\SeoFields;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\LandingPage;
 use App\Support\Seo\ContentSeoFallbacks;
@@ -51,9 +51,7 @@ final class LandingPageForm
                                 ->enableToolbarButtons(['attachCuratorMedia'])
                                 ->disableToolbarButtons(['attachFiles'])
                                 ->columnSpanFull(),
-                            SeoImageField::make(),
-                            TextInput::make('seo_title')->label('SEO title')->maxLength(255)->formatStateUsing(fn (?string $state, ?LandingPage $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))->columnSpanFull(),
-                            Textarea::make('seo_description')->label('Meta description')->rows(4)->formatStateUsing(fn (?string $state, ?LandingPage $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))->columnSpanFull(),
+                            ...SeoFields::make(),
                         ])
                         ->columns(2),
                     Section::make('Dữ liệu hiển thị trong landing')
@@ -64,6 +62,16 @@ final class LandingPageForm
                             Select::make('services')->label('Dịch vụ liên quan')->relationship('services', 'title')->multiple()->searchable()->preload()->columnSpanFull(),
                             Select::make('projects')->label('Dự án liên quan')->relationship('projects', 'title')->multiple()->searchable()->preload()->columnSpanFull(),
                             Select::make('posts')->label('Bài viết / blog liên quan')->relationship('posts', 'title')->multiple()->searchable()->preload()->columnSpanFull(),
+                            Select::make('tags')
+                                ->label('Thẻ')
+                                ->relationship('tags', 'name')
+                                ->multiple()
+                                ->searchable()
+                                ->preload()
+                                ->createOptionForm([
+                                    TextInput::make('name')->label('Tên thẻ')->required(),
+                                ])
+                                ->columnSpanFull(),
                         ])
                         ->columns(2),
                     ...LandingExperienceSchema::components(),

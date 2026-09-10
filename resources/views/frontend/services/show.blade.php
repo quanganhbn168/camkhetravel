@@ -87,7 +87,7 @@
 
     @if ($faqItems->isNotEmpty())
         <section class="home-faq section-space" id="cau-hoi-thuong-gap">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8"><header class="home-faq__header"><h2 class="display-title text-3xl leading-tight md:text-4xl">{{ $service->faq_title ?: 'Câu hỏi thường gặp' }}</h2>@if ($service->faq_description)<p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">{{ $service->faq_description }}</p>@endif</header><div class="home-faq__list">@foreach ($faqItems as $item)<details class="home-faq__item" @if ($loop->first) open @endif><summary class="home-faq__question"><span>{{ $item['question'] }}</span><span class="home-faq__indicator" aria-hidden="true">+</span></summary><div class="home-faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8"><header class="home-faq__header"><h2 class="display-title text-3xl leading-tight md:text-4xl">Câu hỏi thường gặp</h2><p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Thông tin cần biết trước khi triển khai dịch vụ PCCC.</p></header><div class="home-faq__list">@foreach ($faqItems as $item)<details class="home-faq__item" @if ($loop->first) open @endif><summary class="home-faq__question"><span>{{ $item['question'] }}</span><span class="home-faq__indicator" aria-hidden="true">+</span></summary><div class="home-faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
         </section>
     @endif
 

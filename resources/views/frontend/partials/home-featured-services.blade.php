@@ -1,10 +1,10 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 @if ($featuredServiceCategories->isNotEmpty())
-    <section class="section-space home-featured-services" id="dich-vu-media-noi-bat" aria-labelledby="home-featured-services-title">
+    <section class="section-space home-featured-services" id="dich-vu-pccc-noi-bat" aria-labelledby="home-featured-services-title">
         <div class="site-container mx-auto w-full max-w-7xl px-4 lg:px-8">
             <div class="flex flex-wrap items-end justify-between gap-5">
-                <h2 class="display-title uppercase" id="home-featured-services-title">Dịch vụ media nổi bật</h2>
+                <h2 class="display-title uppercase" id="home-featured-services-title">Dịch vụ PCCC nổi bật</h2>
                 <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Tất cả dịch vụ <span aria-hidden="true">↗</span></a>
             </div>
             <div class="home-service-groups">

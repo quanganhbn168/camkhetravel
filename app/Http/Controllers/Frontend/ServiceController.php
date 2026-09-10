@@ -27,7 +27,7 @@ class ServiceController extends Controller
         return view('frontend.services.index', $this->listingData() + [
             'seo' => $this->seo->listing(
                 'Dịch vụ | '.$this->seo->siteName(),
-                'Khám phá các dịch vụ truyền thông, sản xuất nội dung và tổ chức sự kiện.',
+                'Khám phá các dịch vụ tư vấn, thiết kế, thi công và bảo trì hệ thống PCCC.',
                 LocalizedUrl::route('services.index'),
             ),
         ]);
@@ -45,7 +45,7 @@ class ServiceController extends Controller
         abort_unless($category->is_active, 404);
 
         $title = $category->name.' | Dịch vụ';
-        $description = $category->description ?: 'Dịch vụ truyền thông thuộc nhóm '.$category->name.'.';
+        $description = $category->description ?: 'Dịch vụ PCCC thuộc nhóm '.$category->name.'.';
 
         return view('frontend.services.index', $this->listingData($category) + [
             'seo' => $this->seo->listing($title, $description, LocalizedUrl::serviceCategory($category), image: $category->seoImageUrl()),
@@ -67,6 +67,7 @@ class ServiceController extends Controller
                 ->active()
                 ->with(['items' => fn ($itemQuery) => $itemQuery->active()->orderBy('sort_order')])
                 ->orderBy('sort_order'),
+            'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
             'backstageProjects' => fn ($query) => $query
                 ->published()
@@ -105,12 +106,11 @@ class ServiceController extends Controller
         $processItems = $this->mediaItems($service->process_items);
         $benefitItems = $this->mediaItems($service->benefit_items);
         $referenceVideos = $this->videoItems($service->reference_videos);
-        $faqItems = collect($service->faq_items ?? [])
-            ->map(fn (mixed $item): array => [
-                'question' => trim((string) (is_array($item) ? ($item['question'] ?? '') : '')),
-                'answer' => trim((string) (is_array($item) ? ($item['answer'] ?? '') : '')),
+        $faqItems = $service->faqs
+            ->map(fn ($faq): array => [
+                'question' => $faq->question,
+                'answer' => $faq->answer,
             ])
-            ->filter(fn (array $item): bool => $item['question'] !== '' && $item['answer'] !== '')
             ->values();
         $ratedComments = $service->approvedComments
             ->filter(fn ($comment): bool => $comment->rating !== null)
@@ -215,7 +215,7 @@ class ServiceController extends Controller
             'services' => $services,
             'heroImageUrl' => $heroService ? MediaUrl::resolve($heroService->curatorMedia) : null,
             'pageTitle' => $activeCategory?->name ?? 'Dịch vụ',
-            'pageDescription' => $activeCategory?->description ?: 'Các giải pháp truyền thông được xây dựng theo mục tiêu, nguồn lực và ngữ cảnh riêng của từng thương hiệu.',
+            'pageDescription' => $activeCategory?->description ?: 'Các giải pháp PCCC được xây dựng theo mục tiêu, quy mô và đặc thù riêng của từng công trình.',
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',

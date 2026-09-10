@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Services\Schemas;
 
-use App\Filament\Forms\SeoImageField;
+use App\Filament\Forms\SeoFields;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Service;
 use App\Support\Seo\ContentSeoFallbacks;
@@ -93,30 +93,9 @@ final class ServiceForm
                     Section::make('SEO')
                         ->icon(Heroicon::OutlinedMagnifyingGlass)
                         ->schema([
-                            SeoImageField::make(),
-                            TextInput::make('seo_title')->label('SEO title')->maxLength(255)->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: ContentSeoFallbacks::title($record?->title))->columnSpanFull(),
-                            Textarea::make('seo_description')->label('Meta description')->rows(5)->formatStateUsing(fn (?string $state, ?Service $record): ?string => $state ?: ContentSeoFallbacks::description($record?->excerpt))->columnSpanFull(),
+                            ...SeoFields::make(),
                         ])
                         ->columns(2),
-                    Section::make('Câu hỏi thường gặp')
-                        ->icon(Heroicon::OutlinedQuestionMarkCircle)
-                        ->schema([
-                            TextInput::make('faq_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                            Textarea::make('faq_description')->label('Mô tả ngắn')->rows(2)->columnSpanFull(),
-                            Repeater::make('faq_items')
-                                ->label('Danh sách câu hỏi')
-                                ->schema([
-                                    TextInput::make('question')->label('Câu hỏi')->maxLength(500)->columnSpanFull(),
-                                    Textarea::make('answer')->label('Trả lời')->rows(4)->columnSpanFull(),
-                                ])
-                                ->addActionLabel('Thêm câu hỏi')
-                                ->reorderable()
-                                ->cloneable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['question'] ?? 'Câu hỏi mới')
-                                ->columnSpanFull(),
-                        ])
-                        ->columns(1),
                     Section::make('Giá trị nổi bật')
                         ->icon(Heroicon::OutlinedSparkles)
                         ->schema([
@@ -229,6 +208,15 @@ final class ServiceForm
                     ->icon(Heroicon::OutlinedCog6Tooth)
                     ->schema([
                         Select::make('service_category_id')->label('Danh mục dịch vụ')->relationship('category', 'name')->searchable()->preload(),
+                        Select::make('tags')
+                            ->label('Thẻ')
+                            ->relationship('tags', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name')->label('Tên thẻ')->required(),
+                            ]),
                         Select::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư'])->required()->default('draft'),
                         TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(fn (): int => ((int) Service::query()->max('sort_order')) + 1),
                         Toggle::make('is_featured')->label('Dịch vụ nổi bật'),

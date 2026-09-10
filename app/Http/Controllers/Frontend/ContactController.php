@@ -49,7 +49,7 @@ class ContactController extends Controller
             'googleMapsEmbedUrl' => $googleMapsEmbedUrl,
             'seo' => $this->seo->listing(
                 'Liên hệ | '.$this->seo->siteName(),
-                'Liên hệ để trao đổi nhu cầu truyền thông, sản xuất nội dung và sự kiện.',
+                'Liên hệ để trao đổi nhu cầu khảo sát, thiết kế, thi công và bảo trì hệ thống PCCC.',
                 LocalizedUrl::route('contact'),
             ),
         ]);

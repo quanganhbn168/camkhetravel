@@ -8,8 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('curator', function (Blueprint $table): void {
+        Schema::create('curator', function (Blueprint $table) {
             $table->id();
+
             $table->string('disk');
             $table->string('directory')->nullable();
             $table->string('visibility')->default('public');
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->text('exif')->nullable();
             $table->longText('curations')->nullable();
             $table->unsignedBigInteger('tenant_id')->nullable();
+
             $table->timestamps();
         });
     }

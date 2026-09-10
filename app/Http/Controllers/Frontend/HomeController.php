@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Faq;
 use App\Models\HeroSlide;
 use App\Models\Partner;
 use App\Models\Post;
@@ -135,6 +136,13 @@ class HomeController extends Controller
         $companyName = trim($this->website->company_name)
             ?: trim($this->website->site_name)
             ?: (string) config('app.name');
+        $faqItems = Faq::query()
+            ->homepage()
+            ->get(['question', 'answer'])
+            ->map(fn (Faq $faq): array => [
+                'question' => $faq->question,
+                'answer' => $faq->answer,
+            ]);
 
         return view('frontend.home', compact('heroSlides', 'services', 'posts', 'projectTabs', 'companyProfileUrl', 'aboutImageUrl', 'googleMapsEmbedUrl', 'googleMapsUrl') + [
             'companyName' => $companyName,
@@ -150,8 +158,11 @@ class HomeController extends Controller
                 'title' => $this->translated($this->homepage->about_title),
                 'content' => $this->translated($this->homepage->about_content),
             ],
+            'faqTitle' => $this->translated($this->homepage->faq_title),
+            'faqDescription' => $this->translated($this->homepage->faq_description),
             'commitments' => $this->lines($this->homepage->commitments),
             'capabilities' => $this->lines($this->homepage->capabilities),
+            'faqItems' => $faqItems,
             'testimonials' => Testimonial::query()
                 ->active()
                 ->with('curatorMedia')
@@ -162,7 +173,7 @@ class HomeController extends Controller
                 ->published()
                 ->orderBy('sort_order')
                 ->get(['id', 'title']),
-            'seo' => $this->seo->home(),
+            'seo' => $this->seo->home($faqItems),
         ]);
     }
 

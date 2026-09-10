@@ -67,6 +67,8 @@ class MenuItem extends Model
             'project-category' => $this->projectCategoryLink(),
             'post' => $this->postLink(),
             'post-category' => $this->postCategoryLink(),
+            'product' => $this->productLink(),
+            'product-category' => $this->productCategoryLink(),
             'page' => $this->pageLink(),
             'custom' => $this->url ?: '#',
             default => $this->url ?: '#',
@@ -91,6 +93,8 @@ class MenuItem extends Model
             LandingPage::class => 'landing-page',
             Project::class => 'project',
             Post::class => 'post',
+            Product::class => 'product',
+            ProductCategory::class => 'product-category',
             default => 'custom',
         };
     }
@@ -130,6 +134,7 @@ class MenuItem extends Model
             'pricing.index',
             'projects.index',
             'posts.index',
+            'products.index',
             'contact',
             'search',
         ];
@@ -200,6 +205,20 @@ class MenuItem extends Model
             ->find($this->linked_source_id);
 
         return $category ? LocalizedUrl::postCategory($category) : '#';
+    }
+
+    private function productLink(): string
+    {
+        $product = Product::query()->published()->with('slugs')->find($this->linked_source_id);
+
+        return $product ? LocalizedUrl::product($product) : '#';
+    }
+
+    private function productCategoryLink(): string
+    {
+        $category = ProductCategory::query()->active()->find($this->linked_source_id);
+
+        return $category ? LocalizedUrl::productCategory($category) : '#';
     }
 
     private function pageLink(): string

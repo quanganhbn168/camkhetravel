@@ -11,6 +11,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(WebsiteSeeder::class);
+        $this->call([
+            ShieldSeeder::class,
+            WebsiteSeeder::class,
+            DvtecContentSeeder::class,
+        ]);
     }
 }

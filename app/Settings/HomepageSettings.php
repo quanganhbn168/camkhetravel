@@ -26,8 +26,6 @@ class HomepageSettings extends Settings
 
     public array $faq_description;
 
-    public array $faq_items;
-
     public static function group(): string
     {
         return 'homepage';

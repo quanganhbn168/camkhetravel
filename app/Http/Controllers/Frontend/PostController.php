@@ -52,7 +52,7 @@ class PostController extends Controller
             'heroImageUrl' => $posts->first()?->image_url,
             'seo' => $this->listingSeo(
                 'Tin tức | '.$this->seo->siteName(),
-                'Tin tức, kiến thức và góc nhìn truyền thông.',
+                'Tin tức, kiến thức và góc nhìn thực tế về phòng cháy chữa cháy.',
                 $canonicalUrl,
             ),
         ]);

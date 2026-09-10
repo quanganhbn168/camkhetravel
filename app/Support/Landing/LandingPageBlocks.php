@@ -94,7 +94,7 @@ class LandingPageBlocks
                             ->values(),
                     ],
                     'faqs' => $prepared + [
-                        'items' => $this->faqItems($data['items'] ?? $landingPage->faq_items ?? []),
+                        'items' => $this->faqItems($landingPage->faqs),
                     ],
                     default => $prepared,
                 };
@@ -153,12 +153,12 @@ class LandingPageBlocks
     }
 
     /** @return Collection<int, array{question: string, answer: string}> */
-    private function faqItems(mixed $items): Collection
+    private function faqItems(iterable $items): Collection
     {
-        return collect(is_array($items) ? $items : [])
-            ->map(fn (mixed $item): array => [
-                'question' => trim((string) (is_array($item) ? ($item['question'] ?? '') : '')),
-                'answer' => trim((string) (is_array($item) ? ($item['answer'] ?? '') : '')),
+        return collect($items)
+            ->map(fn ($item): array => [
+                'question' => trim((string) $item->question),
+                'answer' => trim((string) $item->answer),
             ])
             ->filter(fn (array $item): bool => $item['question'] !== '' && $item['answer'] !== '')
             ->values();

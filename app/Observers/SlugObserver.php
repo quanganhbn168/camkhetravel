@@ -79,6 +79,7 @@ class SlugObserver
             'lien-he',
             'tin-tuc',
             'blog',
+            'san-pham',
             'sitemap.xml',
             'robots.txt',
         ], true);

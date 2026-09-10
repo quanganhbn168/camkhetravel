@@ -34,8 +34,11 @@ final class WebsiteSeeder extends Seeder
                 ['name' => 'DVTEC Admin', 'password' => Hash::make('password')],
             );
 
-            if (method_exists($user, 'assignRole')) {
-                $user->assignRole(Role::findOrCreate('super_admin', 'web'));
+            if (method_exists($user, 'assignRole') && ($role = Role::query()
+                ->where('name', 'super_admin')
+                ->where('guard_name', 'web')
+                ->first())) {
+                $user->assignRole($role);
             }
         }
 
@@ -49,8 +52,9 @@ final class WebsiteSeeder extends Seeder
             ['label' => 'Giới thiệu', 'url' => 'about', 'position' => 20],
             ['label' => 'Dịch vụ', 'url' => 'services.index', 'position' => 30],
             ['label' => 'Dự án', 'url' => 'projects.index', 'position' => 40],
-            ['label' => 'Bài viết', 'url' => 'posts.index', 'position' => 50],
-            ['label' => 'Liên hệ', 'url' => 'contact', 'position' => 60],
+            ['label' => 'Sản phẩm', 'url' => 'products.index', 'position' => 50],
+            ['label' => 'Kiến thức', 'url' => 'posts.index', 'position' => 60],
+            ['label' => 'Liên hệ', 'url' => 'contact', 'position' => 70],
         ];
 
         $menu->items()->delete();

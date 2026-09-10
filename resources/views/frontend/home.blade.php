@@ -77,7 +77,7 @@
             <div class="hero-brand-glow absolute inset-0"></div>
             <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative grid items-end py-24 md:py-32 lg:py-40">
                 <div class="max-w-4xl pb-16">
-                    <h2 class="font-display max-w-4xl text-4xl leading-[1.12] tracking-[-0.045em] text-white lg:text-6xl">Biến câu chuyện thương hiệu thành trải nghiệm đáng nhớ.</h2>
+                    <h2 class="font-display max-w-4xl text-4xl leading-[1.12] tracking-[-0.045em] text-white lg:text-6xl">Kiến tạo hệ thống PCCC an toàn, đồng bộ và bền vững.</h2>
                 </div>
             </div>
         @endforelse
@@ -317,6 +317,30 @@
         </div>
 
     </section>
+
+    @if ($faqItems->isNotEmpty())
+        <section class="home-faq section-space border-t border-slate-100" id="cau-hoi">
+            <div class="site-container mx-auto w-full max-w-7xl px-4 lg:px-8">
+                <div class="grid gap-10 lg:grid-cols-[.75fr_1.25fr] lg:items-start">
+                    <header class="home-faq__header">
+                        <p class="text-sm font-bold uppercase tracking-[0.16em] text-primary">Giải đáp nhanh</p>
+                        <h2 class="display-title mt-3 text-3xl leading-tight uppercase md:text-4xl">{{ $faqTitle ?: 'Câu hỏi thường gặp' }}</h2>
+                        @if (filled($faqDescription))
+                            <p class="mt-4 text-base leading-8 text-slate-600">{{ $faqDescription }}</p>
+                        @endif
+                    </header>
+                    <div class="home-faq__list">
+                        @foreach ($faqItems as $item)
+                            <details class="home-faq__item" @if ($loop->first) open @endif>
+                                <summary class="home-faq__question"><span>{{ $item['question'] }}</span><span class="home-faq__indicator" aria-hidden="true">+</span></summary>
+                                <div class="home-faq__answer"><p>{{ $item['answer'] }}</p></div>
+                            </details>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
 
     <section class="home-consultation section-space" id="tu-van">
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
