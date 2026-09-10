@@ -397,7 +397,7 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Phát video: Video đầu trang Lễ chuyển giao');
     }
 
-    public function test_a_handover_slide_upload_renders_native_audio_and_pause_controls(): void
+    public function test_a_handover_slide_upload_autoplays_muted_with_native_audio_and_pause_controls(): void
     {
         Storage::fake('public');
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
@@ -440,13 +440,23 @@ class BniExperienceRoutesTest extends TestCase
         $slider = substr($body, $sliderStart, $sliderEnd - $sliderStart);
 
         $this->assertStringContainsString(
-            'class="bni-event-slide__video" controls playsinline preload="metadata" poster="'.$image->getUrl('webp'),
+            'class="bni-event-slide__video" controls autoplay muted playsinline preload="metadata" poster="'.$image->getUrl('webp'),
             $slider,
         );
         $this->assertStringContainsString($video->getUrl(), $slider);
-        $this->assertStringNotContainsString('autoplay', $slider);
-        $this->assertStringNotContainsString('muted', $slider);
         $this->assertStringNotContainsString(' loop', $slider);
+
+        $javascript = file_get_contents(resource_path('js/app.js'));
+
+        $this->assertIsString($javascript);
+        $this->assertStringContainsString('const syncHeroVideos = () => {', $javascript);
+        $this->assertStringContainsString('video.play().catch(() => {});', $javascript);
+
+        $heroJavascriptStart = strpos($javascript, 'const initialiseBniHeroSwipers = () => {');
+        $heroJavascriptEnd = strpos($javascript, 'const initialisePostSwipers = () => {', $heroJavascriptStart);
+        $heroJavascript = substr($javascript, $heroJavascriptStart, $heroJavascriptEnd - $heroJavascriptStart);
+
+        $this->assertStringNotContainsString('pauseOnMouseEnter', $heroJavascript);
     }
 
     public function test_overview_uses_the_separate_event_video_and_keeps_chapter_media_in_the_four_small_cards(): void

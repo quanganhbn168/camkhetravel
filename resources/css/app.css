@@ -442,21 +442,21 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-tab-list button { min-height: 2.65rem; border: 1px solid color-mix(in srgb, var(--bni-red) 28%, var(--bni-white)); border-radius: var(--bni-radius); padding: 0.55rem 1rem; color: var(--bni-black); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
     .bni-tab-list button.is-active, .bni-tab-list button:hover { border-color: var(--bni-red); background: var(--bni-red); color: var(--bni-white); box-shadow: 0 0.65rem 1.25rem color-mix(in srgb, var(--bni-red) 20%, transparent); }
     .bni-schedule-list { margin-top: 1.3rem; border-top: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); }
-    .bni-schedule-item { display: grid; grid-template-columns: 5.1rem minmax(0, 1fr); gap: 1rem; border-bottom: 1px solid color-mix(in srgb, var(--bni-red) 14%, var(--bni-white)); padding: 1.2rem 0; }
-    .bni-schedule-item time { color: var(--bni-red); font-size: 0.76rem; font-weight: 800; line-height: 1.6; }
+    .bni-schedule-item { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: 1rem; border-bottom: 1px solid color-mix(in srgb, var(--bni-red) 14%, var(--bni-white)); padding: 1.2rem 0; }
+    .bni-schedule-item time { color: var(--bni-red); font-size: clamp(1rem, 1.45vw, 1.25rem); font-variant-numeric: tabular-nums; font-weight: 900; line-height: 1.3; letter-spacing: -0.02em; }
     .bni-schedule-item h3 { margin: 0; color: var(--bni-black); font-size: 1rem; font-weight: 800; line-height: 1.35; }
     .bni-schedule-item p, .bni-schedule-item span { display: block; margin: 0.4rem 0 0; color: var(--bni-black); font-size: 0.84rem; line-height: 1.6; }
     .bni-schedule-item strong { display: block; margin-top: 0.6rem; color: var(--bni-red); font-size: 0.8rem; }
     .bni-schedule__aside { display: grid; align-content: space-between; min-height: 20rem; overflow: hidden; border-radius: var(--bni-radius-lg); background: var(--bni-red); box-shadow: var(--bni-shadow); }
-    .bni-schedule__aside > img { width: 100%; height: 12rem; object-fit: cover; padding: 2rem; background: var(--bni-white); }
+    .bni-schedule__aside > .bni-schedule__cover { display: block; width: 100%; height: 12rem; object-fit: contain; padding: 1.25rem 2rem; background: var(--bni-white); }
     .bni-schedule__aside > div { padding: 1.25rem; color: var(--bni-white); }
     .bni-schedule__aside h3 { margin: 0; font-size: 1.05rem; line-height: 1.4; }
     .bni-schedule__aside > div > p { margin: 0.5rem 0 0; color: var(--bni-white); font-size: 0.84rem; line-height: 1.6; }
     .bni-countdown { padding: 1.25rem; background: var(--bni-red); color: var(--bni-white); }
     .bni-countdown > p { margin: 0; color: var(--bni-white); font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
-    .bni-countdown > div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.45rem; margin-top: 1rem; }
-    .bni-countdown span { color: var(--bni-white); font-size: clamp(1.15rem, 2.1vw, 1.7rem); font-weight: 800; line-height: 1; text-align: center; }
-    .bni-countdown small { display: block; margin-top: 0.35rem; color: var(--bni-white); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .bni-countdown > div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.65rem; margin-top: 1rem; }
+    .bni-countdown span { color: var(--bni-white); font-size: clamp(1.35rem, 2.6vw, 2rem); font-variant-numeric: tabular-nums; font-weight: 900; line-height: 1; text-align: center; }
+    .bni-countdown small { display: block; margin-top: 0.4rem; color: var(--bni-white); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
     .bni-countdown__cta { width: 100%; margin-top: 1.2rem; }
     .bni-activities-grid { display: grid; gap: 1rem; }
     .bni-activities-grid__side { display: grid; gap: 1rem; min-width: 0; }
@@ -1354,12 +1354,12 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-tab-list { flex-wrap: nowrap; margin-inline: -0.2rem; overflow-x: auto; padding: 0.2rem; scrollbar-width: none; }
     .bni-tab-list::-webkit-scrollbar { display: none; }
     .bni-tab-list button { min-height: 2.85rem; flex: none; padding-inline: 0.8rem; font-size: 0.64rem; }
-    .bni-schedule-item { grid-template-columns: 4.35rem minmax(0, 1fr); gap: 0.7rem; padding: 1rem 0; }
-    .bni-schedule-item time { font-size: 0.7rem; }
+    .bni-schedule-item { grid-template-columns: 5.3rem minmax(0, 1fr); gap: 0.7rem; padding: 1rem 0; }
+    .bni-schedule-item time { font-size: 0.86rem; line-height: 1.35; }
     .bni-schedule-item h3 { font-size: 0.9rem; }
     .bni-schedule-item p, .bni-schedule-item span { font-size: 0.78rem; }
     .bni-schedule__aside { min-height: 15rem; border-radius: 1.15rem; }
-    .bni-schedule__aside > img { height: 8rem; padding: 1.5rem; }
+    .bni-schedule__aside > .bni-schedule__cover { height: 9rem; padding: 1rem 1.5rem; }
     .bni-countdown { padding: 1rem; }
     .bni-countdown > div { margin-top: 0.8rem; }
      .bni-activities-grid, .bni-news-grid, .bni-pickleball-news { gap: 0.8rem; }

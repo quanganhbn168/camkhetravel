@@ -52,6 +52,7 @@ class BniHandoverPageTest extends TestCase
             ->assertSee('bni-chapter-widgets__grid')
             ->assertSee('bni-handover-overview-section')
             ->assertSee('bni-countdown__cta')
+            ->assertSee('bni-schedule__cover')
             ->assertSee('Đăng ký ngay')
             ->assertSee('Chưa gắn ảnh cover trong quản trị Chapter')
             ->assertSee('Chưa gắn ảnh cover hoặc video trong quản trị Video sự kiện')
@@ -108,6 +109,17 @@ class BniHandoverPageTest extends TestCase
         $this->assertIsString($css);
         $this->assertStringNotContainsString('.bni-video-card::after', $css);
         $this->assertStringContainsString('.bni-video-card__label', $css);
+    }
+
+    public function test_the_handover_schedule_uses_large_times_and_an_uncropped_image_cover(): void
+    {
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertIsString($css);
+        $this->assertStringContainsString('grid-template-columns: 7.2rem minmax(0, 1fr)', $css);
+        $this->assertStringContainsString('font-size: clamp(1rem, 1.45vw, 1.25rem)', $css);
+        $this->assertStringContainsString('.bni-schedule__aside > .bni-schedule__cover', $css);
+        $this->assertStringContainsString('object-fit: contain', $css);
     }
 
     public function test_an_authenticated_user_does_not_see_a_logout_button_in_the_handover_content(): void

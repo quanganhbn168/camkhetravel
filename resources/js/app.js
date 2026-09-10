@@ -132,7 +132,6 @@ const initialiseBniHeroSwipers = () => {
             autoplay: slideCount > 1 ? {
                 delay: 6500,
                 disableOnInteraction: false,
-                pauseOnMouseEnter: true,
             } : false,
             keyboard: { enabled: true },
             navigation: {
@@ -166,22 +165,27 @@ const initialiseBniHeroSwipers = () => {
             updateAutoplayToggle();
         });
 
-        element.querySelectorAll('[data-bni-hero-video]').forEach((video) => {
+        element.querySelectorAll('[data-bni-hero-video], .bni-event-slide__video-link').forEach((video) => {
             video.addEventListener('pointerdown', stopAutoplayForVideo);
-            video.addEventListener('play', stopAutoplayForVideo);
         });
 
-        const pauseInactiveVideos = () => {
+        const syncHeroVideos = () => {
             element.querySelectorAll('[data-bni-hero-video]').forEach((video) => {
                 const slide = video.closest('.swiper-slide');
 
                 if (slide && !slide.classList.contains('swiper-slide-active')) {
                     video.pause();
+
+                    return;
                 }
+
+                video.muted = true;
+                video.play().catch(() => {});
             });
         };
 
-        swiper.on('slideChange', pauseInactiveVideos);
+        swiper.on('slideChange', syncHeroVideos);
+        syncHeroVideos();
         updateAutoplayToggle();
     });
 };

@@ -70,7 +70,7 @@ class BniEventSlideResource extends Resource
                         ->collection('video')
                         ->disk('public')
                         ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])
-                        ->helperText('Nếu có video tải lên, slide hiển thị thanh điều khiển mặc định để bật tiếng, dừng và tua. Video không tự phát; video tải lên được ưu tiên trước URL bên dưới.')
+                        ->helperText('Nếu có video tải lên, slide tự phát ở chế độ tắt tiếng khi tới lượt; thanh điều khiển mặc định cho phép bật tiếng, dừng và tua. Video tải lên được ưu tiên trước URL bên dưới.')
                         ->columnSpanFull(),
                     TextInput::make('video_url')
                         ->label('Hoặc URL YouTube/Vimeo')

@@ -66,6 +66,7 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringNotContainsString('poster video', $chapterResource);
         $this->assertStringContainsString("->label('Ảnh slide / ảnh cover video')", $slideResource);
         $this->assertStringContainsString('được dùng làm poster khi slide có video', $slideResource);
+        $this->assertStringContainsString('slide tự phát ở chế độ tắt tiếng khi tới lượt', $slideResource);
         $this->assertStringContainsString('protected static ?string $navigationLabel = \'Video sự kiện\';', $eventVideoResource);
         $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('poster')", $eventVideoResource);
         $this->assertStringContainsString('Cấu hình riêng cho khung Video sự kiện', $eventVideoResource);

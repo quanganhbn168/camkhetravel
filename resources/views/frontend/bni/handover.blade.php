@@ -25,7 +25,7 @@
                                         $slideImageUrl = $slide['image_url'] ?: Vite::asset('resources/images/bni/bni-kv-milk-red.webp');
                                     @endphp
                                     @if ($slide['video_media_url'])
-                                        <video class="bni-event-slide__video" controls playsinline preload="metadata" poster="{{ $slideImageUrl }}" aria-label="{{ $slide['alt_text'] }}" data-bni-hero-video>
+                                        <video class="bni-event-slide__video" controls autoplay muted playsinline preload="metadata" poster="{{ $slideImageUrl }}" aria-label="{{ $slide['alt_text'] }}" data-bni-hero-video>
                                             <source src="{{ $slide['video_media_url'] }}">
                                             Trình duyệt của bạn chưa hỗ trợ phát video.
                                         </video>
@@ -194,7 +194,11 @@
                         @endforelse
                     </div>
                     <aside class="bni-schedule__aside">
-                        @if ($heroImageUrl)<img src="{{ $heroImageUrl }}" alt="Hình ảnh {{ $event?->title ?: 'Lễ chuyển giao BNI' }}">@else<img src="{{ asset('bni-logo-red.svg') }}" alt="BNI">@endif
+                        @if ($heroImageUrl)
+                            <img class="bni-schedule__cover" src="{{ $heroImageUrl }}" alt="Hình ảnh {{ $event?->title ?: 'Lễ chuyển giao BNI' }}" loading="lazy" decoding="async">
+                        @else
+                            <img class="bni-schedule__cover" src="{{ asset('bni-logo-red.svg') }}" alt="BNI" loading="lazy" decoding="async">
+                        @endif
                         <div class="bni-countdown" @if ($event?->starts_at) data-bni-countdown="{{ $event->starts_at->toIso8601String() }}" @endif>
                             <p>Đếm ngược đến sự kiện</p>
                             <div><span data-bni-countdown-days>--<small>Ngày</small></span><span data-bni-countdown-hours>--<small>Giờ</small></span><span data-bni-countdown-minutes>--<small>Phút</small></span><span data-bni-countdown-seconds>--<small>Giây</small></span></div>
