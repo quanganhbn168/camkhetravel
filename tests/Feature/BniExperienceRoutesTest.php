@@ -211,6 +211,25 @@ class BniExperienceRoutesTest extends TestCase
         }
     }
 
+    public function test_bni_article_detail_exposes_reading_and_member_comment_ui(): void
+    {
+        Role::findOrCreate('bni_member', 'web');
+        $article = BniArticle::query()->published()->firstOrFail();
+        $user = User::factory()->create();
+        $user->assignRole('bni_member');
+
+        $this->actingAs($user)
+            ->get(route('bni.articles.show', ['article' => $article]))
+            ->assertOk()
+            ->assertSee('class="bni-article__content"', false)
+            ->assertSee('id="bni-reactions-title"', false)
+            ->assertSee('id="bni-comments-title"', false)
+            ->assertSee('bni-comment-form', false)
+            ->assertSee('maxlength="3000"', false)
+            ->assertSee('Bình luận sẽ hiển thị sau khi được Ban quản trị duyệt.')
+            ->assertSee('Đang đăng nhập với', false);
+    }
+
     public function test_bni_news_index_only_lists_published_handover_news_and_filters_by_category(): void
     {
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
