@@ -198,6 +198,14 @@ class LandingBuilderTest extends TestCase
             ->get('/admin/landing-events')
             ->assertOk()
             ->assertSee('Tracking landing');
+
+        $this->actingAs($user)
+            ->get('/admin/landing-tracking-overview')
+            ->assertOk()
+            ->assertSee('Tổng quan tracking nội bộ')
+            ->assertSee('Bộ lọc báo cáo')
+            ->assertSee('Lượt xem ghi nhận')
+            ->assertSee('Nguồn traffic');
     }
 
     public function test_builder_templates_and_native_landings_resolve_distinct_contracts(): void

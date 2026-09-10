@@ -52,7 +52,21 @@ class LandingEventsTable
                 SelectFilter::make('service_id')->label('Dịch vụ')->relationship('service', 'title')->searchable()->preload(),
                 SelectFilter::make('event_name')->label('Sự kiện')->options(array_combine(
                     LandingEventRecorder::EVENT_NAMES,
-                    LandingEventRecorder::EVENT_NAMES,
+                    array_map(
+                        fn (string $event): string => match ($event) {
+                            'page_view' => 'Xem trang',
+                            'cta_click' => 'Bấm CTA',
+                            'pricing_view' => 'Xem gói giá',
+                            'project_click' => 'Xem dự án',
+                            'phone_click' => 'Bấm gọi',
+                            'zalo_click' => 'Bấm Zalo',
+                            'countdown_view' => 'Xem countdown',
+                            'countdown_expired' => 'Countdown hết hạn',
+                            'lead_submit' => 'Gửi lead',
+                            default => $event,
+                        },
+                        LandingEventRecorder::EVENT_NAMES,
+                    ),
                 )),
                 Filter::make('occurred_at')
                     ->label('Khoảng thời gian')
