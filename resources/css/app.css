@@ -492,10 +492,10 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-sponsors-group { display: grid; gap: 0.9rem; }
     .bni-sponsors-group h3 { margin: 0; color: var(--bni-red); font-family: var(--font-display); font-size: clamp(1.05rem, 2vw, 1.45rem); font-weight: 850; letter-spacing: -0.02em; text-align: center; }
     .bni-sponsors-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
-    .bni-sponsor-card { display: flex; min-width: 0; min-height: 7.5rem; flex-direction: column; align-items: center; justify-content: center; gap: 0.65rem; border: 1px solid color-mix(in srgb, var(--bni-red) 16%, var(--bni-white)); border-radius: var(--bni-radius); background: var(--bni-white); padding: 1rem; color: var(--bni-black); text-align: center; box-shadow: 0 0.8rem 1.8rem color-mix(in srgb, var(--bni-red) 8%, transparent); transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+    .bni-sponsor-card { display: flex; min-width: 0; min-height: 8.5rem; flex-direction: column; align-items: center; justify-content: center; gap: 0.65rem; overflow: hidden; border: 1px solid color-mix(in srgb, var(--bni-red) 16%, var(--bni-white)); border-radius: var(--bni-radius); background: var(--bni-white); padding: 1rem; color: var(--bni-black); text-align: center; box-shadow: 0 0.8rem 1.8rem color-mix(in srgb, var(--bni-red) 8%, transparent); transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
     .bni-sponsor-card:hover, .bni-sponsor-card:focus-visible { border-color: color-mix(in srgb, var(--bni-red) 52%, var(--bni-white)); box-shadow: 0 1rem 2.2rem color-mix(in srgb, var(--bni-red) 14%, transparent); transform: translateY(-0.2rem); }
-    .bni-sponsor-card__logo { display: grid; width: 100%; height: 4.25rem; place-items: center; }
-    .bni-sponsor-card__logo img { display: block; width: auto; max-width: 100%; height: auto; max-height: 100%; object-fit: contain; }
+    .bni-sponsor-card__logo { display: grid; width: min(100%, 14rem); height: 5rem; flex: none; place-items: center; overflow: hidden; }
+    .bni-sponsor-card__logo img { display: block; width: 100%; max-width: 100%; height: 100%; max-height: 100%; object-fit: contain; }
     .bni-sponsor-card__logo > span { max-width: 100%; overflow-wrap: anywhere; color: var(--bni-red); font-size: 0.8rem; font-weight: 850; line-height: 1.3; }
     .bni-sponsor-card__name { max-width: 100%; overflow-wrap: anywhere; font-size: 0.72rem; font-weight: 800; line-height: 1.35; }
     .bni-news { background: var(--bni-white); }
@@ -955,6 +955,7 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
         .bni-chapter-detail__contact-person { flex-direction: row; align-items: center; }
         .bni-chapter-detail__contact-actions { justify-content: flex-end; }
         .bni-chapter-detail__news-grid, .bni-chapter-detail__siblings-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .bni-sponsors-grid { grid-template-columns: repeat(auto-fit, minmax(12rem, 16rem)); justify-content: center; }
         .bni-article__layout { grid-template-columns: minmax(0, 1fr) 15rem; }
     }
 
@@ -1371,8 +1372,8 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
      .bni-activity-card--compact .bni-activity-card__summary { font-size: 0.72rem; }
      .bni-sponsors__groups { gap: 1.65rem; }
      .bni-sponsors-grid { gap: 0.6rem; }
-     .bni-sponsor-card { min-height: 6.5rem; padding: 0.75rem; }
-     .bni-sponsor-card__logo { height: 3.5rem; }
+     .bni-sponsor-card { min-height: 7.5rem; padding: 0.75rem; }
+     .bni-sponsor-card__logo { width: 100%; height: 4rem; }
      .bni-sponsor-card__name { font-size: 0.68rem; }
     .bni-news-card { min-height: 0; border-radius: 1rem; }
     .bni-news-card > img { height: 11rem; }

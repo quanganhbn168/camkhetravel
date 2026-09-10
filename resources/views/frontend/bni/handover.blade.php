@@ -251,14 +251,14 @@
                                         @else
                                             <div class="bni-sponsor-card">
                                         @endif
-                                            <span class="bni-sponsor-card__logo">
-                                                @if ($sponsor['logo_url'])
-                                                    <img src="{{ $sponsor['logo_url'] }}" alt="Logo {{ $sponsor['name'] }}" loading="lazy">
-                                                @else
-                                                    <span aria-hidden="true">{{ $sponsor['name'] }}</span>
-                                                @endif
-                                            </span>
-                                            <span class="bni-sponsor-card__name">{{ $sponsor['name'] }}</span>
+                                        <span class="bni-sponsor-card__logo">
+                                            @if ($sponsor['logo_url'])
+                                                <img src="{{ $sponsor['logo_url'] }}" alt="Logo {{ $sponsor['name'] }}" loading="lazy" decoding="async">
+                                            @else
+                                                <span aria-hidden="true">Chưa có logo</span>
+                                            @endif
+                                        </span>
+                                        <span class="bni-sponsor-card__name">{{ $sponsor['name'] }}</span>
                                         @if ($sponsor['url'])
                                             </a>
                                         @else
