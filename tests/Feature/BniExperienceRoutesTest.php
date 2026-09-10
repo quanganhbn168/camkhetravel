@@ -14,6 +14,7 @@ use App\Models\BniGalleryItem;
 use App\Models\BniInvitation;
 use App\Models\BniScheduleDay;
 use App\Models\BniScheduleItem;
+use App\Models\BniSponsor;
 use App\Models\User;
 use App\Settings\BniInvitationSettings;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -51,6 +52,8 @@ class BniExperienceRoutesTest extends TestCase
         $navigation = substr($body, $navStart, $navEnd - $navStart);
 
         $this->assertStringNotContainsString('Video giới thiệu', $navigation);
+        $this->assertStringContainsString('activeChapter:', $body);
+        $this->assertStringContainsString('@click="activeChapter =', $body);
         $this->assertStringContainsString(route('bni.events.index'), $navigation);
         $this->assertStringContainsString(route('bni.articles.index'), $navigation);
         $this->assertStringNotContainsString('KINHBAC', $navigation);
@@ -71,6 +74,7 @@ class BniExperienceRoutesTest extends TestCase
             'is_featured' => true,
             'starts_at' => now()->addMonths(3),
             'venue' => 'Địa điểm sự kiện kiểm thử',
+            'landing_url' => 'https://example.test/su-kien-vuong',
         ]);
         $featured->addMedia(UploadedFile::fake()->image('activity-square.png', 1200, 1200))
             ->toMediaCollection('activity_image', 'public');
@@ -89,12 +93,102 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('bni-activity-card--featured')
             ->assertSee('bni-activity-card--compact')
             ->assertSee('bni-activities-grid__side')
+            ->assertSee('href="https://example.test/su-kien-vuong"', false)
             ->assertDontSee($draft->title);
 
         $body = $response->getContent();
         $this->assertSame(1, substr_count($body, 'bni-activity-card--featured'));
         $this->assertLessThanOrEqual(3, substr_count($body, 'bni-activity-card--compact'));
         $this->assertStringContainsString($featured->bniMediaUrl('activity_image'), $body);
+    }
+
+    public function test_special_activity_grid_keeps_a_single_event_to_one_card(): void
+    {
+        BniEvent::query()->where('is_featured', true)->update(['is_featured' => false]);
+
+        $single = BniEvent::query()->create([
+            'type' => 'community',
+            'title' => 'Chỉ một sự kiện đặc biệt',
+            'status' => 'published',
+            'is_featured' => true,
+        ]);
+
+        $response = $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee($single->title)
+            ->assertSee('bni-activities-grid--single')
+            ->assertDontSee('bni-activities-grid__side')
+            ->assertDontSee('bni-activity-card--compact');
+
+        $this->assertSame(1, substr_count($response->getContent(), 'bni-activity-card--featured'));
+    }
+
+    public function test_special_activity_grid_keeps_one_secondary_event_compact(): void
+    {
+        BniEvent::query()->where('is_featured', true)->update(['is_featured' => false]);
+
+        BniEvent::query()->create([
+            'type' => 'community',
+            'title' => 'Sự kiện lớn kiểm thử',
+            'status' => 'published',
+            'is_featured' => true,
+        ]);
+        BniEvent::query()->create([
+            'type' => 'community',
+            'title' => 'Sự kiện phụ kiểm thử',
+            'status' => 'published',
+            'is_featured' => true,
+        ]);
+
+        $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('bni-activities-grid__side--single')
+            ->assertSee('bni-activity-card--compact');
+    }
+
+    public function test_handover_renders_active_sponsors_grouped_by_tier(): void
+    {
+        Storage::fake('public');
+
+        $event = BniEvent::query()->where('type', 'handover')->published()->firstOrFail();
+        $sponsors = collect(BniSponsor::tierOptions())->map(function (string $label, string $tier) use ($event): BniSponsor {
+            $sponsor = BniSponsor::query()->create([
+                'bni_event_id' => $event->getKey(),
+                'tier' => $tier,
+                'name' => 'Logo '.$tier,
+                'url' => 'https://'.$tier.'.example.test',
+                'sort_order' => 1,
+                'is_active' => true,
+            ]);
+            $sponsor->addMedia(UploadedFile::fake()->image($tier.'.png', 800, 400))
+                ->toMediaCollection('logo', 'public');
+
+            return $sponsor;
+        });
+        $hidden = BniSponsor::query()->create([
+            'bni_event_id' => $event->getKey(),
+            'tier' => BniSponsor::TIER_GOLD,
+            'name' => 'Logo ẩn không hiển thị',
+            'is_active' => false,
+        ]);
+
+        $response = $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee('Nhà tài trợ')
+            ->assertSee('Nhà tài trợ Kim cương')
+            ->assertSee('Nhà tài trợ Vàng')
+            ->assertSee('Nhà tài trợ Bạc')
+            ->assertSee('Đồng tài trợ')
+            ->assertSee('Logo diamond')
+            ->assertSee('Logo gold')
+            ->assertSee('Logo silver')
+            ->assertSee('Logo co_sponsor')
+            ->assertSee('href="https://diamond.example.test"', false)
+            ->assertDontSee($hidden->name);
+
+        foreach ($sponsors as $sponsor) {
+            $this->assertStringContainsString($sponsor->bniMediaUrl('logo'), $response->getContent());
+        }
     }
 
     public function test_bni_news_registration_and_gallery_pages_share_the_handover_navigation(): void
@@ -383,7 +477,8 @@ class BniExperienceRoutesTest extends TestCase
             ->assertOk()
             ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
             ->assertSee('Xác nhận tham dự')
-            ->assertDontSee('Đăng ký tham dự')
+            ->assertSee('qr_dang_ky.jpg')
+            ->assertSee('Quét mã QR để đăng ký')
             ->assertSee('name="full_name"', false)
             ->assertSee('action="'.route('bni.invitations.template.rsvp').'"', false)
             ->assertSee('data-bni-ajax-form', false)
@@ -393,8 +488,8 @@ class BniExperienceRoutesTest extends TestCase
             ->assertSee('Chỉ đường')
             ->assertSee('https://maps.google.com/?q=BNI+Handover', false)
             ->assertSee('width: fit-content;', false)
-            ->assertSee('margin: 0 auto;', false)
-            ->assertSee('text-align: center;', false)
+            ->assertSee('margin-inline: 0;', false)
+            ->assertSee('text-align: left;', false)
             ->assertDontSee('Vì sao nên tham dự?')
             ->assertDontSee('<details', false)
             ->assertDontSee('Mã thư mời')
@@ -472,6 +567,7 @@ class BniExperienceRoutesTest extends TestCase
             'slug' => 'le-chuyen-giao-kem-thu',
             'starts_at' => '2026-10-01 08:00:00',
             'venue' => 'Trung tâm hội nghị',
+            'address' => 'Số 01, đường Kiểm Thử, Hà Nội',
         ]);
         $settings = app(BniInvitationSettings::class);
         $settings->content_title = 'Tiêu đề nội dung lấy từ database';
@@ -515,25 +611,51 @@ class BniExperienceRoutesTest extends TestCase
             ->assertOk()
             ->assertSee('<meta name="robots" content="noindex, nofollow, noarchive">', false)
             ->assertSee('id="bni-invitation-main"', false)
-            ->assertSee('THƯ MỜI')
+            ->assertSee('Thư mời')
+            ->assertSee('background-thumoi.jpg')
+            ->assertSee('BNI Accelerator')
+            ->assertSee('Tới tham dự chương trình chào mừng')
             ->assertSee('class="bni-invite-brand__logo"', false)
             ->assertSee('bni-logo-red.svg')
-            ->assertSee('images/bni/le-chuyen-giao.png')
             ->assertDontSee('bni-invite-brand__mark')
-            ->assertSee('LỄ CHUYỂN GIAO')
+            ->assertSee('Lễ Chuyển Giao Kiểm Thử')
+            ->assertSee('class="bni-invite-hero__event-image"', false)
+            ->assertSee('src="'.asset('images/bni/le-chuyen-giao.png').'"', false)
+            ->assertDontSee('class="bni-invite-hero__event-type">Lễ chuyển giao</p>', false)
+            ->assertSee('Kiểm Thử')
+            ->assertSee('Địa chỉ')
+            ->assertSee('Trung tâm hội nghị, Số 01, đường Kiểm Thử, Hà Nội')
+            ->assertDontSee('>Hình thức<', false)
+            ->assertSee('class="bni-invite-hero__guest"', false)
+            ->assertDontSee('bni-invite-hero__guest--default')
             ->assertSee('Anh/Chị chủ doanh nghiệp')
             ->assertSee('Tiêu đề nội dung lấy từ database')
             ->assertSee('Nội dung chung toàn hệ thống.')
             ->assertSee('Lịch trình sự kiện')
             ->assertSee('Đón tiếp khách mời')
-            ->assertSee('Trang phục')
-            ->assertSee('images/bni/dress-code-vest-line.webp')
+            ->assertSee('Dress code chung toàn hệ thống.')
+            ->assertSee('Chapter Kiểm Thử')
+            ->assertDontSee('BNI Famous')
+            ->assertDontSee('Sự kiện nổi bật')
+            ->assertDontSee('bni-invite-featured-events')
+            ->assertSee('class="bni-invite-rsvp-layout"', false)
+            ->assertSee('qr_dang_ky.jpg')
+            ->assertSee('Quét mã QR để đăng ký')
             ->assertSee('Xác nhận tham dự')
             ->assertSee('Mô tả RSVP lấy từ database.')
             ->assertSee('name="rsvp_status"', false)
             ->assertSee('Người phụ trách chapter')
             ->assertSee('property="og:type"', false)
             ->assertSee('"@type":"Event"', false);
+    }
+
+    public function test_invitation_does_not_render_featured_events(): void
+    {
+        $this->get(route('bni.invitations.template'))
+            ->assertOk()
+            ->assertDontSee('Sự kiện nổi bật')
+            ->assertDontSee('bni-invite-featured-events')
+            ->assertDontSee('BNI Pickleball Championship');
     }
 
     public function test_handover_news_tabs_use_bni_article_categories_and_gallery_images_are_rendered_from_database_records(): void

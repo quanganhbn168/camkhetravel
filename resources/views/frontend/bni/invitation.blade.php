@@ -8,22 +8,6 @@
 
 @section('content')
     @php
-        /*
-        |--------------------------------------------------------------------------
-        | DATA CŨ - GIỮ NGUYÊN CÁCH DÙNG
-        |--------------------------------------------------------------------------
-        | Blade này tiếp tục dùng:
-        | $event, $invitationContent, $guestName, $invitation, $chapter,
-        | $scheduleDays, $heroImageUrl, $directionsUrl, $isInvitationTemplate
-        |
-        | Ảnh cần copy vào:
-        | public/images/bni/background_thumoi.jpg
-        | public/images/bni/BNI5@4x.png
-        | public/images/bni/BNI6@4x.png
-        | public/images/bni/BNI7@4x.png
-        | public/images/bni/BNI8@4x.png
-        */
-
         $contacts = collect($invitationContent['contacts'] ?? []);
         $primaryContact = $contacts->first();
         $location = collect([$event->venue, $event->address])->filter()->implode(', ');
@@ -31,46 +15,51 @@
         $startAt = $event->starts_at;
         $endAt = $event->ends_at;
 
-        $eventTime = $startAt?->format('H:i') ?: '09:00';
-        $eventDate = $startAt?->format('d.m') ?: '03.10';
-        $eventYear = $startAt?->format('Y') ?: now()->format('Y');
-        $eventWeekday = $startAt?->translatedFormat('l') ?: 'Thứ bảy';
-
-        $eventLabel = $invitationContent['event_label'] ?? $event->title ?? 'Lễ chuyển giao liên chapter';
+        $eventTitle = filled($event->title) ? $event->title : ($invitationContent['event_label'] ?? 'Sự kiện BNI');
+        $eventTime = $startAt?->format('H:i');
+        $eventDate = $startAt?->format('d.m');
+        $eventYear = $startAt?->format('Y');
+        $eventWeekday = $startAt?->translatedFormat('l');
+        $eventContent = filled($event->content) ? $event->content : ($invitationContent['content'] ?? null);
         $heroLabel = $invitationContent['label'] ?? 'Thư mời';
         $greeting = $invitationContent['greeting'] ?? 'Trân trọng kính mời';
-        $displayGuestName = filled($guestName ?? null) ? $guestName : 'QUÝ DOANH NGHIỆP / ĐỐI TÁC';
+        $eventPrefix = $invitationContent['event_prefix'] ?? 'Tới tham dự chương trình chào mừng';
+        $displayGuestName = filled($guestName ?? null)
+            ? $guestName
+            : ($invitationContent['default_guest_name'] ?? 'Anh/Chị chủ doanh nghiệp');
+        $eventTypeLabel = match ($event->type) {
+            'handover' => 'Lễ chuyển giao',
+            'pickleball' => 'Pickleball',
+            default => null,
+        };
+        $eventTypeImage = $event->type === 'handover'
+            ? asset('images/bni/le-chuyen-giao.png')
+            : null;
+        $eventTitleDetail = $eventTitle;
 
-        $heroBackground = $heroImageUrl ?: asset('images/bni/background_thumoi.jpg');
+        if (filled($eventTypeLabel)) {
+            $strippedTitle = preg_replace('/^\s*' . preg_quote($eventTypeLabel, '/') . '\s*/iu', '', $eventTitle);
+            $eventTitleDetail = filled($strippedTitle) ? $strippedTitle : $eventTitle;
+        }
 
-        $primaryPhone = data_get($primaryContact, 'phone')
-            ?: ($invitationContent['hotline'] ?? '0900 123 456');
+        $heroBackground = $heroImageUrl ?: asset('images/bni/background-thumoi.jpg');
+        $heroLocation = collect([$event->venue, $event->address])->filter()->first();
 
+        $primaryPhone = data_get($primaryContact, 'phone');
         $primaryPhoneUrl = data_get($primaryContact, 'phone_url')
-            ?: ('tel:' . preg_replace('/\s+/', '', $primaryPhone));
-
-        $chapterLogos = [
-            [
-                'name' => 'BNI Famous',
-                'image' => asset('images/bni/BNI5@4x.png'),
-            ],
-            [
-                'name' => 'BNI KBG',
-                'image' => asset('images/bni/BNI6@4x.png'),
-            ],
-            [
-                'name' => 'BNI Impact',
-                'image' => asset('images/bni/BNI7@4x.png'),
-            ],
-            [
-                'name' => 'BNI KinhBac',
-                'image' => asset('images/bni/BNI8@4x.png'),
-            ],
-        ];
+            ?: (filled($primaryPhone) ? 'tel:' . preg_replace('/\s+/', '', $primaryPhone) : null);
 
     @endphp
 
     <style>
+        @font-face {
+            font-family: 'UTM Edwardian';
+            src: url('{{ asset('fonts/UTM Edwardian/UTM EdwardianB.ttf') }}') format('truetype');
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+        }
+
         :root {
             --bni-red: #cf202f;
             --bni-red-dark: #9f0c16;
@@ -117,12 +106,7 @@
            HEADER
         ========================== */
         .bni-invite-topbar {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, .94);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid rgba(207, 32, 47, .08);
+            display: none;
         }
 
         .bni-invite-topbar__inner {
@@ -226,12 +210,12 @@
         ========================== */
         .bni-invite-hero {
             position: relative;
-            min-height: 690px;
+            min-height: min(100svh, 900px);
             display: flex;
             align-items: center;
             isolation: isolate;
             overflow: hidden;
-            background: #fff8f4;
+            background: #c90013;
         }
 
         .bni-invite-hero__bg {
@@ -250,8 +234,8 @@
             inset: 0;
             z-index: -2;
             background:
-                linear-gradient(90deg, rgba(255, 255, 255, .98) 0%, rgba(255, 255, 255, .92) 36%, rgba(255, 255, 255, .43) 59%, rgba(255, 255, 255, .02) 100%),
-                linear-gradient(180deg, rgba(255, 255, 255, .15), rgba(255, 244, 240, .1));
+                linear-gradient(180deg, rgba(72, 0, 8, .2), rgba(160, 0, 14, .02) 42%, rgba(58, 0, 8, .18)),
+                linear-gradient(90deg, rgba(72, 0, 8, .08), transparent 50%, rgba(72, 0, 8, .1));
         }
 
         .bni-invite-hero::after {
@@ -259,31 +243,75 @@
             position: absolute;
             inset: auto 0 0;
             z-index: -1;
-            height: 170px;
-            background: linear-gradient(180deg, transparent, #fffdfb);
+            height: 130px;
+            background: linear-gradient(180deg, transparent, rgba(93, 0, 10, .2));
         }
 
         .bni-invite-hero__content {
-            width: min(670px, 58%);
-            padding: 84px 0 115px;
+            width: min(780px, 100%);
+            margin-inline: 0;
+            padding: 34px 0 92px;
+            text-align: left;
+        }
+
+        .bni-invite-hero__brand-strip {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: clamp(14px, 2.6vw, 38px);
+            width: min(100%, 730px);
+            margin: 0 auto 48px;
+            color: #fff;
+        }
+
+        .bni-invite-hero__brand-main {
+            display: block;
+            flex: 0 0 auto;
+            width: clamp(108px, 17vw, 170px);
+            height: auto;
+        }
+
+        .bni-invite-hero__chapter-brand {
+            display: grid;
+            justify-items: center;
+            gap: 3px;
+            min-width: 44px;
+            color: #fff;
             text-align: center;
+            text-transform: uppercase;
+        }
+
+        .bni-invite-hero__chapter-brand strong {
+            font-size: clamp(16px, 2vw, 24px);
+            font-weight: 950;
+            line-height: .82;
+            letter-spacing: -.08em;
+        }
+
+        .bni-invite-hero__chapter-brand small {
+            max-width: 76px;
+            font-size: clamp(7px, .85vw, 10px);
+            font-weight: 900;
+            line-height: 1;
+            letter-spacing: .02em;
         }
 
         .bni-invite-hero__label {
             width: fit-content;
             max-width: 100%;
-            margin: 0 auto;
-            color: var(--bni-red);
-            font-size: clamp(36px, 4.2vw, 68px);
-            font-weight: 950;
-            line-height: .92;
-            letter-spacing: -.045em;
+            margin: 0;
+            color: #fff;
+            font-family: 'UTM Edwardian', cursive;
+            font-size: clamp(46px, 5.5vw, 82px);
+            font-weight: 400;
+            line-height: .8;
+            letter-spacing: 0;
             text-align: center;
         }
 
         .bni-invite-hero__greeting {
             margin: 9px 0 13px;
-            color: var(--bni-red);
+            color: #fff;
             font-family: var(--site-font-display);
             font-size: clamp(20px, 2vw, 31px);
             font-style: italic;
@@ -292,7 +320,7 @@
 
         .bni-invite-hero__guest {
             margin: 0 0 16px;
-            color: var(--bni-red);
+            color: #fff;
             text-transform: uppercase;
             font-size: clamp(20px, 2.4vw, 34px);
             font-weight: 900;
@@ -302,19 +330,57 @@
         .bni-invite-hero__guest small {
             display: block;
             margin-top: 8px;
-            color: #353539;
+            color: rgba(255, 255, 255, .82);
             font-size: 14px;
             font-weight: 700;
             letter-spacing: .04em;
         }
 
         .bni-invite-hero__event-prefix {
-            margin: 8px 0 0;
-            color: var(--bni-red);
+            margin: 8px 0 18px;
+            color: #fff;
             text-transform: uppercase;
-            font-size: 23px;
+            font-size: clamp(17px, 2.1vw, 27px);
             font-weight: 950;
-            letter-spacing: .16em;
+            letter-spacing: .04em;
+        }
+
+        .bni-invite-hero__event-type {
+            margin: 18px 0 0;
+            color: #fff;
+            font-size: clamp(34px, 4.8vw, 64px);
+            font-weight: 400;
+            line-height: .82;
+        }
+
+        .bni-invite-hero__event-image {
+            display: block;
+            width: min(650px, 100%);
+            height: auto;
+            margin: 0;
+        }
+
+        .bni-invite-hero__event-title {
+            max-width: 100%;
+            margin: 14px 0 0;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: clamp(30px, 4.2vw, 58px);
+            font-style: italic;
+            font-weight: 1000;
+            line-height: .95;
+            letter-spacing: -.045em;
+            text-shadow: 0 3px 0 rgba(128, 0, 10, .35), 0 7px 0 rgba(128, 0, 10, .18);
+            transform: skewX(-5deg);
+        }
+
+        .bni-invite-hero__event-kicker {
+            margin: 14px 0 0;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: .14em;
         }
 
         .bni-invite-hero__title {
@@ -338,7 +404,7 @@
             align-items: center;
             gap: 14px;
             margin-top: 16px;
-            color: var(--bni-red);
+            color: #fff;
             text-transform: uppercase;
             font-size: 23px;
             font-weight: 950;
@@ -351,22 +417,22 @@
             content: "";
             width: 58px;
             height: 2px;
-            background: var(--bni-red);
+            background: #fff;
         }
 
         .bni-invite-date {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             gap: 0;
-            margin-top: 35px;
+            margin-top: 28px;
         }
 
         .bni-invite-date__part {
             min-width: 120px;
             padding: 0 22px;
             text-align: center;
-            border-right: 2px solid var(--bni-red);
+            border-right: 2px solid rgba(255, 255, 255, .92);
         }
 
         .bni-invite-date__part:first-child {
@@ -379,8 +445,8 @@
 
         .bni-invite-date strong {
             display: block;
-            color: var(--bni-red);
-            font-size: 29px;
+            color: #fff;
+            font-size: clamp(29px, 3.2vw, 46px);
             font-weight: 950;
             line-height: 1;
         }
@@ -388,9 +454,21 @@
         .bni-invite-date span {
             display: block;
             margin-bottom: 7px;
-            color: #4e4e51;
-            font-size: 13px;
+            color: rgba(255, 255, 255, .92);
+            font-size: 15px;
             font-weight: 800;
+        }
+
+        .bni-invite-date__label--hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         .bni-invite-hero__actions {
@@ -399,6 +477,39 @@
             justify-content: center;
             gap: 16px;
             margin-top: 35px;
+            display: none;
+        }
+
+        .bni-invite-hero__location {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 9px;
+            margin: 20px 0 0;
+            color: #fff;
+            font-size: clamp(17px, 2.1vw, 27px);
+            font-weight: 900;
+            letter-spacing: .01em;
+            text-transform: uppercase;
+        }
+
+        .bni-invite-hero__location svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .bni-invite-hero__event-title--handover,
+        .bni-invite-hero__event-kicker--handover {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         /* =========================
@@ -725,6 +836,27 @@
             display: block;
         }
 
+        .bni-invite-chapter__placeholder {
+            min-height: 100px;
+            display: grid;
+            place-items: center;
+            align-content: center;
+            gap: 5px;
+            color: var(--bni-red);
+            border: 1px dashed rgba(207, 32, 47, .3);
+            border-radius: 12px;
+        }
+
+        .bni-invite-chapter__placeholder span {
+            font-size: 22px;
+            font-weight: 950;
+        }
+
+        .bni-invite-chapter__placeholder small {
+            color: var(--bni-muted);
+            font-size: 11px;
+        }
+
         .bni-invite-chapter strong {
             display: block;
             margin-top: 7px;
@@ -734,7 +866,35 @@
         }
 
         /* =========================
-           DRESS CODE
+           ATTENDANCE NOTES
+        ========================== */
+        .bni-invite-note__card {
+            padding: 30px 34px;
+            border: 1px solid rgba(207, 32, 47, .14);
+            border-radius: 22px;
+            background: rgba(255, 255, 255, .96);
+            box-shadow: var(--bni-shadow);
+        }
+
+        .bni-invite-note__card .bni-invite-heading {
+            margin-bottom: 24px;
+        }
+
+        .bni-invite-note__card .bni-invite-rich-copy {
+            max-width: 820px;
+            margin-inline: auto;
+        }
+
+        .bni-invite-note__card .bni-invite-rich-copy > *:first-child {
+            margin-top: 0;
+        }
+
+        .bni-invite-note__card .bni-invite-rich-copy > *:last-child {
+            margin-bottom: 0;
+        }
+
+        /* =========================
+           LEGACY DRESS CODE STYLES
         ========================== */
         .bni-invite-dresscode {
             display: flex;
@@ -798,6 +958,70 @@
             font-size: 14px;
             line-height: 1.75;
             text-align: center;
+        }
+
+        .bni-invite-rsvp-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(270px, .85fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .bni-invite-rsvp-qr {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+            padding: 28px 24px;
+            border: 1px solid rgba(207, 32, 47, .14);
+            border-radius: 14px;
+            background:
+                radial-gradient(circle at 50% 0, rgba(207, 32, 47, .08), transparent 13rem),
+                #fff8f5;
+            text-align: center;
+        }
+
+        .bni-invite-rsvp-qr__eyebrow {
+            margin: 0 0 8px;
+            color: var(--bni-red);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .bni-invite-rsvp-qr h3 {
+            margin: 0 0 18px;
+            color: #2f2f33;
+            font-size: clamp(20px, 2.2vw, 27px);
+            line-height: 1.2;
+        }
+
+        .bni-invite-rsvp-qr img {
+            display: block;
+            width: min(250px, 100%);
+            aspect-ratio: 1;
+            padding: 10px;
+            border: 1px solid #eadcdc;
+            border-radius: 12px;
+            background: #fff;
+            object-fit: contain;
+        }
+
+        .bni-invite-rsvp-qr__caption {
+            max-width: 300px;
+            margin: 17px 0 0;
+            color: #57575a;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .bni-invite-rsvp-qr__hint {
+            margin: 8px 0 0;
+            color: #858589;
+            font-size: 12px;
+            line-height: 1.5;
         }
 
         .bni-invite-rsvp-form {
@@ -994,6 +1218,7 @@
             .bni-invite-chapters__card {
                 grid-template-columns: repeat(2, 1fr);
             }
+
         }
 
         @media (max-width: 820px) {
@@ -1027,16 +1252,25 @@
 
             .bni-invite-hero::before {
                 background:
-                    linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.88) 48%, rgba(255,255,255,.30) 74%, rgba(255,255,255,.04) 100%);
+                    linear-gradient(180deg, rgba(72, 0, 8, .2), rgba(160, 0, 14, .02) 42%, rgba(58, 0, 8, .2));
             }
 
             .bni-invite-hero__bg {
-                object-position: 66% center;
+                object-position: 60% center;
             }
 
             .bni-invite-hero__content {
                 width: 100%;
-                padding: 58px 0 180px;
+                padding: 28px 0 120px;
+            }
+
+            .bni-invite-hero__brand-strip {
+                gap: 10px;
+                margin-bottom: 36px;
+            }
+
+            .bni-invite-hero__brand-main {
+                width: 104px;
             }
 
             .bni-invite-hero__title {
@@ -1054,6 +1288,10 @@
             .bni-invite-intro__visual {
                 min-height: 310px;
                 order: -1;
+            }
+
+            .bni-invite-rsvp-layout {
+                grid-template-columns: 1fr;
             }
 
             .bni-invite-schedule__grid {
@@ -1074,15 +1312,62 @@
             }
 
             .bni-invite-hero {
-                min-height: 620px;
+                min-height: max(760px, 100svh);
             }
 
             .bni-invite-hero__content {
-                padding-top: 45px;
+                padding-top: 28px;
             }
 
             .bni-invite-hero__event-prefix {
+                font-size: 16px;
+            }
+
+            .bni-invite-hero__event-type {
+                font-size: 43px;
+            }
+
+            .bni-invite-hero__label {
+                font-size: 60px;
+            }
+
+            .bni-invite-hero__greeting {
+                font-size: 21px;
+            }
+
+            .bni-invite-hero__brand-strip {
+                gap: 7px;
+                margin-bottom: 32px;
+            }
+
+            .bni-invite-hero__brand-main {
+                width: 96px;
+            }
+
+            .bni-invite-hero__chapter-brand {
+                min-width: 39px;
+            }
+
+            .bni-invite-hero__chapter-brand strong {
                 font-size: 17px;
+            }
+
+            .bni-invite-hero__chapter-brand small {
+                max-width: 55px;
+                font-size: 7px;
+            }
+
+            .bni-invite-hero__event-image {
+                width: min(100%, 620px);
+            }
+
+            .bni-invite-hero__location {
+                font-size: 15px;
+            }
+
+            .bni-invite-hero__location svg {
+                width: 18px;
+                height: 18px;
             }
 
             .bni-invite-hero__subtitle {
@@ -1230,6 +1515,21 @@
 
                 <div class="bni-invite-shell">
                     <div class="bni-invite-hero__content">
+                        <div class="bni-invite-hero__brand-strip" aria-label="BNI và các chapter tham dự">
+                            <img
+                                class="bni-invite-hero__brand-main"
+                                src="{{ asset('bni-logo.svg') }}"
+                                alt="BNI Accelerator"
+                            >
+
+                            @foreach ($eventChapters as $eventChapter)
+                                <span class="bni-invite-hero__chapter-brand">
+                                    <strong aria-hidden="true">BNI</strong>
+                                    <small>{{ $eventChapter['short_name'] ?: $eventChapter['name'] }}</small>
+                                </span>
+                            @endforeach
+                        </div>
+
                         <p class="bni-invite-hero__label">{{ $heroLabel }}</p>
                         <p class="bni-invite-hero__greeting">{{ $greeting }}</p>
 
@@ -1240,26 +1540,40 @@
                             @endif
                         </p>
 
-                        <p class="bni-invite-hero__event-prefix">Tới tham dự chương trình</p>
-
-                        <p>
-                            <img class="bni-invite-hero__event-logo" src="{{ asset('images/bni/le-chuyen-giao.png') }}" alt="Lễ chuyển giao">
-                        </p>
+                        <p class="bni-invite-hero__event-prefix">{{ $eventPrefix }}</p>
+                        @if ($eventTypeImage)
+                            <img class="bni-invite-hero__event-image" src="{{ $eventTypeImage }}" alt="{{ $eventTypeLabel }}">
+                        @elseif (filled($eventTypeLabel))
+                            <p class="bni-invite-hero__event-type">{{ $eventTypeLabel }}</p>
+                        @endif
+                        <h1 class="bni-invite-hero__event-title{{ $event->type === 'handover' ? ' bni-invite-hero__event-title--handover' : '' }}" id="bni-invite-title">{{ $eventTitleDetail }}</h1>
+                        @if (filled($event->kicker))
+                            <p class="bni-invite-hero__event-kicker{{ $event->type === 'handover' ? ' bni-invite-hero__event-kicker--handover' : '' }}">{{ $event->kicker }}</p>
+                        @endif
 
                         <div class="bni-invite-date" aria-label="Thời gian diễn ra">
                             <div class="bni-invite-date__part">
-                                <span>Thời gian</span>
-                                <strong>{{ $eventTime }}</strong>
+                                <span class="bni-invite-date__label--hidden">Thời gian</span>
+                                <strong>{{ $eventTime ?: '—' }}</strong>
                             </div>
                             <div class="bni-invite-date__part">
-                                <span>{{ ucfirst($eventWeekday) }}</span>
-                                <strong>{{ $eventDate }}</strong>
+                                <span>{{ $eventWeekday ? ucfirst($eventWeekday) . ' ngày' : 'Ngày diễn ra' }}</span>
+                                <strong>{{ $eventDate ?: '—' }}</strong>
                             </div>
                             <div class="bni-invite-date__part">
-                                <span>Năm</span>
-                                <strong>{{ $eventYear }}</strong>
+                                <span class="bni-invite-date__label--hidden">Năm</span>
+                                <strong>{{ $eventYear ?: '—' }}</strong>
                             </div>
                         </div>
+
+                        @if (filled($heroLocation))
+                            <p class="bni-invite-hero__location">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"></path>
+                                </svg>
+                                <span>{{ $heroLocation }}</span>
+                            </p>
+                        @endif
 
                         <div class="bni-invite-hero__actions">
                             <a class="bni-invite-button" href="#rsvp">Xác nhận tham dự</a>
@@ -1285,7 +1599,7 @@
                             </div>
                             <dt>Thời gian</dt>
                             <dd>
-                                {{ $eventTime }}, {{ ucfirst($eventWeekday) }}<br>
+                                {{ $eventTime ?: 'Đang cập nhật' }}{{ $eventWeekday ? ', ' . ucfirst($eventWeekday) : '' }}<br>
                                 <strong>{{ $startAt?->format('d/m/Y') ?: 'Đang cập nhật' }}</strong>
                             </dd>
                             @if ($endAt)
@@ -1301,11 +1615,8 @@
                                     <path d="M8 13h3M13 13h3M8 16h3"></path>
                                 </svg>
                             </div>
-                            <dt>Hình thức</dt>
-                            <dd>{{ $eventLabel }}</dd>
-                            @if ($event->venue)
-                                <small>{{ $event->venue }}</small>
-                            @endif
+                            <dt>Địa chỉ</dt>
+                            <dd>{{ $location ?: 'Đang cập nhật' }}</dd>
                         </div>
 
                         <div class="bni-invite-fact">
@@ -1329,8 +1640,12 @@
                             </div>
                             <dt>Liên hệ</dt>
                             <dd>
-                                Hotline<br>
-                                <a href="{{ $primaryPhoneUrl }}">{{ $primaryPhone }}</a>
+                                @if ($primaryPhoneUrl)
+                                    Hotline<br>
+                                    <a href="{{ $primaryPhoneUrl }}">{{ $primaryPhone }}</a>
+                                @else
+                                    Đang cập nhật
+                                @endif
                             </dd>
                         </div>
                     </dl>
@@ -1344,25 +1659,17 @@
                         <div class="bni-invite-intro__copy">
                             <h2>{{ $invitationContent['content_title'] ?? 'Giới thiệu chương trình' }}</h2>
 
-                            @if (filled($invitationContent['content'] ?? null))
+                            @if (filled($eventContent))
                                 <div class="bni-invite-rich-copy">
-                                    {!! $invitationContent['content'] !!}
+                                    {!! $eventContent !!}
                                 </div>
                             @else
-                                <p>
-                                    Lễ Chuyển giao Liên Chapter là dấu mốc quan trọng trong hành trình
-                                    phát triển của cộng đồng BNI, ghi nhận những thành tựu đã đạt được,
-                                    kết nối các thế hệ lãnh đạo và mở ra một nhiệm kỳ mới.
-                                </p>
-                                <p>
-                                    Sự kiện là dịp để giao lưu, mở rộng quan hệ, gia tăng cơ hội hợp tác
-                                    và cùng nhau kiến tạo những giá trị bền vững.
-                                </p>
+                                <p>Nội dung chương trình sẽ được Ban tổ chức cập nhật.</p>
                             @endif
                         </div>
 
                         <div class="bni-invite-intro__visual">
-                            <img src="{{ $heroBackground }}" alt="{{ $event->title }}">
+                            <img src="{{ $heroBackground }}" alt="{{ $eventTitle }}">
                         </div>
                     </div>
                 </div>
@@ -1418,43 +1725,44 @@
                     </div>
 
                     <div class="bni-invite-chapters__card">
-                        @foreach ($chapterLogos as $chapterLogo)
+                        @forelse ($eventChapters as $eventChapter)
                             <div class="bni-invite-chapter">
-                                <img
-                                    src="{{ $chapterLogo['image'] }}"
-                                    alt="{{ $chapterLogo['name'] }}"
-                                    loading="lazy"
-                                >
-                                <strong>{{ $chapterLogo['name'] }}</strong>
+                                @if ($eventChapter['image_url'])
+                                    <img
+                                        src="{{ $eventChapter['image_url'] }}"
+                                        alt="{{ $eventChapter['name'] }}"
+                                        loading="lazy"
+                                    >
+                                @else
+                                    <div class="bni-invite-chapter__placeholder" aria-hidden="true">
+                                        <span>{{ $eventChapter['short_name'] }}</span>
+                                        <small>Chưa gắn logo</small>
+                                    </div>
+                                @endif
+                                <strong>{{ $eventChapter['name'] }}</strong>
                             </div>
-                        @endforeach
+                        @empty
+                            <p class="bni-invite-empty">Chapter tham dự sẽ hiển thị sau khi được gắn vào sự kiện trong CMS BNI.</p>
+                        @endforelse
                     </div>
                 </div>
             </section>
 
-            {{-- TRANG PHỤC --}}
-            <section class="bni-invite-section bni-invite-section--tight">
-                <div class="bni-invite-narrow">
-                    <div class="bni-invite-heading">
-                        <h2>Trang phục</h2>
-                    </div>
-
-                    <div class="bni-invite-dresscode">
-                        @foreach ([
-                            ['name' => 'Đỏ', 'class' => 'red'],
-                            ['name' => 'Trắng', 'class' => 'white'],
-                            ['name' => 'Đen', 'class' => 'black'],
-                        ] as $dress)
-                            <div class="bni-invite-dresscode__item">
-                                <div class="bni-invite-dresscode__circle bni-invite-dresscode__circle--{{ $dress['class'] }}">
-                                    <span class="bni-invite-dresscode__vest-icon" aria-hidden="true"></span>
-                                </div>
-                                <strong>{{ $dress['name'] }}</strong>
+            {{-- LƯU Ý THAM DỰ --}}
+            @if (filled($invitationContent['note_content'] ?? null))
+                <section class="bni-invite-section bni-invite-section--tight" id="luu-y" aria-labelledby="bni-invite-note-title">
+                    <div class="bni-invite-narrow">
+                        <div class="bni-invite-note__card">
+                            <div class="bni-invite-heading">
+                                <h2 id="bni-invite-note-title">{{ $invitationContent['note_title'] ?? 'Lưu ý tham dự' }}</h2>
                             </div>
-                        @endforeach
+                            <div class="bni-invite-rich-copy">
+                                {!! $invitationContent['note_content'] !!}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            @endif
 
             {{-- RSVP --}}
             <section class="bni-invite-section bni-invite-section--tight" id="rsvp">
@@ -1468,8 +1776,9 @@
                             ?? 'Vui lòng xác nhận tham dự để Ban Tổ Chức chủ động sắp xếp và đón tiếp chu đáo.' }}
                     </p>
 
-                    @if ($invitation)
-                        <form
+                    <div class="bni-invite-rsvp-layout">
+                        @if ($invitation)
+                            <form
                                 class="bni-invite-rsvp-form"
                                 method="POST"
                                 action="{{ LocalizedUrl::route('bni.invitations.rsvp', ['invitation' => $invitation]) }}"
@@ -1541,9 +1850,9 @@
                                     </button>
                                 </div>
                                 <p class="bni-form-status" data-bni-form-status role="status" aria-live="polite" hidden></p>
-                        </form>
-                    @else
-                        <form
+                            </form>
+                        @else
+                            <form
                                 class="bni-invite-rsvp-form"
                                 method="POST"
                                 action="{{ LocalizedUrl::route('bni.invitations.template.rsvp') }}"
@@ -1611,8 +1920,23 @@
                                     </button>
                                 </div>
                                 <p class="bni-form-status" data-bni-form-status role="status" aria-live="polite" hidden></p>
-                        </form>
-                    @endif
+                            </form>
+                        @endif
+
+                        <aside class="bni-invite-rsvp-qr" aria-labelledby="bni-invite-rsvp-qr-title">
+                            <p class="bni-invite-rsvp-qr__eyebrow">Đăng ký tham dự</p>
+                            <h3 id="bni-invite-rsvp-qr-title">Quét mã QR để đăng ký</h3>
+                            <img
+                                src="{{ asset('images/bni/qr_dang_ky.jpg') }}"
+                                alt="Mã QR đăng ký tham dự sự kiện BNI"
+                                loading="lazy"
+                            >
+                            <p class="bni-invite-rsvp-qr__caption">
+                                Dùng camera điện thoại để quét mã và gửi thông tin đăng ký nhanh.
+                            </p>
+                            <p class="bni-invite-rsvp-qr__hint">Hoặc điền form bên cạnh để xác nhận.</p>
+                        </aside>
+                    </div>
 
                     <div class="bni-invite-contact-strip" id="lien-he">
                         @if ($contacts->isNotEmpty())

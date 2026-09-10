@@ -24,6 +24,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 
 class BniInvitationResource extends Resource
@@ -53,6 +54,16 @@ class BniInvitationResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return BniPanelAccess::scopeChapter(parent::getEloquentQuery());
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return self::canManageRecord($record);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return self::canManageRecord($record);
     }
 
     public static function form(Schema $schema): Schema
@@ -132,5 +143,15 @@ class BniInvitationResource extends Resource
             'create' => CreateBniInvitation::route('/create'),
             'edit' => EditBniInvitation::route('/{record}/edit'),
         ];
+    }
+
+    private static function canManageRecord(Model $record): bool
+    {
+        if (BniPanelAccess::canManageEverything()) {
+            return true;
+        }
+
+        return BniPanelAccess::isChapterManager()
+            && (int) $record->getAttribute('bni_chapter_id') === BniPanelAccess::chapterId();
     }
 }

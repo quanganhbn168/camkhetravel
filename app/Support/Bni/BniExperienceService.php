@@ -8,6 +8,7 @@ use App\Models\BniChapter;
 use App\Models\BniContact;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
+use App\Models\BniSponsor;
 use App\Support\Events\EventCatalog;
 use App\Support\Localization\LocalizedUrl;
 use Illuminate\Support\Collection;
@@ -31,6 +32,7 @@ class BniExperienceService
             'purposes',
             'scheduleDays.items',
             'contacts',
+            'sponsors.media',
         ]);
         $video = $event?->video;
         $chapters = $event?->chapters->where('is_active', true)->values() ?? collect();
@@ -151,6 +153,7 @@ class BniExperienceService
             ]) ?? collect(),
             'scheduleDays' => $this->scheduleDays($event),
             'specialEvents' => $specialEvents,
+            'sponsorGroups' => $this->sponsorGroups($event),
             'newsCategories' => $newsCategories,
             'newsInitialCategory' => $newsCategories->first()['key'] ?? null,
             'galleryGroups' => $galleryGroups,
@@ -426,6 +429,30 @@ class BniExperienceService
         $card['image'] = $event->bniMediaUrl('activity_image') ?: $card['image'];
 
         return $card;
+    }
+
+    /** @return Collection<int, array{key: string, label: string, items: Collection<int, array<string, mixed>>}> */
+    private function sponsorGroups(?BniEvent $event): Collection
+    {
+        $sponsors = $event?->sponsors->where('is_active', true)->values() ?? collect();
+
+        return collect(BniSponsor::tierOptions())
+            ->map(function (string $label, string $tier) use ($sponsors): array {
+                return [
+                    'key' => $tier,
+                    'label' => $label,
+                    'items' => $sponsors
+                        ->where('tier', $tier)
+                        ->map(fn (BniSponsor $sponsor): array => [
+                            'name' => $sponsor->name,
+                            'logo_url' => $sponsor->bniMediaUrl('logo'),
+                            'url' => $sponsor->publicUrl(),
+                        ])
+                        ->values(),
+                ];
+            })
+            ->filter(fn (array $group): bool => $group['items']->isNotEmpty())
+            ->values();
     }
 
     private function eventDate(BniEvent $event): ?string

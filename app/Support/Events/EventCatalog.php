@@ -14,6 +14,10 @@ class EventCatalog
 
     public function url(BniEvent $event): string
     {
+        if ($landingUrl = $this->landingUrl($event)) {
+            return $landingUrl;
+        }
+
         $this->nativeEvents ??= BniEvent::query()->published()
             ->whereIn('type', ['handover', 'pickleball'])
             ->orderByDesc('is_featured')->orderByDesc('starts_at')
@@ -24,6 +28,25 @@ class EventCatalog
         }
 
         return LocalizedUrl::route('bni.events.show', ['event' => $event->slug]);
+    }
+
+    public function landingUrl(BniEvent $event): ?string
+    {
+        $url = trim((string) $event->landing_url);
+
+        if ($url === '') {
+            return null;
+        }
+
+        if (Str::startsWith($url, '/') && ! Str::startsWith($url, '//')) {
+            return $url;
+        }
+
+        $scheme = Str::lower((string) parse_url($url, PHP_URL_SCHEME));
+
+        return in_array($scheme, ['http', 'https'], true) && filter_var($url, FILTER_VALIDATE_URL)
+            ? $url
+            : null;
     }
 
     public function present(BniEvent $event): array
@@ -43,6 +66,7 @@ class EventCatalog
         return [
             'title' => $event->title,
             'url' => $this->url($event),
+            'landing_url' => $this->landingUrl($event),
             'image' => $image,
             'category' => match ($event->type) {
                 'handover' => 'Kết nối doanh nghiệp',

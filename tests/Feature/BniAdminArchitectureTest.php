@@ -28,6 +28,8 @@ class BniAdminArchitectureTest extends TestCase
     public function test_event_content_is_split_into_relational_resources_and_schedule_days(): void
     {
         $eventResource = File::get(app_path('Filament/Bni/Resources/BniEvents/BniEventResource.php'));
+        $chapterResource = File::get(app_path('Filament/Bni/Resources/BniChapters/BniChapterResource.php'));
+        $sponsorResource = File::get(app_path('Filament/Bni/Resources/BniSponsors/BniSponsorResource.php'));
         $scheduleResource = File::get(app_path('Filament/Bni/Resources/BniScheduleDays/BniScheduleDayResource.php'));
         $pickleballScheduleResource = File::get(app_path('Filament/Bni/Resources/BniPickleballScheduleDays/BniPickleballScheduleDayResource.php'));
 
@@ -39,7 +41,7 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString("\$navigationLabel = 'Lịch trình sự kiện'", $pickleballScheduleResource);
         $this->assertStringNotContainsString('Lịch thi đấu', $pickleballScheduleResource);
 
-        foreach (['bni_event_videos', 'bni_event_landings', 'bni_event_prizes', 'bni_schedule_days', 'bni_contacts'] as $table) {
+        foreach (['bni_event_videos', 'bni_event_landings', 'bni_event_prizes', 'bni_schedule_days', 'bni_contacts', 'bni_sponsors'] as $table) {
             $this->assertTrue(Schema::hasTable($table), $table);
         }
 
@@ -55,8 +57,12 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString('Thông báo chung: thời gian & địa điểm', $eventResource);
         $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('activity_image')", $eventResource);
         $this->assertStringContainsString("->imageAspectRatio('1:1')", $eventResource);
+        $this->assertStringContainsString('class BniSponsorResource', $sponsorResource);
+        $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('logo')", $sponsorResource);
+        $this->assertStringContainsString("BniSponsor::tierOptions()", $sponsorResource);
+        $this->assertStringContainsString("->reorderable('sort_order')", $chapterResource);
 
-        foreach (['starts_at', 'ends_at', 'venue', 'address', 'directions_url'] as $field) {
+        foreach (['starts_at', 'ends_at', 'venue', 'address', 'directions_url', 'landing_url'] as $field) {
             $this->assertStringContainsString("::make('{$field}')", $eventResource, $field);
             $this->assertStringNotContainsString("::make('{$field}')", $invitationSettings, $field);
         }

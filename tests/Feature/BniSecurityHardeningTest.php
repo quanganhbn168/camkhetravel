@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Bni\Resources\BniArticleCategories\BniArticleCategoryResource;
 use App\Filament\Bni\Resources\BniArticleComments\BniArticleCommentResource;
 use App\Filament\Bni\Resources\BniArticles\BniArticleResource;
+use App\Filament\Bni\Resources\BniInvitations\BniInvitationResource;
 use App\Models\BniArticle;
 use App\Models\BniArticleCategory;
 use App\Models\BniChapter;
@@ -182,12 +183,31 @@ class BniSecurityHardeningTest extends TestCase
         $user->assignRole('bni_chapter_manager');
         $this->actingAs($user);
         $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $ownInvitation = BniInvitation::query()->create([
+            'bni_event_id' => $event->id,
+            'bni_chapter_id' => $chapter->id,
+            'guest_name' => 'Khách đúng chapter',
+            'slug' => 'khach-dung-chapter-'.str()->random(8),
+        ]);
         $otherInvitation = BniInvitation::query()->create([
             'bni_event_id' => $event->id,
             'bni_chapter_id' => $otherChapter->id,
             'guest_name' => 'Khách chapter khác',
             'slug' => 'khach-chapter-khac-'.str()->random(8),
         ]);
+
+        $this->assertTrue(BniInvitationResource::canViewAny());
+        $this->assertTrue(BniInvitationResource::canEdit($ownInvitation));
+        $this->assertTrue(BniInvitationResource::canDelete($ownInvitation));
+        $this->assertFalse(BniInvitationResource::canEdit($otherInvitation));
+        $this->assertFalse(BniInvitationResource::canDelete($otherInvitation));
+        $this->assertEqualsCanonicalizing(
+            [$ownInvitation->id],
+            BniInvitationResource::getEloquentQuery()
+                ->whereKey([$ownInvitation->id, $otherInvitation->id])
+                ->pluck('id')
+                ->all(),
+        );
 
         $this->expectException(ValidationException::class);
 

@@ -94,7 +94,7 @@ class BniChapterResource extends Resource
             TextColumn::make('event.title')->label('Sự kiện')->toggleable(),
             TextColumn::make('contacts_count')->label('Đầu mối')->sortable(),
             ToggleColumn::make('is_active')->label('Hiển thị')->disabled(fn (): bool => ! BniPanelAccess::canManageEverything()),
-        ])->defaultSort('sort_order')->recordActions([
+        ])->defaultSort('sort_order')->reorderable('sort_order')->recordActions([
             EditAction::make(),
             DeleteAction::make()->slideOver()->visible(fn (): bool => BniPanelAccess::canManageEverything()),
         ]);

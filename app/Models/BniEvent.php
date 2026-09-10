@@ -61,6 +61,11 @@ class BniEvent extends Model implements HasMedia
         return $this->hasMany(BniActivity::class)->orderBy('sort_order');
     }
 
+    public function sponsors(): HasMany
+    {
+        return $this->hasMany(BniSponsor::class)->orderBy('sort_order')->orderBy('id');
+    }
+
     public function contacts(): HasMany
     {
         return $this->hasMany(BniContact::class)->whereNull('bni_chapter_id')->orderByDesc('is_primary')->orderBy('sort_order');

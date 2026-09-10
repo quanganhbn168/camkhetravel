@@ -121,6 +121,13 @@ class BniEventResource extends Resource
                         ->placeholder('https://maps.app.goo.gl/...')
                         ->helperText('Dán liên kết lấy từ nút Chia sẻ trên Google Maps; link này dùng chung cho nút chỉ đường.')
                         ->columnSpanFull(),
+                    TextInput::make('landing_url')
+                        ->label('Link sự kiện tùy chỉnh (tuỳ chọn)')
+                        ->url()
+                        ->maxLength(2048)
+                        ->placeholder('https://...')
+                        ->helperText('Dán link theo ý anh; các thẻ sự kiện sẽ mở link này thay vì trang mặc định.')
+                        ->columnSpanFull(),
                     Select::make('status')->label('Trạng thái')->options([
                         'draft' => 'Bản nháp',
                         'published' => 'Đã xuất bản',
@@ -139,6 +146,7 @@ class BniEventResource extends Resource
             TextColumn::make('type')->label('Loại')->badge()->formatStateUsing(fn (string $state): string => $state === 'pickleball' ? 'Pickleball' : 'Lễ chuyển giao'),
             TextColumn::make('starts_at')->label('Bắt đầu')->dateTime('d/m/Y H:i')->sortable(),
             TextColumn::make('venue')->label('Địa điểm')->placeholder('Chưa nhập')->toggleable(),
+            TextColumn::make('landing_url')->label('Link tùy chỉnh')->limit(36)->placeholder('Dùng trang mặc định')->toggleable(),
             SelectColumn::make('status')->label('Trạng thái')->options([
                 'draft' => 'Bản nháp',
                 'published' => 'Đã xuất bản',

@@ -10,12 +10,9 @@
 @section('content')
     @php
         $chapterMedia = $chapters;
-        $featuredChapter = $chapterMedia->first(fn (array $chapter): bool => filled($chapter['video_media_url']) || filled($chapter['video_external_url']) || filled($chapter['cover_url']));
-        $featuredChapterVideoUrl = $featuredChapter ? ($featuredChapter['video_media_url'] ?: $featuredChapter['video_external_url']) : null;
-        $featuredChapterPosterUrl = $featuredChapter['cover_url'] ?? null;
-        $featuredChapterLightboxUrl = $featuredChapterVideoUrl ?: $featuredChapterPosterUrl;
+        $activeChapterSlug = data_get($chapterMedia->first(), 'slug');
     @endphp
-    <div x-data="{ scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: @js($newsInitialCategory), galleryTab: @js($galleryInitialGroup) }">
+    <div x-data="{ activeChapter: @js($activeChapterSlug), scheduleDay: {{ $scheduleDays->first()['number'] ?? 1 }}, newsTab: @js($newsInitialCategory), galleryTab: @js($galleryInitialGroup) }">
         @include('frontend.bni.partials.navigation')
 
         <section class="bni-event-slider" id="tong-quan" aria-label="Trình chiếu Lễ chuyển giao BNI">
@@ -114,19 +111,28 @@
                 </div>
                 <aside class="bni-overview__video" aria-label="Video và hình ảnh từ các chapter">
                     <div class="bni-overview__featured-media">
-                        @if ($featuredChapterLightboxUrl)
-                            <a class="bni-video-card glightbox" href="{{ $featuredChapterLightboxUrl }}" data-type="{{ $featuredChapterVideoUrl ? 'video' : 'image' }}" data-gallery="bni-chapter-videos" data-title="{{ $featuredChapter['name'] }}" target="_blank" rel="noopener" aria-label="{{ $featuredChapterVideoUrl ? 'Xem video' : 'Xem hình ảnh' }} {{ $featuredChapter['name'] }}">
-                                @if ($featuredChapterPosterUrl)
-                                    <img src="{{ $featuredChapterPosterUrl }}" alt="{{ $featuredChapter['name'] }}">
-                                @else
-                                    <span class="bni-database-media-placeholder"><strong>{{ $featuredChapter['short_name'] }}</strong><small>Chapter chưa gắn ảnh cover</small></span>
-                                @endif
-                                @if ($featuredChapterVideoUrl)<span class="bni-video-card__play" aria-hidden="true">▶</span>@endif
-                                <span>{{ $featuredChapterVideoUrl ? 'Phát video' : 'Xem hình ảnh' }} {{ $featuredChapter['short_name'] }}</span>
-                            </a>
-                        @else
+                        @forelse ($chapterMedia as $chapter)
+                            @php
+                                $chapterPosterUrl = $chapter['cover_url'];
+                                $chapterVideoUrl = $chapter['video_media_url'] ?: $chapter['video_external_url'];
+                                $chapterLightboxUrl = $chapterVideoUrl ?: $chapterPosterUrl;
+                            @endphp
+                            @if ($chapterLightboxUrl)
+                                <a class="bni-video-card glightbox" href="{{ $chapterLightboxUrl }}" data-type="{{ $chapterVideoUrl ? 'video' : 'image' }}" data-gallery="bni-chapter-videos" data-title="{{ $chapter['name'] }}" x-show="activeChapter === @js($chapter['slug'])" x-cloak aria-label="{{ $chapterVideoUrl ? 'Xem video' : 'Xem hình ảnh' }} {{ $chapter['name'] }}">
+                                    @if ($chapterPosterUrl)
+                                        <img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}">
+                                    @else
+                                        <span class="bni-database-media-placeholder"><strong>{{ $chapter['short_name'] }}</strong><small>Chapter chưa gắn ảnh cover</small></span>
+                                    @endif
+                                    @if ($chapterVideoUrl)<span class="bni-video-card__play" aria-hidden="true">▶</span>@endif
+                                    <span>{{ $chapterVideoUrl ? 'Phát video' : 'Xem hình ảnh' }} {{ $chapter['short_name'] }}</span>
+                                </a>
+                            @else
+                                <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder" x-show="activeChapter === @js($chapter['slug'])" x-cloak><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn video hoặc ảnh cover trong quản trị Chapter</small></div>
+                            @endif
+                        @empty
                             <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder"><span>Video Chapter</span><small>Chưa gắn video hoặc ảnh cover trong quản trị Chapter</small></div>
-                        @endif
+                        @endforelse
                     </div>
 
                     <div class="bni-chapter-video-list" id="chapters" aria-label="Video của bốn chapter">
@@ -138,19 +144,24 @@
                             @endphp
                             <article class="bni-chapter-video-item" id="chapter-{{ $chapter['slug'] }}">
                                 @if ($chapterLightboxUrl)
-                                    <a class="bni-chapter-video-item__link glightbox"
-                                       href="{{ $chapterLightboxUrl }}"
-                                       data-type="{{ $chapterVideoUrl ? 'video' : 'image' }}"
-                                       data-gallery="bni-chapter-videos"
-                                       data-title="{{ $chapter['name'] }}"
-                                       target="_blank"
-                                       rel="noopener"
-                                       aria-label="{{ $chapterVideoUrl ? 'Xem video' : 'Xem hình ảnh' }} {{ $chapter['name'] }}">
+                                    <button type="button"
+                                            class="bni-chapter-video-item__link"
+                                            @click="activeChapter = @js($chapter['slug'])"
+                                            :class="activeChapter === @js($chapter['slug']) && 'is-active'"
+                                            :aria-pressed="(activeChapter === @js($chapter['slug'])).toString()"
+                                            aria-label="Chọn {{ $chapter['name'] }} để xem ở khung lớn">
                                         @if ($chapterPosterUrl)<img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}" loading="lazy">@else<span class="bni-database-media-placeholder"><small>Chưa có ảnh poster</small></span>@endif
                                         <span class="bni-chapter-video-item__overlay" aria-hidden="true"><strong>{{ $chapter['short_name'] }}</strong></span>
-                                    </a>
+                                    </button>
                                 @else
-                                    <div class="bni-chapter-video-item__link bni-database-media-placeholder"><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh hoặc video trong CMS BNI</small></div>
+                                    <button type="button"
+                                            class="bni-chapter-video-item__link bni-database-media-placeholder"
+                                            @click="activeChapter = @js($chapter['slug'])"
+                                            :class="activeChapter === @js($chapter['slug']) && 'is-active'"
+                                            :aria-pressed="(activeChapter === @js($chapter['slug'])).toString()"
+                                            aria-label="Chọn {{ $chapter['name'] }} để xem ở khung lớn">
+                                        <span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh hoặc video trong CMS BNI</small>
+                                    </button>
                                 @endif
                             </article>
                         @endforeach
@@ -203,10 +214,10 @@
                     $secondarySpecialEvents = $specialEvents->skip(1)->take(3);
                 @endphp
                 @if ($featuredSpecialEvent)
-                    <div class="bni-activities-grid">
+                    <div class="bni-activities-grid{{ $secondarySpecialEvents->isEmpty() ? ' bni-activities-grid--single' : '' }}">
                         @include('frontend.bni.partials.special-event-card', ['event' => $featuredSpecialEvent, 'variant' => 'featured'])
                         @if ($secondarySpecialEvents->isNotEmpty())
-                            <div class="bni-activities-grid__side">
+                            <div class="bni-activities-grid__side{{ $secondarySpecialEvents->count() === 1 ? ' bni-activities-grid__side--single' : '' }}">
                                 @foreach ($secondarySpecialEvents as $specialEvent)
                                     @include('frontend.bni.partials.special-event-card', ['event' => $specialEvent, 'variant' => 'compact'])
                                 @endforeach
@@ -218,6 +229,46 @@
                 @endif
             </div>
         </section>
+
+        @if ($sponsorGroups->isNotEmpty())
+            <section class="bni-section bni-sponsors" aria-labelledby="bni-sponsors-title">
+                <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+                    <div class="bni-section-heading bni-section-heading--center">
+                        <p class="bni-experience-kicker">Đồng hành cùng sự kiện</p>
+                        <h2 id="bni-sponsors-title">Nhà tài trợ</h2>
+                    </div>
+                    <div class="bni-sponsors__groups">
+                        @foreach ($sponsorGroups as $sponsorGroup)
+                            <div class="bni-sponsors-group">
+                                <h3>{{ $sponsorGroup['label'] }}</h3>
+                                <div class="bni-sponsors-grid">
+                                    @foreach ($sponsorGroup['items'] as $sponsor)
+                                        @if ($sponsor['url'])
+                                            <a class="bni-sponsor-card" href="{{ $sponsor['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="Xem {{ $sponsor['name'] }}">
+                                        @else
+                                            <div class="bni-sponsor-card">
+                                        @endif
+                                            <span class="bni-sponsor-card__logo">
+                                                @if ($sponsor['logo_url'])
+                                                    <img src="{{ $sponsor['logo_url'] }}" alt="Logo {{ $sponsor['name'] }}" loading="lazy">
+                                                @else
+                                                    <span aria-hidden="true">{{ $sponsor['name'] }}</span>
+                                                @endif
+                                            </span>
+                                            <span class="bni-sponsor-card__name">{{ $sponsor['name'] }}</span>
+                                        @if ($sponsor['url'])
+                                            </a>
+                                        @else
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+        @endif
 
         <section class="bni-section bni-news" id="tin-tuc-bni" aria-labelledby="bni-news-title">
             <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">

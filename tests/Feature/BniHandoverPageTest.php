@@ -68,6 +68,8 @@ class BniHandoverPageTest extends TestCase
         $chapterListStart = strpos($body, 'class="bni-chapter-video-list"');
 
         $this->assertSame(4, substr_count($body, 'class="bni-chapter-video-item"'));
+        $this->assertStringContainsString('activeChapter:', $body);
+        $this->assertSame(4, substr_count($body, '@click="activeChapter ='));
         $this->assertSame(0, substr_count($body, 'class="bni-chapter-video-item__link glightbox"'));
         $this->assertSame(0, substr_count($body, 'class="bni-chapter-video-item__overlay"'));
         $this->assertSame(4, substr_count($body, 'class="bni-chapter-widget"'));

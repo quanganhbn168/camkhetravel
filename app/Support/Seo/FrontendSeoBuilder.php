@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
+use App\Support\Events\EventCatalog;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Models\Media;
@@ -25,6 +26,7 @@ class FrontendSeoBuilder
     public function __construct(
         private readonly WebsiteSettings $website,
         private readonly LanguageCatalog $languages,
+        private readonly EventCatalog $eventCatalog,
     ) {}
 
     public function default(): array
@@ -140,9 +142,9 @@ class FrontendSeoBuilder
         $canonical = LocalizedUrl::route('bni.invitations.show', ['invitation' => $invitation]);
         $event = $invitation->event;
         $image = $event?->bniMediaUrl('seo_image') ?: $image;
-        $eventLabel = trim((string) ($content['event_label'] ?? 'LỄ CHUYỂN GIAO'));
-        $eventTitle = $event?->title ?: $eventLabel;
-        $title = trim(($content['label'] ?? 'THƯ MỜI').' '.$eventLabel.' – '.$guestName.' | '.$this->website->site_name);
+        $eventTitle = trim((string) ($event?->title ?: ($content['event_label'] ?? 'Sự kiện BNI')));
+        $eventUrl = $event ? $this->eventCatalog->url($event) : LocalizedUrl::route('bni.handover');
+        $title = trim(($content['label'] ?? 'THƯ MỜI').' '.$eventTitle.' – '.$guestName.' | '.$this->website->site_name);
         $description = trim(($content['greeting'] ?? 'Trân trọng kính mời').' '.$guestName.' tham dự '.$eventTitle.'.');
 
         $eventSchema = [
@@ -185,7 +187,7 @@ class FrontendSeoBuilder
                 $eventSchema,
                 $this->breadcrumb([
                     ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => $eventLabel, 'url' => LocalizedUrl::route('bni.handover')],
+                    ['name' => $eventTitle, 'url' => $eventUrl],
                     ['name' => $guestName, 'url' => $canonical],
                 ]),
             ],

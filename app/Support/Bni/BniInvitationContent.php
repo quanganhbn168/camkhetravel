@@ -14,8 +14,9 @@ final class BniInvitationContent
     public static function defaults(): array
     {
         return [
-            'label' => 'THƯ MỜI',
+            'label' => 'Thư mời',
             'event_label' => 'LỄ CHUYỂN GIAO',
+            'event_prefix' => 'Tới tham dự chương trình chào mừng',
             'greeting' => 'Trân trọng kính mời',
             'default_guest_name' => 'Anh/Chị chủ doanh nghiệp',
             'content_title' => 'Nội dung chương trình',

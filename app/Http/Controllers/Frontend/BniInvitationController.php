@@ -32,17 +32,17 @@ class BniInvitationController extends Controller
         return view('frontend.bni.invitation', [
             'invitation' => null,
             'event' => $event,
+            'eventChapters' => $this->eventChapterCards($event),
             'chapter' => null,
             'heroImageUrl' => $event->bniMediaUrl('hero'),
             'directionsUrl' => $event->directions_url,
             'guestName' => $invitationContent['default_guest_name'],
             'invitationContent' => $invitationContent,
             'scheduleDays' => $this->experience->scheduleDays($event),
-            'featuredEvents' => $this->featuredEventCards(),
             'isInvitationTemplate' => true,
             'seo' => $this->seo->listing(
-                $invitationContent['label'].' '.$invitationContent['event_label'].' | '.$this->seo->siteName(),
-                $invitationContent['greeting'].' '.$invitationContent['event_label'].' dành cho các chapter BNI.',
+                $invitationContent['label'].' '.$event->title.' | '.$this->seo->siteName(),
+                $invitationContent['greeting'].' '.$event->title.' dành cho các chapter BNI.',
                 $canonical,
                 false,
                 image: $event->bniMediaUrl('seo_image') ?: $event->bniMediaUrl('hero'),
@@ -52,7 +52,7 @@ class BniInvitationController extends Controller
 
     public function show(BniInvitation $invitation): View
     {
-        $invitation->load(['event.media', 'event.scheduleDays.items', 'event.contacts', 'chapter.contacts']);
+        $invitation->load(['event.media', 'event.chapters.media', 'event.scheduleDays.items', 'event.contacts', 'chapter.contacts']);
         abort_unless($invitation->event, 404);
 
         $event = $invitation->event;
@@ -64,13 +64,13 @@ class BniInvitationController extends Controller
         return view('frontend.bni.invitation', [
             'invitation' => $invitation,
             'event' => $event,
+            'eventChapters' => $this->eventChapterCards($event),
             'chapter' => $chapter,
             'heroImageUrl' => $heroImageUrl,
             'directionsUrl' => $event->directions_url,
             'guestName' => $guestName,
             'invitationContent' => $invitationContent,
             'scheduleDays' => $this->experience->scheduleDays($event),
-            'featuredEvents' => $this->featuredEventCards(),
             'isInvitationTemplate' => false,
             'seo' => $this->seo->invitation($invitation, $guestName, $invitationContent, $heroImageUrl),
         ]);
@@ -118,34 +118,22 @@ class BniInvitationController extends Controller
 
     private function handoverEvent(): BniEvent
     {
-        return $this->experience->currentEvent('handover', ['media', 'scheduleDays.items', 'contacts'])
+        return $this->experience->currentEvent('handover', ['media', 'chapters.media', 'scheduleDays.items', 'contacts'])
             ?? abort(404);
     }
 
     /** @return Collection<int, array<string, mixed>> */
-    private function featuredEventCards(): Collection
+    private function eventChapterCards(BniEvent $event): Collection
     {
-        return BniEvent::query()
-            ->published()
-            ->where('is_featured', true)
-            ->with('media')
-            ->orderByDesc('starts_at')
-            ->get()
-            ->map(fn (BniEvent $event): array => [
-                'title' => $event->title,
-                'label' => match ($event->type) {
-                    'handover' => 'Lễ chuyển giao',
-                    'pickleball' => 'Pickleball',
-                    default => 'Sự kiện BNI',
-                },
-                'date' => $event->starts_at?->translatedFormat('d/m/Y'),
-                'venue' => $event->venue,
-                'image_url' => $event->bniMediaUrl('hero'),
-                'url' => match ($event->type) {
-                    'handover' => LocalizedUrl::route('bni.handover'),
-                    'pickleball' => LocalizedUrl::route('bni.pickleball'),
-                    default => null,
-                },
+        return $event->chapters
+            ->where('is_active', true)
+            ->values()
+            ->map(fn ($chapter): array => [
+                'name' => $chapter->name,
+                'short_name' => $chapter->short_name ?: $chapter->name,
+                'image_url' => $chapter->bniMediaUrl('logo') ?: $chapter->bniMediaUrl('cover'),
+                'detail_url' => LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]),
             ]);
     }
+
 }

@@ -49,6 +49,7 @@ class ManageBniInvitationSettings extends Page
         $this->form->fill([
             'label' => $settings->label,
             'event_label' => $settings->event_label,
+            'event_prefix' => $settings->event_prefix,
             'greeting' => $settings->greeting,
             'default_guest_name' => $settings->default_guest_name,
             'content_title' => $settings->content_title,
@@ -76,6 +77,7 @@ class ManageBniInvitationSettings extends Page
                                     ->schema([
                                         TextInput::make('label')->label('Nhãn thư mời')->required()->maxLength(255)->columnSpanFull(),
                                         TextInput::make('event_label')->label('Tên loại sự kiện trên thiệp')->required()->maxLength(255)->columnSpanFull(),
+                                        TextInput::make('event_prefix')->label('Dòng dẫn vào chương trình')->required()->maxLength(255)->columnSpanFull(),
                                         TextInput::make('greeting')->label('Lời kính mời')->required()->maxLength(255)->columnSpanFull(),
                                         TextInput::make('default_guest_name')->label('Tên mặc định khi chưa chỉ định khách')->required()->maxLength(255)->columnSpanFull(),
                                     ])

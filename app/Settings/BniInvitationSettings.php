@@ -10,6 +10,8 @@ class BniInvitationSettings extends Settings
 
     public string $event_label;
 
+    public string $event_prefix;
+
     public string $greeting;
 
     public string $default_guest_name;
