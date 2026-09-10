@@ -93,6 +93,6 @@ class BniEvent extends Model implements HasMedia
 
     protected function bniImageCollections(): array
     {
-        return ['hero', 'seo_image'];
+        return ['hero', 'activity_image', 'seo_image'];
     }
 }

@@ -198,16 +198,24 @@
         <section class="bni-section" aria-labelledby="bni-activities-title">
             <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
                 <div class="bni-section-heading bni-section-heading--center"><h2 id="bni-activities-title">Những hoạt động đặc biệt</h2></div>
-                <div class="bni-activities-grid">
-                    @forelse ($activities as $activity)
-                        <a class="bni-activity-card bni-activity-card--{{ $activity['type'] }}" href="{{ $activity['link_url'] ?: '#' }}" @if (! $activity['link_url']) aria-disabled="true" @endif>
-                            @if ($activity['image_url'])<img src="{{ $activity['image_url'] }}" alt="" loading="lazy">@endif
-                            <div><p>{{ $activity['type'] === 'pickleball' ? 'Kết nối thể thao' : 'Sự kiện đặc biệt' }}</p><h3>{{ $activity['title'] }}</h3><span>{{ $activity['description'] }}</span>@if ($activity['type'] === 'pickleball')<b>Khám phá giải đấu →</b>@endif</div>
-                        </a>
-                    @empty
-                        <p class="bni-empty-copy">Hoạt động sẽ hiển thị sau khi Ban tổ chức cập nhật trong cơ sở dữ liệu BNI.</p>
-                    @endforelse
-                </div>
+                @php
+                    $featuredSpecialEvent = $specialEvents->first();
+                    $secondarySpecialEvents = $specialEvents->skip(1)->take(3);
+                @endphp
+                @if ($featuredSpecialEvent)
+                    <div class="bni-activities-grid">
+                        @include('frontend.bni.partials.special-event-card', ['event' => $featuredSpecialEvent, 'variant' => 'featured'])
+                        @if ($secondarySpecialEvents->isNotEmpty())
+                            <div class="bni-activities-grid__side">
+                                @foreach ($secondarySpecialEvents as $specialEvent)
+                                    @include('frontend.bni.partials.special-event-card', ['event' => $specialEvent, 'variant' => 'compact'])
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @else
+                    <p class="bni-empty-copy">Sự kiện nổi bật sẽ hiển thị sau khi Ban tổ chức cập nhật trong cơ sở dữ liệu BNI.</p>
+                @endif
             </div>
         </section>
 

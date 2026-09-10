@@ -53,6 +53,8 @@ class BniAdminArchitectureTest extends TestCase
 
         $this->assertStringNotContainsString("TextInput::make('schedule_title')", $invitationSettings);
         $this->assertStringContainsString('Thông báo chung: thời gian & địa điểm', $eventResource);
+        $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('activity_image')", $eventResource);
+        $this->assertStringContainsString("->imageAspectRatio('1:1')", $eventResource);
 
         foreach (['starts_at', 'ends_at', 'venue', 'address', 'directions_url'] as $field) {
             $this->assertStringContainsString("::make('{$field}')", $eventResource, $field);

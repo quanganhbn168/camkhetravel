@@ -8,6 +8,7 @@ use App\Models\BniChapter;
 use App\Models\BniContact;
 use App\Models\BniEvent;
 use App\Models\BniGalleryItem;
+use App\Support\Events\EventCatalog;
 use App\Support\Localization\LocalizedUrl;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -15,6 +16,8 @@ use Illuminate\Support\Str;
 class BniExperienceService
 {
     private const PICKLEBALL_NEWS_CATEGORY_SLUG = 'tin-pickleball';
+
+    public function __construct(private readonly EventCatalog $eventCatalog) {}
 
     /** @return array<string, mixed> */
     public function handover(): array
@@ -27,7 +30,6 @@ class BniExperienceService
             'chapters.media',
             'purposes',
             'scheduleDays.items',
-            'activities.media',
             'contacts',
         ]);
         $video = $event?->video;
@@ -96,6 +98,17 @@ class BniExperienceService
             ->values();
         $generalContacts = $event?->contacts->where('is_active', true)->values() ?? collect();
 
+        $specialEvents = BniEvent::query()
+            ->published()
+            ->where('is_featured', true)
+            ->with(['media', 'slides.media'])
+            ->orderByDesc('starts_at')
+            ->orderByDesc('id')
+            ->limit(4)
+            ->get()
+            ->map(fn (BniEvent $specialEvent): array => $this->specialEventCard($specialEvent))
+            ->values();
+
         if ($generalContacts->isEmpty()) {
             $generalContacts = BniContact::query()
                 ->general()
@@ -137,13 +150,7 @@ class BniExperienceService
                 'icon' => $purpose->icon,
             ]) ?? collect(),
             'scheduleDays' => $this->scheduleDays($event),
-            'activities' => $event?->activities->where('is_active', true)->map(fn ($activity): array => [
-                'type' => $activity->type,
-                'title' => $activity->title,
-                'description' => $activity->description,
-                'image_url' => $activity->bniMediaUrl('image'),
-                'link_url' => $activity->link_url,
-            ])->values() ?? collect(),
+            'specialEvents' => $specialEvents,
             'newsCategories' => $newsCategories,
             'newsInitialCategory' => $newsCategories->first()['key'] ?? null,
             'galleryGroups' => $galleryGroups,
@@ -410,6 +417,15 @@ class BniExperienceService
             'image_url' => $article->bniMediaUrl('cover'),
             'featured' => $article->is_featured,
         ];
+    }
+
+    /** @return array<string, mixed> */
+    private function specialEventCard(BniEvent $event): array
+    {
+        $card = $this->eventCatalog->present($event);
+        $card['image'] = $event->bniMediaUrl('activity_image') ?: $card['image'];
+
+        return $card;
     }
 
     private function eventDate(BniEvent $event): ?string

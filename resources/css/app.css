@@ -460,16 +460,31 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-countdown small { display: block; margin-top: 0.35rem; color: var(--bni-white); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
     .bni-countdown__cta { width: 100%; margin-top: 1.2rem; }
     .bni-activities-grid { display: grid; gap: 1rem; }
-    .bni-activity-card { position: relative; display: flex; min-height: 17rem; align-items: end; overflow: hidden; border-radius: var(--bni-radius-lg); background: var(--bni-red); color: var(--bni-white); box-shadow: var(--bni-shadow); }
-    .bni-activity-card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 600ms ease; }
-    .bni-activity-card:hover > img { transform: scale(1.05); }
-    .bni-activity-card > div { position: relative; width: 100%; padding: 1.4rem; background: linear-gradient(0deg, color-mix(in srgb, var(--bni-red) 92%, transparent), transparent); }
+    .bni-activities-grid__side { display: grid; gap: 1rem; min-width: 0; }
+    .bni-activity-card { position: relative; min-width: 0; overflow: hidden; border-radius: var(--bni-radius-lg); background: var(--bni-red); color: var(--bni-white); box-shadow: var(--bni-shadow); }
+    .bni-activity-card--featured { aspect-ratio: 1; }
+    .bni-activity-card--compact { display: grid; grid-template-columns: minmax(5.5rem, 7rem) minmax(0, 1fr); align-items: stretch; border: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); background: var(--bni-white); color: var(--bni-black); }
+    .bni-activity-card__media { position: relative; min-width: 0; overflow: hidden; background: color-mix(in srgb, var(--bni-red) 8%, var(--bni-white)); }
+    .bni-activity-card--featured .bni-activity-card__media { position: absolute; inset: 0; }
+    .bni-activity-card--compact .bni-activity-card__media { aspect-ratio: 1; align-self: center; margin: 0.65rem 0 0.65rem 0.65rem; border-radius: calc(var(--bni-radius) * 0.75); }
+    .bni-activity-card__media > img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 600ms ease; }
+    .bni-activity-card:hover .bni-activity-card__media > img { transform: scale(1.05); }
+    .bni-activity-card__placeholder { display: grid; width: 100%; height: 100%; align-content: center; justify-items: center; gap: 0.5rem; padding: 1rem; color: var(--bni-red); text-align: center; }
+    .bni-activity-card__placeholder strong { font-size: clamp(0.85rem, 1.8vw, 1.2rem); font-weight: 900; letter-spacing: 0.08em; }
+    .bni-activity-card__placeholder small { max-width: 15rem; color: var(--bni-black); font-size: 0.67rem; font-weight: 700; line-height: 1.5; }
+    .bni-activity-card__body { position: relative; min-width: 0; }
+    .bni-activity-card--featured .bni-activity-card__body { position: absolute; right: 0; bottom: 0; left: 0; padding: clamp(1.15rem, 3vw, 1.8rem); background: linear-gradient(0deg, color-mix(in srgb, var(--bni-red) 94%, transparent), color-mix(in srgb, var(--bni-red) 58%, transparent) 70%, transparent); }
+    .bni-activity-card--compact .bni-activity-card__body { display: grid; align-content: center; gap: 0.35rem; padding: 0.95rem 1rem; }
     .bni-activity-card p, .bni-news-card p { margin: 0; color: var(--bni-red); font-size: 0.64rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
-    .bni-activity-card p { color: var(--bni-white); }
-    .bni-activity-card h3 { margin: 0.6rem 0 0; font-family: var(--font-display); font-size: clamp(1.35rem, 2.4vw, 2.2rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.03em; }
-    .bni-activity-card span { display: block; max-width: 27rem; margin-top: 0.7rem; color: var(--bni-white); font-size: 0.83rem; line-height: 1.6; }
-    .bni-activity-card b { display: inline-block; margin-top: 1.2rem; color: var(--bni-white); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
-    .bni-activity-card--pickleball { background: var(--bni-red); }
+    .bni-activity-card--featured p { color: var(--bni-white); }
+    .bni-activity-card h3 { margin: 0.35rem 0 0; font-family: var(--font-display); font-size: clamp(1.1rem, 2vw, 1.55rem); font-weight: 800; line-height: 1.12; letter-spacing: -0.03em; }
+    .bni-activity-card--featured h3 { margin-top: 0.6rem; font-size: clamp(1.5rem, 3vw, 2.55rem); }
+    .bni-activity-card__summary { display: -webkit-box; max-width: 32rem; margin-top: 0.45rem; overflow: hidden; color: var(--bni-black); font-size: 0.78rem; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .bni-activity-card--featured .bni-activity-card__summary { margin-top: 0.7rem; color: var(--bni-white); font-size: 0.83rem; line-height: 1.6; -webkit-line-clamp: 3; }
+    .bni-activity-card__meta { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; margin-top: 0.85rem; color: var(--bni-white); font-size: 0.68rem; font-weight: 700; line-height: 1.45; }
+    .bni-activity-card__meta span + span { opacity: 0.8; }
+    .bni-activity-card b { display: inline-block; margin-top: 0.85rem; color: var(--bni-red); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .bni-activity-card--featured b { color: var(--bni-white); }
     .bni-news { background: var(--bni-white); }
     .bni-news__heading { display: flex; flex-direction: column; align-items: start; justify-content: space-between; gap: 1.25rem; margin-bottom: 2.25rem; }
     .bni-news__heading h2 { margin: 0; font-family: var(--font-display); font-size: clamp(1.65rem, 3.2vw, 2.75rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.035em; }
@@ -887,8 +902,10 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
         .bni-overview__video { height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
         .bni-overview__featured-media { aspect-ratio: auto; }
         .bni-chapter-video-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-        .bni-activities-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .bni-activity-card--handover { grid-column: span 2; min-height: 26rem; }
+        .bni-activities-grid { grid-template-columns: minmax(0, 1.45fr) minmax(17rem, 0.85fr); align-items: stretch; }
+        .bni-activities-grid__side { display: flex; min-height: 100%; flex-direction: column; }
+        .bni-activities-grid__side .bni-activity-card--compact { flex: 1 1 0; }
+        .bni-activity-card--compact .bni-activity-card__media { width: clamp(5.5rem, 8vw, 7rem); justify-self: center; margin: 0; }
         .bni-news__heading { flex-direction: row; align-items: end; }
         .bni-news-grid { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); }
         .bni-news-card--featured { grid-column: 2; grid-row: span 3; }
@@ -1328,10 +1345,13 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-schedule__aside > img { height: 8rem; padding: 1.5rem; }
     .bni-countdown { padding: 1rem; }
     .bni-countdown > div { margin-top: 0.8rem; }
-    .bni-activities-grid, .bni-news-grid, .bni-pickleball-news { gap: 0.8rem; }
-    .bni-activity-card { min-height: 14rem; border-radius: 1.15rem; }
-    .bni-activity-card > div { padding: 1.1rem; }
-    .bni-activity-card h3 { font-size: 1.3rem; }
+     .bni-activities-grid, .bni-news-grid, .bni-pickleball-news { gap: 0.8rem; }
+     .bni-activity-card { border-radius: 1.15rem; }
+     .bni-activity-card--compact { min-height: 7rem; }
+     .bni-activity-card--featured .bni-activity-card__body { padding: 1.1rem; }
+     .bni-activity-card--featured h3 { font-size: 1.45rem; }
+     .bni-activity-card--compact .bni-activity-card__body { padding: 0.8rem; }
+     .bni-activity-card--compact .bni-activity-card__summary { font-size: 0.72rem; }
     .bni-news-card { min-height: 0; border-radius: 1rem; }
     .bni-news-card > img { height: 11rem; }
     .bni-news-card > div { gap: 0.55rem; padding: 1rem; }

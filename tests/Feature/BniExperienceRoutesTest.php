@@ -59,6 +59,44 @@ class BniExperienceRoutesTest extends TestCase
         $this->assertStringNotContainsString('FAMOUS', $navigation);
     }
 
+    public function test_special_activity_grid_uses_featured_events_and_square_activity_media(): void
+    {
+        Storage::fake('public');
+
+        $featured = BniEvent::query()->create([
+            'type' => 'community',
+            'title' => 'Sự kiện vuông lấy từ CMS',
+            'summary' => 'Mô tả sự kiện được quản trị trong phần Sự kiện.',
+            'status' => 'published',
+            'is_featured' => true,
+            'starts_at' => now()->addMonths(3),
+            'venue' => 'Địa điểm sự kiện kiểm thử',
+        ]);
+        $featured->addMedia(UploadedFile::fake()->image('activity-square.png', 1200, 1200))
+            ->toMediaCollection('activity_image', 'public');
+
+        $draft = BniEvent::query()->create([
+            'type' => 'community',
+            'title' => 'Sự kiện nháp không được hiển thị',
+            'status' => 'draft',
+            'is_featured' => true,
+        ]);
+
+        $response = $this->get(route('bni.handover'))
+            ->assertOk()
+            ->assertSee($featured->title)
+            ->assertSee($featured->summary)
+            ->assertSee('bni-activity-card--featured')
+            ->assertSee('bni-activity-card--compact')
+            ->assertSee('bni-activities-grid__side')
+            ->assertDontSee($draft->title);
+
+        $body = $response->getContent();
+        $this->assertSame(1, substr_count($body, 'bni-activity-card--featured'));
+        $this->assertLessThanOrEqual(3, substr_count($body, 'bni-activity-card--compact'));
+        $this->assertStringContainsString($featured->bniMediaUrl('activity_image'), $body);
+    }
+
     public function test_bni_news_registration_and_gallery_pages_share_the_handover_navigation(): void
     {
         $article = BniArticle::query()->published()->firstOrFail();

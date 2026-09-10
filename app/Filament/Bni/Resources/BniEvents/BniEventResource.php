@@ -79,6 +79,16 @@ class BniEventResource extends Resource
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                         ->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('activity_image')
+                        ->label('Ảnh hoạt động (1:1)')
+                        ->collection('activity_image')
+                        ->conversion(BniMediaService::WEBP_CONVERSION)
+                        ->disk('public')
+                        ->image()
+                        ->imageAspectRatio('1:1')
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                        ->helperText('Ảnh dùng trong mục Những hoạt động đặc biệt. Vui lòng tải ảnh vuông tỉ lệ 1:1; ảnh gốc không bị tự ý đổi kích thước.')
+                        ->columnSpanFull(),
                     Textarea::make('summary')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
                     RichEditor::make('content')->label('Nội dung giới thiệu')->columnSpanFull(),
                 ])
