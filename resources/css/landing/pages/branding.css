@@ -155,7 +155,9 @@
 .branding-lead-form input:not([type=hidden]), .branding-lead-form textarea { display: block; width: 100%; min-height: 2.4rem; border: 1px solid #d4dedb; border-radius: .3rem; padding: .55rem .65rem; color: #263831; background: #fcfdfd; font-size: var(--branding-small); box-shadow: inset 0 1px 2px #12322308; }
 .branding-lead-form textarea { min-height: 5rem; resize: vertical; }
 .branding-lead-form .branding-button { width: 100%; cursor: pointer; }
-.branding-form-errors { font-size: var(--branding-small); padding: .6rem; border-radius: .4rem; color: #8d1a24; background: #fff0f1; }
+.branding-form-errors, .branding-form-success { font-size: var(--branding-small); padding: .6rem; border-radius: .4rem; }
+.branding-form-errors { color: #8d1a24; background: #fff0f1; }
+.branding-form-success { border: 1px solid #b7dfc4; color: #075333; background: #e8f7ed; }
 .branding-direct-contact { font-style: normal; }
 .branding-direct-contact h3 { font-size: var(--site-font-size-lead); margin-bottom: 1rem; }
 .branding-contact-phones { display: flex; align-items: center; gap: .65rem; margin-bottom: 1.2rem; }

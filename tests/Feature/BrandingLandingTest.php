@@ -68,6 +68,8 @@ class BrandingLandingTest extends TestCase
             ->assertSee('site-design-tokens', false)
             ->assertSee('hero-branding.webp', false)
             ->assertSee('branding-lead-form', false)
+            ->assertSee('data-landing-success', false)
+            ->assertSee('branding-form-success', false)
             ->assertSee('aria-label="Liên hệ nhanh"', false)
             ->assertDontSee('name="company"', false)
             ->assertDontSee('cdn.tailwindcss.com', false)

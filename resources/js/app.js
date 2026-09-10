@@ -415,6 +415,12 @@ const initialiseLandingLeadForms = () => {
                 return;
             }
 
+            const successMessage = form.querySelector('[data-landing-success]');
+            if (successMessage) {
+                successMessage.hidden = true;
+                successMessage.textContent = '';
+            }
+
             const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
             const originalButtonContent = submitButton?.innerHTML;
 
@@ -457,10 +463,16 @@ const initialiseLandingLeadForms = () => {
 
                 Swal.close();
                 preserveHiddenFieldsWhileResetting(form);
+                const successCopy = payload.message || 'THT Media sẽ liên hệ tư vấn trong thời gian sớm nhất.';
+                if (successMessage) {
+                    successMessage.textContent = successCopy;
+                    successMessage.hidden = false;
+                }
+
                 await Swal.fire({
                     icon: 'success',
                     title: 'Đã nhận thông tin',
-                    text: payload.message || 'THT Media sẽ liên hệ tư vấn trong thời gian sớm nhất.',
+                    text: successCopy,
                     confirmButtonText: 'Đóng',
                     confirmButtonColor: '#5cb811',
                 });

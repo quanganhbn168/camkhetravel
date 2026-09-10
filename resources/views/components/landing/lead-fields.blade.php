@@ -3,12 +3,15 @@
     'service' => null,
     'blockId' => 'lead-form',
     'returnAnchor' => 'lien-he',
+    'successClass' => null,
 ])
 
 @php
     $anchor = ltrim((string) $returnAnchor, '#');
     $returnTo = request()->getPathInfo().($anchor !== '' ? '#'.$anchor : '');
     $hasLandingContext = $landingPage || $service;
+    $successMessage = session('success');
+    $successClasses = trim('landing-form-success '.(string) $successClass);
 @endphp
 
 @csrf
@@ -28,3 +31,5 @@
 @foreach (['visitor_id', 'session_id', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'gclid', 'fbclid', 'first_url', 'referrer'] as $field)
     <input type="hidden" name="{{ $field }}" data-attribution-field="{{ $field }}">
 @endforeach
+
+<p class="{{ $successClasses }}" data-landing-success role="status" aria-live="polite" @if (blank($successMessage)) hidden @endif>{{ $successMessage }}</p>

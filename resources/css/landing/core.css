@@ -49,6 +49,24 @@ body.tht-landing.modal-open {
     display: none !important;
 }
 
+.tht-landing .landing-form-success {
+    margin-block: .75rem;
+    border: 1px solid #b7dfc4;
+    border-radius: .75rem;
+    padding: .75rem 1rem;
+    background: #e8f7ed;
+    color: #075333;
+    font-size: var(--site-font-size-small, .875rem);
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.tht-landing-theme-tiktok .landing-form-success {
+    border-color: color-mix(in srgb, var(--tt-cyan) 42%, transparent);
+    background: color-mix(in srgb, var(--tt-cyan) 10%, transparent);
+    color: var(--tt-cyan);
+}
+
 
 
 .tht-landing .tht-landing-button,

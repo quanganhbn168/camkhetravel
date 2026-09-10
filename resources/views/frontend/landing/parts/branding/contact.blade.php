@@ -7,8 +7,8 @@
             <p>{{ $content['contact_section']['description'] }}</p>
         </div>
         <form id="branding-lead-form" class="branding-lead-form" method="POST" action="{{ route('contact.store') }}" data-landing-lead-form>
-            <x-landing.lead-fields :landing-page="$landingPage" block-id="branding-contact" return-anchor="lien-he" />
             <h3>ĐĂNG KÝ TƯ VẤN MIỄN PHÍ</h3>
+            <x-landing.lead-fields :landing-page="$landingPage" block-id="branding-contact" return-anchor="lien-he" success-class="branding-form-success" />
             @if ($errors->any())<div class="branding-form-errors" role="alert">@foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
             <label><span class="sr-only">Họ tên của bạn</span><input name="name" type="text" placeholder="Họ tên của bạn *" value="{{ old('name') }}" autocomplete="name" maxlength="255" required></label>
             <label><span class="sr-only">Số điện thoại</span><input name="phone" type="tel" placeholder="Số điện thoại *" value="{{ old('phone') }}" autocomplete="tel" inputmode="tel" maxlength="32" required></label>

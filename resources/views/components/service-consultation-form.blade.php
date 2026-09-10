@@ -28,6 +28,8 @@
         </aside>
 
         <form class="rounded-[2rem] bg-white p-7 md:p-10" method="POST" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" data-landing-lead-form>
+            @php($successMessage = session('success'))
+            <p class="landing-form-success mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800" data-landing-success role="status" aria-live="polite" @if (blank($successMessage)) hidden @endif>{{ $successMessage }}</p>
             @csrf
             @if ($content instanceof \App\Models\Service)
                 <input type="hidden" name="service_id" value="{{ $content->id }}">

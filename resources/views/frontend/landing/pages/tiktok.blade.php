@@ -131,7 +131,7 @@
         <x-landing.container>
             <div class="tt-about-grid"><div><h2>{{ $content['contact_section']['title'] }}</h2><p class="tt-intro">{{ $content['contact_section']['description'] }}</p><div class="tt-actions"><a class="tt-button" href="tel:{{ $contact['hotline_1'] }}">{{ $contact['hotline_display'] }}</a><a class="tt-button tt-button--outline" href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer">Chat Zalo ↗</a></div></div>
                 <form class="tt-lead-form" action="{{ LocalizedUrl::route('contact.store') }}" method="POST" data-landing-lead-form>
-                    <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="tiktok-contact" return-anchor="lien-he" />
+                    <x-landing.lead-fields :landing-page="$landingPage ?? null" :service="$service ?? null" block-id="tiktok-contact" return-anchor="lien-he" success-class="tt-form-message" />
                     @if($errors->any())<ul class="tt-form-errors" role="alert">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>@endif
                     <label>Họ và tên<input name="name" value="{{ old('name') }}" autocomplete="name" required></label>
                     <label>Số điện thoại<input name="phone" type="tel" value="{{ old('phone') }}" autocomplete="tel" required></label>
