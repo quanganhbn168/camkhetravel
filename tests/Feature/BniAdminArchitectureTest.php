@@ -59,8 +59,12 @@ class BniAdminArchitectureTest extends TestCase
         $this->assertStringContainsString("->imageAspectRatio('1:1')", $eventResource);
         $this->assertStringContainsString('class BniSponsorResource', $sponsorResource);
         $this->assertStringContainsString("SpatieMediaLibraryFileUpload::make('logo')", $sponsorResource);
-        $this->assertStringContainsString("BniSponsor::tierOptions()", $sponsorResource);
+        $this->assertStringContainsString('BniSponsor::tierOptions()', $sponsorResource);
         $this->assertStringContainsString("->reorderable('sort_order')", $chapterResource);
+        $this->assertStringContainsString("->label('Ảnh cover / poster video')", $chapterResource);
+        $this->assertStringContainsString('khung video lớn trên /le-chuyen-giao', $chapterResource);
+        $this->assertStringContainsString("->label('Ảnh slide / ảnh cover video')", $slideResource);
+        $this->assertStringContainsString('được dùng làm poster khi slide có video', $slideResource);
 
         foreach (['starts_at', 'ends_at', 'venue', 'address', 'directions_url', 'landing_url'] as $field) {
             $this->assertStringContainsString("::make('{$field}')", $eventResource, $field);

@@ -67,7 +67,7 @@
                                 @if ($chapter['cover_url'])
                                     <img src="{{ $chapter['cover_url'] }}" alt="Ảnh chapter {{ $chapter['name'] }}" loading="lazy">
                                 @else
-                                    <div class="bni-database-media-placeholder"><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh trong CMS BNI</small></div>
+                                    <div class="bni-database-media-placeholder"><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh cover / poster video trong quản trị Chapter</small></div>
                                 @endif
                                 @if ($chapter['logo_url'])
                                     <span class="bni-chapter-widget__logo"><img src="{{ $chapter['logo_url'] }}" alt="Logo {{ $chapter['name'] }}" loading="lazy"></span>
@@ -114,7 +114,7 @@
                     <div class="bni-overview__featured-media">
                         @forelse ($chapterMedia as $chapter)
                             @php
-                                $chapterPosterUrl = $chapter['cover_url'];
+                                $chapterPosterUrl = $chapter['video_poster_url'];
                                 $chapterVideoUrl = $chapter['video_media_url'] ?: $chapter['video_external_url'];
                                 $chapterLightboxUrl = $chapterVideoUrl ?: $chapterPosterUrl;
                             @endphp
@@ -123,13 +123,12 @@
                                     @if ($chapterPosterUrl)
                                         <img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}">
                                     @else
-                                        <span class="bni-database-media-placeholder"><strong>{{ $chapter['short_name'] }}</strong><small>Chapter chưa gắn ảnh cover</small></span>
+                                        <span class="bni-database-media-placeholder"><strong>{{ $chapter['short_name'] }}</strong><small>Chapter chưa gắn ảnh cover / poster video</small></span>
                                     @endif
                                     @if ($chapterVideoUrl)<span class="bni-video-card__play" aria-hidden="true">▶</span>@endif
-                                    <span>{{ $chapterVideoUrl ? 'Phát video' : 'Xem hình ảnh' }} {{ $chapter['short_name'] }}</span>
                                 </a>
                             @else
-                                <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder" x-show="activeChapter === @js($chapter['slug'])" x-cloak><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn video hoặc ảnh cover trong quản trị Chapter</small></div>
+                                <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder" x-show="activeChapter === @js($chapter['slug'])" x-cloak><span>{{ $chapter['short_name'] }}</span><small>Chưa gắn video hoặc ảnh cover / poster video trong quản trị Chapter</small></div>
                             @endif
                         @empty
                             <div class="bni-video-card bni-video-card--poster bni-database-media-placeholder"><span>Video Chapter</span><small>Chưa gắn video hoặc ảnh cover trong quản trị Chapter</small></div>
@@ -139,7 +138,7 @@
                     <div class="bni-chapter-video-list" id="chapters" aria-label="Video của bốn chapter">
                         @foreach ($chapterMedia as $chapter)
                             @php
-                                $chapterPosterUrl = $chapter['cover_url'];
+                                $chapterPosterUrl = $chapter['video_poster_url'];
                                 $chapterVideoUrl = $chapter['video_media_url'] ?: $chapter['video_external_url'];
                                 $chapterLightboxUrl = $chapterVideoUrl ?: $chapterPosterUrl;
                             @endphp
@@ -151,7 +150,7 @@
                                             :class="activeChapter === @js($chapter['slug']) && 'is-active'"
                                             :aria-pressed="(activeChapter === @js($chapter['slug'])).toString()"
                                             aria-label="Chọn {{ $chapter['name'] }} để xem ở khung lớn">
-                                        @if ($chapterPosterUrl)<img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}" loading="lazy">@else<span class="bni-database-media-placeholder"><small>Chưa có ảnh poster</small></span>@endif
+                                        @if ($chapterPosterUrl)<img src="{{ $chapterPosterUrl }}" alt="{{ $chapter['name'] }}" loading="lazy">@else<span class="bni-database-media-placeholder"><small>Chưa có ảnh cover / poster video</small></span>@endif
                                         <span class="bni-chapter-video-item__overlay" aria-hidden="true"><strong>{{ $chapter['short_name'] }}</strong></span>
                                     </button>
                                 @else
@@ -161,7 +160,7 @@
                                             :class="activeChapter === @js($chapter['slug']) && 'is-active'"
                                             :aria-pressed="(activeChapter === @js($chapter['slug'])).toString()"
                                             aria-label="Chọn {{ $chapter['name'] }} để xem ở khung lớn">
-                                        <span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh hoặc video trong CMS BNI</small>
+                                        <span>{{ $chapter['short_name'] }}</span><small>Chưa gắn ảnh cover / video trong quản trị Chapter</small>
                                     </button>
                                 @endif
                             </article>

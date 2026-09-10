@@ -78,7 +78,16 @@ class BniChapterResource extends Resource
                     TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                     BniSeoImageField::make(),
                     SpatieMediaLibraryFileUpload::make('logo')->label('Logo')->collection('logo')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
-                    SpatieMediaLibraryFileUpload::make('cover')->label('Ảnh cover')->collection('cover')->conversion(BniMediaService::WEBP_CONVERSION)->disk('public')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
+                    SpatieMediaLibraryFileUpload::make('cover')
+                        ->label('Ảnh cover / poster video')
+                        ->collection('cover')
+                        ->conversion(BniMediaService::WEBP_CONVERSION)
+                        ->disk('public')
+                        ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                        ->helperText('Ảnh này hiển thị ở thẻ Chapter và làm ảnh poster cho khung video lớn trên /le-chuyen-giao. Đây là ảnh upload riêng của Chapter, không lấy từ thư viện ảnh khác.')
+                        ->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())
+                        ->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('video')->label('Video chapter')->collection('video')->disk('public')->acceptedFileTypes(['video/mp4', 'video/webm', 'video/quicktime'])->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->columnSpanFull(),
                     TextInput::make('video_url')->label('Hoặc URL video ngoài')->url()->maxLength(2048)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),
                     Textarea::make('description')->label('Giới thiệu')->rows(3)->disabled(fn (): bool => ! BniPanelAccess::canManageEverything())->dehydrated()->columnSpanFull(),

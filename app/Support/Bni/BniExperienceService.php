@@ -135,17 +135,22 @@ class BniExperienceService
                 'label' => $video?->registration_label ?: 'Đăng ký ngay',
                 'url' => $registrationUrl,
             ],
-            'chapters' => $chapters->map(fn ($chapter): array => [
-                'name' => $chapter->name,
-                'slug' => $chapter->slug,
-                'detail_url' => LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]),
-                'short_name' => $chapter->short_name ?: $chapter->name,
-                'description' => $chapter->description,
-                'logo_url' => $chapter->bniMediaUrl('logo'),
-                'cover_url' => $chapter->bniMediaUrl('cover') ?: $videoPosterUrl,
-                'video_media_url' => $chapter->bniMediaUrl('video', false),
-                'video_external_url' => $chapter->video_url,
-            ]),
+            'chapters' => $chapters->map(function ($chapter): array {
+                $chapterCoverUrl = $chapter->bniMediaUrl('cover');
+
+                return [
+                    'name' => $chapter->name,
+                    'slug' => $chapter->slug,
+                    'detail_url' => LocalizedUrl::route('bni.chapters.show', ['chapter' => $chapter->slug]),
+                    'short_name' => $chapter->short_name ?: $chapter->name,
+                    'description' => $chapter->description,
+                    'logo_url' => $chapter->bniMediaUrl('logo'),
+                    'cover_url' => $chapterCoverUrl,
+                    'video_poster_url' => $chapterCoverUrl,
+                    'video_media_url' => $chapter->bniMediaUrl('video', false),
+                    'video_external_url' => $chapter->video_url,
+                ];
+            }),
             'purposes' => $event?->purposes->map(fn ($purpose): array => [
                 'title' => $purpose->title,
                 'description' => $purpose->description,

@@ -410,9 +410,8 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-video-frame { display: grid; min-height: 20rem; overflow: hidden; border: 1px solid color-mix(in srgb, var(--bni-red) 22%, var(--bni-white)); border-radius: var(--bni-radius-lg); background: var(--bni-red); box-shadow: var(--bni-shadow-strong); }
     .bni-video-frame video { width: 100%; height: 100%; min-height: 20rem; object-fit: cover; }
     .bni-video-card { position: relative; display: grid; min-height: 20rem; place-items: center; overflow: hidden; margin-top: 0.8rem; border: 1px solid color-mix(in srgb, var(--bni-red) 22%, var(--bni-white)); border-radius: var(--bni-radius-lg); background: var(--bni-white); color: var(--bni-red); text-align: center; box-shadow: var(--bni-shadow-strong); }
-    .bni-video-card::after { position: absolute; z-index: 0; inset: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--bni-red) 78%, transparent), transparent); content: ''; }
     .bni-video-card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .bni-video-card > span:not(.bni-video-card__play) { position: relative; z-index: 1; color: var(--bni-white); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+    .bni-video-card__label { position: absolute; z-index: 1; right: 1rem; bottom: 1rem; border-radius: 9999px; background: color-mix(in srgb, var(--bni-red) 88%, transparent); padding: 0.5rem 0.7rem; color: var(--bni-white); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; line-height: 1.2; text-align: right; text-transform: uppercase; }
     .bni-video-card__play { position: relative; z-index: 1; display: grid; width: 4.7rem; height: 4.7rem; place-items: center; border: 1px solid var(--bni-white); border-radius: 9999px; background: var(--bni-red); color: var(--bni-white); font-size: 1.35rem; box-shadow: 0 0 0 0.8rem color-mix(in srgb, var(--bni-red) 23%, transparent); }
     .bni-video-card--empty { align-content: center; gap: 1.25rem; padding: 2rem; }
     .bni-video-card--empty img { position: relative; z-index: 1; inset: auto; width: 8rem; height: auto; }
@@ -437,7 +436,6 @@ body .site-footer h2 { font-size: var(--site-font-size-footer-heading); line-hei
     .bni-database-media-placeholder > small { max-width: 16rem; color: var(--bni-black); font-size: 0.7rem; font-weight: 700; line-height: 1.5; }
     .bni-chapter-widget__visual > .bni-database-media-placeholder { min-height: 100%; }
     .bni-video-card.bni-database-media-placeholder { margin: 0; }
-    .bni-video-card.bni-database-media-placeholder::after { opacity: 0.08; }
     .bni-schedule { background-color: color-mix(in srgb, var(--bni-red) 5%, var(--bni-white)); background-image: linear-gradient(90deg, color-mix(in srgb, var(--bni-white) 98%, transparent) 0%, color-mix(in srgb, var(--bni-white) 92%, transparent) 42%, color-mix(in srgb, var(--bni-white) 72%, transparent) 100%), url('../images/bni/handover-network-wave.webp'), linear-gradient(135deg, var(--bni-white), color-mix(in srgb, var(--bni-red) 7%, var(--bni-white))); background-repeat: no-repeat; background-position: center, right bottom, center; background-size: cover, min(84rem, 108vw) auto, cover; }
     .bni-schedule__layout { display: grid; gap: 1.5rem; }
     .bni-schedule__main { min-width: 0; border: 1px solid color-mix(in srgb, var(--bni-red) 18%, var(--bni-white)); border-radius: var(--bni-radius-lg); background: var(--bni-white); padding: 1.25rem; box-shadow: var(--bni-shadow); }

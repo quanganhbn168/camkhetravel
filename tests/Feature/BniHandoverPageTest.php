@@ -53,7 +53,7 @@ class BniHandoverPageTest extends TestCase
             ->assertSee('bni-handover-overview-section')
             ->assertSee('bni-countdown__cta')
             ->assertSee('Đăng ký ngay')
-            ->assertSee('Chưa gắn ảnh trong CMS BNI')
+            ->assertSee('Chưa gắn ảnh cover / poster video trong quản trị Chapter')
             ->assertDontSee('Chưa gắn video hoặc ảnh cover trong mục Video giới thiệu')
             ->assertDontSee('border-t border-white/15 bg-midnight')
             ->assertDontSee('bni-handover-chapter-nav')
@@ -76,6 +76,10 @@ class BniHandoverPageTest extends TestCase
         $this->assertSame(4, substr_count($body, '>Xem chi tiết <b'));
         $this->assertGreaterThan($overviewMediaStart, $chapterListStart);
         $this->assertLessThan($overviewMediaEnd, $chapterListStart);
+        $overview = substr($body, $overviewMediaStart, $overviewMediaEnd - $overviewMediaStart);
+        $this->assertStringNotContainsString('bni-video-card__label', $overview);
+        $this->assertStringNotContainsString('Xem hình ảnh', $overview);
+        $this->assertStringNotContainsString('Phát video', $overview);
         $this->assertStringNotContainsString('bni-chapter-showcases', $body);
         $this->assertStringNotContainsString('bni-chapter-video-item__label', $body);
         $this->assertFileExists(resource_path('images/bni/bni-kv-milk-red.webp'));
@@ -95,6 +99,15 @@ class BniHandoverPageTest extends TestCase
         $this->assertStringNotContainsString('color-mix(in srgb, var(--bni-black)', $css);
         $this->assertStringNotContainsString('body.bni-app-shell :is(.floating-action--zalo, .footer-social--zalo) img { filter:', $css);
         $this->assertStringNotContainsString('body.bni-app-shell header img[alt="THT Media"] { filter:', $css);
+    }
+
+    public function test_the_large_chapter_media_card_does_not_apply_a_gradient_overlay(): void
+    {
+        $css = file_get_contents(resource_path('css/app.css'));
+
+        $this->assertIsString($css);
+        $this->assertStringNotContainsString('.bni-video-card::after', $css);
+        $this->assertStringContainsString('.bni-video-card__label', $css);
     }
 
     public function test_an_authenticated_user_does_not_see_a_logout_button_in_the_handover_content(): void

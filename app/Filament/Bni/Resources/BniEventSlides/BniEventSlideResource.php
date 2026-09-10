@@ -62,6 +62,7 @@ class BniEventSlideResource extends Resource
                         ->disk('public')
                         ->image()
                         ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                        ->helperText('Ảnh hiển thị toàn chiều ngang khi slide là ảnh và được dùng làm poster khi slide có video.')
                         ->required()
                         ->columnSpanFull(),
                     SpatieMediaLibraryFileUpload::make('video')

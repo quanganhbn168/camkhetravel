@@ -471,6 +471,32 @@ class BniExperienceRoutesTest extends TestCase
         $this->assertDatabaseHas('bni_event_videos', ['bni_event_id' => $event->id, 'external_url' => 'https://www.youtube.com/watch?v=intro-video']);
     }
 
+    public function test_chapter_media_does_not_fall_back_to_the_separate_event_video_poster(): void
+    {
+        Storage::fake('public');
+        $event = BniEvent::query()->published()->where('type', 'handover')->firstOrFail();
+        $chapter = $event->chapters()->where('is_active', true)->orderBy('sort_order')->firstOrFail();
+        $chapter->update(['video_url' => null]);
+        $chapter->clearMediaCollection('cover');
+        $chapter->clearMediaCollection('video');
+
+        $eventVideo = BniEventVideo::query()->updateOrCreate(
+            ['bni_event_id' => $event->id],
+            ['external_url' => 'https://www.youtube.com/watch?v=separate-intro-video'],
+        );
+        $eventPoster = $eventVideo->addMedia(UploadedFile::fake()->image('separate-event-poster.jpg', 1600, 900))
+            ->toMediaCollection('poster', 'public');
+
+        $body = $this->get(route('bni.handover'))->assertOk()->getContent();
+        $overviewStart = strpos($body, '<aside class="bni-overview__video"');
+        $overviewEnd = strpos($body, '</aside>', $overviewStart);
+        $overview = substr($body, $overviewStart, $overviewEnd - $overviewStart);
+
+        $this->assertStringNotContainsString($eventPoster->getUrl('webp'), $overview);
+        $this->assertStringContainsString('Chưa gắn video hoặc ảnh cover / poster video trong quản trị Chapter', $overview);
+        $this->assertStringNotContainsString('separate-intro-video', $overview);
+    }
+
     public function test_a_new_handover_slide_is_bound_without_an_event_field_in_the_admin_form(): void
     {
         $event = BniEvent::query()

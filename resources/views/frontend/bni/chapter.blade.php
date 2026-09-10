@@ -79,7 +79,7 @@
                         <a class="bni-video-card glightbox" href="{{ $chapterVideo['external_url'] }}" data-type="video" data-gallery="bni-chapter-detail-video" data-title="{{ $chapter['name'] }}" target="_blank" rel="noopener" aria-label="Xem video {{ $chapter['name'] }}">
                             @if ($chapterVideo['poster_url'])<img src="{{ $chapterVideo['poster_url'] }}" alt="">@endif
                             <span class="bni-video-card__play" aria-hidden="true">▶</span>
-                            <span>Phát video</span>
+                            <span class="bni-video-card__label">Phát video</span>
                         </a>
                     @elseif ($chapterVideo['poster_url'])
                         <figure class="bni-video-card bni-video-card--poster">
