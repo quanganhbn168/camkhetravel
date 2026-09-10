@@ -19,25 +19,6 @@
         </section>
 
         <section>
-            <div class="mb-3 flex items-end justify-between gap-4">
-                <div>
-                    <h2 class="text-base font-semibold text-gray-950 dark:text-white">Nội dung đang vận hành</h2>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Số lượng nội dung đã đủ điều kiện hiển thị công khai.</p>
-                </div>
-            </div>
-
-            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                @foreach ($data['stats'] as $stat)
-                    <a href="{{ $stat['url'] }}" class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 transition hover:-translate-y-0.5 hover:ring-primary-300 dark:bg-gray-900 dark:ring-white/10 dark:hover:ring-primary-500/40">
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ $stat['label'] }}</p>
-                        <p class="mt-2 text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">{{ number_format($stat['value']) }}</p>
-                        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">{{ $stat['hint'] }}</p>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-
-        <section>
             <div class="mb-3">
                 <h2 class="text-base font-semibold text-gray-950 dark:text-white">Vận hành cần chú ý</h2>
                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Các mục quản trị thường cần kiểm tra trong ngày.</p>
@@ -57,14 +38,14 @@
         </section>
 
         <div class="grid gap-6 xl:grid-cols-5">
-            <section class="fi-section rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6 xl:col-span-3">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <h2 class="text-base font-semibold text-gray-950 dark:text-white">Nội dung cập nhật gần đây</h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Mở nhanh bản ghi vừa được chỉnh sửa.</p>
-                    </div>
-                    <a href="{{ \App\Filament\Resources\Services\ServiceResource::getUrl('index') }}" class="shrink-0 text-sm font-semibold text-primary-600 hover:text-primary-500">Quản lý nội dung</a>
-                </div>
+            <x-filament::section
+                heading="Nội dung cập nhật gần đây"
+                description="Mở nhanh bản ghi vừa được chỉnh sửa."
+                class="xl:col-span-3"
+            >
+                <x-slot name="afterHeader">
+                    <a href="{{ \App\Filament\Resources\Services\ServiceResource::getUrl('index') }}" class="text-sm font-semibold text-primary-600 hover:text-primary-500">Quản lý nội dung</a>
+                </x-slot>
 
                 @if ($data['recent_content']->isEmpty())
                     <p class="mt-6 rounded-lg bg-gray-50 px-4 py-5 text-sm text-gray-500 dark:bg-white/5 dark:text-gray-400">Chưa có nội dung trong hệ thống.</p>
@@ -88,16 +69,16 @@
                         @endforeach
                     </div>
                 @endif
-            </section>
+            </x-filament::section>
 
-            <section class="fi-section rounded-xl bg-white p-5 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:p-6 xl:col-span-2">
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <h2 class="text-base font-semibold text-gray-950 dark:text-white">Yêu cầu tư vấn gần đây</h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Lead mới nhất từ website.</p>
-                    </div>
-                    <a href="{{ \App\Filament\Resources\ContactRequests\ContactRequestResource::getUrl('index') }}" class="shrink-0 text-sm font-semibold text-primary-600 hover:text-primary-500">Xem tất cả</a>
-                </div>
+            <x-filament::section
+                heading="Yêu cầu tư vấn gần đây"
+                description="Lead mới nhất từ website."
+                class="xl:col-span-2"
+            >
+                <x-slot name="afterHeader">
+                    <a href="{{ \App\Filament\Resources\ContactRequests\ContactRequestResource::getUrl('index') }}" class="text-sm font-semibold text-primary-600 hover:text-primary-500">Xem tất cả</a>
+                </x-slot>
 
                 @if ($data['recent_leads']->isEmpty())
                     <p class="mt-6 rounded-lg bg-gray-50 px-4 py-5 text-sm text-gray-500 dark:bg-white/5 dark:text-gray-400">Chưa có yêu cầu tư vấn.</p>
@@ -127,7 +108,7 @@
                         @endforeach
                     </div>
                 @endif
-            </section>
+            </x-filament::section>
         </div>
 
         <section class="rounded-xl border border-primary-200 bg-primary-50/70 p-5 dark:border-primary-500/20 dark:bg-primary-500/10">

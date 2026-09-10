@@ -5,10 +5,10 @@ namespace App\Filament\Pages;
 use App\Filament\Resources\Comments\CommentResource;
 use App\Filament\Resources\ContactRequests\ContactRequestResource;
 use App\Filament\Resources\LandingPages\LandingPageResource;
-use App\Filament\Resources\LandingTemplates\LandingTemplateResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Services\ServiceResource;
+use App\Filament\Widgets\WebsiteStatsOverview;
 use App\Models\Comment;
 use App\Models\ContactRequest;
 use App\Models\LandingPage;
@@ -19,6 +19,7 @@ use App\Models\Service;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Panel;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Collection;
@@ -42,9 +43,20 @@ class AdminDashboard extends Page
 
     protected string $view = 'filament.pages.admin-dashboard';
 
-    public static function getRoutePath(\Filament\Panel $panel): string
+    public static function getRoutePath(Panel $panel): string
     {
         return '/';
+    }
+
+    /** @return array<int, class-string> */
+    protected function getHeaderWidgets(): array
+    {
+        return [WebsiteStatsOverview::class];
+    }
+
+    public function getHeaderWidgetsColumns(): int|array
+    {
+        return 1;
     }
 
     /** @return array<int, Action> */
@@ -69,7 +81,6 @@ class AdminDashboard extends Page
 
     /**
      * @return array{
-     *     stats: list<array{label: string, value: int, hint: string, url: string}>,
      *     operations: list<array{label: string, value: int, hint: string, url: string}>,
      *     recent_leads: \Illuminate\Database\Eloquent\Collection<int, ContactRequest>,
      *     recent_content: Collection<int, array{label: string, title: string, status: string, status_label: string, updated_at: mixed, url: string}>,
@@ -85,32 +96,6 @@ class AdminDashboard extends Page
         $landingCount = LandingPage::query()->count();
 
         return [
-            'stats' => [
-                [
-                    'label' => 'Dịch vụ đang hiển thị',
-                    'value' => Service::query()->published()->count(),
-                    'hint' => $serviceCount.' dịch vụ trong hệ thống',
-                    'url' => ServiceResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Dự án đang hiển thị',
-                    'value' => Project::query()->published()->count(),
-                    'hint' => $projectCount.' dự án trong hệ thống',
-                    'url' => ProjectResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Bài viết đang hiển thị',
-                    'value' => Post::query()->published()->count(),
-                    'hint' => $postCount.' bài viết trong hệ thống',
-                    'url' => PostResource::getUrl('index'),
-                ],
-                [
-                    'label' => 'Landing page đang hiển thị',
-                    'value' => LandingPage::query()->published()->count(),
-                    'hint' => $landingCount.' landing page trong hệ thống',
-                    'url' => LandingPageResource::getUrl('index'),
-                ],
-            ],
             'operations' => [
                 [
                     'label' => 'Yêu cầu tư vấn mới',

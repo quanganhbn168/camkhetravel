@@ -211,6 +211,8 @@ class LandingBuilderTest extends TestCase
             ->get('/admin')
             ->assertOk()
             ->assertSee('Tổng quan website')
+            ->assertSee('Bài viết tạo trong tháng này')
+            ->assertSee('created_at')
             ->assertSee('Dịch vụ đang hiển thị')
             ->assertSee('Yêu cầu tư vấn mới')
             ->assertSee('Nội dung cập nhật gần đây')
