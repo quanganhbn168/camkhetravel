@@ -91,11 +91,37 @@ class LandingArchitectureTest extends TestCase
     {
         $this->get('/dich-vu-san-xuat-phim-doanh-nghiep')
             ->assertOk()
-            ->assertSee('film-form-success', false);
+            ->assertSee('class="landing-form-success film-form-success"', false);
 
         $this->get('/quay-phim-chup-anh-su-kien-tai-bac-ninh')
             ->assertOk()
-            ->assertSee('media-form-success', false);
+            ->assertSee('class="landing-form-success media-form-success"', false);
+    }
+
+    public function test_success_class_naming_is_stable_for_registered_templates(): void
+    {
+        $expected = [
+            LandingRegistry::TIKTOK => 'tiktok-form-success',
+            LandingRegistry::BRANDING => 'branding-form-success',
+            LandingRegistry::ADS => 'ads-form-success',
+            LandingRegistry::WEDDING => 'wedding-form-success',
+            LandingRegistry::CORPORATE_FILM => 'film-form-success',
+            LandingRegistry::COMMUNICATIONS => 'communications-form-success',
+            LandingRegistry::ACADEMY => 'academy-form-success',
+            LandingRegistry::ACADEMY_V2 => 'academy-v2-form-success',
+            LandingRegistry::OUTSOURCED_MARKETING => 'outsourced-marketing-form-success',
+            LandingRegistry::EVENT_MEDIA => 'media-form-success',
+            LandingRegistry::PROFILE => 'profile-form-success',
+            LandingRegistry::EVENT_ORGANIZATION => 'event-organization-form-success',
+        ];
+
+        foreach ($expected as $templateKey => $class) {
+            $this->assertSame($class, LandingRegistry::successClass($templateKey), $templateKey);
+        }
+
+        $this->assertSame('media-form-success', LandingRegistry::successClass(null, 'quay-chup-live-su-kien-chuong-trinh'));
+        $this->assertSame('film-form-success', LandingRegistry::successClass(null, 'san-xuat-phim-doanh-nghiep'));
+        $this->assertSame('new-offer-form-success', LandingRegistry::successClass('landing_new_offer'));
     }
 
     public function test_production_profile_slug_renders_its_own_design_and_remains_scrollable(): void

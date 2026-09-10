@@ -4,6 +4,7 @@
     'description' => null,
     'buttonLabel' => 'Gửi thông tin đăng ký',
     'blockId' => 'lead-form',
+    'successClass' => null,
 ])
 
 <section class="resource-related-section relative isolate overflow-hidden bg-ink" id="tu-van">
@@ -27,9 +28,22 @@
                 </div>
         </aside>
 
+        @php
+            $successMessage = session('success');
+            $successTemplateKey = $content instanceof \App\Models\LandingPage ? $content->template_key : null;
+            $standardSuccessClass = \App\Support\Landing\LandingRegistry::successClass(
+                $successTemplateKey,
+                (string) request()->route('slug'),
+            );
+            $legacySuccessClasses = preg_split('/\s+/', trim((string) $successClass), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+            $successClassNames = array_merge([
+                'landing-form-success',
+                $standardSuccessClass,
+            ], $legacySuccessClasses);
+            $successClasses = implode(' ', array_values(array_unique(array_filter($successClassNames))));
+        @endphp
         <form class="rounded-[2rem] bg-white p-7 md:p-10" method="POST" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" data-landing-lead-form>
-            @php($successMessage = session('success'))
-            <p class="landing-form-success mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800" data-landing-success role="status" aria-live="polite" @if (blank($successMessage)) hidden @endif>{{ $successMessage }}</p>
+            <p class="{{ $successClasses }} mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800" data-landing-success role="status" aria-live="polite" @if (blank($successMessage)) hidden @endif>{{ $successMessage }}</p>
             @csrf
             @if ($content instanceof \App\Models\Service)
                 <input type="hidden" name="service_id" value="{{ $content->id }}">

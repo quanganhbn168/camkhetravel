@@ -286,6 +286,34 @@ final class LandingRegistry
         return null;
     }
 
+    /**
+     * Return the stable page-specific success hook used by every landing form.
+     *
+     * Film and event media keep their short, human-friendly names. Other
+     * templates derive the hook from their template key so new templates get a
+     * predictable class without another view-level mapping.
+     */
+    public static function successClass(?string $templateKey = null, ?string $slug = null): string
+    {
+        $resolvedTemplateKey = $templateKey ?: self::templateForSlug($slug);
+        $prefix = match ($resolvedTemplateKey) {
+            self::CORPORATE_FILM => 'film',
+            self::EVENT_MEDIA => 'media',
+            default => self::normaliseSuccessPrefix($resolvedTemplateKey ?: $slug),
+        };
+
+        return ($prefix ?: 'landing').'-form-success';
+    }
+
+    private static function normaliseSuccessPrefix(?string $value): string
+    {
+        $prefix = strtolower(trim((string) $value));
+        $prefix = preg_replace('/^landing[_-]?/', '', $prefix) ?? $prefix;
+        $prefix = preg_replace('/[^a-z0-9]+/', '-', $prefix) ?? $prefix;
+
+        return trim($prefix, '-');
+    }
+
     /** @return list<string> */
     public static function slugsForTemplate(?string $templateKey): array
     {

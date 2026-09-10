@@ -11,7 +11,16 @@
     $returnTo = request()->getPathInfo().($anchor !== '' ? '#'.$anchor : '');
     $hasLandingContext = $landingPage || $service;
     $successMessage = session('success');
-    $successClasses = trim('landing-form-success '.(string) $successClass);
+    $standardSuccessClass = \App\Support\Landing\LandingRegistry::successClass(
+        $landingPage?->template_key,
+        (string) request()->route('slug'),
+    );
+    $legacySuccessClasses = preg_split('/\s+/', trim((string) $successClass), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    $successClassNames = array_merge([
+        'landing-form-success',
+        $standardSuccessClass,
+    ], $legacySuccessClasses);
+    $successClasses = implode(' ', array_values(array_unique(array_filter($successClassNames))));
 @endphp
 
 @csrf
