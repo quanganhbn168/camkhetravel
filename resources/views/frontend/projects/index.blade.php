@@ -45,7 +45,7 @@
                 'categoryCountAttribute' => 'projects_count',
             ])
 
-            <div class="resource-project-grid mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="resource-project-grid mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 @forelse ($projects as $project)
                     @include('frontend.partials.project-card')
                 @empty

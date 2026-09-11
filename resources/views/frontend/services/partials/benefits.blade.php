@@ -10,8 +10,8 @@
             <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 @foreach ($benefitItems as $item)
                     <article class="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
-                        @if ($item['media_url'] ?? null)
-                            <img class="aspect-[4/3] w-full object-cover" src="{{ $item['media_url'] }}" alt="{{ $item['title'] ?? $service->title }}" loading="lazy">
+                        @if (($item['media_url'] ?? null) ?: ($service->image_url ?: $defaultBannerUrl))
+                            <img class="aspect-[4/3] w-full object-cover" src="{{ ($item['media_url'] ?? null) ?: ($service->image_url ?: $defaultBannerUrl) }}" alt="{{ $item['title'] ?? $service->title }}" loading="lazy">
                         @endif
                         <div class="p-6">
                             <h3 class="text-xl font-bold leading-tight text-ink">{{ $item['title'] ?? '' }}</h3>

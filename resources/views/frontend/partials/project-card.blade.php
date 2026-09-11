@@ -2,8 +2,8 @@
 
 <article class="resource-card group">
     <a class="resource-card__media" href="{{ LocalizedUrl::project($project) }}" aria-label="Xem dự án {{ $project->title }}">
-        @if ($project->image_url)
-            <img src="{{ $project->image_url }}" alt="{{ $project->title }}" loading="lazy">
+        @if ($project->image_url ?: ($defaultBannerUrl ?? null))
+            <img src="{{ $project->image_url ?: $defaultBannerUrl }}" alt="{{ $project->title }}" loading="lazy">
         @else
             <span class="image-placeholder">DV</span>
         @endif

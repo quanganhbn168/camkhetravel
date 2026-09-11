@@ -7,10 +7,11 @@
                     <p class="mt-4 text-base leading-8 text-slate-300">{{ $service->stats_description }}</p>
                 @endif
             </header>
-            <div class="mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-3">
+            <div class="service-stats-grid mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-3">
                 @foreach ($statsItems as $item)
                     <article class="rounded-[1.5rem] border border-white/15 bg-white/[0.06] p-7 text-center">
-                        <p class="text-3xl font-bold text-primary-soft md:text-4xl">{{ $item['label'] }}</p>
+                        <p class="service-stat__value">{{ $item['value'] ?? '—' }}</p>
+                        <p class="service-stat__label">{{ $item['label'] }}</p>
                         @if (filled($item['description'] ?? null))
                             <p class="mt-3 text-sm leading-7 text-slate-300">{{ $item['description'] }}</p>
                         @endif

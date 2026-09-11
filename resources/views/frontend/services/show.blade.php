@@ -34,16 +34,84 @@
     @include('frontend.services.partials.pricing-media')
 
     @if ($service->excerpt)
-        <section id="noi-dung-dich-vu" class="resource-detail-content">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
-                <article class="article-prose service-content-body">
-                    <p class="service-content-lead">{{ $service->excerpt }}</p>
-                </article>
+        <section id="noi-dung-dich-vu" class="service-intro section-space">
+            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 service-intro__grid">
+                <div class="service-intro__copy">
+                    <p class="pccc-eyebrow">Giải pháp PCCC theo nhu cầu thực tế</p>
+                    <h2 class="display-title">{{ $service->benefit_title ?: 'Giải pháp phù hợp từng công trình' }}</h2>
+                    <p class="service-intro__lead">{{ $service->excerpt }}</p>
+                    <ul class="service-intro__checks" aria-label="Điểm nổi bật của dịch vụ">
+                        @forelse (collect($benefitItems)->pluck('title')->filter()->take(4) as $benefitTitle)
+                            <li><span aria-hidden="true">✓</span>{{ $benefitTitle }}</li>
+                        @empty
+                            <li><span aria-hidden="true">✓</span>Đúng tiêu chuẩn và hồ sơ được duyệt</li>
+                            <li><span aria-hidden="true">✓</span>Đồng bộ thiết bị, vật tư và thi công</li>
+                            <li><span aria-hidden="true">✓</span>Dễ kiểm tra, nghiệm thu và vận hành</li>
+                        @endforelse
+                    </ul>
+                    <a class="button-primary" href="{{ LocalizedUrl::route('contact', ['service' => $service->id]) }}">Nhận tư vấn dịch vụ <span aria-hidden="true">→</span></a>
+                </div>
+                <div class="service-intro__visual">
+                    <figure class="service-intro__visual-main">
+                        @if ($service->image_url ?: $defaultBannerUrl)
+                            <img src="{{ $service->image_url ?: $defaultBannerUrl }}" alt="{{ $service->title }}" loading="eager">
+                        @else
+                            <span class="image-placeholder">DVTEC</span>
+                        @endif
+                    </figure>
+                    @foreach (collect([
+                        $referenceImages[0] ?? null,
+                        $referenceImages[1] ?? ($service->image_url ?: $defaultBannerUrl),
+                    ])->filter()->take(2) as $imageUrl)
+                        <figure class="service-intro__visual-small">
+                            <img src="{{ $imageUrl }}" alt="{{ $service->title }} — ảnh tham khảo {{ $loop->iteration }}" loading="eager">
+                        </figure>
+                    @endforeach
+                </div>
             </div>
         </section>
     @endif
 
     @include('frontend.services.partials.benefits')
+
+    <section id="thiet-bi" class="service-equipment section-space">
+        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+            <header class="resource-list-heading service-equipment__heading">
+                <div>
+                    <p class="resource-list-heading__eyebrow">Thiết bị & hạng mục liên quan</p>
+                    <h2 class="display-title text-3xl leading-tight uppercase md:text-5xl">Vật tư, thiết bị PCCC đồng bộ</h2>
+                    <p class="mt-4 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">Các thiết bị được lựa chọn theo hồ sơ, tiêu chuẩn áp dụng và điều kiện vận hành của từng công trình.</p>
+                </div>
+                <a class="section-link" href="{{ LocalizedUrl::route('products.index') }}">Xem toàn bộ thiết bị <span aria-hidden="true">→</span></a>
+            </header>
+            <div class="service-equipment-grid">
+                @forelse ($featuredProducts as $product)
+                    <article class="service-equipment-card">
+                        <a class="service-equipment-card__media" href="{{ LocalizedUrl::product($product) }}" aria-label="Xem {{ $product->title }}">
+                            @if ($product->image_url ?: $defaultBannerUrl)
+                                <img src="{{ $product->image_url ?: $defaultBannerUrl }}" alt="{{ $product->title }}" loading="lazy">
+                            @else
+                                <span class="image-placeholder">DV</span>
+                            @endif
+                        </a>
+                        <div class="service-equipment-card__body">
+                            @if ($product->category)<p class="service-equipment-card__category">{{ $product->category->name }}</p>@endif
+                            <h3><a href="{{ LocalizedUrl::product($product) }}">{{ $product->title }}</a></h3>
+                            <a class="service-equipment-card__link" href="{{ LocalizedUrl::product($product) }}">Xem thiết bị <span aria-hidden="true">→</span></a>
+                        </div>
+                    </article>
+                @empty
+                    @foreach (['Hệ thống báo cháy tự động', 'Hệ thống chữa cháy Sprinkler', 'Máy bơm chữa cháy', 'Van & phụ kiện đường ống', 'Tủ điều khiển PCCC', 'Thiết bị thoát nạn'] as $equipment)
+                        <article class="service-equipment-card service-equipment-card--fallback">
+                            <span class="service-equipment-card__icon" aria-hidden="true">+</span>
+                            <div class="service-equipment-card__body"><h3>{{ $equipment }}</h3><p>Hạng mục được tư vấn theo đặc thù công trình.</p></div>
+                        </article>
+                    @endforeach
+                @endforelse
+            </div>
+        </div>
+    </section>
+
     @include('frontend.services.partials.reference-videos')
     @include('frontend.services.partials.pricing-plans')
     @include('frontend.services.partials.process')

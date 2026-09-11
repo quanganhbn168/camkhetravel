@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Product;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
@@ -125,6 +126,14 @@ class ServiceController extends Controller
             ->filter(fn (array $item): bool => $item['title'] !== '')
             ->values();
         $pricingMatrix = $this->pricingCatalogPresenter->present($service->pricingCatalog);
+        $featuredProducts = Product::query()
+            ->published()
+            ->with(['category', 'curatorMedia'])
+            ->orderByDesc('is_featured')
+            ->orderBy('sort_order')
+            ->limit(6)
+            ->get();
+        $featuredProducts->each(fn (Product $product): mixed => $product->setAttribute('image_url', MediaUrl::resolve($product->curatorMedia)));
 
         return view('frontend.services.show', compact('service') + [
             'relatedServices' => $relatedServices,
@@ -141,6 +150,7 @@ class ServiceController extends Controller
             'benefitItems' => $benefitItems,
             'commitmentItems' => $commitmentItems,
             'pricingMatrix' => $pricingMatrix,
+            'featuredProducts' => $featuredProducts,
             'testimonials' => Testimonial::query()
                 ->active()
                 ->with('curatorMedia')

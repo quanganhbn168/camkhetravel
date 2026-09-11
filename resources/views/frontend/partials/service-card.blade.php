@@ -2,8 +2,8 @@
 
 <article class="resource-card group">
     <a class="resource-card__media" href="{{ LocalizedUrl::slug($service->slug) }}" aria-label="Xem {{ $service->title }}">
-        @if ($service->image_url)
-            <img src="{{ $service->image_url }}" alt="{{ $service->title }}" loading="lazy">
+        @if ($service->image_url ?: ($defaultBannerUrl ?? null))
+            <img src="{{ $service->image_url ?: $defaultBannerUrl }}" alt="{{ $service->title }}" loading="lazy">
         @else
             <span class="image-placeholder">DV</span>
         @endif
