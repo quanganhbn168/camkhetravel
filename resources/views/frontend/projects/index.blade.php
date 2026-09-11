@@ -27,7 +27,7 @@
         </section>
     @endif
 
-    <section class="section-space bg-white">
+    <section class="resource-project-listing section-space bg-white">
         <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
             @if ($backstageService)
                 <div class="mb-8 flex flex-col gap-4 rounded-[1.5rem] border border-primary/20 bg-sand/50 p-6 md:flex-row md:items-center md:justify-between">
@@ -45,7 +45,7 @@
                 'categoryCountAttribute' => 'projects_count',
             ])
 
-            <div class="mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="resource-project-grid mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 @forelse ($projects as $project)
                     @include('frontend.partials.project-card')
                 @empty
