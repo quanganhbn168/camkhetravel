@@ -1,4 +1,8 @@
 @extends('layouts.master')
+
+@push('styles')
+    @vite('resources/css/frontend/pages/intros-show.css')
+@endpush
 @section('title', $seoTitle)
 @section('meta_description'){{ $seoDescription }}@endsection
 @section('canonical', $intro->url)
@@ -7,11 +11,11 @@
 @section('og_type', 'article')
 @section('seo_image'){{ $intro->image_url }}@endsection
 @section('content')
-<article class="container mx-auto px-4 py-12" style="max-width: 56rem">
-    <nav aria-label="Đường dẫn" class="mb-6 text-sm"><a href="{{ route('home') }}">Trang chủ</a> / <a href="{{ route('about') }}">Giới thiệu</a></nav>
-    <h1 class="text-3xl font-bold mb-6">{{ $intro->title }}</h1>
-    @if($intro->summary)<p class="mb-6 text-lg">{{ $intro->summary }}</p>@endif
-    @if($intro->image_url)<img src="{{ $intro->image_url }}" alt="{{ $intro->title }}" class="w-full mb-8 rounded-xl">@endif
-    <div class="prose max-w-none fi-prose">{!! $content !!}</div>
+<article class="mx-auto dv-intros-show__article-1" style="max-width: 56rem">
+    <nav aria-label="Đường dẫn" class="dv-intros-show__nav-2"><a href="{{ route('home') }}">Trang chủ</a> / <a href="{{ route('about') }}">Giới thiệu</a></nav>
+    <h1 class="fw-bold dv-intros-show__heading-3">{{ $intro->title }}</h1>
+    @if($intro->summary)<p class="dv-intros-show__copy-4">{{ $intro->summary }}</p>@endif
+    @if($intro->image_url)<img src="{{ $intro->image_url }}" alt="{{ $intro->title }}" class="w-100 dv-intros-show__media-5">@endif
+    <div class="article-prose dv-intros-show__div-6">{!! $content !!}</div>
 </article>
 @endsection

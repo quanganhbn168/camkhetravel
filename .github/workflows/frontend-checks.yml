@@ -1,0 +1,135 @@
+name: Frontend and Sass regression checks
+
+on:
+  push:
+    branches: [main, fix/frontend-bootstrap-clean-build]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: dvtec_testing
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      APP_ENV: testing
+      APP_TESTING_HTTP: 'false'
+      APP_URL: http://127.0.0.1:8000
+      APP_KEY: base64:BTWIi6nuqFGlT81VxZmmap2bkut6MZp2/6ZZddnBAbU=
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: '3306'
+      DB_DATABASE: dvtec_testing
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+      CACHE_STORE: array
+      SESSION_DRIVER: file
+      QUEUE_CONNECTION: sync
+      MAIL_MAILER: array
+      CURATOR_GLIDE_TOKEN: dvtec-test-glide-token
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.4'
+          extensions: gd, imagick, mbstring, pdo_mysql, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - name: Install locked dependencies
+        run: |
+          npm install --global pnpm@10.15.0
+          pnpm install --frozen-lockfile
+          composer install --prefer-dist --no-interaction --no-progress
+          cp .env.example .env
+          mkdir -p test-results
+          git rev-parse HEAD > test-results/tested-commit.txt
+      - name: Audit frontend source
+        run: pnpm test:frontend 2>&1 | tee test-results/source-audit.log
+      - name: Check Sass output equivalence and warnings
+        run: pnpm test:sass 2>&1 | tee test-results/sass.log
+      - name: Build production assets and audit their ownership
+        run: pnpm build 2>&1 | tee test-results/build.log
+      - name: Create isolated test schema and compile Blade
+        run: |
+          php artisan migrate --force
+          php artisan view:cache
+          php artisan view:clear
+      - name: Run PHP unit and feature suite
+        id: phpunit
+        continue-on-error: true
+        env:
+          APP_TESTING_HTTP: 'true'
+        run: vendor/bin/phpunit --log-junit test-results/phpunit.xml 2>&1 | tee test-results/phpunit.log
+      - name: Prepare browser fixtures in disposable CI database
+        run: |
+          test "$DB_DATABASE" = dvtec_testing
+          php artisan migrate:fresh --force
+          DVTEC_BROWSER_FIXTURES=1 php tests/Browser/seed.php
+          php artisan storage:link
+          pnpm exec playwright install --with-deps chromium
+      - name: Run desktop and mobile browser regressions
+        id: browser
+        continue-on-error: true
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 > test-results/server.log 2>&1 &
+          for n in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/ -o /dev/null && break || sleep 1; done
+          pnpm test:browser 2>&1 | tee test-results/browser.log
+      - name: Require successful PHP and browser suites
+        if: always()
+        env:
+          PHPUNIT: ${{ steps.phpunit.outcome }}
+          BROWSER: ${{ steps.browser.outcome }}
+        run: |
+          test "$PHPUNIT" = success
+          test "$BROWSER" = success
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: frontend-verification
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: warn
+
+  sass-windows:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - run: npm install --global pnpm@10.15.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:sass

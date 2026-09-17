@@ -5,21 +5,21 @@
         <img class="resource-archive-hero__image" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">
     @endif
     <div class="resource-archive-hero__overlay"></div>
-    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-archive-hero__content">
+    <div class="site-container resource-archive-hero__content w-100 mx-auto dv-partials-resource-archive-hero__div-1">
         <nav aria-label="Breadcrumb">
-            <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/65">
-                <li><a class="hover:text-white" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li>
+            <ol class="d-flex flex-wrap align-items-center dv-partials-resource-archive-hero__element-2">
+                <li><a class="dv-partials-resource-archive-hero__action-3" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li>
                 <li aria-hidden="true">/</li>
                 @if ($activeCategory)
-                    <li><a class="hover:text-white" href="{{ LocalizedUrl::route($resourceIndexRoute) }}">{{ $resourceName }}</a></li>
+                    <li><a class="dv-partials-resource-archive-hero__action-3" href="{{ LocalizedUrl::route($resourceIndexRoute) }}">{{ $resourceName }}</a></li>
                     <li aria-hidden="true">/</li>
-                    <li class="text-white" aria-current="page">{{ $activeCategory->name }}</li>
+                    <li class="dv-partials-resource-archive-hero__li-4" aria-current="page">{{ $activeCategory->name }}</li>
                 @else
-                    <li class="text-white" aria-current="page">{{ $resourceName }}</li>
+                    <li class="dv-partials-resource-archive-hero__li-4" aria-current="page">{{ $resourceName }}</li>
                 @endif
             </ol>
         </nav>
-        <h1 class="mt-7 max-w-4xl font-display text-4xl leading-[1.1] tracking-[-0.045em] text-white md:text-6xl">{{ $pageTitle }}</h1>
-        <p class="mt-5 max-w-2xl text-sm leading-7 text-white/75 md:text-base md:leading-8">{{ $pageDescription }}</p>
+        <h1 class="dv-partials-resource-archive-hero__heading-5">{{ $pageTitle }}</h1>
+        <p class="dv-partials-resource-archive-hero__copy-6">{{ $pageDescription }}</p>
     </div>
 </section>

@@ -1,13 +1,13 @@
 @if ($pricingMediaUrl || $pricingSourceUrl)
     <section class="service-pricing-media resource-detail-content" id="tai-lieu-bang-gia">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="site-container w-100 mx-auto dv-services-partials-pricing-media__div-1">
             <div class="service-pricing-media__card">
                 <div class="service-pricing-media__header">
                     <div>
                         <h2 class="display-title">{{ $pricingCatalog?->title ?: 'Bảng giá dịch vụ' }}</h2>
                     </div>
                     @if ($pricingSourceUrl)
-                        <a class="button-dark" href="{{ $pricingSourceUrl }}" target="_blank" rel="noopener noreferrer">Mở bảng giá online <span aria-hidden="true">↗</span></a>
+                        <a class="btn btn-dark button-dark" href="{{ $pricingSourceUrl }}" target="_blank" rel="noopener noreferrer">Mở bảng giá online <span aria-hidden="true">↗</span></a>
                     @endif
                 </div>
 

@@ -10,7 +10,7 @@
             </header>
             <div class="landing-pricing__grid">
                 @foreach ($block['plans'] as $plan)
-                    <article class="landing-price-card {{ $plan->is_featured ? 'is-featured' : '' }}" data-aos="fade-up">
+                    <article class="landing-price-card  {{ $plan->is_featured ? 'is-featured' : '' }}" data-aos="fade-up">
                         @if ($plan->badge)<span class="landing-price-card__badge">{{ $plan->badge }}</span>@endif
                         <h3>{{ $plan->name }}</h3>
                         @if ($plan->description)<p>{{ $plan->description }}</p>@endif

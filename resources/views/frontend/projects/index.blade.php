@@ -1,5 +1,9 @@
 @extends('layouts.master')
 
+@push('styles')
+    @vite('resources/css/frontend/pages/projects-index.css')
+@endpush
+
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
@@ -10,11 +14,11 @@
 
     @if ($activeCategory)
         <section class="resource-category-intro">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-category-intro__grid">
+            <div class="site-container resource-category-intro__grid w-100 mx-auto dv-projects-index__div-1">
                 <div>
-                    <h2 class="display-title text-3xl leading-tight md:text-4xl">Các dự án {{ mb_strtolower($activeCategory->name) }} đã triển khai.</h2>
-                    <p class="mt-5 max-w-xl text-sm leading-7 text-slate-600 md:text-base md:leading-8">{{ $pageDescription }}</p>
-                    <a class="button-dark mt-7" href="{{ LocalizedUrl::route('contact') }}">Trao đổi dự án <span aria-hidden="true">→</span></a>
+                    <h2 class="display-title dv-projects-index__heading-2">Các dự án {{ mb_strtolower($activeCategory->name) }} đã triển khai.</h2>
+                    <p class="dv-projects-index__copy-3">{{ $pageDescription }}</p>
+                    <a class="btn btn-dark button-dark dv-projects-index__action-4" href="{{ LocalizedUrl::route('contact') }}">Trao đổi dự án <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="resource-category-intro__visual">
                     @if (($heroImageUrl ?: $defaultBannerUrl))
@@ -27,15 +31,15 @@
         </section>
     @endif
 
-    <section class="resource-project-listing section-space bg-white">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+    <section class="resource-project-listing section-space dv-projects-index__section-5">
+        <div class="site-container w-100 mx-auto dv-projects-index__div-1">
             @if ($backstageService)
-                <div class="mb-8 flex flex-col gap-4 rounded-[1.5rem] border border-primary/20 bg-sand/50 p-6 md:flex-row md:items-center md:justify-between">
+                <div class="flex-column dv-projects-index__div-6">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-accent">Hậu trường dịch vụ</p>
-                        <p class="text-sm leading-7 text-slate-600">Đang xem các dự án được gắn với <strong class="font-semibold text-ink">{{ $backstageService->title }}</strong>.</p>
+                        <p class="fw-bold text-uppercase dv-projects-index__copy-7">Hậu trường dịch vụ</p>
+                        <p class="dv-projects-index__copy-8">Đang xem các dự án được gắn với <strong class="fw-semibold dv-projects-index__element-9">{{ $backstageService->title }}</strong>.</p>
                     </div>
-                    <a class="button-dark shrink-0" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a>
+                    <a class="btn btn-dark button-dark flex-shrink-0" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a>
                 </div>
             @endif
 
@@ -45,16 +49,16 @@
                 'categoryCountAttribute' => 'projects_count',
             ])
 
-            <div class="resource-project-grid mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="resource-project-grid dv-projects-index__div-11">
                 @forelse ($projects as $project)
                     @include('frontend.partials.project-card')
                 @empty
-                    <p class="col-span-full rounded-2xl border border-dashed border-slate-300 p-8 text-sm leading-7 text-slate-500">Chưa có dự án được xuất bản trong danh mục này.</p>
+                    <p class="dv-projects-index__copy-12">Chưa có dự án được xuất bản trong danh mục này.</p>
                 @endforelse
             </div>
 
             @if ($projects->hasPages())
-                <div class="mt-12">{{ $projects->onEachSide(1)->links() }}</div>
+                <div class="dv-projects-index__div-13">{{ $projects->onEachSide(1)->links('frontend.partials.pagination') }}</div>
             @endif
         </div>
     </section>

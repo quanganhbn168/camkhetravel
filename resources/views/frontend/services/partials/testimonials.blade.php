@@ -1,8 +1,8 @@
 <section class="home-testimonials section-space" id="khach-hang-noi-gi">
-    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 home-testimonials__layout">
+    <div class="site-container home-testimonials__layout w-100 mx-auto dv-services-partials-testimonials__div-1">
         <div class="home-testimonials__intro">
             <h2>Khách hàng nói về chúng tôi</h2>
-            <p class="mt-4 text-sm leading-7 text-slate-300">Những chia sẻ từ các hành trình đã đồng hành.</p>
+            <p class="dv-services-partials-testimonials__copy-2">Những chia sẻ từ các hành trình đã đồng hành.</p>
         </div>
         <div class="home-testimonials__slider">
             <div class="swiper" data-testimonial-swiper>
@@ -34,10 +34,10 @@
                 </div>
             </div>
             @if ($testimonials->isNotEmpty())
-                <button class="absolute top-1/2 -left-3 z-10 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-white text-ink shadow-sm transition hover:border-primary hover:bg-primary hover:text-white md:grid" type="button" aria-label="Phản hồi trước" data-testimonial-swiper-prev>
+                <button class="position-absolute dv-services-partials-testimonials__action-4" type="button" aria-label="Phản hồi trước" data-testimonial-swiper-prev>
                     <span aria-hidden="true">←</span>
                 </button>
-                <button class="absolute top-1/2 -right-3 z-10 hidden size-11 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-white text-ink shadow-sm transition hover:border-primary hover:bg-primary hover:text-white md:grid" type="button" aria-label="Phản hồi tiếp theo" data-testimonial-swiper-next>
+                <button class="position-absolute dv-services-partials-testimonials__action-5" type="button" aria-label="Phản hồi tiếp theo" data-testimonial-swiper-next>
                     <span aria-hidden="true">→</span>
                 </button>
             @endif

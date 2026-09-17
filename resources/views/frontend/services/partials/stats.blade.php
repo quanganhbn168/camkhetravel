@@ -1,19 +1,19 @@
 @if ($statsItems->isNotEmpty())
-    <section class="section-space bg-ink text-white">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
-            <header class="mx-auto max-w-3xl text-center">
-                <h2 class="display-title text-3xl leading-tight text-white md:text-5xl">{{ $service->stats_title ?: 'Những con số đáng chú ý' }}</h2>
+    <section class="section-space dv-services-partials-stats__section-1">
+        <div class="site-container w-100 mx-auto dv-services-partials-stats__div-2">
+            <header class="mx-auto text-center dv-services-partials-stats__element-3">
+                <h2 class="display-title dv-services-partials-stats__heading-4">{{ $service->stats_title ?: 'Những con số đáng chú ý' }}</h2>
                 @if ($service->stats_description)
-                    <p class="mt-4 text-base leading-8 text-slate-300">{{ $service->stats_description }}</p>
+                    <p class="dv-services-partials-stats__copy-5">{{ $service->stats_description }}</p>
                 @endif
             </header>
-            <div class="service-stats-grid mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-3">
+            <div class="service-stats-grid mx-auto dv-services-partials-stats__div-6">
                 @foreach ($statsItems as $item)
-                    <article class="rounded-[1.5rem] border border-white/15 bg-white/[0.06] p-7 text-center">
+                    <article class="text-center dv-services-partials-stats__article-7">
                         <p class="service-stat__value">{{ $item['value'] ?? '—' }}</p>
                         <p class="service-stat__label">{{ $item['label'] }}</p>
                         @if (filled($item['description'] ?? null))
-                            <p class="mt-3 text-sm leading-7 text-slate-300">{{ $item['description'] }}</p>
+                            <p class="dv-services-partials-stats__copy-8">{{ $item['description'] }}</p>
                         @endif
                     </article>
                 @endforeach

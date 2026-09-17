@@ -1,0 +1,25 @@
+// Image frames must have a definite size; percentage image heights alone
+// cannot fill a parent whose height is defined only by min-height.
+.home-bootstrap {
+    .dv-service-image,
+    .dv-about-main,
+    .dv-about-side:not(.dv-about-quote) {
+        position: relative;
+    }
+
+    .dv-service-image {
+        min-height: 0;
+        height: clamp(260px, 32vw, 410px);
+    }
+
+    .dv-service-image > img,
+    .dv-about-main > img,
+    .dv-about-side > img {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}

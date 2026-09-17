@@ -1,5 +1,9 @@
 @extends('layouts.master')
 
+@push('styles')
+    @vite('resources/css/frontend/pages/services-show.css')
+@endpush
+
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
@@ -12,20 +16,20 @@
             <img class="resource-detail-hero__image" src="{{ $service->image_url ?: $defaultBannerUrl }}" alt="" aria-hidden="true">
         @endif
         <div class="resource-detail-hero__overlay"></div>
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-detail-hero__content">
-            <h1 class="max-w-4xl font-display text-4xl leading-[1.08] tracking-[-0.045em] text-white md:text-6xl">{{ $service->title }}</h1>
-            <div class="mt-8 flex flex-wrap justify-center gap-3"><a class="button-primary" href="{{ LocalizedUrl::route('contact', ['service' => $service->id]) }}">Nhận tư vấn ngay <span aria-hidden="true">→</span></a><a class="button-secondary" href="#noi-dung-dich-vu">Khám phá dịch vụ <span aria-hidden="true">↓</span></a></div>
+        <div class="site-container resource-detail-hero__content w-100 mx-auto dv-services-show__div-1">
+            <h1 class="dv-services-show__heading-2">{{ $service->title }}</h1>
+            <div class="d-flex flex-wrap justify-content-center dv-services-show__div-3"><a class="btn btn-primary button-primary" href="{{ LocalizedUrl::route('contact', ['service' => $service->id]) }}">Nhận tư vấn ngay <span aria-hidden="true">→</span></a><a class="btn btn-outline-light button-secondary" href="#noi-dung-dich-vu">Khám phá dịch vụ <span aria-hidden="true">↓</span></a></div>
         </div>
     </section>
 
-    <div class="border-b border-slate-100 bg-white py-4">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+    <div class="dv-services-show__div-4">
+        <div class="site-container w-100 mx-auto dv-services-show__div-1">
             <nav aria-label="Breadcrumb">
-                <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
-                    <li><a class="transition hover:text-accent" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li><li aria-hidden="true">/</li>
-                    <li><a class="transition hover:text-accent" href="{{ LocalizedUrl::route('services.index') }}">{{ __('site.services') }}</a></li>
-                    @if ($service->category)<li aria-hidden="true">/</li><li><a class="transition hover:text-accent" href="{{ LocalizedUrl::serviceCategory($service->category) }}">{{ $service->category->name }}</a></li>@endif
-                    <li aria-hidden="true">/</li><li class="font-medium text-ink" aria-current="page">{{ $service->title }}</li>
+                <ol class="d-flex flex-wrap align-items-center dv-services-show__element-5">
+                    <li><a class="dv-services-show__action-6" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li><li aria-hidden="true">/</li>
+                    <li><a class="dv-services-show__action-6" href="{{ LocalizedUrl::route('services.index') }}">{{ __('site.services') }}</a></li>
+                    @if ($service->category)<li aria-hidden="true">/</li><li><a class="dv-services-show__action-6" href="{{ LocalizedUrl::serviceCategory($service->category) }}">{{ $service->category->name }}</a></li>@endif
+                    <li aria-hidden="true">/</li><li class="fw-medium dv-services-show__li-7" aria-current="page">{{ $service->title }}</li>
                 </ol>
             </nav>
         </div>
@@ -35,7 +39,7 @@
 
     @if ($service->excerpt)
         <section id="noi-dung-dich-vu" class="service-intro section-space">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 service-intro__grid">
+            <div class="site-container service-intro__grid w-100 mx-auto dv-services-show__div-1">
                 <div class="service-intro__copy">
                     <p class="pccc-eyebrow">Giải pháp PCCC theo nhu cầu thực tế</p>
                     <h2 class="display-title">{{ $service->benefit_title ?: 'Giải pháp phù hợp từng công trình' }}</h2>
@@ -49,7 +53,7 @@
                             <li><span aria-hidden="true">✓</span>Dễ kiểm tra, nghiệm thu và vận hành</li>
                         @endforelse
                     </ul>
-                    <a class="button-primary" href="{{ LocalizedUrl::route('contact', ['service' => $service->id]) }}">Nhận tư vấn dịch vụ <span aria-hidden="true">→</span></a>
+                    <a class="btn btn-primary button-primary" href="{{ LocalizedUrl::route('contact', ['service' => $service->id]) }}">Nhận tư vấn dịch vụ <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="service-intro__visual">
                     <figure class="service-intro__visual-main">
@@ -75,12 +79,12 @@
     @include('frontend.services.partials.benefits')
 
     <section id="thiet-bi" class="service-equipment section-space">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="site-container w-100 mx-auto dv-services-show__div-1">
             <header class="resource-list-heading service-equipment__heading">
                 <div>
                     <p class="resource-list-heading__eyebrow">Thiết bị & hạng mục liên quan</p>
-                    <h2 class="display-title text-3xl leading-tight uppercase md:text-5xl">Vật tư, thiết bị PCCC đồng bộ</h2>
-                    <p class="mt-4 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">Các thiết bị được lựa chọn theo hồ sơ, tiêu chuẩn áp dụng và điều kiện vận hành của từng công trình.</p>
+                    <h2 class="display-title text-uppercase dv-services-show__heading-8">Vật tư, thiết bị PCCC đồng bộ</h2>
+                    <p class="dv-services-show__copy-9">Các thiết bị được lựa chọn theo hồ sơ, tiêu chuẩn áp dụng và điều kiện vận hành của từng công trình.</p>
                 </div>
                 <a class="section-link" href="{{ LocalizedUrl::route('products.index') }}">Xem toàn bộ thiết bị <span aria-hidden="true">→</span></a>
             </header>
@@ -119,7 +123,7 @@
 
     @if (filled(strip_tags((string) $service->body_html)))
         <section id="noi-dung-chi-tiet" class="resource-detail-content">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+            <div class="site-container w-100 mx-auto dv-services-show__div-1">
                 <article class="article-prose service-content-body">
                     {!! $service->body_html !!}
                 </article>
@@ -132,20 +136,20 @@
     @include('frontend.services.partials.projects')
 
     @if ($backstageImages !== [])
-        <section class="resource-related-section border-y border-slate-100 bg-mist/55" id="hau-truong">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
-                <header class="mx-auto max-w-2xl text-center"><h2 class="display-title text-3xl leading-tight md:text-4xl">HÌNH ẢNH HẬU TRƯỜNG</h2><p class="mt-4 text-sm leading-7 text-slate-600">Tư liệu được chọn lọc từ quá trình triển khai {{ mb_strtolower($service->title) }}.</p></header>
+        <section class="resource-related-section dv-services-show__section-10" id="hau-truong">
+            <div class="site-container w-100 mx-auto dv-services-show__div-1">
+                <header class="mx-auto text-center dv-services-show__element-11"><h2 class="display-title dv-services-show__heading-12">HÌNH ẢNH HẬU TRƯỜNG</h2><p class="dv-services-show__copy-13">Tư liệu được chọn lọc từ quá trình triển khai {{ mb_strtolower($service->title) }}.</p></header>
                 <div class="resource-detail-gallery__load-more" x-data="{ visible: 6 }">
-                    <div class="resource-detail-gallery__grid mt-7">
+                    <div class="resource-detail-gallery__grid dv-services-show__div-14">
                         @foreach ($backstageImages as $imageUrl)
                             <template x-if="visible > {{ $loop->index }}">
-                                <a class="resource-detail-gallery__item group glightbox" href="{{ $imageUrl }}" data-type="image" data-gallery="service-backstage-images-{{ $service->id }}" data-title="{{ $service->title }} — ảnh hậu trường {{ $loop->iteration }}" aria-label="Mở ảnh hậu trường {{ $loop->iteration }} của {{ $service->title }}"><img src="{{ $imageUrl }}" alt="{{ $service->title }} — ảnh hậu trường {{ $loop->iteration }}" loading="lazy"><span class="resource-detail-gallery__zoom" aria-hidden="true">↗</span></a>
+                                <a class="resource-detail-gallery__item dv-hover-group glightbox" href="{{ $imageUrl }}" data-type="image" data-gallery="service-backstage-images-{{ $service->id }}" data-title="{{ $service->title }} — ảnh hậu trường {{ $loop->iteration }}" aria-label="Mở ảnh hậu trường {{ $loop->iteration }} của {{ $service->title }}"><img src="{{ $imageUrl }}" alt="{{ $service->title }} — ảnh hậu trường {{ $loop->iteration }}" loading="lazy"><span class="resource-detail-gallery__zoom" aria-hidden="true">↗</span></a>
                             </template>
                         @endforeach
                     </div>
                     @if (count($backstageImages) > 6)
-                        <div class="mt-8 text-center" x-show="visible < {{ count($backstageImages) }}">
-                            <button class="button-dark" type="button" @click="visible += 6; $nextTick(() => window.refreshLightboxes?.())">Xem thêm hậu trường <span aria-hidden="true">↓</span></button>
+                        <div class="text-center dv-services-show__div-15" x-show="visible < {{ count($backstageImages) }}">
+                            <button class="btn btn-dark button-dark" type="button" @click="visible += 6; $nextTick(() => window.refreshLightboxes?.())">Xem thêm hậu trường <span aria-hidden="true">↓</span></button>
                         </div>
                     @endif
                 </div>
@@ -155,17 +159,17 @@
 
     @if ($faqItems->isNotEmpty())
         <section class="home-faq section-space" id="cau-hoi-thuong-gap">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8"><header class="home-faq__header"><h2 class="display-title text-3xl leading-tight md:text-4xl">Câu hỏi thường gặp</h2><p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Thông tin cần biết trước khi triển khai dịch vụ PCCC.</p></header><div class="home-faq__list">@foreach ($faqItems as $item)<details class="home-faq__item" @if ($loop->first) open @endif><summary class="home-faq__question"><span>{{ $item['question'] }}</span><span class="home-faq__indicator" aria-hidden="true">+</span></summary><div class="home-faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
+            <div class="site-container w-100 mx-auto dv-services-show__div-1"><header class="home-faq__header"><h2 class="display-title dv-services-show__heading-12">Câu hỏi thường gặp</h2><p class="dv-services-show__copy-16">Thông tin cần biết trước khi triển khai dịch vụ PCCC.</p></header><div class="home-faq__list">@foreach ($faqItems as $item)<details class="home-faq__item" @if ($loop->first) open @endif><summary class="home-faq__question"><span>{{ $item['question'] }}</span><span class="home-faq__indicator" aria-hidden="true">+</span></summary><div class="home-faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
         </section>
     @endif
 
     <x-service-consultation-form :content="$service" />
 
     <section class="resource-related-section" id="phan-hoi">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8"><header class="mx-auto max-w-2xl text-center"><h2 class="display-title text-3xl leading-tight md:text-4xl">Đánh giá từ khách hàng</h2>@if ($ratingSummary['count'])<p class="mt-4 text-sm leading-7 text-slate-600"><strong class="text-lg text-ink">{{ number_format($ratingSummary['average'], 1) }}/5</strong> từ {{ $ratingSummary['count'] }} đánh giá đã được duyệt.</p>@else<p class="mt-4 text-sm leading-7 text-slate-600">Những đánh giá đầu tiên sẽ được hiển thị sau khi đội ngũ kiểm duyệt.</p>@endif</header><div class="mt-9 grid gap-8 border-t border-slate-200 pt-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)]"><div class="grid content-start gap-6">@forelse ($service->approvedComments as $comment)<article class="flex gap-4"><span class="grid size-11 shrink-0 place-items-center rounded-full bg-mist text-sm font-bold text-primary" aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->author_name, 0, 1)) }}</span><div class="min-w-0"><div class="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h3 class="text-sm font-semibold text-ink">{{ $comment->author_name }}</h3><time class="text-xs font-medium text-slate-400" datetime="{{ $comment->approved_at?->toDateString() }}">{{ $comment->approved_at?->translatedFormat('d/m/Y') }}</time></div>@if ($comment->rating)<p class="mt-1 text-sm tracking-[0.08em] text-primary" aria-label="{{ $comment->rating }} trên 5 sao">@for ($star = 1; $star <= 5; $star++)<span class="{{ $star <= $comment->rating ? '' : 'text-slate-200' }}" aria-hidden="true">★</span>@endfor</p>@endif<p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ $comment->body }}</p></div></article>@empty<p class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm leading-7 text-slate-500">Chưa có đánh giá nào. Anh/chị có thể là người đầu tiên chia sẻ trải nghiệm.</p>@endforelse</div><x-comment-form :service="$service" :rating-enabled="true" :compact="true" /></div></div>
+        <div class="site-container w-100 mx-auto dv-services-show__div-1"><header class="mx-auto text-center dv-services-show__element-11"><h2 class="display-title dv-services-show__heading-12">Đánh giá từ khách hàng</h2>@if ($ratingSummary['count'])<p class="dv-services-show__copy-13"><strong class="dv-services-show__element-17">{{ number_format($ratingSummary['average'], 1) }}/5</strong> từ {{ $ratingSummary['count'] }} đánh giá đã được duyệt.</p>@else<p class="dv-services-show__copy-13">Những đánh giá đầu tiên sẽ được hiển thị sau khi đội ngũ kiểm duyệt.</p>@endif</header><div class="dv-services-show__div-18"><div class="d-grid dv-services-show__div-19">@forelse ($service->approvedComments as $comment)<article class="d-flex dv-services-show__article-20"><span class="d-grid flex-shrink-0 fw-bold dv-services-show__copy-21" aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->author_name, 0, 1)) }}</span><div class="dv-services-show__div-22"><div class="d-flex flex-wrap align-items-baseline dv-services-show__div-23"><h3 class="fw-semibold dv-services-show__heading-24">{{ $comment->author_name }}</h3><time class="fw-medium dv-services-show__copy-25" datetime="{{ $comment->approved_at?->toDateString() }}">{{ $comment->approved_at?->translatedFormat('d/m/Y') }}</time></div>@if ($comment->rating)<p class="dv-services-show__copy-26" aria-label="{{ $comment->rating }} trên 5 sao">@for ($star = 1; $star <= 5; $star++)<span class="{{ $star <= $comment->rating ? '' : 'dv-services-show__element-27' }}" aria-hidden="true">★</span>@endfor</p>@endif<p class="dv-services-show__copy-28">{{ $comment->body }}</p></div></article>@empty<p class="dv-services-show__copy-29">Chưa có đánh giá nào. Anh/chị có thể là người đầu tiên chia sẻ trải nghiệm.</p>@endforelse</div><x-comment-form :service="$service" :rating-enabled="true" :compact="true" /></div></div>
     </section>
 
     @if ($relatedServices->isNotEmpty())
-        <section class="resource-related-section" id="dich-vu-tham-khao"><div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><h2 class="display-title text-3xl leading-tight md:text-4xl">Dịch vụ tham khảo</h2><a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a></div><div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedServices as $relatedService) @include('frontend.partials.service-card', ['service' => $relatedService]) @endforeach</div></section>
+        <section class="resource-related-section" id="dich-vu-tham-khao"><div class="site-container w-100 mx-auto flex-column dv-services-show__div-30"><h2 class="display-title dv-services-show__heading-12">Dịch vụ tham khảo</h2><a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a></div><div class="site-container w-100 mx-auto dv-services-show__div-31">@foreach ($relatedServices as $relatedService) @include('frontend.partials.service-card', ['service' => $relatedService]) @endforeach</div></section>
     @endif
 @endsection

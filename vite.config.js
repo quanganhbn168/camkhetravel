@@ -1,15 +1,24 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+    css: {
+        preprocessorOptions: {
+            scss: {
+                fatalDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
+            },
+        },
+    },
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css',
                 'resources/scss/frontend.scss',
-                'resources/css/filament/admin/theme.css',
                 'resources/js/app.js',
+                ...fs.readdirSync('resources/css/frontend/pages').filter((file) => file.endsWith('.css')).map((file) => path.posix.join('resources/css/frontend/pages', file)),
+                'resources/css/filament/admin/theme.css',
                 'resources/js/filament/curator-rich-editor-integration.js',
             ],
             refresh: true,

@@ -1,5 +1,9 @@
 @extends('layouts.master')
 
+@push('styles')
+    @vite('resources/css/frontend/pages/services-index.css')
+@endpush
+
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
@@ -10,11 +14,11 @@
 
     @if ($activeCategory)
         <section class="resource-category-intro">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-category-intro__grid">
+            <div class="site-container resource-category-intro__grid w-100 mx-auto dv-services-index__div-1">
                 <div>
-                    <h2 class="display-title text-3xl leading-tight md:text-4xl">Giải pháp {{ mb_strtolower($activeCategory->name) }} theo đúng nhu cầu thực tế.</h2>
-                    <p class="mt-5 max-w-xl text-sm leading-7 text-slate-600 md:text-base md:leading-8">{{ $pageDescription }}</p>
-                    <a class="button-dark mt-7" href="{{ LocalizedUrl::route('contact') }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
+                    <h2 class="display-title dv-services-index__heading-2">Giải pháp {{ mb_strtolower($activeCategory->name) }} theo đúng nhu cầu thực tế.</h2>
+                    <p class="dv-services-index__copy-3">{{ $pageDescription }}</p>
+                    <a class="btn btn-dark button-dark dv-services-index__action-4" href="{{ LocalizedUrl::route('contact') }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="resource-category-intro__visual">
                     @if (($heroImageUrl ?: $defaultBannerUrl))
@@ -27,13 +31,13 @@
         </section>
     @endif
 
-    <section class="section-space bg-white" id="he-sinh-thai-dich-vu">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+    <section class="section-space dv-services-index__section-5" id="he-sinh-thai-dich-vu">
+        <div class="site-container w-100 mx-auto dv-services-index__div-1">
             <header class="resource-list-heading">
                 <div>
                     <p class="resource-list-heading__eyebrow">Danh mục dịch vụ PCCC</p>
-                    <h2 class="display-title text-3xl leading-tight uppercase md:text-5xl">{{ $activeCategory?->name ?: 'Hệ sinh thái dịch vụ PCCC' }}</h2>
-                    <p class="mt-4 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">{{ $activeCategory?->description ?: 'Giải pháp đồng bộ từ khảo sát, thiết kế, thi công đến bảo trì cho từng loại công trình.' }}</p>
+                    <h2 class="display-title text-uppercase dv-services-index__heading-6">{{ $activeCategory?->name ?: 'Hệ sinh thái dịch vụ PCCC' }}</h2>
+                    <p class="dv-services-index__copy-7">{{ $activeCategory?->description ?: 'Giải pháp đồng bộ từ khảo sát, thiết kế, thi công đến bảo trì cho từng loại công trình.' }}</p>
                 </div>
                 @if ($activeCategory)
                     <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">←</span></a>
@@ -46,16 +50,16 @@
                 'categoryCountAttribute' => 'services_count',
             ])
 
-            <div class="mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="dv-services-index__div-8">
                 @forelse ($services as $service)
                     @include('frontend.partials.service-card', ['showCategoryBadge' => true])
                 @empty
-                    <p class="col-span-full rounded-2xl border border-dashed border-slate-300 p-8 text-sm leading-7 text-slate-500">Chưa có dịch vụ được xuất bản trong danh mục này.</p>
+                    <p class="dv-services-index__copy-9">Chưa có dịch vụ được xuất bản trong danh mục này.</p>
                 @endforelse
             </div>
 
             @if ($services->hasPages())
-                <div class="mt-12">{{ $services->onEachSide(1)->links() }}</div>
+                <div class="dv-services-index__div-10">{{ $services->onEachSide(1)->links('frontend.partials.pagination') }}</div>
             @endif
         </div>
     </section>
@@ -101,17 +105,17 @@
     </section>
 
     @if ($featuredProjects->isNotEmpty())
-        <section class="section-space bg-white pccc-archive-projects">
+        <section class="section-space pccc-archive-projects dv-services-index__section-5">
             <div class="site-container">
                 <header class="resource-list-heading">
                     <div>
                         <p class="resource-list-heading__eyebrow">Dự án tiêu biểu</p>
-                        <h2 class="display-title text-3xl leading-tight uppercase md:text-5xl">Những công trình chúng tôi đã triển khai</h2>
-                        <p class="mt-4 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">Minh chứng rõ ràng cho năng lực, quy trình và sự đồng hành của DVTEC.</p>
+                        <h2 class="display-title text-uppercase dv-services-index__heading-6">Những công trình chúng tôi đã triển khai</h2>
+                        <p class="dv-services-index__copy-7">Minh chứng rõ ràng cho năng lực, quy trình và sự đồng hành của DVTEC.</p>
                     </div>
                     <a class="section-link" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a>
                 </header>
-                <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="dv-services-index__div-11">
                     @foreach ($featuredProjects as $project)
                         @include('frontend.partials.project-card', ['project' => $project])
                     @endforeach

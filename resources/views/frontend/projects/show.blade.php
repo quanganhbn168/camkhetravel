@@ -1,15 +1,19 @@
 @extends('layouts.master')
 
+@push('styles')
+    @vite('resources/css/frontend/pages/projects-show.css')
+@endpush
+
 @use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
     <section class="resource-detail-hero resource-detail-hero--project">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 resource-detail-hero__project-wrap">
+        <div class="site-container resource-detail-hero__project-wrap w-100 mx-auto dv-projects-show__div-1">
             <nav aria-label="Breadcrumb">
-                <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-white/65">
-                    <li><a class="hover:text-white" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li><li aria-hidden="true">/</li>
-                    <li><a class="hover:text-white" href="{{ LocalizedUrl::route('projects.index') }}">{{ __('site.projects') }}</a></li>
-                    @if ($project->category)<li aria-hidden="true">/</li><li><a class="hover:text-white" href="{{ LocalizedUrl::projectCategory($project->category) }}">{{ $project->category->name }}</a></li>@endif
+                <ol class="d-flex flex-wrap align-items-center dv-projects-show__element-2">
+                    <li><a class="dv-projects-show__action-3" href="{{ LocalizedUrl::route('home') }}">Trang chủ</a></li><li aria-hidden="true">/</li>
+                    <li><a class="dv-projects-show__action-3" href="{{ LocalizedUrl::route('projects.index') }}">{{ __('site.projects') }}</a></li>
+                    @if ($project->category)<li aria-hidden="true">/</li><li><a class="dv-projects-show__action-3" href="{{ LocalizedUrl::projectCategory($project->category) }}">{{ $project->category->name }}</a></li>@endif
                 </ol>
             </nav>
             <div class="resource-project-hero-grid">
@@ -26,8 +30,8 @@
                         @if ($project->completed_at)<span>{{ $project->completed_at->translatedFormat('Y') }}</span>@endif
                         @if ($project->industry)<span>{{ $project->industry }}</span>@endif
                     </div>
-                    <div class="mt-7 flex flex-wrap gap-3">
-                        @if ($projectVideoUrl)<a class="button-secondary" href="{{ $projectVideoUrl }}" target="_blank" rel="noopener">Xem video dự án <span aria-hidden="true">↗</span></a>@endif
+                    <div class="d-flex flex-wrap dv-projects-show__div-4">
+                        @if ($projectVideoUrl)<a class="btn btn-outline-light button-secondary" href="{{ $projectVideoUrl }}" target="_blank" rel="noopener">Xem video dự án <span aria-hidden="true">↗</span></a>@endif
                         @if (filled(strip_tags((string) $project->body_html)))<a class="resource-project-hero-link" href="#noi-dung-du-an">Nội dung dự án <span aria-hidden="true">↓</span></a>@endif
                     </div>
                 </div>
@@ -40,7 +44,7 @@
     </section>
 
     <nav class="project-detail-nav" aria-label="Điều hướng nội dung dự án">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 project-detail-nav__inner">
+        <div class="site-container project-detail-nav__inner w-100 mx-auto dv-projects-show__div-1">
             <a class="is-active" href="#noi-dung-du-an">Tổng quan</a>
             @if ($galleryImages !== [])<a href="#hinh-anh-du-an">Hình ảnh thực tế</a>@endif
             <a href="#yeu-cau-du-an">Yêu cầu & giải pháp</a>
@@ -50,7 +54,7 @@
     </nav>
 
     <section id="noi-dung-du-an" class="project-detail-content">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="site-container w-100 mx-auto dv-projects-show__div-1">
             <div class="project-detail-overview">
                 <article class="project-overview__copy">
                     <p class="pccc-eyebrow">Tổng quan dự án</p>
@@ -85,7 +89,7 @@
                         </div>
                         <div class="project-overview__gallery-grid">
                             @foreach ($galleryImages as $imageUrl)
-                                <a class="project-overview__gallery-item {{ $loop->first ? 'is-featured' : '' }} glightbox" href="{{ $imageUrl }}" data-type="image" data-gallery="project-gallery-{{ $project->id }}" data-title="{{ $project->title }} — ảnh {{ $loop->iteration }}" aria-label="Mở ảnh {{ $loop->iteration }} của {{ $project->title }}">
+                                <a class="project-overview__gallery-item  {{ $loop->first ? 'is-featured' : '' }}  glightbox" href="{{ $imageUrl }}" data-type="image" data-gallery="project-gallery-{{ $project->id }}" data-title="{{ $project->title }} — ảnh {{ $loop->iteration }}" aria-label="Mở ảnh {{ $loop->iteration }} của {{ $project->title }}">
                                     <img src="{{ $imageUrl }}" alt="{{ $project->title }} — ảnh {{ $loop->iteration }}" loading="eager">
                                     <span aria-hidden="true">↗</span>
                                 </a>
@@ -98,7 +102,7 @@
     </section>
 
     <section id="yeu-cau-du-an" class="project-challenge-band">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 project-challenge-band__inner">
+        <div class="site-container project-challenge-band__inner w-100 mx-auto dv-projects-show__div-1">
             <div class="project-challenge-band__copy">
                 <p class="pccc-eyebrow">Yêu cầu bài toán</p>
                 <h2>Thách thức của dự án</h2>
@@ -113,7 +117,7 @@
     </section>
 
     <section id="giai-phap-du-an" class="project-solution-section section-space">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 project-solution-section__grid">
+        <div class="site-container project-solution-section__grid w-100 mx-auto dv-projects-show__div-1">
             <div>
                 <p class="pccc-eyebrow">Giải pháp triển khai</p>
                 <h2 class="display-title">Giải pháp PCCC đồng bộ từ DVTEC</h2>
@@ -123,7 +127,7 @@
                         <li><span aria-hidden="true">✓</span>{{ $solution }}</li>
                     @endforeach
                 </ul>
-                <a class="button-primary" href="{{ LocalizedUrl::route('contact') }}">Liên hệ tư vấn giải pháp <span aria-hidden="true">→</span></a>
+                <a class="btn btn-primary button-primary" href="{{ LocalizedUrl::route('contact') }}">Liên hệ tư vấn giải pháp <span aria-hidden="true">→</span></a>
             </div>
             <figure class="project-solution-section__media">
                 @if ($project->image_url ?: $defaultBannerUrl)<img src="{{ $project->image_url ?: $defaultBannerUrl }}" alt="Giải pháp PCCC tại {{ $project->title }}" loading="lazy">@else<span class="image-placeholder">DVTEC</span>@endif
@@ -132,9 +136,9 @@
     </section>
 
     <section class="project-scope-section section-space">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="site-container w-100 mx-auto dv-projects-show__div-1">
             <header class="resource-list-heading">
-                <div><p class="resource-list-heading__eyebrow">Hạng mục thi công</p><h2 class="display-title text-3xl leading-tight uppercase md:text-5xl">Các hạng mục chính</h2></div>
+                <div><p class="resource-list-heading__eyebrow">Hạng mục thi công</p><h2 class="display-title text-uppercase dv-projects-show__heading-5">Các hạng mục chính</h2></div>
             </header>
             <div class="project-scope-grid">
                 @foreach (['Báo cháy tự động', 'Chữa cháy Sprinkler', 'Họng nước chữa cháy', 'Bơm chữa cháy', 'Tăng áp - hút khói', 'Tủ điện & điều khiển'] as $scope)
@@ -146,10 +150,10 @@
 
     @if ($faqItems->isNotEmpty())
         <section class="home-faq section-space" id="cau-hoi-thuong-gap">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+            <div class="site-container w-100 mx-auto dv-projects-show__div-1">
                 <header class="home-faq__header">
-                    <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Câu hỏi thường gặp</h2>
-                    <p class="mt-4 text-base leading-8 text-slate-600 md:text-lg">Thông tin cần biết trước khi triển khai dự án PCCC.</p>
+                    <h2 class="display-title text-uppercase dv-projects-show__heading-6">Câu hỏi thường gặp</h2>
+                    <p class="dv-projects-show__copy-7">Thông tin cần biết trước khi triển khai dự án PCCC.</p>
                 </header>
                 <div class="home-faq__list">
                     @foreach ($faqItems as $item)
@@ -164,29 +168,29 @@
     @endif
 
     <section class="resource-related-section" id="phan-hoi">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
-            <header class="mx-auto max-w-2xl text-center">
-                <h2 class="display-title text-3xl leading-tight uppercase md:text-4xl">Đánh giá từ khách hàng</h2>
+        <div class="site-container w-100 mx-auto dv-projects-show__div-1">
+            <header class="mx-auto text-center dv-projects-show__element-8">
+                <h2 class="display-title text-uppercase dv-projects-show__heading-6">Đánh giá từ khách hàng</h2>
                 @if ($ratingSummary['count'])
-                    <p class="mt-4 text-sm leading-7 text-slate-600"><strong class="text-lg text-ink">{{ number_format($ratingSummary['average'], 1) }}/5</strong> từ {{ $ratingSummary['count'] }} đánh giá đã được duyệt.</p>
+                    <p class="dv-projects-show__copy-9"><strong class="dv-projects-show__element-10">{{ number_format($ratingSummary['average'], 1) }}/5</strong> từ {{ $ratingSummary['count'] }} đánh giá đã được duyệt.</p>
                 @else
-                    <p class="mt-4 text-sm leading-7 text-slate-600">Những đánh giá đầu tiên sẽ được hiển thị sau khi đội ngũ kiểm duyệt.</p>
+                    <p class="dv-projects-show__copy-9">Những đánh giá đầu tiên sẽ được hiển thị sau khi đội ngũ kiểm duyệt.</p>
                 @endif
             </header>
 
-            <div class="mt-9 grid gap-8 border-t border-slate-200 pt-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)]">
-                <div class="grid content-start gap-6">
+            <div class="dv-projects-show__div-11">
+                <div class="d-grid dv-projects-show__div-12">
                     @forelse ($project->approvedComments as $comment)
-                        <article class="flex gap-4">
-                            <span class="grid size-11 shrink-0 place-items-center rounded-full bg-mist text-sm font-bold text-primary" aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->author_name, 0, 1)) }}</span>
-                            <div class="min-w-0">
-                                <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h3 class="text-sm font-semibold text-ink">{{ $comment->author_name }}</h3><time class="text-xs font-medium text-slate-400" datetime="{{ $comment->approved_at?->toDateString() }}">{{ $comment->approved_at?->translatedFormat('d/m/Y') }}</time></div>
-                                @if ($comment->rating)<p class="mt-1 text-sm tracking-[0.08em] text-primary" aria-label="{{ $comment->rating }} trên 5 sao">@for ($star = 1; $star <= 5; $star++)<span class="{{ $star <= $comment->rating ? '' : 'text-slate-200' }}" aria-hidden="true">★</span>@endfor</p>@endif
-                                <p class="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{{ $comment->body }}</p>
+                        <article class="d-flex dv-projects-show__article-13">
+                            <span class="d-grid flex-shrink-0 fw-bold dv-projects-show__copy-14" aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->author_name, 0, 1)) }}</span>
+                            <div class="dv-projects-show__div-15">
+                                <div class="d-flex flex-wrap align-items-baseline dv-projects-show__div-16"><h3 class="fw-semibold dv-projects-show__heading-17">{{ $comment->author_name }}</h3><time class="fw-medium dv-projects-show__copy-18" datetime="{{ $comment->approved_at?->toDateString() }}">{{ $comment->approved_at?->translatedFormat('d/m/Y') }}</time></div>
+                                @if ($comment->rating)<p class="dv-projects-show__copy-19" aria-label="{{ $comment->rating }} trên 5 sao">@for ($star = 1; $star <= 5; $star++)<span class="{{ $star <= $comment->rating ? '' : 'dv-projects-show__element-20' }}" aria-hidden="true">★</span>@endfor</p>@endif
+                                <p class="dv-projects-show__copy-21">{{ $comment->body }}</p>
                             </div>
                         </article>
                     @empty
-                        <p class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm leading-7 text-slate-500">Chưa có đánh giá nào. Anh/chị có thể là người đầu tiên chia sẻ trải nghiệm.</p>
+                        <p class="dv-projects-show__copy-22">Chưa có đánh giá nào. Anh/chị có thể là người đầu tiên chia sẻ trải nghiệm.</p>
                     @endforelse
                 </div>
 
@@ -197,28 +201,28 @@
 
     @if ($relatedServices->isNotEmpty())
         <section class="resource-related-section" id="dich-vu-lien-quan">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                <div><h2 class="display-title text-3xl leading-tight md:text-4xl">Dịch vụ đồng hành cùng dự án</h2></div>
+            <div class="site-container w-100 mx-auto flex-column dv-projects-show__div-23">
+                <div><h2 class="display-title dv-projects-show__heading-24">Dịch vụ đồng hành cùng dự án</h2></div>
                 <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a>
             </div>
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedServices as $service) @include('frontend.partials.service-card') @endforeach</div>
+            <div class="site-container w-100 mx-auto dv-projects-show__div-25">@foreach ($relatedServices as $service) @include('frontend.partials.service-card') @endforeach</div>
         </section>
     @endif
 
     @if ($relatedPosts->isNotEmpty())
         <section class="resource-related-section" id="bai-viet-lien-quan">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-                <div><h2 class="display-title text-3xl leading-tight md:text-4xl">Bài viết liên quan</h2></div>
+            <div class="site-container w-100 mx-auto flex-column dv-projects-show__div-23">
+                <div><h2 class="display-title dv-projects-show__heading-24">Bài viết liên quan</h2></div>
                 <a class="section-link" href="{{ LocalizedUrl::route('posts.index') }}">Xem tất cả bài viết <span aria-hidden="true">→</span></a>
             </div>
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedPosts as $post) @include('frontend.partials.post-card') @endforeach</div>
+            <div class="site-container w-100 mx-auto dv-projects-show__div-25">@foreach ($relatedPosts as $post) @include('frontend.partials.post-card') @endforeach</div>
         </section>
     @endif
 
     @if ($relatedProjects->isNotEmpty())
         <section id="du-an-lien-quan" class="resource-related-section">
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between"><div><h2 class="display-title text-3xl leading-tight md:text-4xl">Khám phá thêm các dự án đã thực hiện</h2></div><a class="section-link" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a></div>
-            <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 mt-9 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">@foreach ($relatedProjects as $project) @include('frontend.partials.project-card') @endforeach</div>
+            <div class="site-container w-100 mx-auto flex-column dv-projects-show__div-23"><div><h2 class="display-title dv-projects-show__heading-24">Khám phá thêm các dự án đã thực hiện</h2></div><a class="section-link" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a></div>
+            <div class="site-container w-100 mx-auto dv-projects-show__div-25">@foreach ($relatedProjects as $project) @include('frontend.partials.project-card') @endforeach</div>
         </section>
     @endif
 @endsection

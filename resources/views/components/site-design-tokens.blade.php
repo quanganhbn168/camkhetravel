@@ -1,7 +1,18 @@
+@php($palette = \App\Support\Design\BrandPalette::make($design->color_primary, $design->color_primary_hover))
 <style id="site-design-tokens">
     :root {
-        --site-color-primary: {{ $design->color_primary }};
-        --site-color-primary-hover: {{ $design->color_primary_hover }};
+        --bs-primary: {{ $palette['primary'] }};
+        --bs-primary-rgb: {{ $palette['rgb'] }};
+        --bs-link-color: {{ $palette['primary'] }};
+        --bs-link-color-rgb: {{ $palette['rgb'] }};
+        --bs-link-hover-color: {{ $palette['hover'] }};
+        --bs-link-hover-color-rgb: {{ $palette['hover_rgb'] }};
+        --bs-primary-bg-subtle: color-mix(in srgb, {{ $palette['primary'] }} 10%, white);
+        --bs-primary-border-subtle: color-mix(in srgb, {{ $palette['primary'] }} 25%, white);
+        --dv-primary-contrast: {{ $palette['contrast'] }};
+        --dv-primary-hover-contrast: {{ $palette['hover_contrast'] }};
+        --site-color-primary: {{ $palette['primary'] }};
+        --site-color-primary-hover: {{ $palette['hover'] }};
         --site-color-ink: {{ $design->color_ink }};
         --site-color-surface: {{ $design->color_surface }};
         --site-color-muted: {{ $design->color_muted }};

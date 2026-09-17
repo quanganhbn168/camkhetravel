@@ -50,7 +50,7 @@ class LandingController extends Controller
             'landingBlocks' => $this->landingPageBlocks->prepare($landingPage),
             'landingTheme' => $this->landingPageBlocks->theme(),
             'landingAssets' => [
-                'vite' => ['resources/css/app.css', 'resources/js/app.js'],
+                'vite' => ['resources/scss/frontend.scss', 'resources/js/app.js'],
             ],
             'hideHeader' => ! $landingPage->show_header,
             'hideFooter' => ! $landingPage->show_footer,

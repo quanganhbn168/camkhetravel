@@ -1,0 +1,246 @@
+/* Page components: frontend/services/show.blade.php */
+
+.dv-services-show__div-1 {
+  max-width: var(--container-7xl);
+  padding-inline: calc(var(--spacing) * 4);
+  @media (width >= 64rem) {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+}
+.dv-services-show__heading-2 {
+  max-width: var(--container-4xl);
+  font-family: 'Roboto Condensed Variable', 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--text-4xl);
+  line-height: var(--dv-ui-leading, var(--text-4xl--line-height));
+  --dv-ui-leading: 1.08;
+  line-height: 1.08;
+  --dv-ui-tracking: -0.045em;
+  letter-spacing: -0.045em;
+  color: var(--color-white);
+  @media (width >= 48rem) {
+    font-size: var(--text-6xl);
+    line-height: var(--dv-ui-leading, var(--text-6xl--line-height));
+  }
+}
+.dv-services-show__div-3 {
+  margin-top: calc(var(--spacing) * 8);
+  gap: calc(var(--spacing) * 3);
+}
+.dv-services-show__div-4 {
+  border-bottom-style: var(--dv-ui-border-style);
+  border-bottom-width: 1px;
+  border-color: var(--color-slate-100);
+  background-color: var(--color-white);
+  padding-block: calc(var(--spacing) * 4);
+}
+.dv-services-show__element-5 {
+  column-gap: calc(var(--spacing) * 2);
+  row-gap: calc(var(--spacing) * 1);
+  font-size: var(--text-xs);
+  line-height: var(--dv-ui-leading, var(--text-xs--line-height));
+  color: var(--color-slate-500);
+}
+.dv-services-show__action-6 {
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --dv-ui-gradient-from, --dv-ui-gradient-via, --dv-ui-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, visibility, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--dv-ui-ease, var(--default-transition-timing-function));
+  transition-duration: var(--dv-ui-duration, var(--default-transition-duration));
+  &:hover {
+    @media (hover: hover) {
+      color: var(--site-color-primary, #f68e1e);
+    }
+  }
+}
+.dv-services-show__li-7 {
+  color: var(--site-color-ink, #1f2b25);
+}
+.dv-services-show__heading-8 {
+  font-size: var(--text-3xl);
+  line-height: var(--dv-ui-leading, var(--text-3xl--line-height));
+  --dv-ui-leading: var(--leading-tight);
+  line-height: var(--leading-tight);
+  @media (width >= 48rem) {
+    font-size: var(--text-5xl);
+    line-height: var(--dv-ui-leading, var(--text-5xl--line-height));
+  }
+}
+.dv-services-show__copy-9 {
+  margin-top: calc(var(--spacing) * 4);
+  max-width: var(--container-3xl);
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  --dv-ui-leading: calc(var(--spacing) * 7);
+  line-height: calc(var(--spacing) * 7);
+  color: var(--color-slate-600);
+  @media (width >= 48rem) {
+    font-size: var(--text-base);
+    line-height: var(--dv-ui-leading, var(--text-base--line-height));
+  }
+}
+.dv-services-show__section-10 {
+  border-block-style: var(--dv-ui-border-style);
+  border-block-width: 1px;
+  border-color: var(--color-slate-100);
+  background-color: var(--site-color-surface, #f8fafc);
+  @supports (color: color-mix(in lab, red, red)) {
+    background-color: color-mix(in oklab, var(--site-color-surface, #f8fafc) 55%, transparent);
+  }
+}
+.dv-services-show__element-11 {
+  max-width: var(--container-2xl);
+}
+.dv-services-show__heading-12 {
+  font-size: var(--text-3xl);
+  line-height: var(--dv-ui-leading, var(--text-3xl--line-height));
+  --dv-ui-leading: var(--leading-tight);
+  line-height: var(--leading-tight);
+  @media (width >= 48rem) {
+    font-size: var(--text-4xl);
+    line-height: var(--dv-ui-leading, var(--text-4xl--line-height));
+  }
+}
+.dv-services-show__copy-13 {
+  margin-top: calc(var(--spacing) * 4);
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  --dv-ui-leading: calc(var(--spacing) * 7);
+  line-height: calc(var(--spacing) * 7);
+  color: var(--color-slate-600);
+}
+.dv-services-show__div-14 {
+  margin-top: calc(var(--spacing) * 7);
+}
+.dv-services-show__div-15 {
+  margin-top: calc(var(--spacing) * 8);
+}
+.dv-services-show__copy-16 {
+  margin-top: calc(var(--spacing) * 4);
+  font-size: var(--text-base);
+  line-height: var(--dv-ui-leading, var(--text-base--line-height));
+  --dv-ui-leading: calc(var(--spacing) * 8);
+  line-height: calc(var(--spacing) * 8);
+  color: var(--color-slate-600);
+  @media (width >= 48rem) {
+    font-size: var(--text-lg);
+    line-height: var(--dv-ui-leading, var(--text-lg--line-height));
+  }
+}
+.dv-services-show__element-17 {
+  font-size: var(--text-lg);
+  line-height: var(--dv-ui-leading, var(--text-lg--line-height));
+  color: var(--site-color-ink, #1f2b25);
+}
+.dv-services-show__div-18 {
+  margin-top: calc(var(--spacing) * 9);
+  display: grid;
+  gap: calc(var(--spacing) * 8);
+  border-top-style: var(--dv-ui-border-style);
+  border-top-width: 1px;
+  border-color: var(--color-slate-200);
+  padding-top: calc(var(--spacing) * 8);
+  @media (width >= 64rem) {
+    grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr);
+  }
+}
+.dv-services-show__div-19 {
+  align-content: flex-start;
+  gap: calc(var(--spacing) * 6);
+}
+.dv-services-show__article-20 {
+  gap: calc(var(--spacing) * 4);
+}
+.dv-services-show__copy-21 {
+  width: calc(var(--spacing) * 11);
+  height: calc(var(--spacing) * 11);
+  place-items: center;
+  border-radius: calc(infinity * 1px);
+  background-color: var(--site-color-surface, #f8fafc);
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  color: var(--site-color-primary, #f68e1e);
+}
+.dv-services-show__div-22 {
+  min-width: calc(var(--spacing) * 0);
+}
+.dv-services-show__div-23 {
+  column-gap: calc(var(--spacing) * 3);
+  row-gap: calc(var(--spacing) * 1);
+}
+.dv-services-show__heading-24 {
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  color: var(--site-color-ink, #1f2b25);
+}
+.dv-services-show__copy-25 {
+  font-size: var(--text-xs);
+  line-height: var(--dv-ui-leading, var(--text-xs--line-height));
+  color: var(--color-slate-400);
+}
+.dv-services-show__copy-26 {
+  margin-top: calc(var(--spacing) * 1);
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  --dv-ui-tracking: 0.08em;
+  letter-spacing: 0.08em;
+  color: var(--site-color-primary, #f68e1e);
+}
+.dv-services-show__element-27 {
+  color: var(--color-slate-200);
+}
+.dv-services-show__copy-28 {
+  margin-top: calc(var(--spacing) * 2);
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  --dv-ui-leading: calc(var(--spacing) * 6);
+  line-height: calc(var(--spacing) * 6);
+  white-space: pre-line;
+  color: var(--color-slate-600);
+}
+.dv-services-show__copy-29 {
+  border-radius: var(--radius-2xl);
+  border-style: var(--dv-ui-border-style);
+  border-width: 1px;
+  --dv-ui-border-style: dashed;
+  border-style: dashed;
+  border-color: var(--color-slate-300);
+  background-color: var(--color-white);
+  padding: calc(var(--spacing) * 6);
+  font-size: var(--text-sm);
+  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
+  --dv-ui-leading: calc(var(--spacing) * 7);
+  line-height: calc(var(--spacing) * 7);
+  color: var(--color-slate-500);
+}
+.dv-services-show__div-30 {
+  display: flex;
+  max-width: var(--container-7xl);
+  gap: calc(var(--spacing) * 5);
+  padding-inline: calc(var(--spacing) * 4);
+  @media (width >= 48rem) {
+    flex-direction: row;
+  }
+  @media (width >= 48rem) {
+    align-items: flex-end;
+  }
+  @media (width >= 48rem) {
+    justify-content: space-between;
+  }
+  @media (width >= 64rem) {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+}
+.dv-services-show__div-31 {
+  margin-top: calc(var(--spacing) * 9);
+  display: grid;
+  max-width: var(--container-7xl);
+  gap: calc(var(--spacing) * 5);
+  padding-inline: calc(var(--spacing) * 4);
+  @media (width >= 40rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (width >= 64rem) {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+  @media (width >= 80rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

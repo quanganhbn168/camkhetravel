@@ -6,11 +6,12 @@
     @stack('head')
 
     @vite($landingAssets['vite'])
+    @stack('styles')
     <x-site-design-tokens />
     @include('partials.tracking.head')
 </head>
 <body
-    class="@yield('body_class', 'min-h-screen overflow-x-clip')"
+    class="@yield('body_class', 'dv-layouts-landing__element-1')"
 >
     @include('partials.tracking.body')
     @yield('before_content')
@@ -21,7 +22,7 @@
         <x-site-header />
     @endif
 
-    <main id="@yield('main_id', 'landing-main')" class="@yield('main_class', 'overflow-x-clip')">
+    <main id="@yield('main_id', 'landing-main')" class="@yield('main_class', 'site-main')">
         @yield('content')
     </main>
 

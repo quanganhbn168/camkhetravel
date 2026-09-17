@@ -36,7 +36,7 @@ class HomeFeaturedServicesTest extends TestCase
             $hidden->services()->create(['title' => 'Dịch vụ thuộc nhóm ẩn QA '.$index, 'status' => 'published', 'is_home' => true]);
         }
 
-        $this->get('/')->assertOk()->assertSee('Dịch vụ PCCC nổi bật')->assertSee('Các dịch vụ khác')
+        $this->get('/')->assertOk()->assertSee('Dịch vụ PCCC toàn diện')->assertDontSee('Các dịch vụ khác')
             ->assertViewHas('featuredServiceCategories', fn ($categories) => $categories->modelKeys() === [$category->id]
                 && $categories->first()->services->modelKeys() === [$shown->id]);
     }

@@ -110,15 +110,12 @@
     ];
 @endphp
 
-@push('styles')
-    @vite('resources/scss/frontend.scss')
-@endpush
-
 @section('body_class', 'home-page bg-white')
 @section('main_class', '')
 
 @section('content')
 <div class="home-bootstrap">
+    <h1 class="visually-hidden">{{ $companyName }} — Giải pháp PCCC cho công trình</h1>
 
     {{-- HERO --}}
     <section class="dv-hero" data-hero-section>
@@ -210,14 +207,14 @@
                 <ul class="nav dv-tabs flex-nowrap overflow-x-auto mt-5" role="tablist">
                     @foreach ($featuredServiceCategories as $category)
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link @if($loop->first) active @endif" id="service-tab-{{ $category->id }}" data-bs-toggle="tab" data-bs-target="#service-pane-{{ $category->id }}" type="button" role="tab">{{ $category->name }}</button>
+                            <button class="nav-link @if($loop->first) active @endif" id="service-tab-{{ $category->id }}" aria-controls="service-pane-{{ $category->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-bs-toggle="tab" data-bs-target="#service-pane-{{ $category->id }}" type="button" role="tab">{{ $category->name }}</button>
                         </li>
                     @endforeach
                 </ul>
 
                 <div class="tab-content pt-4">
                     @foreach ($featuredServiceCategories as $category)
-                        <div class="tab-pane fade @if($loop->first) show active @endif" id="service-pane-{{ $category->id }}" role="tabpanel" tabindex="0">
+                        <div class="tab-pane fade @if($loop->first) show active @endif" id="service-pane-{{ $category->id }}" role="tabpanel" aria-labelledby="service-tab-{{ $category->id }}" tabindex="0">
                             <div class="row g-4 g-lg-5 align-items-center">
                                 <div class="col-lg-7">
                                     <a class="dv-service-image d-block" href="{{ route('services.category', ['category' => $category->slug]) }}">
@@ -546,25 +543,31 @@
                 <div class="col-lg-7">
                     <form method="POST" action="{{ route('contact.store') }}" class="dv-contact-form" data-lead-form>
                         @csrf
+                        <input type="hidden" name="return_to" value="{{ request()->getPathInfo() }}#tu-van">
+                        @if ($errors->any())
+                            <div class="col-12"><div class="alert alert-danger" role="alert">
+                                @foreach ($errors->all() as $error)<p class="mb-1">{{ $error }}</p>@endforeach
+                            </div></div>
+                        @endif
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Họ và tên</label>
-                                <input class="form-control" name="name" value="{{ old('name') }}" required>
+                                <input class="form-control" id="home-name" name="name" autocomplete="name" maxlength="255" value="{{ old('name') }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Số điện thoại</label>
-                                <input class="form-control" name="phone" value="{{ old('phone') }}">
+                                <input class="form-control" id="home-phone" name="phone" autocomplete="tel" maxlength="32" value="{{ old('phone') }}">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Dịch vụ quan tâm</label>
-                                <select class="form-select" name="service_id">
+                                <select class="form-select" id="home-service_id" name="service_id">
                                     <option value="">Chọn dịch vụ</option>
                                     @foreach ($contactServices as $service)<option value="{{ $service->id }}" @selected(old('service_id') == $service->id)>{{ $service->title }}</option>@endforeach
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Nhu cầu của bạn</label>
-                                <input class="form-control" name="message" value="{{ old('message') }}" placeholder="Ví dụ: Khảo sát nhà xưởng..." required>
+                                <input class="form-control" id="home-message" name="message" maxlength="5000" value="{{ old('message') }}" placeholder="Ví dụ: Khảo sát nhà xưởng..." required>
                             </div>
                             <div class="col-12"><button class="btn btn-primary w-100" type="submit">Gửi yêu cầu tư vấn →</button></div>
                             <div class="col-12"><p class="small text-success mb-0" data-form-success hidden></p></div>
@@ -629,7 +632,7 @@
                         <div class="accordion" id="homeFaq">
                             @foreach ($faqItems as $item)
                                 <div class="accordion-item">
-                                    <h3 class="accordion-header"><button class="accordion-button @unless($loop->first) collapsed @endunless" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ $loop->index }}">{{ $item['question'] }}</button></h3>
+                                    <h3 class="accordion-header"><button class="accordion-button @unless($loop->first) collapsed @endunless" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ $loop->index }}" aria-controls="faq-{{ $loop->index }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}">{{ $item['question'] }}</button></h3>
                                     <div id="faq-{{ $loop->index }}" class="accordion-collapse collapse @if($loop->first) show @endif" data-bs-parent="#homeFaq"><div class="accordion-body text-secondary">{{ $item['answer'] }}</div></div>
                                 </div>
                             @endforeach

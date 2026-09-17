@@ -7,23 +7,23 @@
     'successClass' => null,
 ])
 
-<section class="resource-related-section relative isolate overflow-hidden bg-ink" id="tu-van">
+<section class="resource-related-section position-relative overflow-hidden dv-service-consultation-form__section-1" id="tu-van">
     @if ($content->image_url)
-        <img class="absolute inset-0 -z-20 h-full w-full object-cover" src="{{ $content->image_url }}" alt="" aria-hidden="true">
+        <img class="position-absolute h-100 w-100 object-fit-cover dv-service-consultation-form__media-2" src="{{ $content->image_url }}" alt="" aria-hidden="true">
     @endif
-    <div class="absolute inset-0 -z-10 bg-[linear-gradient(115deg,color-mix(in_srgb,var(--site-color-ink)_93%,transparent),color-mix(in_srgb,var(--site-color-primary)_78%,transparent))]"></div>
+    <div class="position-absolute dv-service-consultation-form__div-3"></div>
 
-    <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8 relative grid gap-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)] lg:items-stretch">
-        <aside class="flex min-h-[29rem] max-w-sm flex-col px-1 py-9 text-white md:py-12">
-                <h2 class="display-title text-3xl leading-tight text-white uppercase md:text-4xl">{{ $heading }}</h2>
-                <p class="mt-4 text-sm leading-7 text-slate-200">{{ $description ?: 'Trao đổi nhanh về hạng mục '.mb_strtolower($content->title).' cùng đội ngũ DVTEC.' }}</p>
+    <div class="site-container w-100 mx-auto position-relative dv-service-consultation-form__div-4">
+        <aside class="d-flex flex-column dv-service-consultation-form__aside-5">
+                <h2 class="display-title text-uppercase dv-service-consultation-form__heading-6">{{ $heading }}</h2>
+                <p class="dv-service-consultation-form__copy-7">{{ $description ?: 'Trao đổi nhanh về hạng mục '.mb_strtolower($content->title).' cùng đội ngũ DVTEC.' }}</p>
 
-                <div class="mt-auto border-t border-white/20 pt-6">
-                    <p class="text-xs font-bold tracking-[0.14em] text-primary-soft uppercase">{{ $website->company_name ?: $website->site_name }}</p>
-                    <dl class="mt-4 grid gap-3 text-sm">
-                        @if ($website->hotline)<div><dt class="sr-only">Điện thoại</dt><dd><a class="font-semibold hover:text-primary-soft" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a></dd></div>@endif
-                        @if ($website->contact_email)<div><dt class="sr-only">Email</dt><dd><a class="text-slate-200 hover:text-white" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a></dd></div>@endif
-                        @if ($website->address)<div><dt class="sr-only">Địa chỉ</dt><dd class="leading-6 text-slate-300">{{ $website->address }}</dd></div>@endif
+                <div class="mt-auto dv-service-consultation-form__div-8">
+                    <p class="text-primary-soft fw-bold text-uppercase dv-service-consultation-form__copy-9">{{ $website->company_name ?: $website->site_name }}</p>
+                    <dl class="d-grid dv-service-consultation-form__dl-10">
+                        @if ($website->hotline)<div><dt class="dv-service-consultation-form__dt-11">Điện thoại</dt><dd><a class="hover:text-primary-soft fw-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a></dd></div>@endif
+                        @if ($website->contact_email)<div><dt class="dv-service-consultation-form__dt-11">Email</dt><dd><a class="dv-service-consultation-form__action-13" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a></dd></div>@endif
+                        @if ($website->address)<div><dt class="dv-service-consultation-form__dt-11">Địa chỉ</dt><dd class="dv-service-consultation-form__dd-14">{{ $website->address }}</dd></div>@endif
                     </dl>
                 </div>
         </aside>
@@ -36,8 +36,8 @@
         ], $legacySuccessClasses);
             $successClasses = implode(' ', array_values(array_unique(array_filter($successClassNames))));
         @endphp
-        <form class="rounded-[2rem] bg-white p-7 md:p-10" method="POST" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" data-lead-form>
-            <p class="{{ $successClasses }} mt-5 rounded-xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800" data-form-success role="status" aria-live="polite" @if (blank($successMessage)) hidden @endif>{{ $successMessage }}</p>
+        <form class="dv-service-consultation-form__element-15" method="POST" action="{{ \App\Support\Localization\LocalizedUrl::route('contact.store') }}" data-lead-form>
+            <p class="{{ $successClasses }} fw-semibold dv-service-consultation-form__copy-16" data-form-success role="status" aria-live="polite" @if (blank($successMessage)) hidden @endif>{{ $successMessage }}</p>
             @csrf
             @if ($content instanceof \App\Models\Service)
                 <input type="hidden" name="service_id" value="{{ $content->id }}">
@@ -47,14 +47,14 @@
             @endif
             <input type="hidden" name="return_to" value="{{ request()->getRequestUri() }}#tu-van">
 
-            <div class="grid gap-5 md:grid-cols-2">
-                <label class="text-sm font-semibold text-ink">Họ và tên<input class="form-field" name="name" value="{{ old('name') }}" autocomplete="name" maxlength="255">@error('name')<span class="mt-1 block text-xs font-medium text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm font-semibold text-ink">Số điện thoại <span class="text-primary">*</span><input class="form-field" name="phone" value="{{ old('phone') }}" autocomplete="tel" required maxlength="32">@error('phone')<span class="mt-1 block text-xs font-medium text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm font-semibold text-ink md:col-span-2">Email<input class="form-field" name="email" type="email" value="{{ old('email') }}" autocomplete="email" maxlength="255">@error('email')<span class="mt-1 block text-xs font-medium text-red-600">{{ $message }}</span>@enderror</label>
-                <label class="text-sm font-semibold text-ink md:col-span-2">Nội dung<textarea class="form-field" name="message" rows="6" maxlength="5000">{{ old('message') }}</textarea>@error('message')<span class="mt-1 block text-xs font-medium text-red-600">{{ $message }}</span>@enderror</label>
+            <div class="dv-service-consultation-form__div-17">
+                <label class="fw-semibold dv-service-consultation-form__element-18">Họ và tên<input class="form-control form-field" name="name" value="{{ old('name') }}" autocomplete="name" maxlength="255">@error('name')<span class="d-block fw-medium dv-service-consultation-form__copy-19">{{ $message }}</span>@enderror</label>
+                <label class="fw-semibold dv-service-consultation-form__element-18">Số điện thoại <span class="dv-service-consultation-form__copy-20">*</span><input class="form-control form-field" name="phone" value="{{ old('phone') }}" autocomplete="tel" required maxlength="32">@error('phone')<span class="d-block fw-medium dv-service-consultation-form__copy-19">{{ $message }}</span>@enderror</label>
+                <label class="fw-semibold dv-service-consultation-form__element-21">Email<input class="form-control form-field" name="email" type="email" value="{{ old('email') }}" autocomplete="email" maxlength="255">@error('email')<span class="d-block fw-medium dv-service-consultation-form__copy-19">{{ $message }}</span>@enderror</label>
+                <label class="fw-semibold dv-service-consultation-form__element-21">Nội dung<textarea class="form-control form-field" name="message" rows="6" maxlength="5000">{{ old('message') }}</textarea>@error('message')<span class="d-block fw-medium dv-service-consultation-form__copy-19">{{ $message }}</span>@enderror</label>
             </div>
-            <p class="mt-5 text-xs leading-5 text-slate-500"><span class="text-primary">*</span> Thông tin bắt buộc</p>
-            <button class="button-primary mt-5" type="submit">{{ $buttonLabel }} <span aria-hidden="true">↗</span></button>
+            <p class="dv-service-consultation-form__copy-22"><span class="dv-service-consultation-form__copy-20">*</span> Thông tin bắt buộc</p>
+            <button class="btn btn-primary button-primary dv-service-consultation-form__action-23" type="submit">{{ $buttonLabel }} <span aria-hidden="true">↗</span></button>
         </form>
     </div>
 </section>

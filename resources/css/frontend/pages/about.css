@@ -1,0 +1,12 @@
+/* Page components: frontend/about.blade.php */
+
+.dv-about__div-1 {
+  max-width: var(--container-7xl);
+  padding-inline: calc(var(--spacing) * 4);
+  @media (width >= 64rem) {
+    padding-inline: calc(var(--spacing) * 8);
+  }
+}
+.dv-about__action-2 {
+  margin-top: calc(var(--spacing) * 8);
+}

@@ -1,5 +1,5 @@
 @php
-    $planBodyClass = trim($__env->yieldContent('body_class', 'min-h-screen'));
+    $planBodyClass = trim($__env->yieldContent('body_class', 'dv-layouts-plain__element-3'));
 @endphp
 <!doctype html>
 <html lang="{{ app()->getLocale() }}">
@@ -7,15 +7,17 @@
     @include('partials.head.seo')
     @yield('head')
     @stack('head')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/scss/frontend.scss', 'resources/js/app.js'])
+    @stack('styles')
+    <x-site-design-tokens />
     @include('partials.tracking.head')
 </head>
 <body class="{{ $planBodyClass }}">
     @include('partials.tracking.body')
     @yield('before_content')
-    <main id="@yield('main_id', 'plan-main')" class="@yield('main_class', 'overflow-x-clip')">
+    <main id="@yield('main_id', 'plan-main')" class="@yield('main_class', 'site-main')">
         @if (session('success'))
-            <div class="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">{{ session('success') }}</div>
+            <div class="alert alert-success site-flash" role="status">{{ session('success') }}</div>
         @endif
         @yield('content')
     </main>

@@ -1,24 +1,24 @@
 <!doctype html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 <head>
     @include('partials.head.seo')
     @yield('head')
     @stack('head')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/scss/frontend.scss', 'resources/js/app.js'])
     @stack('styles')
     <x-site-design-tokens />
     @include('partials.tracking.head')
 </head>
-<body class="@yield('body_class', 'min-h-screen')">
+<body class="@yield('body_class', 'dv-layouts-master__element-2')">
     @include('partials.tracking.body')
     @yield('before_header')
     @unless ($hideHeader ?? false)
         <x-site-header />
     @endunless
 
-    <main id="@yield('main_id', 'site-main')" class="@yield('main_class', 'overflow-x-clip')">
+    <main id="@yield('main_id', 'site-main')" class="@yield('main_class', 'site-main')">
         @if (session('success'))
-            <div class="fixed top-24 right-4 z-50 max-w-md rounded-2xl bg-emerald-700 px-5 py-4 text-sm font-medium text-white shadow-xl" role="status">{{ session('success') }}</div>
+            <div class="alert alert-success site-flash" role="status">{{ session('success') }}</div>
         @endif
 
         @yield('content')

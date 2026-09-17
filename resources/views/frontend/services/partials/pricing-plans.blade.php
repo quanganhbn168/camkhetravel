@@ -2,7 +2,7 @@
 
 @if ($pricingMatrix['packages'] !== [])
     <section id="goi-dich-vu" class="service-pricing-section section-space">
-        <div class="site-container w-full max-w-7xl mx-auto px-4 lg:px-8">
+        <div class="site-container w-100 mx-auto dv-services-partials-pricing-plans__div-1">
             <header class="service-pricing-section__header">
                 <h2 class="display-title">{{ $pricingMatrix['title'] }}</h2>
                 <p>{{ $pricingMatrix['description'] ?: 'Các gói được xây dựng theo phạm vi công việc và mục tiêu thực tế của từng dịch vụ.' }}</p>
@@ -10,14 +10,14 @@
 
             <div class="service-package-grid">
                 @foreach ($pricingMatrix['packages'] as $package)
-                    <article class="service-package-card {{ $package['is_featured'] ? 'is-featured' : '' }}">
+                    <article class="service-package-card  {{ $package['is_featured'] ? 'is-featured' : '' }}">
                         <div class="service-package-card__intro">
                             @if ($package['badge'])<span class="service-pricing-table__badge">{{ $package['badge'] }}</span>@endif
                             <h3>{{ $package['name'] }}</h3>
                             @if ($package['description'])<p>{{ $package['description'] }}</p>@endif
                         </div>
                         @include('frontend.services.partials.package-price')
-                        <a class="{{ $package['is_featured'] ? 'button-primary' : 'button-dark' }}" href="{{ LocalizedUrl::route('contact', ['service' => $service->id, 'plan' => $package['id']]) }}" aria-label="Nhận tư vấn gói {{ $package['name'] }}">Nhận tư vấn gói này <span aria-hidden="true">→</span></a>
+                        <a class="{{ $package['is_featured'] ? 'btn btn-primary button-primary' : 'btn btn-dark button-dark' }}" href="{{ LocalizedUrl::route('contact', ['service' => $service->id, 'plan' => $package['id']]) }}" aria-label="Nhận tư vấn gói {{ $package['name'] }}">Nhận tư vấn gói này <span aria-hidden="true">→</span></a>
                         @if ($package['items'] !== [])
                             <ul class="service-package-card__items">
                                 @foreach (array_slice($package['items'], 0, 4) as $item)
@@ -46,12 +46,12 @@
             <div class="service-pricing-table-wrap" tabindex="0" role="region" aria-label="Bảng so sánh các gói dịch vụ">
 
                 <table class="service-pricing-table">
-                    <caption class="sr-only">So sánh các gói trong {{ $pricingMatrix['title'] }} của {{ $service->title }}</caption>
+                    <caption class="dv-services-partials-pricing-plans__element-2">So sánh các gói trong {{ $pricingMatrix['title'] }} của {{ $service->title }}</caption>
                     <thead>
                         <tr>
                             <th class="service-pricing-table__feature-heading" scope="col">Hạng mục</th>
                             @foreach ($pricingMatrix['packages'] as $package)
-                                <th class="service-pricing-table__package-heading {{ $package['is_featured'] ? 'is-featured' : '' }}" scope="col">
+                                <th class="service-pricing-table__package-heading  {{ $package['is_featured'] ? 'is-featured' : '' }}" scope="col">
                                     @if ($package['badge'])
                                         <span class="service-pricing-table__badge">{{ $package['badge'] }}</span>
                                     @endif
@@ -88,7 +88,7 @@
                         <tr>
                             <th scope="row">Trao đổi theo nhu cầu</th>
                             @foreach ($pricingMatrix['packages'] as $package)
-                                <td><a class="button-dark" href="{{ LocalizedUrl::route('contact', ['service' => $service->id, 'plan' => $package['id']]) }}">Nhận tư vấn <span aria-hidden="true">→</span></a></td>
+                                <td><a class="btn btn-dark button-dark" href="{{ LocalizedUrl::route('contact', ['service' => $service->id, 'plan' => $package['id']]) }}">Nhận tư vấn <span aria-hidden="true">→</span></a></td>
                             @endforeach
                         </tr>
                     </tfoot>
