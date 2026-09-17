@@ -1,4 +1,5 @@
 import './bootstrap';
+import * as bootstrap from 'bootstrap';
 import Alpine from 'alpinejs';
 import AOS from 'aos';
 import GLightbox from 'glightbox';
@@ -12,6 +13,7 @@ import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 
+window.bootstrap = bootstrap;
 window.Alpine = Alpine;
 window.AOS = AOS;
 window.Swiper = Swiper;
@@ -34,9 +36,7 @@ const showFormValidationToast = () => formToast.fire({
 
 const initialiseHeroSwipers = () => {
     document.querySelectorAll('[data-hero-swiper]').forEach((element) => {
-        if (element.swiper) {
-            return;
-        }
+        if (element.swiper) return;
 
         new Swiper(element, {
             modules: [A11y, Autoplay, EffectFade, Keyboard],
@@ -57,10 +57,7 @@ const initialiseHeroSwipers = () => {
 
 const initialisePostSwipers = () => {
     document.querySelectorAll('[data-post-swiper]').forEach((element) => {
-        if (element.swiper) {
-            return;
-        }
-
+        if (element.swiper) return;
         const section = element.parentElement;
 
         new Swiper(element, {
@@ -83,10 +80,7 @@ const initialisePostSwipers = () => {
 
 const initialiseTestimonialSwipers = () => {
     document.querySelectorAll('[data-testimonial-swiper]').forEach((element) => {
-        if (element.swiper) {
-            return;
-        }
-
+        if (element.swiper) return;
         const section = element.parentElement;
 
         new Swiper(element, {
@@ -114,13 +108,9 @@ const initialiseTestimonialSwipers = () => {
 
 const initialiseScrollTop = () => {
     const button = document.querySelector('[data-scroll-top]');
-
-    if (!button) {
-        return;
-    }
+    if (!button) return;
 
     const toggle = () => button.classList.toggle('is-visible', window.scrollY > 480);
-
     toggle();
     window.addEventListener('scroll', toggle, { passive: true });
     button.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -138,19 +128,12 @@ const initialiseAos = () => {
 
 const initialiseCountUps = () => {
     const counters = document.querySelectorAll('[data-count-up]');
-
-    if (!counters.length) {
-        return;
-    }
+    if (!counters.length) return;
 
     const formatter = new Intl.NumberFormat(document.documentElement.lang || 'vi');
-    const renderValue = (element, value) => {
-        element.textContent = formatter.format(value);
-    };
+    const renderValue = (element, value) => { element.textContent = formatter.format(value); };
     const animateCounter = (element) => {
-        if (element.dataset.countStarted === 'true') {
-            return;
-        }
+        if (element.dataset.countStarted === 'true') return;
 
         element.dataset.countStarted = 'true';
         const target = Number(element.dataset.countUp || 0);
@@ -159,29 +142,20 @@ const initialiseCountUps = () => {
         const update = (now) => {
             const progress = Math.min((now - startedAt) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
-
             renderValue(element, Math.round(target * eased));
-
-            if (progress < 1) {
-                window.requestAnimationFrame(update);
-            }
+            if (progress < 1) window.requestAnimationFrame(update);
         };
-
         window.requestAnimationFrame(update);
     };
 
     if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         counters.forEach((element) => renderValue(element, Number(element.dataset.countUp || 0)));
-
         return;
     }
 
     const observer = new IntersectionObserver((entries, activeObserver) => {
         entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                return;
-            }
-
+            if (!entry.isIntersecting) return;
             animateCounter(entry.target);
             activeObserver.unobserve(entry.target);
         });
@@ -196,19 +170,13 @@ const initialiseCountUps = () => {
 const preserveHiddenFieldsWhileResetting = (form) => {
     const hiddenFields = Array.from(form.querySelectorAll('input[type="hidden"]'))
         .map((input) => [input, input.value]);
-
     form.reset();
-
-    hiddenFields.forEach(([input, value]) => {
-        input.value = value;
-    });
+    hiddenFields.forEach(([input, value]) => { input.value = value; });
 };
 
 const initialiseLeadForms = () => {
     document.querySelectorAll('form[data-lead-form]').forEach((form) => {
-        if (form.dataset.leadFormReady === 'true') {
-            return;
-        }
+        if (form.dataset.leadFormReady === 'true') return;
 
         form.dataset.leadFormReady = 'true';
         form.noValidate = true;
@@ -219,7 +187,6 @@ const initialiseLeadForms = () => {
             if (!form.checkValidity()) {
                 form.querySelector(':invalid')?.focus();
                 showFormValidationToast();
-
                 return;
             }
 
@@ -266,7 +233,6 @@ const initialiseLeadForms = () => {
                         .flat()
                         .filter(Boolean)
                         .join('\n');
-
                     throw new Error(validationMessages || payload.message || 'Không thể gửi thông tin lúc này. Anh/chị vui lòng thử lại.');
                 }
 
@@ -279,12 +245,7 @@ const initialiseLeadForms = () => {
                     successMessage.hidden = false;
                 }
 
-                formToast.fire({
-                    icon: 'success',
-                    title: 'Đã nhận thông tin',
-                    text: successCopy,
-                });
-
+                formToast.fire({ icon: 'success', title: 'Đã nhận thông tin', text: successCopy });
             } catch (error) {
                 Swal.close();
                 formToast.fire({
@@ -296,10 +257,7 @@ const initialiseLeadForms = () => {
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.removeAttribute('aria-busy');
-
-                    if (originalButtonContent !== undefined) {
-                        submitButton.innerHTML = originalButtonContent;
-                    }
+                    if (originalButtonContent !== undefined) submitButton.innerHTML = originalButtonContent;
                 }
             }
         });
@@ -309,9 +267,7 @@ const initialiseLeadForms = () => {
 let lightbox;
 
 const initialiseLightboxes = () => {
-    if (lightbox || !document.querySelector('.glightbox')) {
-        return;
-    }
+    if (lightbox || !document.querySelector('.glightbox')) return;
 
     lightbox = GLightbox({
         selector: '.glightbox',
@@ -326,10 +282,8 @@ const initialiseLightboxes = () => {
 window.refreshLightboxes = () => {
     if (lightbox?.reload) {
         lightbox.reload();
-
         return;
     }
-
     initialiseLightboxes();
 };
 
