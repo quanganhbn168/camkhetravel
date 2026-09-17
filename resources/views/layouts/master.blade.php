@@ -5,6 +5,7 @@
     @yield('head')
     @stack('head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
     <x-site-design-tokens />
     @include('partials.tracking.head')
 </head>
