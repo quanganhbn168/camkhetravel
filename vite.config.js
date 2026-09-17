@@ -7,6 +7,7 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/scss/frontend.scss',
                 'resources/css/filament/admin/theme.css',
                 'resources/js/app.js',
                 'resources/js/filament/curator-rich-editor-integration.js',
