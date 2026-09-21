@@ -7,10 +7,8 @@
     @vite(['resources/scss/frontend.scss', 'resources/js/app.js'])
     @stack('styles')
     <x-site-design-tokens />
-    @include('partials.tracking.head')
 </head>
-<body class="@yield('body_class', 'dv-layouts-master__element-2')">
-    @include('partials.tracking.body')
+<body class="@yield('body_class', 'site-layouts-master__element-2')">
     @yield('before_header')
     @unless ($hideHeader ?? false)
         <x-site-header />
@@ -31,6 +29,5 @@
     @endunless
     @yield('after_footer')
     @stack('scripts')
-    @include('partials.tracking.footer')
 </body>
 </html>

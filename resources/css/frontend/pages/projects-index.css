@@ -1,51 +1,51 @@
 /* Page components: frontend/projects/index.blade.php */
 
-.dv-projects-index__div-1 {
+.site-projects-index__div-1 {
   max-width: var(--container-7xl);
   padding-inline: calc(var(--spacing) * 4);
   @media (width >= 64rem) {
     padding-inline: calc(var(--spacing) * 8);
   }
 }
-.dv-projects-index__heading-2 {
+.site-projects-index__heading-2 {
   font-size: var(--text-3xl);
-  line-height: var(--dv-ui-leading, var(--text-3xl--line-height));
-  --dv-ui-leading: var(--leading-tight);
+  line-height: var(--color-ui-leading, var(--text-3xl--line-height));
+  --color-ui-leading: var(--leading-tight);
   line-height: var(--leading-tight);
   @media (width >= 48rem) {
     font-size: var(--text-4xl);
-    line-height: var(--dv-ui-leading, var(--text-4xl--line-height));
+    line-height: var(--color-ui-leading, var(--text-4xl--line-height));
   }
 }
-.dv-projects-index__copy-3 {
+.site-projects-index__copy-3 {
   margin-top: calc(var(--spacing) * 5);
   max-width: var(--container-xl);
   font-size: var(--text-sm);
-  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
-  --dv-ui-leading: calc(var(--spacing) * 7);
+  line-height: var(--color-ui-leading, var(--text-sm--line-height));
+  --color-ui-leading: calc(var(--spacing) * 7);
   line-height: calc(var(--spacing) * 7);
   color: var(--color-slate-600);
   @media (width >= 48rem) {
     font-size: var(--text-base);
-    line-height: var(--dv-ui-leading, var(--text-base--line-height));
+    line-height: var(--color-ui-leading, var(--text-base--line-height));
   }
   @media (width >= 48rem) {
-    --dv-ui-leading: calc(var(--spacing) * 8);
+    --color-ui-leading: calc(var(--spacing) * 8);
     line-height: calc(var(--spacing) * 8);
   }
 }
-.dv-projects-index__action-4 {
+.site-projects-index__action-4 {
   margin-top: calc(var(--spacing) * 7);
 }
-.dv-projects-index__section-5 {
+.site-projects-index__section-5 {
   background-color: var(--color-white);
 }
-.dv-projects-index__div-6 {
+.site-projects-index__div-6 {
   margin-bottom: calc(var(--spacing) * 8);
   display: flex;
   gap: calc(var(--spacing) * 4);
   border-radius: 1.5rem;
-  border-style: var(--dv-ui-border-style);
+  border-style: var(--color-ui-border-style);
   border-width: 1px;
   border-color: var(--site-color-primary, #f68e1e);
   @supports (color: color-mix(in lab, red, red)) {
@@ -66,24 +66,24 @@
     justify-content: space-between;
   }
 }
-.dv-projects-index__copy-7 {
+.site-projects-index__copy-7 {
   font-size: var(--text-xs);
-  line-height: var(--dv-ui-leading, var(--text-xs--line-height));
-  --dv-ui-tracking: 0.18em;
+  line-height: var(--color-ui-leading, var(--text-xs--line-height));
+  --color-ui-tracking: 0.18em;
   letter-spacing: 0.18em;
   color: var(--site-color-primary, #f68e1e);
 }
-.dv-projects-index__copy-8 {
+.site-projects-index__copy-8 {
   font-size: var(--text-sm);
-  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
-  --dv-ui-leading: calc(var(--spacing) * 7);
+  line-height: var(--color-ui-leading, var(--text-sm--line-height));
+  --color-ui-leading: calc(var(--spacing) * 7);
   line-height: calc(var(--spacing) * 7);
   color: var(--color-slate-600);
 }
-.dv-projects-index__element-9 {
+.site-projects-index__element-9 {
   color: var(--site-color-ink, #1f2b25);
 }
-.dv-projects-index__div-11 {
+.site-projects-index__div-11 {
   margin-top: calc(var(--spacing) * 9);
   display: grid;
   gap: calc(var(--spacing) * 5);
@@ -94,21 +94,21 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
-.dv-projects-index__copy-12 {
+.site-projects-index__copy-12 {
   grid-column: 1 / -1;
   border-radius: var(--radius-2xl);
-  border-style: var(--dv-ui-border-style);
+  border-style: var(--color-ui-border-style);
   border-width: 1px;
-  --dv-ui-border-style: dashed;
+  --color-ui-border-style: dashed;
   border-style: dashed;
   border-color: var(--color-slate-300);
   padding: calc(var(--spacing) * 8);
   font-size: var(--text-sm);
-  line-height: var(--dv-ui-leading, var(--text-sm--line-height));
-  --dv-ui-leading: calc(var(--spacing) * 7);
+  line-height: var(--color-ui-leading, var(--text-sm--line-height));
+  --color-ui-leading: calc(var(--spacing) * 7);
   line-height: calc(var(--spacing) * 7);
   color: var(--color-slate-500);
 }
-.dv-projects-index__div-13 {
+.site-projects-index__div-13 {
   margin-top: calc(var(--spacing) * 12);
 }

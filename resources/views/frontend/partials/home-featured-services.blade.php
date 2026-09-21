@@ -1,20 +1,20 @@
 @use(App\Support\Localization\LocalizedUrl)
 
 @if ($featuredServiceCategories->isNotEmpty())
-    <section class="section-space home-featured-services" id="dich-vu-pccc-noi-bat" aria-labelledby="home-featured-services-title">
-        <div class="site-container mx-auto w-100 dv-partials-home-featured-services__div-1">
-            <div class="d-flex flex-wrap align-items-end justify-content-between dv-partials-home-featured-services__div-2">
+    <section class="section-space home-featured-services" id="dich-vu-site-noi-bat" aria-labelledby="home-featured-services-title">
+        <div class="site-container mx-auto w-100 site-partials-home-featured-services__div-1">
+            <div class="d-flex flex-wrap align-items-end justify-content-between site-partials-home-featured-services__div-2">
                 <h2 class="display-title text-uppercase" id="home-featured-services-title">Dịch vụ PCCC nổi bật</h2>
                 <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Tất cả dịch vụ <span aria-hidden="true">↗</span></a>
             </div>
             <div class="home-service-groups">
                 @foreach ($featuredServiceCategories as $category)
-                    <article @class(['home-service-dv-hover-group', 'home-service-dv-hover-group--reverse' => $loop->even]) aria-labelledby="home-service-group-{{ $category->id }}">
+                    <article @class(['home-service-site-hover-group', 'home-service-site-hover-group--reverse' => $loop->even]) aria-labelledby="home-service-group-{{ $category->id }}">
                         <a class="home-service-group__image" href="{{ LocalizedUrl::serviceCategory($category) }}" aria-label="Xem danh mục {{ $category->name }}">
                             @if ($category->home_image_url)
                                 <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt }}" loading="lazy">
                             @else
-                                <span class="image-placeholder">DVTEC</span>
+                                <span class="image-placeholder">{{ $website->site_name }}</span>
                             @endif
                         </a>
                         <div class="home-service-group__content">

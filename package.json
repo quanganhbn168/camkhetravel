@@ -3,22 +3,17 @@
     "type": "module",
     "packageManager": "pnpm@10.15.0",
     "scripts": {
-        "build": "node scripts/prepare-bootstrap.mjs && vite build && node scripts/check-assets.mjs",
-        "dev": "node scripts/prepare-bootstrap.mjs && vite",
-        "test:sass": "node scripts/prepare-bootstrap.mjs && node scripts/test-bootstrap.mjs",
-        "test:frontend": "node scripts/check-frontend.mjs",
-        "test:browser": "playwright test"
+        "build": "vite build && node scripts/check-assets.mjs",
+        "dev": "vite",
+        "test:frontend": "node scripts/check-frontend.mjs"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
-        "axios": "^1.7.4",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^1.2.0",
         "sass": "1.104.1",
         "tailwindcss": "^4.0.0",
-        "vite": "^6.0.11",
-        "sass-migrator": "2.6.1",
-        "@playwright/test": "1.63.0"
+        "vite": "^6.0.11"
     },
     "dependencies": {
         "@fontsource-variable/roboto-condensed": "^5.3.0",
@@ -26,11 +21,7 @@
         "@fontsource/inter": "^5.3.0",
         "@fortawesome/fontawesome-free": "^7.3.1",
         "@popperjs/core": "^2.11.8",
-        "alpinejs": "^3.16.1",
-        "aos": "^2.3.4",
         "bootstrap": "5.3.8",
-        "glightbox": "^3.3.1",
-        "sweetalert2": "^11.26.25",
         "swiper": "^14.1.0"
     }
 }

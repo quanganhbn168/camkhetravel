@@ -1,25 +1,4 @@
 @use 'tokens';
-@use '../../.generated/bootstrap/bootstrap' with (
-    $primary: tokens.$primary,
-    $secondary: tokens.$secondary,
-    $dark: tokens.$dark,
-    $light: tokens.$light,
-    $body-color: tokens.$body-color,
-    $body-bg: tokens.$body-bg,
-    $link-color: tokens.$primary,
-    $link-hover-color: tokens.$primary-hover,
-    $border-color: tokens.$border-color,
-    $border-radius: .5rem,
-    $border-radius-sm: .375rem,
-    $border-radius-lg: .75rem,
-    $btn-border-radius: .4rem,
-    $btn-border-radius-sm: .35rem,
-    $btn-border-radius-lg: .5rem,
-    $font-family-sans-serif: tokens.$body-font,
-    $headings-font-family: tokens.$heading-font,
-    $headings-font-weight: 700,
-    $enable-shadows: false
-);
 @use 'fonts';
 @use 'foundation';
 @use '../css/frontend/components.css';
@@ -28,3 +7,25 @@
 @use 'pages/home';
 @use 'components/media';
 @use 'brand';
+
+$primary: tokens.$primary;
+$secondary: tokens.$secondary;
+$dark: tokens.$dark;
+$light: tokens.$light;
+$body-color: tokens.$body-color;
+$body-bg: tokens.$body-bg;
+$link-color: tokens.$primary;
+$link-hover-color: tokens.$primary-hover;
+$border-color: tokens.$border-color;
+$border-radius: .5rem;
+$border-radius-sm: .375rem;
+$border-radius-lg: .75rem;
+$btn-border-radius: .4rem;
+$btn-border-radius-sm: .35rem;
+$btn-border-radius-lg: .5rem;
+$font-family-sans-serif: tokens.$body-font;
+$headings-font-family: tokens.$heading-font;
+$headings-font-weight: 700;
+$enable-shadows: false;
+
+@import 'bootstrap/dist/css/bootstrap.css';

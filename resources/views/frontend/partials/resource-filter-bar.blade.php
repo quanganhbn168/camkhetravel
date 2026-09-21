@@ -13,7 +13,7 @@
         @endforeach
     </div>
     <form class="resource-sort" method="GET" action="{{ url()->current() }}">
-        <label class="dv-partials-resource-filter-bar__element-1" for="resource-sort">Sắp xếp {{ mb_strtolower($resourceName) }}</label>
+        <label class="site-partials-resource-filter-bar__element-1" for="resource-sort">Sắp xếp {{ mb_strtolower($resourceName) }}</label>
         <select id="resource-sort" name="sort" onchange="this.form.submit()">
             @foreach ($sortOptions as $value => $label)
                 <option value="{{ $value }}" @selected($sort === $value)>{{ $label }}</option>

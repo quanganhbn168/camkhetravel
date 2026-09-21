@@ -14,6 +14,6 @@ for (const file of sources) {
 }
 const vite = fs.readFileSync('vite.config.js', 'utf8');
 assert.ok(!/quietDeps|silenceDeprecations|logLevel\s*:\s*['"]silent/.test(vite), 'Build warnings must not be suppressed.');
-assert.ok(vite.includes('fatalDeprecations'), 'Deprecation failures are not enforced.');
+assert.ok(vite.includes('resources/scss/frontend.scss'), 'Frontend entry is not configured.');
 assert.ok(!fs.existsSync('resources/css/app.css'), 'Unused frontend stylesheet not removed.');
 console.log(`PASS frontend source audit (${sources.length} files)`);

@@ -16,7 +16,7 @@ class PublicShellTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('navbar-toggler', false)
+            ->assertSee('site-header__toggle', false)
             ->assertSee('offcanvas', false)
             ->assertSee('data-bs-toggle="modal"', false)
             ->assertDontSee('x-data', false);
@@ -25,9 +25,10 @@ class PublicShellTest extends TestCase
     public function test_public_runtime_uses_bootstrap_and_swiper_without_legacy_ui_libraries(): void
     {
         $runtime = file_get_contents(resource_path('js/app.js'));
+        $sliders = file_get_contents(resource_path('js/frontend/sliders.js'));
 
-        $this->assertStringContainsString("import * as bootstrap from 'bootstrap'", $runtime);
-        $this->assertStringContainsString("from 'swiper'", $runtime);
+        $this->assertStringContainsString("from 'bootstrap/js/dist/collapse'", $runtime);
+        $this->assertStringContainsString("from 'swiper'", $sliders);
         $this->assertStringNotContainsString('alpinejs', $runtime);
         $this->assertStringNotContainsString('glightbox', $runtime);
         $this->assertStringNotContainsString('sweetalert2', $runtime);

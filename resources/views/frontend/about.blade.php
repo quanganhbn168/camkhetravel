@@ -8,16 +8,16 @@
 
 @section('content')
     <section class="about-page-hero">
-        <div class="site-container about-page-hero__shell w-100 mx-auto dv-about__div-1">
-            <div class="about-page-hero__content" data-aos="fade-right">
+        <div class="site-container about-page-hero__shell w-100 mx-auto site-about__div-1">
+            <div class="about-page-hero__content">
                 <h1>{{ $about['title'] }}</h1>
                 @if ($about['intro'])
                     <p class="about-page-hero__intro">{{ $about['intro'] }}</p>
                 @endif
-                <a class="btn btn-dark button-dark dv-about__action-2" href="{{ LocalizedUrl::route('contact') }}">{{ __('site.discuss_project') }}</a>
+                <a class="btn btn-dark button-dark site-about__action-2" href="{{ LocalizedUrl::route('contact') }}">{{ __('site.discuss_project') }}</a>
             </div>
 
-            <div class="about-page-hero__media" data-aos="fade-left">
+            <div class="about-page-hero__media">
                 @if ($about['image_url'])
                     <img src="{{ $about['image_url'] }}" alt="{{ $about['title'] }}" fetchpriority="high">
                 @else
@@ -29,15 +29,15 @@
 
     @if (filled(trim(strip_tags($about['story'] ?? ''))))
         <section class="about-page-story section-space">
-            <div class="site-container about-page-story__shell w-100 mx-auto dv-about__div-1">
-                <div class="about-page-story__media" data-aos="fade-right">
+            <div class="site-container about-page-story__shell w-100 mx-auto site-about__div-1">
+                <div class="about-page-story__media">
                     @if ($about['story_image_url'])
                         <img src="{{ $about['story_image_url'] }}" alt="{{ $about['story_title'] ?: $about['title'] }}" loading="lazy">
                     @else
                     <span class="image-placeholder">DV</span>
                     @endif
                 </div>
-                <div class="about-page-story__content" data-aos="fade-left">
+                <div class="about-page-story__content">
                     @if ($about['story_title'])
                         <div class="about-page-story__heading">
                             <h2 class="display-title">{{ $about['story_title'] }}</h2>
@@ -53,18 +53,18 @@
 
     @if ($about['video'])
         <section class="about-page-video section-space" aria-labelledby="about-page-video-title">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
-                <header class="about-page-section-heading" data-aos="fade-up">
+            <div class="site-container w-100 mx-auto site-about__div-1">
+                <header class="about-page-section-heading">
                     <h2 class="display-title" id="about-page-video-title">Video giới thiệu</h2>
                 </header>
-                <div class="about-intro-video" data-aos="fade-up" data-aos-delay="100">
+                <div class="about-intro-video">
                     @if ($about['video']['source'] === 'upload')
                         <video controls playsinline preload="metadata" @if ($about['video']['poster_url']) poster="{{ $about['video']['poster_url'] }}" @endif>
                             <source src="{{ $about['video']['url'] }}">
                             Trình duyệt của bạn chưa hỗ trợ phát video.
                         </video>
                     @else
-                    <iframe src="{{ $about['video']['url'] }}" title="Video giới thiệu DVTEC" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    <iframe src="{{ $about['video']['url'] }}" title="Video giới thiệu {{ $website->site_name }}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                     @endif
                 </div>
             </div>
@@ -73,9 +73,9 @@
 
     @if ($services->isNotEmpty())
         <section class="about-page-services section-space">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
+            <div class="site-container w-100 mx-auto site-about__div-1">
                 @if ($about['services_title'] || $about['services_link_label'])
-                    <header class="about-page-section-heading about-page-section-heading--split" data-aos="fade-up">
+                    <header class="about-page-section-heading about-page-section-heading--split">
                         @if ($about['services_title'])
                             <h2 class="display-title">{{ $about['services_title'] }}</h2>
                         @endif
@@ -87,7 +87,7 @@
 
                 <div class="about-services__grid">
                     @foreach ($services as $service)
-                        <article class="about-service-card" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}">
+                        <article class="about-service-card">
                             <a class="about-service-card__media" href="{{ LocalizedUrl::slug($service->slug) }}" aria-label="{{ $service->title }}">
                                 @if ($service->image_url)
                                     <img src="{{ $service->image_url }}" alt="{{ $service->title }}" loading="lazy">
@@ -110,9 +110,9 @@
 
     @if ($about['mission'] || $about['vision'] || $about['core_values'])
         <section class="about-page-principles section-space">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
+            <div class="site-container w-100 mx-auto site-about__div-1">
                 @if ($about['principles_title'])
-                    <header class="about-page-section-heading" data-aos="fade-up">
+                    <header class="about-page-section-heading">
                         <h2 class="display-title">{{ $about['principles_title'] }}</h2>
                     </header>
                 @endif
@@ -120,7 +120,7 @@
                 <div class="about-page-principles__grid">
                     <div class="about-page-principles__top">
                         @if ($about['vision'])
-                            <article class="about-principle-card" data-aos="fade-up">
+                            <article class="about-principle-card">
                                 <span class="about-principle-card__icon" aria-hidden="true">
                                     <i class="fa-solid fa-eye"></i>
                                 </span>
@@ -130,7 +130,7 @@
                         @endif
 
                         @if ($about['mission'])
-                            <article class="about-principle-card" data-aos="fade-up" data-aos-delay="80">
+                            <article class="about-principle-card">
                                 <span class="about-principle-card__icon" aria-hidden="true">
                                     <i class="fa-solid fa-crosshairs"></i>
                                 </span>
@@ -141,10 +141,10 @@
                     </div>
 
                     @if ($about['core_values'])
-                        <article class="about-principle-values" data-aos="fade-up" data-aos-delay="160">
+                        <article class="about-principle-values">
                             <div class="about-principle-values__media">
                                 @if ($about['core_values_image_url'])
-                                    <img src="{{ $about['core_values_image_url'] }}" alt="Giá trị cốt lõi của DVTEC" loading="lazy">
+                                    <img src="{{ $about['core_values_image_url'] }}" alt="Giá trị cốt lõi của {{ $website->site_name }}" loading="lazy">
                                 @else
                                     <span class="image-placeholder">DV</span>
                                 @endif
@@ -164,10 +164,10 @@
     @endif
 
     @if ($historyTimeline->isNotEmpty())
-        <section class="about-page-history section-space" x-data="{ activeHistory: 0 }">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
+        <section class="about-page-history section-space">
+            <div class="site-container w-100 mx-auto site-about__div-1">
                 @if ($about['history_title'] || $about['history_description'])
-                    <header class="about-page-section-heading" data-aos="fade-up">
+                    <header class="about-page-section-heading">
                         @if ($about['history_title'])
                             <h2 class="display-title">{{ $about['history_title'] }}</h2>
                         @endif
@@ -180,13 +180,13 @@
                 <div class="about-history__tabs" role="tablist" aria-label="Các mốc lịch sử">
                     @foreach ($historyTimeline as $item)
                         <button
-                            class="about-history__tab"
-                            :class="{ 'is-active': activeHistory === {{ $loop->index }} }"
+                            class="about-history__tab {{ $loop->first ? 'active' : '' }}"
                             type="button"
                             role="tab"
-                            :aria-selected="activeHistory === {{ $loop->index }} ? 'true' : 'false'"
+                            data-bs-toggle="tab"
+                            data-bs-target="#history-panel-{{ $loop->index }}"
+                            aria-selected="{{ $loop->first ? 'true' : 'false' }}"
                             aria-controls="history-panel-{{ $loop->index }}"
-                            x-on:click="activeHistory = {{ $loop->index }}"
                         >
                             <span class="about-history__tab-year">{{ $item['year'] }}</span>
                             <span class="about-history__tab-line" aria-hidden="true"></span>
@@ -194,22 +194,18 @@
                     @endforeach
                 </div>
 
-                <div class="about-history__panels">
+                <div class="about-history__panels tab-content">
                     @foreach ($historyTimeline as $item)
                         <article
                             id="history-panel-{{ $loop->index }}"
-                            class="about-history__panel"
+                            class="about-history__panel tab-pane fade {{ $loop->first ? 'show active' : '' }}"
                             role="tabpanel"
-                            x-cloak
-                            x-show="activeHistory === {{ $loop->index }}"
-                            x-transition.opacity.duration.250ms
-                            data-aos="fade-up"
                         >
                             <div class="about-history__media">
                                 @if ($item['image_url'])
                                     <img src="{{ $item['image_url'] }}" alt="{{ $item['title'] }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
                                 @else
-                                    <span class="image-placeholder">DV</span>
+                                    <span class="image-placeholder" aria-hidden="true">•</span>
                                 @endif
                             </div>
                             <div class="about-history__content">
@@ -226,7 +222,7 @@
         </section>
     @elseif ($about['history'])
         <section class="about-page-history section-space">
-            <div class="site-container about-page-history__fallback w-100 mx-auto dv-about__div-1">
+            <div class="site-container about-page-history__fallback w-100 mx-auto site-about__div-1">
                 @if ($about['history_title'])
                     <h2 class="display-title">{{ $about['history_title'] }}</h2>
                 @endif
@@ -240,15 +236,15 @@
 
     @if ($stats->isNotEmpty())
         <section class="about-page-stats section-space">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
+            <div class="site-container w-100 mx-auto site-about__div-1">
                 @if ($about['stats_title'])
-                    <header class="about-page-section-heading" data-aos="fade-up">
+                    <header class="about-page-section-heading">
                         <h2 class="display-title">{{ $about['stats_title'] }}</h2>
                     </header>
                 @endif
                 <div class="about-stats__grid">
                     @foreach ($stats as $stat)
-                        <article class="about-stat" data-aos="fade-up" data-aos-delay="{{ $loop->index * 70 }}">
+                        <article class="about-stat">
                             <strong>{{ $stat['value'] }}</strong>
                             <span>{{ $stat['label'] }}</span>
                         </article>
@@ -260,9 +256,9 @@
 
     @if ($about['team_title'] || $about['team_description'] || $about['team_image_url'] || $departments->isNotEmpty())
         <section class="about-page-showcase about-page-team section-space">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
+            <div class="site-container w-100 mx-auto site-about__div-1">
                 @if ($about['team_title'] || $about['team_description'])
-                    <header class="about-page-section-heading" data-aos="fade-up">
+                    <header class="about-page-section-heading">
                         @if ($about['team_title'])
                             <h2 class="display-title">{{ $about['team_title'] }}</h2>
                         @endif
@@ -272,7 +268,7 @@
                     </header>
                 @endif
                 @if ($about['team_image_url'])
-                    <figure class="about-showcase-media about-showcase-media--team" data-aos="fade-up" data-aos-delay="100">
+                    <figure class="about-showcase-media about-showcase-media--team">
                         <img src="{{ $about['team_image_url'] }}" alt="{{ $about['team_title'] ?: $about['title'] }}" loading="lazy">
                     </figure>
                 @endif
@@ -280,7 +276,7 @@
                 @if ($departments->isNotEmpty())
                     <div class="about-departments">
                         @foreach ($departments as $department)
-                            <section class="about-department" aria-labelledby="about-department-{{ $department->id }}" data-aos="fade-up">
+                            <section class="about-department" aria-labelledby="about-department-{{ $department->id }}">
                                 <header class="about-department__heading">
                                     <h3 id="about-department-{{ $department->id }}">{{ $department->name }}</h3>
                                     @if ($department->description)
@@ -290,7 +286,7 @@
 
                                 <div class="about-team-members">
                                     @foreach ($department->members as $member)
-                                        <article class="about-team-member" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 4) * 60 }}">
+                                        <article class="about-team-member">
                                             <div class="about-team-member__media">
                                                 @if ($member->image_url)
                                                     <img src="{{ $member->image_url }}" alt="{{ $member->name }}" loading="lazy">
@@ -317,9 +313,9 @@
 
     @if ($about['office_title'] || $about['office_description'] || $about['office_gallery']->isNotEmpty())
         <section class="about-page-showcase about-page-office section-space">
-            <div class="site-container w-100 mx-auto dv-about__div-1">
+            <div class="site-container w-100 mx-auto site-about__div-1">
                 @if ($about['office_title'] || $about['office_description'])
-                    <header class="about-page-section-heading" data-aos="fade-up">
+                    <header class="about-page-section-heading">
                         @if ($about['office_title'])
                             <h2 class="display-title">{{ $about['office_title'] }}</h2>
                         @endif
@@ -335,14 +331,11 @@
                     ])>
                         @foreach ($about['office_gallery'] as $image)
                             <a
-                                class="about-office-gallery__item glightbox"
+                                class="about-office-gallery__item"
                                 href="{{ $image['url'] }}"
-                                data-type="image"
-                                data-gallery="about-office-gallery"
-                                data-title="{{ $image['alt'] }}"
+                                target="_blank"
+                                rel="noopener"
                                 aria-label="Mở {{ $image['alt'] }}"
-                                data-aos="fade-up"
-                                data-aos-delay="{{ ($loop->index % 3) * 70 }}"
                             >
                                 <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}" loading="lazy">
                                 <span aria-hidden="true">↗</span>
@@ -356,7 +349,7 @@
 
     @if ($about['cta_title'])
         <section class="about-page-cta">
-            <div class="site-container about-page-cta__shell w-100 mx-auto dv-about__div-1">
+            <div class="site-container about-page-cta__shell w-100 mx-auto site-about__div-1">
                 <div>
                     <h2>{{ $about['cta_title'] }}</h2>
                 </div>

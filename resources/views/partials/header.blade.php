@@ -1,9 +1,9 @@
 <div class="site-header-shell" data-site-header>
     <header class="site-header" aria-label="Đầu trang {{ $website->site_name }}">
-        <div class="pccc-topbar">
-            <div class="container pccc-topbar__inner">
+        <div class="site-topbar">
+            <div class="container site-topbar__inner">
                 <span>Giải pháp PCCC toàn diện · Đồng hành cùng công trình an toàn</span>
-                <div class="pccc-topbar__links">
+                <div class="site-topbar__links">
                     <span>Thứ 2 - Thứ 7: 8:00 - 17:00</span>
                     @if ($headerPhones->isNotEmpty())
                         <a href="{{ $headerPhones->first()['href'] }}">Hotline: {{ $headerPhones->first()['label'] }}</a>

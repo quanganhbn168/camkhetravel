@@ -118,7 +118,7 @@
     <h1 class="visually-hidden">{{ $companyName }} — Giải pháp PCCC cho công trình</h1>
 
     {{-- HERO --}}
-    <section class="dv-hero" data-hero-section>
+    <section class="site-hero" data-hero-section>
         @forelse ($heroSlides as $slide)
             @if ($loop->first)
                 <div class="swiper hero-swiper" data-hero-swiper>
@@ -127,23 +127,23 @@
 
             <article class="swiper-slide">
                 @if ($slide['image_url'])
-                    <img class="dv-hero__media" src="{{ $slide['image_url'] }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                    <img class="site-hero__media" src="{{ $slide['image_url'] }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                 @endif
-                <div class="dv-hero__overlay"></div>
+                <div class="site-hero__overlay"></div>
 
                 @if ($slide['video_url'])
-                    <a class="hero-video-play glightbox" href="{{ $slide['video_url'] }}" data-type="video" data-gallery="hero-video-{{ $loop->index }}" target="_blank" rel="noopener" aria-label="Phát video {{ $slide['title'] ?: 'DVTEC' }}">
+                    <a class="hero-video-play" href="{{ $slide['video_url'] }}" target="_blank" rel="noopener" aria-label="Phát video {{ $slide['title'] ?: $website->site_name }}">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.1v13.8L19 12 8 5.1Z"/></svg>
                     </a>
                 @endif
 
                 <div class="container position-relative z-2">
-                    <div class="dv-hero__content">
+                    <div class="site-hero__content">
                         @if ($slide['title'])
-                            <h2 class="dv-hero__title">{{ $slide['title'] }}</h2>
+                            <h2 class="site-hero__title">{{ $slide['title'] }}</h2>
                         @endif
                         @if ($slide['description'])
-                            <p class="dv-hero__copy">{{ $slide['description'] }}</p>
+                            <p class="site-hero__copy">{{ $slide['description'] }}</p>
                         @endif
                         @if ($slide['has_primary_cta'] || $slide['has_secondary_cta'])
                             <div class="d-flex flex-wrap gap-3 mt-4">
@@ -165,10 +165,10 @@
             @endif
         @empty
             <article class="swiper-slide">
-                <div class="dv-hero__overlay"></div>
+                <div class="site-hero__overlay"></div>
                 <div class="container position-relative z-2">
-                    <div class="dv-hero__content">
-                        <h2 class="dv-hero__title">Kiến tạo hệ thống PCCC an toàn, đồng bộ và bền vững.</h2>
+                    <div class="site-hero__content">
+                        <h2 class="site-hero__title">Kiến tạo hệ thống PCCC an toàn, đồng bộ và bền vững.</h2>
                     </div>
                 </div>
             </article>
@@ -176,13 +176,13 @@
     </section>
 
     {{-- USP --}}
-    <section class="dv-usp">
+    <section class="site-usp">
         <div class="container">
             <div class="row g-0">
                 @foreach ($uspItems as $item)
                     <div class="col-6 col-lg-3">
-                        <article class="dv-usp__item h-100">
-                            <span class="dv-icon-circle">✓</span>
+                        <article class="site-usp__item h-100">
+                            <span class="site-icon-circle">✓</span>
                             <div>
                                 <h3 class="h6 fw-bold text-uppercase mb-1">{{ $item['title'] }}</h3>
                                 <p class="small text-secondary mb-0">{{ $item['description'] }}</p>
@@ -204,7 +204,7 @@
             </div>
 
             @if ($featuredServiceCategories->isNotEmpty())
-                <ul class="nav dv-tabs flex-nowrap overflow-x-auto mt-5" role="tablist">
+                <ul class="nav site-tabs flex-nowrap overflow-x-auto mt-5" role="tablist">
                     @foreach ($featuredServiceCategories as $category)
                         <li class="nav-item" role="presentation">
                             <button class="nav-link @if($loop->first) active @endif" id="service-tab-{{ $category->id }}" aria-controls="service-pane-{{ $category->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-bs-toggle="tab" data-bs-target="#service-pane-{{ $category->id }}" type="button" role="tab">{{ $category->name }}</button>
@@ -217,7 +217,7 @@
                         <div class="tab-pane fade @if($loop->first) show active @endif" id="service-pane-{{ $category->id }}" role="tabpanel" aria-labelledby="service-tab-{{ $category->id }}" tabindex="0">
                             <div class="row g-4 g-lg-5 align-items-center">
                                 <div class="col-lg-7">
-                                    <a class="dv-service-image d-block" href="{{ route('services.category', ['category' => $category->slug]) }}">
+                                    <a class="site-service-image d-block" href="{{ route('services.category', ['category' => $category->slug]) }}">
                                         @if ($category->home_image_url)
                                             <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt ?: $category->name }}" loading="lazy">
                                         @endif
@@ -229,7 +229,7 @@
                                     @if ($category->description)
                                         <p class="section-copy mt-3">{{ $category->description }}</p>
                                     @endif
-                                    <ul class="dv-check-list">
+                                    <ul class="site-check-list">
                                         @foreach ($category->services->take(5) as $service)
                                             <li><a class="text-dark" href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></li>
                                         @endforeach
@@ -247,8 +247,8 @@
                 <div class="row g-4 mt-3">
                     @forelse ($services as $service)
                         <div class="col-md-6 col-lg-4">
-                            <article class="dv-project-card">
-                                <a class="dv-project-image d-block" href="{{ route('slug.show', ['slug' => $service->slug]) }}">
+                            <article class="site-project-card">
+                                <a class="site-project-image d-block" href="{{ route('slug.show', ['slug' => $service->slug]) }}">
                                     @if ($service->image_url)<img src="{{ $service->image_url }}" alt="{{ $service->title }}" loading="lazy">@endif
                                 </a>
                                 <div class="p-4"><h3 class="h5 mb-0"><a class="text-dark" href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></h3></div>
@@ -263,7 +263,7 @@
     </section>
 
     {{-- SOLUTIONS --}}
-    <section class="section-space dv-dark-section" id="giai-phap">
+    <section class="section-space site-dark-section" id="giai-phap">
         <div class="container">
             <div class="row g-4 g-lg-5">
                 <div class="col-lg-3">
@@ -271,7 +271,7 @@
                     <h2 class="section-title">Theo loại công trình</h2>
                     <p class="text-white-50 mt-3">Mỗi công trình có yêu cầu vận hành và mức độ rủi ro khác nhau. Giải pháp cần được thiết kế phù hợp ngay từ đầu.</p>
 
-                    <div class="nav flex-column dv-solution-nav mt-4" role="tablist">
+                    <div class="nav flex-column site-solution-nav mt-4" role="tablist">
                         @foreach ($solutions as $solution)
                             <button class="nav-link @if($loop->first) active @endif" data-bs-toggle="pill" data-bs-target="#solution-{{ $solution['key'] }}" type="button" role="tab">{{ $solution['name'] }}</button>
                         @endforeach
@@ -282,20 +282,20 @@
                     <div class="tab-content">
                         @foreach ($solutions as $solution)
                             <div class="tab-pane fade @if($loop->first) show active @endif" id="solution-{{ $solution['key'] }}" role="tabpanel" tabindex="0">
-                                <article class="dv-solution-card">
+                                <article class="site-solution-card">
                                     <div class="row g-0">
                                         <div class="col-lg-8">
-                                            <div class="dv-solution-image">
+                                            <div class="site-solution-image">
                                                 @if ($solutionImageUrl)<img src="{{ $solutionImageUrl }}" alt="{{ $solution['title'] }}" loading="lazy">@endif
-                                                <div class="dv-solution-copy">
+                                                <div class="site-solution-copy">
                                                     <h3 class="h2 fw-bold text-white">{{ $solution['title'] }}</h3>
                                                     <p class="text-white-50 mb-0">{{ $solution['description'] }}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
-                                            <div class="dv-solution-list">
-                                                <ul class="dv-check-list mt-0">
+                                            <div class="site-solution-list">
+                                                <ul class="site-check-list mt-0">
                                                     @foreach ($solution['items'] as $item)<li>{{ $item }}</li>@endforeach
                                                 </ul>
                                                 <a class="btn btn-primary mt-4" href="{{ route('services.index') }}">Xem giải pháp</a>
@@ -320,7 +320,7 @@
                     <h2 class="section-title">Một hệ thống PCCC tốt không chỉ nằm ở thiết bị</h2>
                     @if ($about['title'])<p class="fw-semibold text-dark mt-4">{{ $about['title'] }}</p>@endif
                     @if ($about['content'])<p class="section-copy">{{ $about['content'] }}</p>@endif
-                    <ul class="dv-check-list">
+                    <ul class="site-check-list">
                         <li>Đội ngũ kỹ sư và kỹ thuật viên có kinh nghiệm</li>
                         <li>Quy trình triển khai rõ ràng, minh bạch</li>
                         <li>Giải pháp tối ưu theo từng loại công trình</li>
@@ -333,14 +333,14 @@
                 </div>
 
                 <div class="col-lg-7">
-                    <div class="dv-about-grid">
-                        <div class="dv-about-main">
+                    <div class="site-about-grid">
+                        <div class="site-about-main">
                             @if ($aboutImageUrl)<img src="{{ $aboutImageUrl }}" alt="{{ $companyName }}" loading="lazy">@endif
                         </div>
-                        <div class="dv-about-side">
+                        <div class="site-about-side">
                             @if ($solutionImageUrl)<img src="{{ $solutionImageUrl }}" alt="Hệ thống PCCC" loading="lazy">@endif
                         </div>
-                        <div class="dv-about-side dv-about-quote">Giải pháp an toàn cho hôm nay và tương lai bền vững.</div>
+                        <div class="site-about-side site-about-quote">Giải pháp an toàn cho hôm nay và tương lai bền vững.</div>
                     </div>
                 </div>
             </div>
@@ -352,18 +352,18 @@
         <div class="container-fluid px-0">
             <div class="row g-0">
                 <div class="col-lg-5">
-                    <div class="dv-why-image h-100" @if($whyImageUrl) style="background-image:url('{{ $whyImageUrl }}')" @endif></div>
+                    <div class="site-why-image h-100" @if($whyImageUrl) style="background-image:url('{{ $whyImageUrl }}')" @endif></div>
                 </div>
                 <div class="col-lg-7">
-                    <div class="dv-why-content">
+                    <div class="site-why-content">
                         <div class="w-100">
                             <p class="section-kicker">Tại sao chọn chúng tôi</p>
                             <h2 class="section-title text-white">Năng lực thực tế · Cam kết lâu dài</h2>
                             <div class="row g-4 mt-3">
                                 @foreach ($whyChooseUs as $item)
                                     <div class="col-sm-6 col-xl-3">
-                                        <article class="dv-why-card">
-                                            <div class="dv-why-number">{{ $item['number'] }}</div>
+                                        <article class="site-why-card">
+                                            <div class="site-why-number">{{ $item['number'] }}</div>
                                             <h3 class="h6 fw-bold text-white text-uppercase mt-3">{{ $item['title'] }}</h3>
                                             <p class="small text-white-50 mb-0">{{ $item['description'] }}</p>
                                         </article>
@@ -391,8 +391,8 @@
             <div class="row g-4 mt-2">
                 @forelse ($featuredProjects as $project)
                     <div class="col-md-6 col-lg-3">
-                        <article class="dv-project-card">
-                            <a class="dv-project-image d-block" href="{{ route('projects.show', ['slug' => $project->slug]) }}">
+                        <article class="site-project-card">
+                            <a class="site-project-image d-block" href="{{ route('projects.show', ['slug' => $project->slug]) }}">
                                 @if ($project->image_url)<img src="{{ $project->image_url }}" alt="{{ $project->title }}" loading="lazy">@endif
                             </a>
                             <div class="p-4">
@@ -417,8 +417,8 @@
             <div class="row g-3 mt-4">
                 @foreach ($processSteps as $step)
                     <div class="col-6 col-md-4 col-xl-2">
-                        <article class="dv-process-card">
-                            <div class="dv-process-number">{{ $step['number'] }}</div>
+                        <article class="site-process-card">
+                            <div class="site-process-number">{{ $step['number'] }}</div>
                             <h3 class="h6 fw-bold text-uppercase mt-4">{{ $step['title'] }}</h3>
                             <p class="small text-secondary mb-0">{{ $step['description'] }}</p>
                         </article>
@@ -435,11 +435,11 @@
                 <div class="row g-4">
                     @foreach ($stats as $stat)
                         <div class="col-6 col-md-3">
-                            <article class="dv-stat">
-                                <p class="dv-stat__value">
+                            <article class="site-stat">
+                                <p class="site-stat__value">
                                     @if (filled($stat['prefix'])){{ $stat['prefix'] }}@endif
                                     @foreach ($stat['segments'] as $segment)
-                                        @if ($segment['is_number'])<span data-count-up="{{ $segment['value'] }}">{{ $segment['value'] }}</span>@else{{ $segment['value'] }}@endif
+                                        {{ $segment['value'] }}
                                     @endforeach
                                     @if (filled($stat['suffix'])){{ $stat['suffix'] }}@endif
                                 </p>
@@ -467,8 +467,8 @@
             <div class="row g-3 mt-4 row-cols-2 row-cols-sm-3 row-cols-lg-7">
                 @foreach ($productGroups as $product)
                     <div class="col">
-                        <a class="dv-product-card d-block text-dark" href="{{ route('products.index') }}">
-                            <span class="dv-product-icon">{{ $product['code'] }}</span>
+                        <a class="site-product-card d-block text-dark" href="{{ route('products.index') }}">
+                            <span class="site-product-icon">{{ $product['code'] }}</span>
                             <span class="d-block small fw-semibold mt-3">{{ $product['name'] }}</span>
                         </a>
                     </div>
@@ -478,7 +478,7 @@
     </section>
 
     {{-- PARTNERS --}}
-    <section class="dv-partners py-5" aria-label="Đối tác và thương hiệu">
+    <section class="site-partners py-5" aria-label="Đối tác và thương hiệu">
         <div class="container mb-4">
             <p class="section-kicker">Hợp tác & đồng hành</p>
             <h2 class="h3 fw-bold text-uppercase mb-0">Đối tác · Thương hiệu</h2>
@@ -516,7 +516,7 @@
                     <div class="row g-3 row-cols-2 row-cols-md-5">
                         @foreach (['Hồ sơ năng lực','Hồ sơ pháp lý','Chứng chỉ 01','Chứng chỉ 02','Chứng chỉ 03'] as $certificate)
                             <div class="col">
-                                @if ($loop->first && $companyProfileUrl)<a class="dv-certificate text-dark" href="{{ $companyProfileUrl }}" target="_blank">@else<div class="dv-certificate">@endif
+                                @if ($loop->first && $companyProfileUrl)<a class="site-certificate text-dark" href="{{ $companyProfileUrl }}" target="_blank">@else<div class="site-certificate">@endif
                                     <div><div class="display-6 text-primary">▤</div><div class="small fw-bold text-uppercase mt-3">{{ $certificate }}</div></div>
                                 @if ($loop->first && $companyProfileUrl)</a>@else</div>@endif
                             </div>
@@ -528,7 +528,7 @@
     </section>
 
     {{-- CONSULTATION --}}
-    <section class="section-space dv-consultation" id="tu-van">
+    <section class="section-space site-consultation" id="tu-van">
         <div class="container">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-5">
@@ -541,7 +541,7 @@
                     </div>
                 </div>
                 <div class="col-lg-7">
-                    <form method="POST" action="{{ route('contact.store') }}" class="dv-contact-form" data-lead-form>
+                    <form method="POST" action="{{ route('contact.store') }}" class="site-contact-form">
                         @csrf
                         <input type="hidden" name="return_to" value="{{ request()->getPathInfo() }}#tu-van">
                         @if ($errors->any())
@@ -592,8 +592,8 @@
             @if ($featuredPost)
                 <div class="row g-4 mt-2">
                     <div class="col-lg-7">
-                        <article class="dv-post-card">
-                            <a class="dv-post-image d-block" href="{{ route('posts.show', ['slug' => $featuredPost->slug]) }}">
+                        <article class="site-post-card">
+                            <a class="site-post-image d-block" href="{{ route('posts.show', ['slug' => $featuredPost->slug]) }}">
                                 @if ($featuredPost->image_url)<img src="{{ $featuredPost->image_url }}" alt="{{ $featuredPost->title }}" loading="lazy">@endif
                             </a>
                             <div class="p-4">
@@ -607,7 +607,7 @@
                         <div class="d-grid gap-3">
                             @foreach ($sidePosts as $post)
                                 <article class="d-flex gap-3 border rounded-3 p-3 bg-white">
-                                    <a class="dv-post-side-image" href="{{ route('posts.show', ['slug' => $post->slug]) }}">@if ($post->image_url)<img src="{{ $post->image_url }}" alt="{{ $post->title }}" loading="lazy">@endif</a>
+                                    <a class="site-post-side-image" href="{{ route('posts.show', ['slug' => $post->slug]) }}">@if ($post->image_url)<img src="{{ $post->image_url }}" alt="{{ $post->title }}" loading="lazy">@endif</a>
                                     <div class="align-self-center"><h3 class="h6 fw-bold mb-1"><a class="text-dark" href="{{ route('posts.show', ['slug' => $post->slug]) }}">{{ $post->title }}</a></h3>@if ($post->published_at)<small class="text-secondary">{{ $post->published_at->format('d/m/Y') }}</small>@endif</div>
                                 </article>
                             @endforeach
@@ -644,7 +644,7 @@
     @endif
 
     {{-- FINAL CTA --}}
-    <section class="dv-final-cta py-5">
+    <section class="site-final-cta py-5">
         <div class="container">
             <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
                 <div>

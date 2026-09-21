@@ -1,12 +1,12 @@
 @use 'tokens';
 :root {
-    --dv-primary: var(--site-color-primary, #{tokens.$primary});
-    --dv-primary-dark: var(--site-color-primary-hover, #{tokens.$primary-hover});
-    --dv-dark: #{tokens.$dark};
-    --dv-ink: var(--site-color-ink, #17212b);
-    --dv-muted: #64748b;
-    --dv-surface: var(--site-color-surface, #f8fafc);
-    --dv-border: #e2e8f0;
+    --color-primary: var(--site-color-primary, #{tokens.$primary});
+    --color-primary-dark: var(--site-color-primary-hover, #{tokens.$primary-hover});
+    --color-dark: #{tokens.$dark};
+    --color-ink: var(--site-color-ink, #17212b);
+    --color-muted: #64748b;
+    --color-surface: var(--site-color-surface, #f8fafc);
+    --color-border: #e2e8f0;
     --site-font-body: 'Be Vietnam Pro', system-ui, sans-serif;
     --site-font-display: 'Roboto Condensed Variable', 'Be Vietnam Pro', system-ui, sans-serif;
 }
@@ -18,7 +18,7 @@ img, video { max-width: 100%; }
 img, svg { vertical-align: middle; }
 button, input, select, textarea { font: inherit; }
 button:not(:disabled), summary { cursor: pointer; }
-[x-cloak], [hidden] { display: none !important; }
+[hidden] { display: none !important; }
 .site-main :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) { margin: 0; }
 .site-main :where(ul, ol) { margin: 0; padding: 0; list-style: none; }
 .site-footer :where(p, h2, dl, dd) { margin: 0; }

@@ -9,8 +9,8 @@
         --bs-link-hover-color-rgb: {{ $palette['hover_rgb'] }};
         --bs-primary-bg-subtle: color-mix(in srgb, {{ $palette['primary'] }} 10%, white);
         --bs-primary-border-subtle: color-mix(in srgb, {{ $palette['primary'] }} 25%, white);
-        --dv-primary-contrast: {{ $palette['contrast'] }};
-        --dv-primary-hover-contrast: {{ $palette['hover_contrast'] }};
+        --color-primary-contrast: {{ $palette['contrast'] }};
+        --color-primary-hover-contrast: {{ $palette['hover_contrast'] }};
         --site-color-primary: {{ $palette['primary'] }};
         --site-color-primary-hover: {{ $palette['hover'] }};
         --site-color-ink: {{ $design->color_ink }};
