@@ -74,9 +74,6 @@ return new class extends SettingsMigration
         $this->migrator->add('about.services_title', []);
         $this->migrator->add('about.services_link_label', []);
         $this->migrator->add('about.stats_title', []);
-        $this->migrator->add('about.team_title', []);
-        $this->migrator->add('about.team_description', []);
-        $this->migrator->add('about.team_image_media_id', null);
         $this->migrator->add('about.office_title', []);
         $this->migrator->add('about.office_description', []);
         $this->migrator->add('about.office_image_media_id', null);

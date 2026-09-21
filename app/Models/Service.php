@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Service extends Model
@@ -62,12 +61,6 @@ class Service extends Model
     {
         return $this->belongsTo(Media::class, 'commitment_media_id');
     }
-
-    public function backstageProjects(): BelongsToMany
-    {
-        return $this->belongsToMany(Project::class, 'project_service')->withTimestamps();
-    }
-
 
     public function contactRequests(): HasMany
     {

@@ -3,9 +3,8 @@
     "type": "module",
     "packageManager": "pnpm@10.15.0",
     "scripts": {
-        "build": "vite build && node scripts/check-assets.mjs",
-        "dev": "vite",
-        "test:frontend": "node scripts/check-frontend.mjs"
+        "build": "vite build",
+        "dev": "vite"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

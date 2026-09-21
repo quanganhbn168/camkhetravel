@@ -25,7 +25,6 @@ final class ServicesTable
                 TextColumn::make('title')->label('Dịch vụ')->searchable()->sortable()->wrap(),
                 TextColumn::make('category.name')->label('Danh mục')->badge()->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
-                TextColumn::make('backstage_projects_count')->counts('backstageProjects')->label('Dự án')->sortable(),
                 IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
                 IconColumn::make('is_home')->label('Trang chủ')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),

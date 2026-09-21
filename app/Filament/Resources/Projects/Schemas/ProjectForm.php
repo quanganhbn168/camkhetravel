@@ -79,28 +79,6 @@ final class ProjectForm
                             ...SeoFields::make(),
                         ])
                         ->columns(2),
-                    Section::make('Nội dung liên quan')
-                        ->icon(Heroicon::OutlinedLink)
-                        ->description('Chọn dịch vụ và bài viết cần hiển thị tại chi tiết dự án.')
-                        ->schema([
-                            Select::make('backstageServices')
-                                ->label('Dịch vụ liên quan')
-                                ->relationship('backstageServices', 'title')
-                                ->multiple()
-                                ->searchable()
-                                ->preload()
-                                ->helperText('Chỉ dịch vụ đã xuất bản mới hiển thị ở trang ngoài.')
-                                ->columnSpanFull(),
-                            Select::make('relatedPosts')
-                                ->label('Bài viết liên quan')
-                                ->relationship('relatedPosts', 'title')
-                                ->multiple()
-                                ->searchable()
-                                ->preload()
-                                ->helperText('Chỉ bài viết đã xuất bản mới hiển thị ở trang ngoài.')
-                                ->columnSpanFull(),
-                        ])
-                        ->columns(1),
                 ])
                     ->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')

@@ -2,11 +2,9 @@
 
 namespace App\Filament\Resources\HeroSlides\Schemas;
 
-use App\Support\Localization\LanguageCatalog;
 use App\Support\Media\VideoMediaLibrary;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -108,31 +106,6 @@ final class HeroSlideForm
                         ->columnSpanFull(),
                 ])
                 ->columns(2),
-            Section::make('Bản dịch')
-                ->icon(Heroicon::OutlinedLanguage)
-                ->description('Chỉ thêm bản dịch khi nội dung đã sẵn sàng xuất bản cho ngôn ngữ đó.')
-                ->schema([
-                    Repeater::make('translations')
-                        ->relationship()
-                        ->schema([
-                            Select::make('locale')
-                                ->label('Ngôn ngữ')
-                                ->options(fn (): array => app(LanguageCatalog::class)->options())
-                                ->required(),
-                            TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(255),
-                            TextInput::make('title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                            Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
-                            TextInput::make('primary_label')->label('Nhãn nút chính')->maxLength(255),
-                            TextInput::make('primary_url')->label('URL nút chính')->url()->maxLength(255),
-                            TextInput::make('secondary_label')->label('Nhãn nút phụ')->maxLength(255),
-                            TextInput::make('secondary_url')->label('URL nút phụ')->url()->maxLength(255),
-                        ])
-                        ->columns(2)
-                        ->addActionLabel('Thêm bản dịch')
-                        ->collapsible()
-                        ->itemLabel(fn (array $state): ?string => app(LanguageCatalog::class)->find((string) ($state['locale'] ?? ''))?->name)
-                        ->columnSpanFull(),
-                ]),
             Section::make('Hiển thị')
                 ->icon(Heroicon::OutlinedCog6Tooth)
                 ->schema([

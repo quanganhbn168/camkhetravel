@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Project extends Model
 {
@@ -39,17 +38,6 @@ class Project extends Model
     public function curatorMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'curator_media_id');
-    }
-
-    public function backstageServices(): BelongsToMany
-    {
-        return $this->belongsToMany(Service::class, 'project_service')->withTimestamps();
-    }
-
-
-    public function relatedPosts(): BelongsToMany
-    {
-        return $this->belongsToMany(Post::class)->withTimestamps();
     }
 
     public function scopePublished(Builder $query): Builder

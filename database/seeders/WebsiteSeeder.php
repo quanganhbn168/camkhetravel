@@ -9,6 +9,6 @@ final class WebsiteSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([LanguageSeeder::class, MenuSeeder::class]);
+        $this->call([MenuSeeder::class]);
     }
 }

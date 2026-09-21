@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Partner;
 use App\Models\Project;
 use App\Models\ProjectCategory;
-use App\Models\Service;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -23,9 +22,7 @@ class ProjectController extends Controller
 
     public function index(Request $request): View
     {
-        $backstageService = $this->backstageService($request);
-
-        return view('frontend.projects.index', $this->listingData(backstageService: $backstageService, request: $request) + [
+        return view('frontend.projects.index', $this->listingData(request: $request) + [
             'seo' => $this->seo->listing(
                 'Dự án | '.$this->seo->siteName(),
                 'Các công trình PCCC tiêu biểu do '.$this->seo->siteName().' triển khai.',
@@ -43,7 +40,7 @@ class ProjectController extends Controller
 
         $request ??= request();
 
-        return view('frontend.projects.index', $this->listingData($category, $this->backstageService($request), $request) + [
+        return view('frontend.projects.index', $this->listingData($category, request: $request) + [
             'seo' => $this->seo->listing($title, $description, LocalizedUrl::projectCategory($category), image: $category->seoImageUrl()),
         ]);
     }
@@ -57,14 +54,6 @@ class ProjectController extends Controller
             'curatorMedia',
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
-            'backstageServices' => fn ($query) => $query
-                ->published()
-                ->with(['category', 'curatorMedia'])
-                ->orderByDesc('published_at'),
-            'relatedPosts' => fn ($query) => $query
-                ->published()
-                ->with(['categories', 'curatorMedia'])
-                ->orderByDesc('published_at'),
         ]);
         $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia));
         $project->setAttribute('body_html', (string) $project->body);
@@ -89,8 +78,6 @@ class ProjectController extends Controller
 
         return view('frontend.projects.show', compact('project') + [
             'relatedProjects' => $relatedProjects,
-            'relatedServices' => $this->withImages($project->backstageServices),
-            'relatedPosts' => $this->withImages($project->relatedPosts),
             'galleryImages' => $this->galleryImages($project->gallery),
             'projectVideoUrl' => filter_var($project->video_url, FILTER_VALIDATE_URL) ? $project->video_url : null,
             'faqItems' => $faqItems,
@@ -115,7 +102,6 @@ class ProjectController extends Controller
     /** @return array<string, mixed> */
     private function listingData(
         ?ProjectCategory $activeCategory = null,
-        ?Service $backstageService = null,
         ?Request $request = null,
     ): array {
         $request ??= request();
@@ -130,10 +116,6 @@ class ProjectController extends Controller
             $projectsQuery->where('project_category_id', $activeCategory->id);
         }
 
-        if ($backstageService) {
-            $projectsQuery->whereHas('backstageServices', fn ($query) => $query->whereKey($backstageService->id));
-        }
-
         $this->applyOrdering($projectsQuery, $sort);
 
         $projects = $this->withImages($projectsQuery
@@ -143,7 +125,6 @@ class ProjectController extends Controller
         $heroProject = Project::query()
             ->published()
             ->when($activeCategory, fn (Builder $query) => $query->where('project_category_id', $activeCategory->id))
-            ->when($backstageService, fn (Builder $query) => $query->whereHas('backstageServices', fn ($serviceQuery) => $serviceQuery->whereKey($backstageService->id)))
             ->with(['curatorMedia'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -151,7 +132,6 @@ class ProjectController extends Controller
 
         return [
             'activeCategory' => $activeCategory,
-            'backstageService' => $backstageService,
             'categories' => $this->categories(),
             'projects' => $projects,
             'heroImageUrl' => $heroProject ? MediaUrl::resolve($heroProject->curatorMedia) : null,
@@ -166,10 +146,8 @@ class ProjectController extends Controller
                 ->with('curatorMedia')
                 ->orderBy('sort_order')
                 ->get(),
-            'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án PCCC'),
-            'pageDescription' => $activeCategory?->description ?: ($backstageService
-                ? 'Các dự án đã được gắn với dịch vụ '.$backstageService->title.'.'
-                : 'Những công trình '.$this->seo->siteName().' đã đồng hành từ khảo sát ban đầu đến khi hệ thống PCCC vận hành ổn định.'),
+            'pageTitle' => $activeCategory?->name ?? 'Dự án',
+            'pageDescription' => $activeCategory?->description ?: 'Những công trình đã được triển khai.',
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',
@@ -218,15 +196,6 @@ class ProjectController extends Controller
         }
 
         return $projects;
-    }
-
-    private function backstageService(Request $request): ?Service
-    {
-        $serviceId = $request->integer('service');
-
-        return $serviceId
-            ? Service::query()->published()->find($serviceId)
-            : null;
     }
 
     private function projectForSlug(string $slug): Project

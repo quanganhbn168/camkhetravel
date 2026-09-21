@@ -199,26 +199,6 @@
         </div>
     </section>
 
-    @if ($relatedServices->isNotEmpty())
-        <section class="resource-related-section" id="dich-vu-lien-quan">
-            <div class="site-container w-100 mx-auto flex-column site-projects-show__div-23">
-                <div><h2 class="display-title site-projects-show__heading-24">Dịch vụ đồng hành cùng dự án</h2></div>
-                <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a>
-            </div>
-            <div class="site-container w-100 mx-auto site-projects-show__div-25">@foreach ($relatedServices as $service) @include('frontend.partials.service-card') @endforeach</div>
-        </section>
-    @endif
-
-    @if ($relatedPosts->isNotEmpty())
-        <section class="resource-related-section" id="bai-viet-lien-quan">
-            <div class="site-container w-100 mx-auto flex-column site-projects-show__div-23">
-                <div><h2 class="display-title site-projects-show__heading-24">Bài viết liên quan</h2></div>
-                <a class="section-link" href="{{ LocalizedUrl::route('posts.index') }}">Xem tất cả bài viết <span aria-hidden="true">→</span></a>
-            </div>
-            <div class="site-container w-100 mx-auto site-projects-show__div-25">@foreach ($relatedPosts as $post) @include('frontend.partials.post-card') @endforeach</div>
-        </section>
-    @endif
-
     @if ($relatedProjects->isNotEmpty())
         <section id="du-an-lien-quan" class="resource-related-section">
             <div class="site-container w-100 mx-auto flex-column site-projects-show__div-23"><div><h2 class="display-title site-projects-show__heading-24">Khám phá thêm các dự án đã thực hiện</h2></div><a class="section-link" href="{{ LocalizedUrl::route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a></div>

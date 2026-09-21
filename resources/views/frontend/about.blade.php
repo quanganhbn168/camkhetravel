@@ -254,63 +254,6 @@
         </section>
     @endif
 
-    @if ($about['team_title'] || $about['team_description'] || $about['team_image_url'] || $departments->isNotEmpty())
-        <section class="about-page-showcase about-page-team section-space">
-            <div class="site-container w-100 mx-auto site-about__div-1">
-                @if ($about['team_title'] || $about['team_description'])
-                    <header class="about-page-section-heading">
-                        @if ($about['team_title'])
-                            <h2 class="display-title">{{ $about['team_title'] }}</h2>
-                        @endif
-                        @if ($about['team_description'])
-                            <p class="about-page-section-heading__intro">{{ $about['team_description'] }}</p>
-                        @endif
-                    </header>
-                @endif
-                @if ($about['team_image_url'])
-                    <figure class="about-showcase-media about-showcase-media--team">
-                        <img src="{{ $about['team_image_url'] }}" alt="{{ $about['team_title'] ?: $about['title'] }}" loading="lazy">
-                    </figure>
-                @endif
-
-                @if ($departments->isNotEmpty())
-                    <div class="about-departments">
-                        @foreach ($departments as $department)
-                            <section class="about-department" aria-labelledby="about-department-{{ $department->id }}">
-                                <header class="about-department__heading">
-                                    <h3 id="about-department-{{ $department->id }}">{{ $department->name }}</h3>
-                                    @if ($department->description)
-                                        <p>{{ $department->description }}</p>
-                                    @endif
-                                </header>
-
-                                <div class="about-team-members">
-                                    @foreach ($department->members as $member)
-                                        <article class="about-team-member">
-                                            <div class="about-team-member__media">
-                                                @if ($member->image_url)
-                                                    <img src="{{ $member->image_url }}" alt="{{ $member->name }}" loading="lazy">
-                                                @else
-                                                    <span class="image-placeholder">DV</span>
-                                                @endif
-                                            </div>
-                                            <div class="about-team-member__content">
-                                                <h4>{{ $member->name }}</h4>
-                                                @if ($member->position)
-                                                    <p>{{ $member->position }}</p>
-                                                @endif
-                                            </div>
-                                        </article>
-                                    @endforeach
-                                </div>
-                            </section>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        </section>
-    @endif
-
     @if ($about['office_title'] || $about['office_description'] || $about['office_gallery']->isNotEmpty())
         <section class="about-page-showcase about-page-office section-space">
             <div class="site-container w-100 mx-auto site-about__div-1">

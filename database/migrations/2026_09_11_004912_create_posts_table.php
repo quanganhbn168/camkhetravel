@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table): void {
             $table->id();
+            $table->foreignId('post_category_id')->nullable()->constrained('post_categories')->nullOnDelete();
             $table->foreignId('curator_media_id')->nullable()->constrained('curator')->nullOnDelete();
             $table->string('title');
             $table->text('excerpt')->nullable();

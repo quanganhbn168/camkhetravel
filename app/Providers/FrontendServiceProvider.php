@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\HeroSlide;
 use App\Models\Intro;
-use App\Models\Language;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Partner;
@@ -75,7 +74,6 @@ class FrontendServiceProvider extends ServiceProvider
 
         foreach ([
             HeroSlide::class,
-            Language::class,
             Partner::class,
             PostCategory::class,
             Product::class,

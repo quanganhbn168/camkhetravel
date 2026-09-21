@@ -54,12 +54,6 @@ class AboutSettings extends Settings
 
     public array $stats_title = [];
 
-    public array $team_title = [];
-
-    public array $team_description = [];
-
-    public ?int $team_image_media_id = null;
-
     public array $office_title = [];
 
     public array $office_description = [];

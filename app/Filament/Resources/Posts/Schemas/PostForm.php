@@ -7,7 +7,6 @@ use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Post;
 use App\Support\Seo\ContentSeoFallbacks;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -80,7 +79,7 @@ final class PostForm
                 Section::make('Phân loại & hiển thị')
                     ->icon(Heroicon::OutlinedCog6Tooth)
                     ->schema([
-                        CheckboxList::make('categories')->label('Chuyên mục')->relationship('categories', 'name')->columns(1)->searchable()->bulkToggleable(),
+                        Select::make('post_category_id')->label('Chuyên mục')->relationship('category', 'name')->searchable()->preload(),
                         Select::make('tags')
                             ->label('Thẻ')
                             ->relationship('tags', 'name')

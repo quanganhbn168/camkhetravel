@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PostCategory extends Model
 {
@@ -21,8 +21,8 @@ class PostCategory extends Model
         ];
     }
 
-    public function posts(): BelongsToMany
+    public function posts(): HasMany
     {
-        return $this->belongsToMany(Post::class)->withPivot('sort_order');
+        return $this->hasMany(Post::class, 'post_category_id');
     }
 }

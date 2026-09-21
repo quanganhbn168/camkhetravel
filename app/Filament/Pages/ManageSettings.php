@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Filament\Concerns\PreservesUnchangedSettings;
 use App\Filament\Forms\Components\GalleryPicker;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
-use App\Models\Language;
 use App\Models\Menu;
 use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
@@ -13,7 +12,6 @@ use App\Settings\DesignSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
-use App\Support\Localization\LanguageCatalog;
 use App\Support\Maps\GoogleMapsShareResolver;
 use App\Support\Maps\GoogleMapsUrl;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
@@ -135,9 +133,6 @@ class ManageSettings extends Page
             'services_title' => $about->services_title,
             'services_link_label' => $about->services_link_label,
             'stats_title' => $about->stats_title,
-            'team_title' => $about->team_title,
-            'team_description' => $about->team_description,
-            'team_image_media_id' => $about->team_image_media_id,
             'office_title' => $about->office_title,
             'office_description' => $about->office_description,
             'office_gallery' => $about->office_gallery,
@@ -370,13 +365,7 @@ class ManageSettings extends Page
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
                         ->columnSpanFull(),
-                    Tabs::make('homepage-intro-languages')
-                        ->tabs(app(LanguageCatalog::class)->active()
-                            ->map(fn (Language $language): Tab => $this->homepageIntroLanguageTab($language))
-                            ->values()
-                            ->all())
-                        ->contained(false)
-                        ->columnSpanFull(),
+                    ...$this->homepageIntroSchema(),
                 ]),
             Section::make('Chỉ số nổi bật')
                 ->icon(Heroicon::OutlinedChartBar)
@@ -414,59 +403,47 @@ class ManageSettings extends Page
                             : 'Chỉ số mới')
                         ->columnSpanFull(),
                 ]),
-            Tabs::make('homepage-languages')
-                ->tabs(app(LanguageCatalog::class)->active()
-                    ->map(fn (Language $language): Tab => $this->homepageLanguageTab($language))
-                    ->values()
-                    ->all())
-                ->contained(false)
-                ->columnSpanFull(),
+            ...$this->homepageContentSchema(),
         ];
     }
 
-    private function homepageLanguageTab(Language $language): Tab
+    private function homepageContentSchema(): array
     {
-        $locale = $language->code;
-
-        return Tab::make($language->name)
-            ->schema([
+        return [
                 Section::make('Cam kết và năng lực')
                     ->icon(Heroicon::OutlinedSparkles)
                     ->description('Mỗi dòng là một ý hiển thị trên trang chủ.')
                     ->schema([
-                        Textarea::make("commitments.{$locale}")->label('Cam kết')->rows(5),
-                        Textarea::make("capabilities.{$locale}")->label('Năng lực')->rows(5),
+                        Textarea::make('commitments.vi')->label('Cam kết')->rows(5),
+                        Textarea::make('capabilities.vi')->label('Năng lực')->rows(5),
                     ])
                     ->columns(2),
                 Section::make('Câu hỏi thường gặp')
                     ->icon(Heroicon::OutlinedQuestionMarkCircle)
                     ->description('Câu hỏi được quản lý riêng tại mục “Câu hỏi thường gặp”.')
                     ->schema([
-                        TextInput::make("faq_title.{$locale}")->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                        Textarea::make("faq_description.{$locale}")->label('Mô tả')->rows(2)->columnSpanFull(),
+                        TextInput::make('faq_title.vi')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                        Textarea::make('faq_description.vi')->label('Mô tả')->rows(2)->columnSpanFull(),
                     ]),
-            ]);
+        ];
     }
 
-    private function homepageIntroLanguageTab(Language $language): Tab
+    private function homepageIntroSchema(): array
     {
-        $locale = $language->code;
-
-        return Tab::make($language->name)
-            ->schema([
-                TextInput::make("about_eyebrow.{$locale}")
+        return [
+                TextInput::make('about_eyebrow.vi')
                     ->label('Tiêu đề phần giới thiệu')
                     ->maxLength(255)
                     ->columnSpanFull(),
-                Textarea::make("about_title.{$locale}")
+                Textarea::make('about_title.vi')
                     ->label('Mô tả ngắn')
                     ->rows(3)
                     ->columnSpanFull(),
-                Textarea::make("about_content.{$locale}")
+                Textarea::make('about_content.vi')
                     ->label('Nội dung chi tiết')
                     ->rows(4)
                     ->columnSpanFull(),
-            ]);
+        ];
     }
 
     /** @return array<int, Section> */
@@ -497,13 +474,7 @@ class ManageSettings extends Page
     private function aboutSchema(): array
     {
         return [
-            Tabs::make('about-languages')
-                ->tabs(app(LanguageCatalog::class)->active()
-                    ->map(fn (Language $language): Tab => $this->aboutLanguageTab($language))
-                    ->values()
-                    ->all())
-                ->contained(false)
-                ->columnSpanFull(),
+            ...$this->aboutContentSchema(),
             Section::make('Chỉ số trang Giới thiệu')->description('Độc lập với chỉ số trên trang chủ.')->schema([
                 Repeater::make('page_stats')->label('Chỉ số')->schema([
                     TextInput::make('value')->label('Giá trị')->required(),
@@ -531,12 +502,6 @@ class ManageSettings extends Page
                         ->columnSpanFull(),
                     CuratorPicker::make('core_values_image_media_id')
                         ->label('Ảnh Giá trị cốt lõi')
-                        ->disk('public')
-                        ->constrained()
-                        ->acceptedFileTypes(['image/*'])
-                        ->columnSpanFull(),
-                    CuratorPicker::make('team_image_media_id')
-                        ->label('Ảnh Đội ngũ nhân sự')
                         ->disk('public')
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
@@ -586,28 +551,25 @@ class ManageSettings extends Page
         ];
     }
 
-    private function aboutLanguageTab(Language $language): Tab
+    private function aboutContentSchema(): array
     {
-        $locale = $language->code;
-
-        return Tab::make($language->name)
-            ->schema([
+        return [
                 Section::make('Mở đầu trang giới thiệu')
                     ->icon(Heroicon::OutlinedDocumentText)
                     ->description('Nhập nội dung quản trị trực tiếp cho trang giới thiệu.')
                     ->schema([
-                        TextInput::make("page_title.{$locale}")->label('Tiêu đề trang')->maxLength(255)->columnSpanFull(),
-                        Textarea::make("page_intro.{$locale}")->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
+                        TextInput::make('page_title.vi')->label('Tiêu đề trang')->maxLength(255)->columnSpanFull(),
+                        Textarea::make('page_intro.vi')->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
                     ])
                     ->columns(1),
                 Section::make('Câu chuyện doanh nghiệp')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->schema([
-                        TextInput::make("story_title.{$locale}")
+                        TextInput::make('story_title.vi')
                             ->label('Tiêu đề khối câu chuyện')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        RichEditor::make("story.{$locale}")
+                        RichEditor::make('story.vi')
                             ->label('Nội dung câu chuyện')
                             ->plugins([ScopedAttachCuratorMediaPlugin::make()])
                             ->enableToolbarButtons(['attachCuratorMedia'])
@@ -618,13 +580,13 @@ class ManageSettings extends Page
                 Section::make('Sứ mệnh, tầm nhìn và giá trị')
                     ->icon(Heroicon::OutlinedSparkles)
                     ->schema([
-                        TextInput::make("principles_title.{$locale}")
+                        TextInput::make('principles_title.vi')
                             ->label('Tiêu đề khối')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make("mission.{$locale}")->label('Sứ mệnh')->rows(4),
-                        Textarea::make("vision.{$locale}")->label('Tầm nhìn')->rows(4),
-                        RichEditor::make("core_values.{$locale}")
+                        Textarea::make('mission.vi')->label('Sứ mệnh')->rows(4),
+                        Textarea::make('vision.vi')->label('Tầm nhìn')->rows(4),
+                        RichEditor::make('core_values.vi')
                             ->label('Giá trị cốt lõi')
                             ->plugins([ScopedAttachCuratorMediaPlugin::make()])
                             ->enableToolbarButtons(['attachCuratorMedia'])
@@ -636,15 +598,15 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedClock)
                     ->description('Có thể dùng nội dung lịch sử đơn hoặc danh sách mốc. Mỗi mốc gồm năm, ảnh nguồn từ Curator, tiêu đề và mô tả.')
                     ->schema([
-                        TextInput::make("history_title.{$locale}")
+                        TextInput::make('history_title.vi')
                             ->label('Tiêu đề khối')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make("history_description.{$locale}")
+                        Textarea::make('history_description.vi')
                             ->label('Mô tả khối')
                             ->rows(3)
                             ->columnSpanFull(),
-                        Textarea::make("history.{$locale}")
+                        Textarea::make('history.vi')
                             ->label('Nội dung lịch sử đơn')
                             ->helperText('Chỉ dùng khi không có danh sách mốc bên dưới.')
                             ->rows(5)
@@ -661,14 +623,14 @@ class ManageSettings extends Page
                                     ->disk('public')
                                     ->constrained()
                                     ->acceptedFileTypes(['image/*']),
-                                TextInput::make("title.{$locale}")
+                                TextInput::make('title.vi')
                                     ->label('Tiêu đề')
-                                    ->required($language->is_default)
+                                    ->required()
                                     ->maxLength(255)
                                     ->columnSpanFull(),
-                                Textarea::make("description.{$locale}")
+                                Textarea::make('description.vi')
                                     ->label('Mô tả')
-                                    ->required($language->is_default)
+                                    ->required()
                                     ->rows(4)
                                     ->columnSpanFull(),
                             ])
@@ -677,46 +639,33 @@ class ManageSettings extends Page
                             ->addActionLabel('Thêm mốc lịch sử')
                             ->reorderable()
                             ->collapsible()
-                            ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title'][$locale] ?? '')))
+                            ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title']['vi'] ?? '')))
                             ->columnSpanFull(),
                     ]),
                 Section::make('Dịch vụ và số liệu')
                     ->icon(Heroicon::OutlinedChartBar)
                     ->description('Các dịch vụ lấy từ danh sách dịch vụ đã xuất bản; tại đây chỉ nhập tiêu đề của khối và tiêu đề liên kết.')
                     ->schema([
-                        TextInput::make("services_title.{$locale}")
+                        TextInput::make('services_title.vi')
                             ->label('Tiêu đề khối dịch vụ')
                             ->maxLength(255),
-                        TextInput::make("services_link_label.{$locale}")
+                        TextInput::make('services_link_label.vi')
                             ->label('Nhãn liên kết xem dịch vụ')
                             ->maxLength(255),
-                        TextInput::make("stats_title.{$locale}")
+                        TextInput::make('stats_title.vi')
                             ->label('Tiêu đề khối số liệu')
                             ->maxLength(255)
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
-                Section::make('Đội ngũ nhân sự')
-                    ->icon(Heroicon::OutlinedUserGroup)
-                    ->schema([
-                        TextInput::make("team_title.{$locale}")
-                            ->label('Tiêu đề khối')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Textarea::make("team_description.{$locale}")
-                            ->label('Mô tả')
-                            ->rows(3)
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(1),
                 Section::make('Văn phòng doanh nghiệp')
                     ->icon(Heroicon::OutlinedBuildingOffice2)
                     ->schema([
-                        TextInput::make("office_title.{$locale}")
+                        TextInput::make('office_title.vi')
                             ->label('Tiêu đề khối')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make("office_description.{$locale}")
+                        Textarea::make('office_description.vi')
                             ->label('Mô tả')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -726,15 +675,15 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedPhone)
                     ->description('Nếu để trống, khối kêu gọi liên hệ sẽ không hiển thị trên trang giới thiệu.')
                     ->schema([
-                        TextInput::make("cta_title.{$locale}")
+                        TextInput::make('cta_title.vi')
                             ->label('Tiêu đề kêu gọi liên hệ')
                             ->maxLength(255),
-                        TextInput::make("cta_button_label.{$locale}")
+                        TextInput::make('cta_button_label.vi')
                             ->label('Nhãn nút liên hệ')
                             ->maxLength(255),
                     ])
                     ->columns(2),
-            ]);
+        ];
     }
 
     /** @return array<int, Section> */
@@ -952,7 +901,7 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveAbout(AboutSettings $about, array $data): void
     {
-        foreach (['page_stats', 'page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'team_title', 'team_description', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
+        foreach (['page_stats', 'page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
             $about->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
         }
 
@@ -964,7 +913,7 @@ class ManageSettings extends Page
             ? (int) $data['video_media_id']
             : null;
 
-        foreach (['default_image_media_id', 'story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id', 'team_image_media_id'] as $key) {
+        foreach (['default_image_media_id', 'story_image_media_id', 'video_poster_media_id', 'core_values_image_media_id'] as $key) {
             $about->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 

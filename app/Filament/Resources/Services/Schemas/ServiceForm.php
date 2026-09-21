@@ -52,14 +52,6 @@ final class ServiceForm
                             CuratorPicker::make('banner_video_media_id')->label('Video banner dịch vụ')->relationship('bannerVideoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/*'])->helperText('Video được phát nền ở banner; ảnh đại diện sẽ làm poster khi cần.')->columnSpanFull(),
                             CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                             CuratorPicker::make('gallery')->label('Ảnh tài liệu tham khảo')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị cùng khối Các dự án nổi bật.')->columnSpanFull(),
-                            Select::make('backstageProjects')
-                                ->label('Dự án đã triển khai')
-                                ->relationship('backstageProjects', 'title')
-                                ->multiple()
-                                ->searchable()
-                                ->preload()
-                                ->helperText('Các dự án này hiển thị ở chi tiết dịch vụ và bộ lọc Dự án.')
-                                ->columnSpanFull(),
                             TextInput::make('projects_title')
                                 ->label('Tiêu đề khối dự án')
                                 ->placeholder('Các dự án nổi bật')

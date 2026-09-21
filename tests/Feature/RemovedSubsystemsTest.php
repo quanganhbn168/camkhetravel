@@ -43,6 +43,14 @@ class RemovedSubsystemsTest extends TestCase
             'service_pricings',
             'pricing_packages',
             'pricing_package_items',
+            'languages',
+            'about_departments',
+            'about_team_members',
+            'redirects',
+            'post_post_category',
+            'project_service',
+            'post_project',
+            'hero_slide_translations',
         ] as $removedTable) {
             $this->assertFalse(Schema::hasTable($removedTable), $removedTable.' must not remain in the database.');
         }

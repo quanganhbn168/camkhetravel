@@ -9,8 +9,8 @@
                 <span class="image-placeholder">DV</span>
             @endif
 
-            @if ($post->categories->first())
-                <span class="position-absolute fw-bold text-uppercase site-partials-home-post-slide__copy-5">{{ $post->categories->first()->name }}</span>
+            @if ($post->category)
+                <span class="position-absolute fw-bold text-uppercase site-partials-home-post-slide__copy-5">{{ $post->category->name }}</span>
             @endif
         </a>
         <div class="d-flex flex-column site-partials-home-post-slide__div-6">

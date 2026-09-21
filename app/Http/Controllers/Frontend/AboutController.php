@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\AboutDepartment;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
@@ -46,8 +45,6 @@ class AboutController extends Controller
             'services_title' => $this->translated($this->settings->services_title),
             'services_link_label' => $this->translated($this->settings->services_link_label),
             'stats_title' => $this->translated($this->settings->stats_title),
-            'team_title' => $this->translated($this->settings->team_title),
-            'team_description' => $this->translated($this->settings->team_description),
             'office_title' => $this->translated($this->settings->office_title),
             'office_description' => $this->translated($this->settings->office_description),
             'cta_title' => $this->translated($this->settings->cta_title),
@@ -69,7 +66,6 @@ class AboutController extends Controller
             $this->settings->story_image_media_id,
             $this->settings->video_poster_media_id,
             $this->settings->core_values_image_media_id,
-            $this->settings->team_image_media_id,
             $this->settings->office_image_media_id,
         ])->merge($officeGalleryIds)
             ->filter(fn (mixed $id): bool => is_numeric($id))
@@ -85,7 +81,6 @@ class AboutController extends Controller
         $about['image_url'] = $fallbackImageUrl;
         $about['story_image_url'] = $this->sectionImageUrl($media, $this->settings->story_image_media_id, $fallbackImageUrl);
         $about['core_values_image_url'] = $this->sectionImageUrl($media, $this->settings->core_values_image_media_id, $fallbackImageUrl);
-        $about['team_image_url'] = $this->sectionImageUrl($media, $this->settings->team_image_media_id, $fallbackImageUrl);
         $about['office_image_url'] = $this->sectionImageUrl($media, $this->settings->office_image_media_id, $fallbackImageUrl);
         $about['office_gallery'] = $officeGalleryIds
             ->map(function (int $mediaId, int $index) use ($media, $managed): ?array {
@@ -119,23 +114,11 @@ class AboutController extends Controller
         foreach ($services as $service) {
             $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia));
         }
-        $departments = AboutDepartment::query()
-            ->active()
-            ->whereHas('members', fn ($query) => $query->active())
-            ->with(['members' => fn ($query) => $query->active()->ordered()->with('curatorMedia')])
-            ->ordered()
-            ->get();
-        foreach ($departments as $department) {
-            foreach ($department->members as $member) {
-                $member->setAttribute('image_url', CuratorMediaUrl::versioned($member->curatorMedia));
-            }
-        }
         $description = $about['intro'] ?: trim(strip_tags($about['story'])) ?: $about['title'];
 
         return view('frontend.about', compact('about') + [
             'historyTimeline' => $historyTimeline,
             'services' => $services,
-            'departments' => $departments,
             'stats' => $this->stats(),
             'seo' => $this->seo->listing(
                 $about['title'].' | '.$this->seo->siteName(),

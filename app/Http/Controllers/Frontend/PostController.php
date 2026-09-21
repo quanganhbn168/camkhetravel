@@ -33,7 +33,7 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts(Post::query()
             ->published()
-            ->with(['categories', 'curatorMedia']), $sort)
+            ->with(['category', 'curatorMedia']), $sort)
             ->paginate(12)
             ->withQueryString());
         $canonicalUrl = LocalizedUrl::route('posts.index');
@@ -67,7 +67,7 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts($category->posts()
             ->published()
-            ->with(['categories', 'curatorMedia']), $sort)
+            ->with(['category', 'curatorMedia']), $sort)
             ->paginate(12)
             ->withQueryString());
         $canonicalUrl = LocalizedUrl::postCategory($category);
@@ -93,7 +93,7 @@ class PostController extends Controller
         abort_unless($post->status === 'published' && (! $post->published_at || $post->published_at->isPast()), 404);
 
         $post->load([
-            'categories',
+            'category',
             'curatorMedia',
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
@@ -105,7 +105,7 @@ class PostController extends Controller
         $featuredPosts = $this->withImages(Post::query()
             ->published()
             ->whereKeyNot($post->id)
-            ->with(['categories', 'curatorMedia'])
+            ->with(['category', 'curatorMedia'])
             ->orderByDesc('is_featured')
             ->latest('published_at')
             ->limit(4)
@@ -115,7 +115,7 @@ class PostController extends Controller
 
         return view('frontend.posts.show', compact('post') + [
             'categories' => $this->categories(),
-            'activeCategory' => $post->categories->first(),
+            'activeCategory' => $post->category,
             'heroImageUrl' => $post->image_url,
             'featuredPosts' => $featuredPosts,
             'previousPost' => $previousPost,

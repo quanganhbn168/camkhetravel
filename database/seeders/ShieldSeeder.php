@@ -15,11 +15,10 @@ class ShieldSeeder extends Seeder
     ];
 
     private const RESOURCES = [
-        'AboutDepartment', 'Comment', 'ContactRequest', 'Faq', 'HeroSlide',
-        'Intro', 'Language', 'Menu', 'Partner', 'PostCategory', 'Post',
-        'ProductCategory', 'Product', 'ProjectCategory', 'Project', 'Redirect',
+        'Comment', 'ContactRequest', 'Faq', 'HeroSlide', 'Intro', 'Menu', 'Partner', 'PostCategory', 'Post',
+        'ProductCategory', 'Product', 'ProjectCategory', 'Project',
         'ServiceCategory', 'Service', 'Tag', 'Testimonial', 'Media', 'Role',
-        'AdminDashboard', 'ManageAboutSettings', 'ManageHomepageSettings',
+        'AdminDashboard',
         'ManageSettings', 'ManageWebsiteSettings', 'WebsiteStatsOverview',
     ];
 

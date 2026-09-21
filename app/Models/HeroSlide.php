@@ -6,7 +6,6 @@ use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HeroSlide extends Model
 {
@@ -30,22 +29,13 @@ class HeroSlide extends Model
         return $this->belongsTo(Media::class, 'video_media_id');
     }
 
-    public function translations(): HasMany
-    {
-        return $this->hasMany(HeroSlideTranslation::class);
-    }
-
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
 
-    public function contentFor(string $locale): array
+    public function contentFor(): array
     {
-        $translation = $this->relationLoaded('translations')
-            ? $this->translations->firstWhere('locale', $locale)
-            : $this->translations()->where('locale', $locale)->first();
-
         return collect([
             'eyebrow',
             'title',
@@ -55,7 +45,7 @@ class HeroSlide extends Model
             'secondary_label',
             'secondary_url',
         ])->mapWithKeys(fn (string $attribute): array => [
-            $attribute => $translation?->getAttribute($attribute) ?: $this->getAttribute($attribute),
+            $attribute => $this->getAttribute($attribute),
         ])->all();
     }
 }

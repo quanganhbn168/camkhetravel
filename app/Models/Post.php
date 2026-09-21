@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Post extends Model
 {
@@ -29,14 +28,9 @@ class Post extends Model
         ];
     }
 
-    public function categories(): BelongsToMany
+    public function category(): BelongsTo
     {
-        return $this->belongsToMany(PostCategory::class)->withPivot('sort_order');
-    }
-
-    public function relatedProjects(): BelongsToMany
-    {
-        return $this->belongsToMany(Project::class)->withTimestamps();
+        return $this->belongsTo(PostCategory::class, 'post_category_id');
     }
 
     public function curatorMedia(): BelongsTo

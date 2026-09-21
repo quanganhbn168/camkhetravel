@@ -62,10 +62,6 @@ class ServiceController extends Controller
             'commitmentMedia',
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
-            'backstageProjects' => fn ($query) => $query
-                ->published()
-                ->with(['category', 'curatorMedia'])
-                ->orderByDesc('published_at'),
         ]);
         $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia));
         $service->setAttribute('body_html', (string) $service->body);
@@ -127,7 +123,6 @@ class ServiceController extends Controller
 
         return view('frontend.services.show', compact('service') + [
             'relatedServices' => $relatedServices,
-            'backstageProjects' => $this->withImages($service->backstageProjects),
             'bannerVideoUrl' => $bannerVideoUrl,
             'bannerVideoType' => $service->bannerVideoMedia?->type,
             'processBackgroundUrl' => MediaUrl::resolve($service->processBackgroundMedia) ?: $service->image_url,

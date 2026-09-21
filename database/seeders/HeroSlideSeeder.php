@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\HeroSlide;
-use App\Models\HeroSlideTranslation;
 use Illuminate\Database\Seeder;
 
 final class HeroSlideSeeder extends Seeder
@@ -18,10 +17,5 @@ final class HeroSlideSeeder extends Seeder
             'secondary_label' => 'Xem dịch vụ', 'secondary_url' => '/dich-vu', 'is_active' => true,
         ]);
 
-        HeroSlideTranslation::query()->updateOrCreate(['hero_slide_id' => $slide->getKey(), 'locale' => 'vi'], [
-            'eyebrow' => $slide->eyebrow, 'title' => $slide->title, 'description' => $slide->description,
-            'primary_label' => $slide->primary_label, 'primary_url' => $slide->primary_url,
-            'secondary_label' => $slide->secondary_label, 'secondary_url' => $slide->secondary_url,
-        ]);
     }
 }

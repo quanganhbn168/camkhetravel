@@ -39,12 +39,11 @@ class HomeController extends Controller
             ->with([
                 'curatorMedia',
                 'videoMedia',
-                'translations' => fn ($query) => $query->where('locale', app()->getLocale()),
             ])
             ->orderBy('sort_order')
             ->get()
             ->map(function (HeroSlide $slide, int $index): array {
-                $content = $slide->contentFor(app()->getLocale());
+                $content = $slide->contentFor();
                 $videoUrl = match ($slide->video_source) {
                     'youtube' => $this->youtubeUrl($slide->video_url),
                     'upload' => $slide->videoMedia?->url,
@@ -103,7 +102,7 @@ class HomeController extends Controller
             ->get();
         $posts = Post::query()
             ->published()
-            ->with(['categories', 'curatorMedia'])
+            ->with(['category', 'curatorMedia'])
             ->latest('published_at')
             ->limit(8)
             ->get();

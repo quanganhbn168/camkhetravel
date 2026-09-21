@@ -130,7 +130,6 @@
 
     @include('frontend.services.partials.stats')
     @include('frontend.services.partials.testimonials')
-    @include('frontend.services.partials.projects')
 
     @if ($backstageImages !== [])
         <section class="resource-related-section site-services-show__section-10" id="hau-truong">

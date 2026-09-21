@@ -597,7 +597,7 @@
                                 @if ($featuredPost->image_url)<img src="{{ $featuredPost->image_url }}" alt="{{ $featuredPost->title }}" loading="lazy">@endif
                             </a>
                             <div class="p-4">
-                                @if ($featuredPost->categories->first())<p class="small fw-bold text-primary text-uppercase mb-2">{{ $featuredPost->categories->first()->name }}</p>@endif
+                                @if ($featuredPost->category)<p class="small fw-bold text-primary text-uppercase mb-2">{{ $featuredPost->category->name }}</p>@endif
                                 <h3 class="h4 fw-bold"><a class="text-dark" href="{{ route('posts.show', ['slug' => $featuredPost->slug]) }}">{{ $featuredPost->title }}</a></h3>
                                 @if ($featuredPost->excerpt)<p class="text-secondary mb-0">{{ $featuredPost->excerpt }}</p>@endif
                             </div>
