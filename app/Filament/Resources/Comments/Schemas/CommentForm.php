@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Comments\Schemas;
 
 use App\Models\Comment;
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
@@ -30,7 +29,6 @@ class CommentForm
                             MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Project::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Service::class)->titleAttribute('title'),
-                            MorphToSelect\Type::make(LandingPage::class)->titleAttribute('title'),
                         ])
                         ->disabled()
                         ->columnSpanFull(),

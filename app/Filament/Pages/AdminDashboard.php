@@ -4,14 +4,12 @@ namespace App\Filament\Pages;
 
 use App\Filament\Resources\Comments\CommentResource;
 use App\Filament\Resources\ContactRequests\ContactRequestResource;
-use App\Filament\Resources\LandingPages\LandingPageResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Services\ServiceResource;
 use App\Filament\Widgets\WebsiteStatsOverview;
 use App\Models\Comment;
 use App\Models\ContactRequest;
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
@@ -66,10 +64,6 @@ class AdminDashboard extends Page
                 ->label('Quản lý nội dung')
                 ->icon(Heroicon::OutlinedDocumentText)
                 ->url(ServiceResource::getUrl('index')),
-            Action::make('landings')
-                ->label('Quản lý landing page')
-                ->icon(Heroicon::OutlinedRectangleGroup)
-                ->url(LandingPageResource::getUrl('index')),
         ];
     }
 
@@ -85,7 +79,6 @@ class AdminDashboard extends Page
         $serviceCount = Service::query()->count();
         $projectCount = Project::query()->count();
         $postCount = Post::query()->count();
-        $landingCount = LandingPage::query()->count();
 
         return [
             'operations' => [
@@ -109,7 +102,7 @@ class AdminDashboard extends Page
                 ],
             ],
             'recent_leads' => ContactRequest::query()
-                ->with(['service:id,title', 'landingPage:id,title'])
+                ->with(['service:id,title'])
                 ->latest('created_at')
                 ->limit(6)
                 ->get([
@@ -117,18 +110,17 @@ class AdminDashboard extends Page
                     'name',
                     'phone',
                     'service_id',
-                    'landing_page_id',
                     'status',
                     'created_at',
                 ]),
-            'recent_content' => $this->recentContent($serviceCount, $projectCount, $postCount, $landingCount),
+            'recent_content' => $this->recentContent($serviceCount, $projectCount, $postCount),
         ];
     }
 
     /**
      * @return Collection<int, array{label: string, title: string, status: string, status_label: string, updated_at: mixed, url: string}>
      */
-    private function recentContent(int $serviceCount, int $projectCount, int $postCount, int $landingCount): Collection
+    private function recentContent(int $serviceCount, int $projectCount, int $postCount): Collection
     {
         $items = collect();
 
@@ -171,20 +163,6 @@ class AdminDashboard extends Page
                     $record->status,
                     $record->updated_at,
                     PostResource::getUrl('edit', ['record' => $record->id]),
-                )));
-        }
-
-        if ($landingCount > 0) {
-            $items = $items->merge(LandingPage::query()
-                ->latest('updated_at')
-                ->limit(3)
-                ->get(['id', 'title', 'status', 'updated_at'])
-                ->map(fn (LandingPage $record): array => $this->contentRow(
-                    'Landing page',
-                    $record->title,
-                    $record->status,
-                    $record->updated_at,
-                    LandingPageResource::getUrl('edit', ['record' => $record->id]),
                 )));
         }
 

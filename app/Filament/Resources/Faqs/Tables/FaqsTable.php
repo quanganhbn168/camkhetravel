@@ -21,7 +21,6 @@ final class FaqsTable
                     'service' => 'Dịch vụ',
                     'project' => 'Dự án',
                     'product' => 'Sản phẩm',
-                    'landing-page' => 'Landing page',
                     'post' => 'Bài viết',
                     default => $state,
                 }),

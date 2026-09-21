@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Service extends Model
 {
@@ -63,22 +62,11 @@ class Service extends Model
         return $this->belongsTo(Media::class, 'commitment_media_id');
     }
 
-    public function pricingCatalog(): HasOne
-    {
-        return $this->hasOne(ServicePricing::class);
-    }
-
     public function backstageProjects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'project_service')->withTimestamps();
     }
 
-    public function landingPages(): BelongsToMany
-    {
-        return $this->belongsToMany(LandingPage::class, 'landing_page_service')
-            ->withPivot('sort_order')
-            ->withTimestamps();
-    }
 
     public function contactRequests(): HasMany
     {

@@ -4,7 +4,6 @@ namespace App\Filament\Pages;
 
 use App\Filament\Concerns\PreservesUnchangedSettings;
 use App\Filament\Forms\Components\GalleryPicker;
-use App\Filament\Forms\TrackingSchema;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Language;
 use App\Models\Menu;
@@ -17,7 +16,6 @@ use App\Support\Branding\FaviconService;
 use App\Support\Localization\LanguageCatalog;
 use App\Support\Maps\GoogleMapsShareResolver;
 use App\Support\Maps\GoogleMapsUrl;
-use App\Support\Tracking\TrackingScripts;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Models\Media;
 use BackedEnum;
@@ -75,7 +73,6 @@ class ManageSettings extends Page
         DesignSettings $design,
     ): void {
         $this->fillSettingsForm([
-            ...app(TrackingScripts::class)->formData(),
             'site_name' => $website->site_name,
             'tagline' => $website->tagline,
             'logo_media_id' => $website->logo_media_id,
@@ -181,9 +178,6 @@ class ManageSettings extends Page
                             ->schema($this->aboutSchema()),
                         Tab::make('Liên hệ')->icon(Heroicon::OutlinedPhone)->schema($this->contactSchema()),
                         Tab::make('SEO')->icon(Heroicon::OutlinedMagnifyingGlass)->schema($this->seoSchema()),
-                        Tab::make('Tracking')
-                            ->icon(Heroicon::OutlinedChartBar)
-                            ->schema(TrackingSchema::make()),
                         Tab::make('Giao diện')
                             ->icon(Heroicon::OutlinedSwatch)
                             ->schema($this->designSchema()),
@@ -231,7 +225,6 @@ class ManageSettings extends Page
         $this->saveCompany($company, $data);
         $this->saveAbout($about, $data);
         $this->saveDesign($design, $data);
-        app(TrackingScripts::class)->save($data);
 
         app()->call([$this, 'mount']);
 
@@ -525,7 +518,7 @@ class ManageSettings extends Page
                 ->schema([
                     CuratorPicker::make('default_image_media_id')->label('Ảnh mặc định trang Giới thiệu')->helperText('Độc lập với ảnh giới thiệu trên trang chủ.'),
                     CuratorPicker::make('story_image_media_id')
-                        ->label('Ảnh câu chuyện DVTEC')
+                        ->label('Ảnh câu chuyện doanh nghiệp')
                         ->disk('public')
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
@@ -549,7 +542,7 @@ class ManageSettings extends Page
                         ->acceptedFileTypes(['image/*'])
                         ->columnSpanFull(),
                     GalleryPicker::make('office_gallery')
-                        ->label('Gallery văn phòng DVTEC')
+                        ->label('Gallery văn phòng doanh nghiệp')
                         ->multiple()
                         ->disk('public')
                         ->constrained()
@@ -716,7 +709,7 @@ class ManageSettings extends Page
                             ->columnSpanFull(),
                     ])
                     ->columns(1),
-                Section::make('Văn phòng DVTEC')
+                Section::make('Văn phòng doanh nghiệp')
                     ->icon(Heroicon::OutlinedBuildingOffice2)
                     ->schema([
                         TextInput::make("office_title.{$locale}")

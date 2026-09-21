@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Menus\Schemas;
 
 use App\Models\Intro;
-use App\Models\LandingPage;
 use App\Models\MenuItem;
 use App\Models\Post;
 use App\Models\PostCategory;
@@ -173,7 +172,6 @@ final class MenuForm
             'native_route' => 'route',
             'native_service' => 'service',
             'native_service_category' => 'service_category',
-            'native_landing_page' => 'landing_page',
             'native_project' => 'project',
             'native_project_category' => 'project_category',
             'native_post' => 'post',
@@ -181,7 +179,6 @@ final class MenuForm
             'custom' => 'custom',
             Service::class => 'service',
             ServiceCategory::class => 'service_category',
-            LandingPage::class => 'landing_page',
             Project::class => 'project',
             ProjectCategory::class => 'project_category',
             Post::class => 'post',
@@ -197,7 +194,6 @@ final class MenuForm
             'route' => 'native_route',
             'service' => 'native_service',
             'service_category' => 'native_service_category',
-            'landing_page' => 'native_landing_page',
             'project' => 'native_project',
             'project_category' => 'native_project_category',
             'post' => 'native_post',
@@ -213,7 +209,6 @@ final class MenuForm
             'home' => 'Trang chủ',
             'about' => 'Giới thiệu',
             'services.index' => 'Tất cả dịch vụ',
-            'pricing.index' => 'Bảng giá',
             'projects.index' => 'Tất cả dự án',
             'posts.index' => 'Blog',
             'contact' => 'Liên hệ',
@@ -285,15 +280,6 @@ final class MenuForm
                         'meta' => 'Dịch vụ',
                     ])
                     ->all(),
-            ],
-            [
-                'key' => 'landing-pages',
-                'label' => 'Landing pages',
-                'items' => LandingPage::query()->published()->orderBy('title')->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])->map(fn (LandingPage $landingPage): array => [
-                    'key' => "landing_page:{$landingPage->id}",
-                    'label' => $landingPage->title,
-                    'meta' => 'Landing page',
-                ])->all(),
             ],
             [
                 'key' => 'project-categories',

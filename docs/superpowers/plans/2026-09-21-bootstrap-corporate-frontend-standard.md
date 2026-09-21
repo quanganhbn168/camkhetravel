@@ -2,7 +2,7 @@
 
 > **Dành cho:** đội triển khai
 
-**Mục tiêu:** Chuẩn hoá frontend thành một nền Bootstrap 5 gọn, tái sử dụng được cho website giới thiệu doanh nghiệp, dịch vụ, dự án, giải pháp, sản phẩm và liên hệ. Giữ nguyên Laravel, Filament, Curator, URL/slug, dữ liệu CMS, bình luận và dữ liệu đánh giá sao.
+**Mục tiêu:** Chuẩn hoá frontend thành một nền Bootstrap 5 gọn, tái sử dụng được cho website giới thiệu doanh nghiệp, dịch vụ, dự án, giải pháp, sản phẩm và liên hệ. Giữ Laravel, Filament, Curator, các URL còn lại, dữ liệu CMS, bình luận và dữ liệu đánh giá sao; gỡ Landing, Bảng giá và Tracking.
 
 **Kiến trúc:** Một entry chung chỉ chứa hệ giao diện dùng chung; CSS/JS đặc thù được tách theo nhóm trang. Bootstrap phụ trách các tương tác giao diện. Dữ liệu trình bày được chuẩn bị trong controller, Blade chỉ render. Tailwind chỉ còn ở bundle Filament.
 
@@ -14,8 +14,7 @@
 
 - Không đưa tên dự án, khách hàng, thương hiệu hoặc tên miền vào tên file frontend, CSS custom property, class, biến JavaScript hay Vite entry.
 - Quy ước chung: `--color-primary`, `--color-primary-hover`, `--color-ink`, `--color-surface`, `--color-muted`, `--font-sans`, `--font-display`; `.site-header`, `.site-footer`, `.site-container`, `.content-card`, `.page-hero`, `.section-heading`, `.form-status`.
-- Không thay đổi migration, model, route, slug, quan hệ Curator, bình luận, rating 1–5 hay trạng thái kiểm duyệt.
-- Không xoá tính năng quản trị như landing, pricing hay tracking chỉ vì dữ liệu local đang ít hoặc trống.
+- Xoá trọn Landing, Bảng giá và Tracking theo dependency: route, controller, admin resource, settings, provider, view, model/policy/test và bảng/quan hệ dữ liệu liên quan. Không đụng Curator, bình luận, rating 1–5 hoặc trạng thái kiểm duyệt của nội dung còn lại.
 - Không khai báo JSON-LD `AggregateRating` trong đợt frontend này. Dữ liệu bình luận/rating là nguồn đúng cho schema sau này; việc hiện rich result Google không thể được đảm bảo bằng code.
 - Mọi thay đổi public đều phải hoạt động ở 1440px và 390px; header, form, ảnh gallery, tab/accordion và modal phải điều khiển được bằng bàn phím.
 
@@ -126,7 +125,7 @@ $response->assertOk()
 - Modify: `tests/Feature/HomeFeaturedServicesTest.php`
 
 1. Chuyển các mảng trình bày tĩnh hiện nằm trong Blade vào phương thức presentation riêng của `HomeController`; không tạo bảng hoặc thay dữ liệu CMS.
-2. Dùng Bootstrap Carousel cho hero khi có nhiều slide; tab dịch vụ dùng Bootstrap nav/tab, FAQ dùng accordion, video dùng modal, card dùng grid responsive.
+2. Giữ Swiper cho hero, post và testimonial vì đây là slider hiện có đầy đủ navigation/keyboard/responsive; tab dịch vụ dùng Bootstrap nav/tab, FAQ dùng accordion, video dùng modal, card dùng grid responsive.
 3. Đổi toàn bộ class trang chủ cũ/mang tên dự án thành `.home-page`, `.home-hero`, `.home-section`, `.solution-card`, `.process-step` và token chung.
 4. Xác nhận partial dịch vụ nổi bật cũ không có caller trước khi xoá cùng CSS chỉ phục vụ nó.
 
@@ -218,8 +217,8 @@ $response->assertOk()
 - Delete after zero-call verification: JS initialization cũ chỉ phục vụ `alpinejs`, `aos`, `glightbox`, `sweetalert2`, `swiper`, `axios`
 
 1. Chạy caller audit trước từng lần xoá. Không xoá asset Curator/Filament.
-2. Sau khi tất cả interaction được Bootstrap hoặc page-local JS thay thế, gỡ `axios`, `alpinejs`, `aos`, `glightbox`, `sweetalert2`, `swiper`, `sass` khỏi dependency bằng pnpm.
-3. Giữ `bootstrap`, `@popperjs/core`, `tailwindcss` (Filament), Vite và các dependency quản trị còn caller.
+2. Sau khi tất cả interaction được Bootstrap hoặc page-local JS thay thế, gỡ `axios`, `alpinejs`, `aos`, `glightbox`, `sweetalert2`, `sass` khỏi dependency bằng pnpm. Giữ `swiper` cho slider.
+3. Giữ `bootstrap`, `@popperjs/core`, `swiper`, `tailwindcss` (Filament), Vite và các dependency quản trị còn caller.
 4. Xác minh source public không còn Tailwind class/directive; Tailwind chỉ tồn tại trong `resources/css/filament/admin/theme.css` và chuỗi build admin.
 
 **Kiểm tra:**
@@ -234,6 +233,21 @@ git status --short
 ```
 
 **Tiêu chí xong:** public bundle không còn dependency cũ; admin vẫn build; lockfile và workspace metadata nhất quán.
+
+## Chặng 0 — Gỡ Landing, Bảng giá và Tracking
+
+**Files:**
+- Delete: Landing, Pricing, Tracking controllers/models/resources/policies/support/views/tests đã map bằng caller audit.
+- Modify: `routes/web.php`, `bootstrap/providers.php`, `config/settings.php`, `app/Providers/FrontendServiceProvider.php`, `app/Filament/Pages/ManageSettings.php`, SEO/menu/dashboard/service callers.
+- Create: migration xoá bảng/foreign key Landing và Bảng giá theo thứ tự phụ thuộc.
+- Create: `tests/Feature/RemovedSubsystemsTest.php`.
+
+1. Viết test đỏ xác nhận route `/bang-gia`, các route bình luận Landing, lớp Tracking settings/provider và entry Landing/Pricing không còn được đăng ký.
+2. Xoá triển khai theo dependency, cập nhật route/menu/SEO/dashboard/service callers còn sống; giữ comments/rating của Service/Project/Post.
+3. Migration xoá dữ liệu và schema Landing/Bảng giá chỉ chạy khi deploy `php artisan migrate`; local hiện không có Landing hay PricingPlan.
+4. Không làm “fallback” render cũ: URL/tính năng đã bỏ phải trả 404 hoặc không tồn tại route, không redirect sang nội dung khác.
+
+**Tiêu chí xong:** admin không còn nhóm Landing, Bảng giá hay Tracking; public không còn `/bang-gia` hay landing slug; source không còn provider/script injection tương ứng.
 
 ## Kiểm thử toàn đợt và bàn giao
 

@@ -4,7 +4,6 @@ use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
 use App\Settings\DesignSettings;
 use App\Settings\HomepageSettings;
-use App\Settings\TrackingSettings;
 use App\Settings\WebsiteSettings;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelSettings\SettingsCasts\DataCast;
@@ -20,7 +19,6 @@ return [
      * put them (manually) here.
      */
     'settings' => [
-        TrackingSettings::class,
         WebsiteSettings::class,
         HomepageSettings::class,
         CompanySettings::class,

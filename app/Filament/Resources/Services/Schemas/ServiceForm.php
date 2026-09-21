@@ -149,7 +149,7 @@ final class ServiceForm
                         ->icon(Heroicon::OutlinedShieldCheck)
                         ->schema([
                             CuratorPicker::make('commitment_media_id')->label('Ảnh cam kết')->relationship('commitmentMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị ở một bên của khối cam kết.')->columnSpanFull(),
-                            TextInput::make('commitment_title')->label('Tiêu đề')->placeholder('Cam kết của DVTEC')->maxLength(255)->columnSpanFull(),
+                            TextInput::make('commitment_title')->label('Tiêu đề')->placeholder('Cam kết của doanh nghiệp')->maxLength(255)->columnSpanFull(),
                             Textarea::make('commitment_description')->label('Mô tả')->rows(3)->columnSpanFull(),
                             Repeater::make('commitment_items')
                                 ->label('Các cam kết')

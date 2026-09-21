@@ -9,7 +9,7 @@
                 <div class="max-w-3xl">
                     <p class="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">Trung tâm quản trị</p>
                     <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Tổng quan website</h2>
-                    <p class="mt-3 text-sm leading-6 text-white/80 sm:text-base">Quản lý nội dung, thư viện media và các yêu cầu tư vấn của DVTEC trong một màn hình chung.</p>
+                    <p class="mt-3 text-sm leading-6 text-white/80 sm:text-base">Quản lý nội dung, thư viện media và các yêu cầu tư vấn trong một màn hình chung.</p>
                 </div>
                 <div class="rounded-xl bg-white/10 px-4 py-3 text-sm text-white/90 ring-1 ring-inset ring-white/15">
                     <span class="block text-xs uppercase tracking-wide text-white/60">Cập nhật lúc</span>
@@ -103,7 +103,7 @@
                                         default => $lead->status ?: 'Chưa rõ',
                                     } }}</span>
                                 </div>
-                                <p class="mt-2 truncate text-xs text-gray-500 dark:text-gray-400">{{ $lead->service?->title ?: ($lead->landingPage?->title ?: 'Nguồn website') }} · {{ $lead->created_at?->format('d/m H:i') }}</p>
+                                <p class="mt-2 truncate text-xs text-gray-500 dark:text-gray-400">{{ $lead->service?->title ?: 'Nguồn website' }} · {{ $lead->created_at?->format('d/m H:i') }}</p>
                             </div>
                         @endforeach
                     </div>

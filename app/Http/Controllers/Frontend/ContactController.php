@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
-use App\Models\PricingPackage;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
 use App\Support\Localization\LocalizedUrl;
@@ -32,13 +31,8 @@ class ContactController extends Controller
             $googleMapsEmbedUrl = 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed';
         }
 
-        $selectedPackage = PricingPackage::query()->active()
-            ->whereKey($request->integer('plan'))
-            ->whereHas('servicePricing.service', fn ($query) => $query->published()->whereKey($request->integer('service')))
-            ->first();
-
         return view('frontend.contact', [
-            'pricingMessage' => $selectedPackage ? 'Tôi muốn được tư vấn gói '.$selectedPackage->name.'.' : '',
+            'prefilledMessage' => '',
             'services' => Service::query()->published()->orderBy('sort_order')->get(['id', 'title']),
             'contactHeroImageUrl' => MediaUrl::versioned(
                 Media::query()->find($this->website->contact_image_media_id),
@@ -57,23 +51,16 @@ class ContactController extends Controller
 
     public function store(Request $request): RedirectResponse|JsonResponse
     {
-        $isLandingSubmission = $request->boolean('from_landing_page');
         $data = $request->validate([
-            'name' => [$isLandingSubmission ? 'nullable' : 'required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
-            'phone' => [$isLandingSubmission ? 'required' : 'nullable', 'string', 'max:32'],
+            'phone' => ['nullable', 'string', 'max:32'],
             'company' => ['nullable', 'string', 'max:255'],
             'service_id' => ['nullable', 'exists:services,id'],
-            'landing_page_id' => ['nullable', 'exists:landing_pages,id'],
             'budget' => ['nullable', 'string', 'max:255'],
             'timeline' => ['nullable', 'string', 'max:255'],
-            'message' => [$isLandingSubmission ? 'nullable' : 'required', 'string', 'max:5000'],
+            'message' => ['required', 'string', 'max:5000'],
         ]);
-
-        if ($isLandingSubmission) {
-            $data['name'] = filled($data['name'] ?? null) ? $data['name'] : 'Chưa cung cấp';
-            $data['message'] = filled($data['message'] ?? null) ? $data['message'] : 'Chưa cung cấp';
-        }
 
         $contactRequest = ContactRequest::query()->create($data);
 

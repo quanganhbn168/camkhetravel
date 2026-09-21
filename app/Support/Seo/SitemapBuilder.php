@@ -3,7 +3,6 @@
 namespace App\Support\Seo;
 
 use App\Models\Intro;
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -91,7 +90,6 @@ class SitemapBuilder
             ['services.index', 'weekly', 0.9],
             ['products.index', 'weekly', 0.8],
             ['projects.index', 'weekly', 0.9],
-            ['pricing.index', 'monthly', 0.7],
             ['posts.index', 'weekly', 0.8],
             ['about', 'monthly', 0.6],
             ['contact', 'monthly', 0.5],
@@ -104,7 +102,6 @@ class SitemapBuilder
     {
         foreach ([
             [Service::class, 'monthly', 0.8],
-            [LandingPage::class, 'monthly', 0.8],
             [Project::class, 'monthly', 0.8],
             [Post::class, 'monthly', 0.7],
             [Product::class, 'monthly', 0.8],
@@ -113,10 +110,9 @@ class SitemapBuilder
                 ->published()
                 ->with('slugs')
                 ->get()
-                ->each(function (Service|LandingPage|Project|Post|Product $item) use ($frequency, $priority): void {
+                ->each(function (Service|Project|Post|Product $item) use ($frequency, $priority): void {
                     $url = match (true) {
                         $item instanceof Service => LocalizedUrl::service($item),
-                        $item instanceof LandingPage => LocalizedUrl::landingPage($item),
                         $item instanceof Project => LocalizedUrl::project($item),
                         $item instanceof Post => LocalizedUrl::post($item),
                         $item instanceof Product => LocalizedUrl::product($item),

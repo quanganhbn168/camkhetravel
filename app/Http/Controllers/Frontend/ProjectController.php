@@ -28,7 +28,7 @@ class ProjectController extends Controller
         return view('frontend.projects.index', $this->listingData(backstageService: $backstageService, request: $request) + [
             'seo' => $this->seo->listing(
                 'Dự án | '.$this->seo->siteName(),
-                'Các công trình PCCC tiêu biểu đã được DVTEC triển khai.',
+                'Các công trình PCCC tiêu biểu do '.$this->seo->siteName().' triển khai.',
                 LocalizedUrl::route('projects.index'),
             ),
         ]);
@@ -169,7 +169,7 @@ class ProjectController extends Controller
             'pageTitle' => $activeCategory?->name ?? ($backstageService ? 'Dự án: '.$backstageService->title : 'Dự án PCCC'),
             'pageDescription' => $activeCategory?->description ?: ($backstageService
                 ? 'Các dự án đã được gắn với dịch vụ '.$backstageService->title.'.'
-                : 'Những công trình DVTEC đã đồng hành từ khảo sát ban đầu đến khi hệ thống PCCC vận hành ổn định.'),
+                : 'Những công trình '.$this->seo->siteName().' đã đồng hành từ khảo sát ban đầu đến khi hệ thống PCCC vận hành ổn định.'),
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',

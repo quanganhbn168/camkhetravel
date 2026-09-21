@@ -96,7 +96,7 @@ class AboutController extends Controller
 
                 return $url ? [
                     'url' => $url,
-                    'alt' => trim((string) ($item->alt ?? $item->title ?? '')) ?: ($managed['office_title'] ?: 'Văn phòng DVTEC').' — ảnh '.($index + 1),
+                    'alt' => trim((string) ($item->alt ?? $item->title ?? '')) ?: ($managed['office_title'] ?: 'Văn phòng '.$this->website->site_name).' — ảnh '.($index + 1),
                 ] : null;
             })
             ->filter()
@@ -104,7 +104,7 @@ class AboutController extends Controller
         if ($about['office_gallery']->isEmpty() && $about['office_image_url']) {
             $about['office_gallery'] = collect([[
                 'url' => $about['office_image_url'],
-                'alt' => $managed['office_title'] ?: 'Văn phòng DVTEC',
+                'alt' => $managed['office_title'] ?: 'Văn phòng '.$this->website->site_name,
             ]]);
         }
         $videoPosterUrl = $this->sectionImageUrl($media, $this->settings->video_poster_media_id, $fallbackImageUrl);

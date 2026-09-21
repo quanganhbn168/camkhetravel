@@ -62,7 +62,6 @@ class MenuItem extends Model
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
             'service-category' => $this->serviceCategoryLink(),
-            'landing-page' => $this->landingPageLink(),
             'project' => $this->projectLink(),
             'project-category' => $this->projectCategoryLink(),
             'post' => $this->postLink(),
@@ -82,7 +81,6 @@ class MenuItem extends Model
             'native_route' => 'route',
             'native_service' => 'service',
             'native_service_category' => 'service-category',
-            'native_landing_page' => 'landing-page',
             'native_project' => 'project',
             'native_project_category' => 'project-category',
             'native_post' => 'post',
@@ -90,7 +88,6 @@ class MenuItem extends Model
             'native_page' => 'custom',
             'custom' => 'custom',
             Service::class => 'service',
-            LandingPage::class => 'landing-page',
             Project::class => 'project',
             Post::class => 'post',
             Product::class => 'product',
@@ -131,7 +128,6 @@ class MenuItem extends Model
             'home',
             'about',
             'services.index',
-            'pricing.index',
             'projects.index',
             'posts.index',
             'products.index',
@@ -148,16 +144,6 @@ class MenuItem extends Model
             ->find($this->linked_source_id);
 
         return $service?->slug ? LocalizedUrl::slug($service->slug) : '#';
-    }
-
-    private function landingPageLink(): string
-    {
-        $landingPage = LandingPage::query()
-            ->published()
-            ->with('slugs')
-            ->find($this->linked_source_id);
-
-        return $landingPage ? LocalizedUrl::landingPage($landingPage) : '#';
     }
 
     private function serviceCategoryLink(): string

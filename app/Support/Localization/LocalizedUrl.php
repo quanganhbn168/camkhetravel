@@ -2,7 +2,6 @@
 
 namespace App\Support\Localization;
 
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Product;
@@ -28,12 +27,6 @@ class LocalizedUrl
             $parameters['service'] = $name === 'services.comments.store'
                 ? $parameters['service']->getKey()
                 : $parameters['service']->getRouteKey();
-        }
-
-        if (($parameters['landingPage'] ?? null) instanceof UrlRoutable) {
-            $parameters['landingPage'] = $name === 'landing-pages.comments.store'
-                ? $parameters['landingPage']->getKey()
-                : $parameters['landingPage']->getRouteKey();
         }
 
         if (($parameters['project'] ?? null) instanceof UrlRoutable) {
@@ -79,11 +72,6 @@ class LocalizedUrl
         return self::route('services.category', ['category' => self::termSlug($category)], $locale);
     }
 
-    public static function landingPage(LandingPage $landingPage, ?string $locale = null): string
-    {
-        return self::slug(self::contentSlug($landingPage), $locale);
-    }
-
     public static function postCategory(PostCategory $category, ?string $locale = null): string
     {
         return self::route('posts.category', ['slug' => self::termSlug($category)], $locale);
@@ -109,7 +97,6 @@ class LocalizedUrl
             'projects.index' => 'du-an',
             'projects.category' => 'du-an/danh-muc/'.($parameters['slug'] ?? ''),
             'projects.show' => 'du-an/'.($parameters['slug'] ?? ''),
-            'pricing.index' => 'bang-gia',
             'about' => 'gioi-thieu',
             'contact' => 'lien-he',
             'contact.store' => 'lien-he',
@@ -118,7 +105,6 @@ class LocalizedUrl
             'products.index' => 'san-pham',
             'products.category' => 'san-pham/danh-muc/'.($parameters['slug'] ?? ''),
             'products.show' => 'san-pham/'.($parameters['slug'] ?? ''),
-            'landing-pages.comments.store' => 'binh-luan/landing-page/'.($parameters['landingPage'] ?? ''),
             'projects.comments.store' => 'binh-luan/du-an/'.($parameters['project'] ?? ''),
             'posts.index' => 'blog',
             'posts.category' => 'blog/danh-muc/'.($parameters['slug'] ?? ''),
@@ -143,7 +129,7 @@ class LocalizedUrl
             : $baseUrl.'/'.ltrim($path, '/');
     }
 
-    private static function contentSlug(Post|Project|Service|LandingPage|Product $content): string
+    private static function contentSlug(Post|Project|Service|Product $content): string
     {
         return $content->slug ?: Str::slug($content->title);
     }

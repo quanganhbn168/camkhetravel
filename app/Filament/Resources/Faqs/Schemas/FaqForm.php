@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Faqs\Schemas;
 
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\Project;
@@ -39,7 +38,6 @@ final class FaqForm
                             'service' => 'Dịch vụ',
                             'project' => 'Dự án',
                             'product' => 'Sản phẩm',
-                            'landing-page' => 'Landing page',
                             'post' => 'Bài viết',
                         ])
                         ->default('homepage')
@@ -79,7 +77,6 @@ final class FaqForm
             'service' => Service::query()->orderBy('title')->pluck('title', 'id')->all(),
             'project' => Project::query()->orderBy('title')->pluck('title', 'id')->all(),
             'product' => Product::query()->orderBy('title')->pluck('title', 'id')->all(),
-            'landing-page' => LandingPage::query()->orderBy('title')->pluck('title', 'id')->all(),
             'post' => Post::query()->orderBy('title')->pluck('title', 'id')->all(),
             default => [],
         };

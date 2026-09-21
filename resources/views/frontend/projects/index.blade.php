@@ -63,10 +63,10 @@
         </div>
     </section>
 
-    <section class="pccc-archive-stats">
-        <div class="site-container pccc-archive-stats__grid">
+    <section class="site-archive-stats">
+        <div class="site-container site-archive-stats__grid">
             @foreach ($archiveStats as $stat)
-                <div class="pccc-archive-stat">
+                <div class="site-archive-stat">
                     <strong>{{ $stat['value'] }}</strong>
                     <span>{{ $stat['label'] }}</span>
                 </div>
@@ -75,15 +75,15 @@
     </section>
 
     @if ($marqueePartners->isNotEmpty())
-        <section class="pccc-partner-strip" aria-label="Đối tác và khách hàng">
+        <section class="site-partner-strip" aria-label="Đối tác và khách hàng">
             <div class="site-container">
-                <header class="pccc-partner-strip__heading">
-                    <p class="pccc-eyebrow">Đối tác - khách hàng tiêu biểu</p>
+                <header class="site-partner-strip__heading">
+                    <p class="site-eyebrow">Đối tác - khách hàng tiêu biểu</p>
                     <h2>Được tin tưởng trong nhiều loại công trình</h2>
                 </header>
-                <div class="pccc-partner-strip__items">
+                <div class="site-partner-strip__items">
                     @foreach ($marqueePartners as $partner)
-                        <span class="pccc-partner-strip__item">
+                        <span class="site-partner-strip__item">
                             @if ($partner->curatorMedia?->url)
                                 <img src="{{ $partner->curatorMedia->url }}" alt="{{ $partner->name }}" loading="lazy">
                             @else

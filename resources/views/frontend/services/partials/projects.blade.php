@@ -11,7 +11,7 @@
                 @foreach ($backstageProjects->take(3) as $project)
                     <article class="dv-hover-group overflow-hidden dv-services-partials-projects__article-6">
                         @if ($project->image_url)
-                            <a class="service-project-card__media glightbox" href="{{ $project->image_url }}" data-type="image" data-gallery="service-projects-{{ $service->id }}" data-title="{{ $project->title }}" aria-label="Mở ảnh dự án {{ $project->title }}">
+                            <a class="service-project-card__media" href="{{ $project->image_url }}" target="_blank" rel="noopener" aria-label="Mở ảnh dự án {{ $project->title }}">
                                 <img src="{{ $project->image_url }}" alt="{{ $project->title }}" loading="lazy">
                                 <span class="service-project-card__zoom" aria-hidden="true">↗</span>
                             </a>

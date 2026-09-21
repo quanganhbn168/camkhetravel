@@ -48,7 +48,7 @@ final class HeroSlideForm
                 ->columns(2),
             Section::make('Video cho slide')
                 ->icon(Heroicon::OutlinedVideoCamera)
-                ->description('Khi có video, trang chủ sẽ hiện nút Play ở giữa slide và mở video bằng GLightbox.')
+                ->description('Khi có video, trang chủ sẽ hiện nút Play dẫn tới video đó.')
                 ->schema([
                     ToggleButtons::make('video_source')
                         ->label('Nguồn video')

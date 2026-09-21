@@ -4,14 +4,12 @@ namespace App\Providers;
 
 use App\Models\HeroSlide;
 use App\Models\Intro;
-use App\Models\LandingPage;
 use App\Models\Language;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Partner;
 use App\Models\Post;
 use App\Models\PostCategory;
-use App\Models\PricingPlan;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Project;
@@ -58,7 +56,6 @@ class FrontendServiceProvider extends ServiceProvider
             'project-category' => ProjectCategory::class,
             'service' => Service::class,
             'service-category' => ServiceCategory::class,
-            'landing-page' => LandingPage::class,
             'user' => User::class,
         ]);
 
@@ -72,7 +69,6 @@ class FrontendServiceProvider extends ServiceProvider
             ProjectCategory::class,
             Service::class,
             ServiceCategory::class,
-            LandingPage::class,
         ] as $model) {
             $model::observe(SlugObserver::class);
         }
@@ -84,12 +80,10 @@ class FrontendServiceProvider extends ServiceProvider
             PostCategory::class,
             Product::class,
             ProductCategory::class,
-            PricingPlan::class,
             Project::class,
             ProjectCategory::class,
             Service::class,
             ServiceCategory::class,
-            LandingPage::class,
             Testimonial::class,
         ] as $model) {
             $model::observe(AssignNextOrderObserver::class);
@@ -104,7 +98,6 @@ class FrontendServiceProvider extends ServiceProvider
             ProjectCategory::class,
             Service::class,
             ServiceCategory::class,
-            LandingPage::class,
             Intro::class,
         ] as $model) {
             $model::observe(ContentSeoFallbackObserver::class);
@@ -251,7 +244,6 @@ class FrontendServiceProvider extends ServiceProvider
         $target = match ($linkedSourceType) {
             'native_service', Service::class, 'service' => [Service::class, 'slug.show'],
             'native_service_category', ServiceCategory::class, 'service-category' => [ServiceCategory::class, 'services.category', 'category'],
-            'native_landing_page', LandingPage::class, 'landing-page' => [LandingPage::class, 'slug.show'],
             'native_project', Project::class, 'project' => [Project::class, 'projects.show'],
             'native_project_category', ProjectCategory::class, 'project-category' => [ProjectCategory::class, 'projects.category'],
             'native_post', Post::class, 'post' => [Post::class, 'posts.show'],

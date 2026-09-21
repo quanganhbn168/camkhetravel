@@ -1,6 +1,6 @@
 {
-    "name": "DVTEC",
-    "short_name": "DVTEC",
+    "name": "Website",
+    "short_name": "Website",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#10233e",

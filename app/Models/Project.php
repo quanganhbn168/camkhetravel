@@ -45,12 +45,6 @@ class Project extends Model
         return $this->belongsToMany(Service::class, 'project_service')->withTimestamps();
     }
 
-    public function landingPages(): BelongsToMany
-    {
-        return $this->belongsToMany(LandingPage::class, 'landing_page_project')
-            ->withPivot('sort_order')
-            ->withTimestamps();
-    }
 
     public function relatedPosts(): BelongsToMany
     {

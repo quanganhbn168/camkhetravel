@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\LandingPage;
 use App\Models\MenuItem;
 use App\Support\Localization\LocalizedUrl;
 use Database\Seeders\WebsiteSeeder;
@@ -40,19 +39,4 @@ class MenuItemLinkTest extends TestCase
         $this->assertSame('#', $item->link);
     }
 
-    public function test_a_native_landing_page_menu_item_uses_its_landing_page_slug(): void
-    {
-        $landingPage = LandingPage::query()->create([
-            'title' => 'Trang giới thiệu kiểm thử',
-            'slug' => 'trang-gioi-thieu-kiem-thu',
-            'status' => 'published',
-            'published_at' => now()->subMinute(),
-        ]);
-        $item = new MenuItem([
-            'linked_source_type' => 'native_landing_page',
-            'linked_source_id' => $landingPage->id,
-        ]);
-
-        $this->assertSame(LocalizedUrl::landingPage($landingPage), $item->link);
-    }
 }

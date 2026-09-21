@@ -28,8 +28,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
-/** Seeds the small, real-world PCCC starter catalogue used by a fresh DVTEC install. */
-final class DvtecContentSeeder extends Seeder
+/** Seeds the starter catalogue used by a fresh corporate website install. */
+final class FoundationContentSeeder extends Seeder
 {
     /** @var array<string, int> */
     private array $mediaIds = [];
@@ -75,8 +75,8 @@ final class DvtecContentSeeder extends Seeder
         $disk = Storage::disk('public');
 
         foreach ($files as $key => $filename) {
-            $source = base_path('resources/content/dvtec/'.$filename);
-            $path = 'media/dvtec/'.$filename;
+            $source = base_path('resources/content/site/'.$filename);
+            $path = 'media/site/'.$filename;
 
             if (! is_file($source)) {
                 continue;
@@ -94,7 +94,7 @@ final class DvtecContentSeeder extends Seeder
             $media = Media::query()->updateOrCreate(
                 ['disk' => 'public', 'path' => $path],
                 [
-                    'directory' => 'media/dvtec',
+                    'directory' => 'media/site',
                     'visibility' => 'public',
                     'name' => pathinfo($filename, PATHINFO_FILENAME),
                     'width' => $dimensions[0] ?? null,

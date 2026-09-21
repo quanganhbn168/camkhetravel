@@ -10,7 +10,6 @@ use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
-use App\Support\Pricing\PricingCatalogPresenter;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,10 +18,7 @@ use Illuminate\View\View;
 
 class ServiceController extends Controller
 {
-    public function __construct(
-        private readonly FrontendSeoBuilder $seo,
-        private readonly PricingCatalogPresenter $pricingCatalogPresenter,
-    ) {}
+    public function __construct(private readonly FrontendSeoBuilder $seo) {}
 
     public function index(): View
     {
@@ -64,11 +60,6 @@ class ServiceController extends Controller
             'bannerVideoMedia',
             'processBackgroundMedia',
             'commitmentMedia',
-            'pricingCatalog.sourceMedia',
-            'pricingCatalog.packages' => fn ($query) => $query
-                ->active()
-                ->with(['items' => fn ($itemQuery) => $itemQuery->active()->orderBy('sort_order')])
-                ->orderBy('sort_order'),
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
             'backstageProjects' => fn ($query) => $query
@@ -125,7 +116,6 @@ class ServiceController extends Controller
             ])
             ->filter(fn (array $item): bool => $item['title'] !== '')
             ->values();
-        $pricingMatrix = $this->pricingCatalogPresenter->present($service->pricingCatalog);
         $featuredProducts = Product::query()
             ->published()
             ->with(['category', 'curatorMedia'])
@@ -140,16 +130,11 @@ class ServiceController extends Controller
             'backstageProjects' => $this->withImages($service->backstageProjects),
             'bannerVideoUrl' => $bannerVideoUrl,
             'bannerVideoType' => $service->bannerVideoMedia?->type,
-            'pricingCatalog' => $service->pricingCatalog,
-            'pricingMediaUrl' => MediaUrl::resolve($service->pricingCatalog?->sourceMedia),
-            'pricingMediaIsImage' => str_starts_with((string) $service->pricingCatalog?->sourceMedia?->type, 'image/'),
-            'pricingSourceUrl' => $service->pricingCatalog?->source_url,
             'processBackgroundUrl' => MediaUrl::resolve($service->processBackgroundMedia) ?: $service->image_url,
             'commitmentImageUrl' => MediaUrl::resolve($service->commitmentMedia) ?: $service->image_url,
             'processItems' => $processItems,
             'benefitItems' => $benefitItems,
             'commitmentItems' => $commitmentItems,
-            'pricingMatrix' => $pricingMatrix,
             'featuredProducts' => $featuredProducts,
             'testimonials' => Testimonial::query()
                 ->active()

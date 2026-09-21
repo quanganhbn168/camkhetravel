@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ShieldSeeder::class,
             WebsiteSeeder::class,
-            DvtecContentSeeder::class,
+            FoundationContentSeeder::class,
         ]);
     }
 }

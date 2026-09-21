@@ -1,8 +1,8 @@
-@props(['post' => null, 'service' => null, 'landingPage' => null, 'project' => null, 'compact' => false, 'ratingEnabled' => false])
+@props(['post' => null, 'service' => null, 'project' => null, 'compact' => false, 'ratingEnabled' => false])
 
 @php
-    $routeName = $project ? 'projects.comments.store' : ($landingPage ? 'landing-pages.comments.store' : ($service ? 'services.comments.store' : 'comments.store'));
-    $routeParameters = $project ? ['project' => $project] : ($landingPage ? ['landingPage' => $landingPage] : ($service ? ['service' => $service] : ['post' => $post]));
+    $routeName = $project ? 'projects.comments.store' : ($service ? 'services.comments.store' : 'comments.store');
+    $routeParameters = $project ? ['project' => $project] : ($service ? ['service' => $service] : ['post' => $post]);
 @endphp
 
 <form class="{{ $compact ? '' : 'dv-comment-form__element-1 ' }} dv-comment-form__element-2" action="{{ \App\Support\Localization\LocalizedUrl::route($routeName, $routeParameters) }}" method="post">

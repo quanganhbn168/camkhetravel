@@ -9,10 +9,14 @@ comments, ratings, URL, and CMS contracts remain unchanged.
 
 ## Scope
 
-This work changes public frontend assets, Blade markup, and frontend tests
-only. It does not remove or redesign existing backend, admin, content models,
-Curator media, comments, ratings, landing features, pricing features, tracking,
-or database schema.
+This work changes public frontend assets, Blade markup, frontend tests, and
+removes three unneeded inherited subsystems: Landing pages, pricing, and
+tracking snippets. Landing pages include their public slug renderer, admin
+resource, builder views, models, relations, policies, tests and tables. Pricing
+includes the public `/bang-gia` route and service/package price catalogue. The
+tracking subsystem includes its settings, provider, injected snippets and
+admin form. Curator media, comments, ratings, the remaining public URLs and
+their CMS content remain in place.
 
 The current comments and ratings remain intact. They provide the approved
 rating data needed for a later, separately-scoped AggregateRating structured
@@ -72,8 +76,10 @@ listing pages, and detail pages from Tailwind/legacy classes to Bootstrap plus
 neutral component classes. It removes a public dependency only after every
 caller has moved:
 
-- Prefer Bootstrap Carousel over Swiper where the content is a standard hero
-  or testimonial carousel.
+- Keep Swiper for hero, post and testimonial sliders; it already provides the
+  needed responsive, keyboard and navigation behaviour. Bootstrap Carousel is
+  acceptable only for a new simple single-purpose carousel that is demonstrably
+  simpler than the existing Swiper implementation.
 - Prefer Bootstrap Toast over SweetAlert for standard lead-form feedback.
 - Prefer CSS transitions with reduced-motion handling over AOS.
 - Replace public Alpine interactions with Bootstrap or small page-local

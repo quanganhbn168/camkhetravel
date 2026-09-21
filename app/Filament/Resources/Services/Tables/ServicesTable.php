@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Services\Tables;
 
-use App\Filament\Resources\ServicePricings\ServicePricingResource;
 use App\Models\Service;
 use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
@@ -27,7 +26,6 @@ final class ServicesTable
                 TextColumn::make('category.name')->label('Danh mục')->badge()->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
                 TextColumn::make('backstage_projects_count')->counts('backstageProjects')->label('Dự án')->sortable(),
-                TextColumn::make('pricingCatalog.title')->label('Bảng giá')->placeholder('Chưa có')->wrap()->toggleable(),
                 IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
                 IconColumn::make('is_home')->label('Trang chủ')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
@@ -40,16 +38,6 @@ final class ServicesTable
             ->defaultSort('sort_order')
             ->recordActions([
                 Action::make('preview')->label('Xem dịch vụ')->icon(Heroicon::OutlinedArrowTopRightOnSquare)->url(fn (Service $record): string => LocalizedUrl::service($record))->openUrlInNewTab(),
-                Action::make('pricing')
-                    ->label(fn (Service $record): string => $record->pricingCatalog()->exists() ? 'Bảng giá' : 'Tạo bảng giá')
-                    ->icon(Heroicon::OutlinedBanknotes)
-                    ->url(function (Service $record): string {
-                        $pricing = $record->pricingCatalog()->first();
-
-                        return $pricing
-                            ? ServicePricingResource::getUrl('edit', ['record' => $pricing])
-                            : ServicePricingResource::getUrl('create', ['service_id' => $record->id]);
-                    }),
                 EditAction::make(),
                 DeleteAction::make(),
             ]);

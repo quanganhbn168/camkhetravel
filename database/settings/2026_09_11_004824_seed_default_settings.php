@@ -97,13 +97,5 @@ return new class extends SettingsMigration
         $this->migrator->add('design.font_size_h3', '1.25rem');
         $this->migrator->add('design.font_size_stat', 'clamp(2.25rem, 4vw, 3.75rem)');
 
-        $this->migrator->add('tracking.google_analytics_code', null);
-        $this->migrator->add('tracking.google_tag_manager_head_code', null);
-        $this->migrator->add('tracking.google_tag_manager_body_code', null);
-        $this->migrator->add('tracking.meta_pixel_code', null);
-        $this->migrator->add('tracking.tiktok_pixel_code', null);
-        $this->migrator->add('tracking.head_code', null);
-        $this->migrator->add('tracking.body_open_code', null);
-        $this->migrator->add('tracking.body_close_code', null);
     }
 };

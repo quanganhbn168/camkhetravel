@@ -21,8 +21,4 @@ class ContactRequest extends Model
         return $this->belongsTo(Service::class);
     }
 
-    public function landingPage(): BelongsTo
-    {
-        return $this->belongsTo(LandingPage::class);
-    }
 }

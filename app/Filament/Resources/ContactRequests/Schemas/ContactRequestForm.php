@@ -23,7 +23,6 @@ final class ContactRequestForm
                     TextInput::make('email')->label('Email')->email(),
                     TextInput::make('company')->label('Công ty'),
                     Select::make('service_id')->label('Dịch vụ quan tâm')->relationship('service', 'title')->searchable()->preload(),
-                    Select::make('landing_page_id')->label('Landing page nguồn')->relationship('landingPage', 'title')->searchable()->preload(),
                     TextInput::make('budget')->label('Ngân sách'),
                     TextInput::make('timeline')->label('Thời gian dự kiến'),
                     Textarea::make('message')->label('Nội dung')->rows(5)->columnSpanFull(),

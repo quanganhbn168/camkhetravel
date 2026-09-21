@@ -8,11 +8,11 @@
 (() => {
     'use strict'
 
-    if (window.__dvtecCuratorRichEditorInitialized) {
+    if (window.__curatorRichEditorInitialized) {
         return
     }
 
-    window.__dvtecCuratorRichEditorInitialized = true
+    window.__curatorRichEditorInitialized = true
 
     let editorContext = null
     let processing = false

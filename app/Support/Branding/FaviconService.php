@@ -247,9 +247,11 @@ final class FaviconService
 
     private function manifest(): string
     {
+        $name = (string) config('app.name', 'Website');
+
         return (string) json_encode([
-            'name' => 'DVTEC',
-            'short_name' => 'DVTEC',
+            'name' => $name,
+            'short_name' => $name,
             'start_url' => '/',
             'display' => 'standalone',
             'background_color' => '#10233e',

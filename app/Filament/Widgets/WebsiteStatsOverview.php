@@ -2,11 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\LandingPages\LandingPageResource;
 use App\Filament\Resources\Posts\PostResource;
 use App\Filament\Resources\Projects\ProjectResource;
 use App\Filament\Resources\Services\ServiceResource;
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
@@ -48,11 +46,6 @@ class WebsiteStatsOverview extends StatsOverviewWidget
                 ->descriptionIcon(Heroicon::OutlinedCalendarDays)
                 ->color('warning')
                 ->url(PostResource::getUrl('index')),
-            Stat::make('Landing page đang hiển thị', LandingPage::query()->published()->count())
-                ->description('Các chiến dịch công khai')
-                ->descriptionIcon(Heroicon::OutlinedRectangleGroup)
-                ->color('gray')
-                ->url(LandingPageResource::getUrl('index')),
         ];
     }
 }

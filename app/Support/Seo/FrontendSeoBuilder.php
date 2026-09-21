@@ -2,7 +2,6 @@
 
 namespace App\Support\Seo;
 
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -109,53 +108,6 @@ class FrontendSeoBuilder
         );
     }
 
-    /** @param iterable<array<string, mixed>> $packages */
-    public function pricing(?Service $service, iterable $packages): array
-    {
-        $canonical = LocalizedUrl::route('pricing.index');
-        $title = $service
-            ? 'Bảng giá '.$service->title.' | '.$this->website->site_name
-            : 'Bảng giá theo dịch vụ | '.$this->website->site_name;
-        $description = $service
-            ? 'Các gói và mức đầu tư tham khảo cho dịch vụ '.$service->title.' tại '.$this->website->site_name.'.'
-            : 'Chọn từng dịch vụ để xem đúng bảng giá và phạm vi công việc tại '.$this->website->site_name.'.';
-        $offers = [];
-
-        foreach ($packages as $package) {
-            $offers[] = [
-                '@type' => 'Offer',
-                'name' => $package['name'],
-                'description' => $this->description($package['description'] ?: $package['name']),
-                'url' => $canonical.'#goi-dich-vu',
-            ];
-        }
-
-        $schema = [
-            $this->organizationSchema(),
-            $this->webPageSchema($canonical, $title, $description),
-            $this->breadcrumb([
-                ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                ['name' => __('site.pricing'), 'url' => $canonical],
-            ]),
-        ];
-
-        if ($offers !== []) {
-            $schema[] = [
-                '@type' => 'OfferCatalog',
-                '@id' => $canonical.'#offer-catalog',
-                'name' => $service ? 'Bảng giá '.$service->title : 'Bảng giá dịch vụ',
-                'itemListElement' => $offers,
-            ];
-        }
-
-        return $this->page(
-            title: $title,
-            description: $description,
-            canonical: $canonical,
-            schema: $schema,
-        );
-    }
-
     public function service(Service $service): array
     {
         $canonical = LocalizedUrl::service($service);
@@ -182,29 +134,6 @@ class FrontendSeoBuilder
                     ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
                     ['name' => __('site.services'), 'url' => LocalizedUrl::route('services.index')],
                     ['name' => $service->title, 'url' => $canonical],
-                ]),
-            ],
-        );
-    }
-
-    public function landingPage(LandingPage $landingPage): array
-    {
-        $canonical = LocalizedUrl::landingPage($landingPage);
-        $title = $landingPage->seo_title ?: $landingPage->title.' | '.$this->website->site_name;
-        $description = $landingPage->seo_description ?: $landingPage->excerpt ?: $landingPage->title;
-
-        return $this->page(
-            title: $title,
-            description: $description,
-            canonical: $canonical,
-            image: $landingPage->seoImageUrl($landingPage->image_url),
-            schema: [
-                $this->organizationSchema(),
-                $this->webPageSchema($canonical, $landingPage->title, $description),
-                $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => 'Landing page', 'url' => $canonical],
-                    ['name' => $landingPage->title, 'url' => $canonical],
                 ]),
             ],
         );

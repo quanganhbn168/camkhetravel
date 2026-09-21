@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Menus\Pages\Concerns;
 
 use App\Filament\Resources\Menus\Schemas\MenuForm;
 use App\Models\Intro;
-use App\Models\LandingPage;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Project;
@@ -117,7 +116,6 @@ trait InteractsWithMenuBuilder
             'intro' => Intro::query()->published()->find($sourceId),
             'service' => Service::query()->published()->find($sourceId),
             'service_category' => ServiceCategory::query()->where('is_active', true)->find($sourceId),
-            'landing_page' => LandingPage::query()->published()->find($sourceId),
             'project' => Project::query()->published()->find($sourceId),
             'project_category' => ProjectCategory::query()->where('is_active', true)->find($sourceId),
             'post' => Post::query()->published()->find($sourceId),
