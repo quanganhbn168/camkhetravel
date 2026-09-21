@@ -34,4 +34,12 @@ class PublicShellTest extends TestCase
         $this->assertStringNotContainsString('sweetalert2', $runtime);
         $this->assertStringNotContainsString('IntersectionObserver', $runtime);
     }
+
+    public function test_floating_contact_and_scroll_controls_have_usable_styles(): void
+    {
+        $styles = file_get_contents(resource_path('css/frontend/site.css'));
+
+        $this->assertStringContainsString('.floating-action {', $styles);
+        $this->assertStringContainsString('.scroll-top.is-visible', $styles);
+    }
 }
