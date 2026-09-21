@@ -1295,45 +1295,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .floating-action svg { width: 1.45rem; height: 1.45rem; }
 
-.floating-action--phone {
-    position: relative;
-    isolation: isolate;
-    background: var(--color-red);
-}
-
-.floating-action--phone::before,
-.floating-action--phone::after {
-    position: absolute;
-    z-index: 0;
-    inset: -0.35rem;
-    border: 1px solid rgb(var(--primary-color-rgb) / 0.72);
-    border-radius: 50%;
-    content: '';
-    opacity: 0;
-    pointer-events: none;
-    animation: phone-wave 2.6s ease-out infinite;
-}
-
-.floating-action--phone::after { animation-delay: 1.3s; }
-
-.floating-action--phone svg {
-    position: relative;
-    z-index: 1;
-    animation: phone-ring 3.2s ease-in-out infinite;
-    transform-origin: 50% 65%;
-}
-
-@keyframes phone-wave {
-    0%, 12% { opacity: 0; transform: scale(0.85); }
-    20% { opacity: 0.8; }
-    68%, 100% { opacity: 0; transform: scale(1.5); }
-}
-
-@keyframes phone-ring {
-    0%, 12%, 30%, 100% { transform: rotate(0deg); }
-    15%, 23% { transform: rotate(-14deg); }
-    19%, 27% { transform: rotate(14deg); }
-}
+.floating-action--phone,
+.floating-action--phone:hover { background: var(--color-red); box-shadow: none; }
 
 .floating-action--zalo { background: #087bea; }
 
@@ -1364,11 +1327,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .scroll-top.is-visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
-@media (prefers-reduced-motion: reduce) {
-    .floating-action--phone::before,
-    .floating-action--phone::after,
-    .floating-action--phone svg { animation: none; }
-}
 
 @media (min-width: 40rem) {
     :root { --color-shell: min(100% - 3rem, 79rem); }

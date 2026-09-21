@@ -42,13 +42,14 @@ class PublicShellTest extends TestCase
     {
         $styles = file_get_contents(resource_path('css/frontend/site.css'));
         $tokens = file_get_contents(resource_path('views/components/site-design-tokens.blade.php'));
+        $frontendStyles = file_get_contents(resource_path('scss/frontend.scss'));
 
         $this->assertStringContainsString('--primary-color:', $tokens);
-        $this->assertStringContainsString('--bs-primary: var(--primary-color);', $tokens);
+        $this->assertStringNotContainsString('--bs-primary:', $tokens);
+        $this->assertStringContainsString('@include brand.overrides();', $frontendStyles);
         $this->assertStringContainsString('.floating-action {', $styles);
-        $this->assertStringContainsString('.floating-action--phone::before', $styles);
-        $this->assertStringContainsString('rgb(var(--primary-color-rgb) / 0.72)', $styles);
-        $this->assertStringContainsString('@keyframes phone-ring', $styles);
+        $this->assertStringNotContainsString('.floating-action--phone::before', $styles);
+        $this->assertStringNotContainsString('@keyframes phone-ring', $styles);
         $this->assertStringContainsString('.scroll-top.is-visible', $styles);
     }
 }
