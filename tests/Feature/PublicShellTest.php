@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\WebsiteSettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,10 +13,12 @@ class PublicShellTest extends TestCase
 
     public function test_header_uses_bootstrap_navigation_without_alpine_markup(): void
     {
+        $this->seed(WebsiteSettingsSeeder::class);
         $this->seed(WebsiteSeeder::class);
 
         $this->get('/')
             ->assertOk()
+            ->assertSee('--primary-color: #e52327;', false)
             ->assertSee('site-header__toggle', false)
             ->assertSee('offcanvas', false)
             ->assertSee('data-bs-toggle="modal"', false)

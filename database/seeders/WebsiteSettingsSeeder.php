@@ -33,8 +33,8 @@ final class WebsiteSettingsSeeder extends Seeder
         $company->save();
 
         $design = app(DesignSettings::class);
-        $design->color_primary = '#0d6efd';
-        $design->color_primary_hover = '#0b5ed7';
+        $design->color_primary = '#e52327';
+        $design->color_primary_hover = '#c9161a';
         $design->color_ink = '#212529';
         $design->color_surface = '#f8f9fa';
         $design->color_muted = '#e9ecef';
