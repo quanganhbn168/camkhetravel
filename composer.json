@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "dvtec/website",
+    "name": "company/corporate-website",
     "type": "project",
-    "description": "The DVTEC website and content management system.",
+    "description": "A corporate website and content management system.",
     "keywords": ["laravel", "filament", "curator", "cms"],
     "license": "MIT",
     "require": {

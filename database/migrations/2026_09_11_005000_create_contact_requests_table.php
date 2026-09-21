@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('contact_requests', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('service_id')->nullable()->constrained('services')->nullOnDelete();
-            $table->foreignId('landing_page_id')->nullable()->constrained('landing_pages')->nullOnDelete();
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone', 32)->nullable();

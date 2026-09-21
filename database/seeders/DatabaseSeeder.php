@@ -13,8 +13,21 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             ShieldSeeder::class,
-            WebsiteSeeder::class,
-            FoundationContentSeeder::class,
+            AdminUserSeeder::class,
+            LanguageSeeder::class,
+            WebsiteSettingsSeeder::class,
+            MenuSeeder::class,
+            MediaSeeder::class,
+            ServiceCategorySeeder::class,
+            ProjectCategorySeeder::class,
+            ProductCategorySeeder::class,
+            PostCategorySeeder::class,
+            TagSeeder::class,
+            ServiceSeeder::class,
+            ProjectSeeder::class,
+            ProductSeeder::class,
+            PostSeeder::class,
+            HeroSlideSeeder::class,
         ]);
     }
 }

@@ -47,4 +47,14 @@ class RemovedSubsystemsTest extends TestCase
             $this->assertFalse(Schema::hasTable($removedTable), $removedTable.' must not remain in the database.');
         }
     }
+
+    public function test_schema_baseline_does_not_create_then_remove_deleted_subsystems(): void
+    {
+        $migrationNames = collect(glob(database_path('migrations/*.php')))
+            ->map(fn (string $path): string => basename($path));
+
+        $this->assertFalse($migrationNames->contains(fn (string $name): bool => str_contains($name, 'remove_')));
+        $this->assertFalse($migrationNames->contains(fn (string $name): bool => str_contains($name, 'landing_page')));
+        $this->assertFalse($migrationNames->contains(fn (string $name): bool => str_contains($name, 'pricing_')));
+    }
 }

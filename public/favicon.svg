@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-    <title id="title">DVTEC</title>
-    <desc id="desc">DVTEC</desc>
+    <title id="title">Website</title>
+    <desc id="desc">Website</desc>
     <rect width="512" height="512" rx="112" fill="#ee6b2d"/>
     <path fill="#10233e" d="M96 112h93c83 0 137 52 137 144s-54 144-137 144H96V112Zm72 63v162h20c42 0 66-28 66-81s-24-81-66-81h-20Zm190-63h58l-42 288h-58l42-288Z"/>
 </svg>

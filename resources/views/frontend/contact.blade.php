@@ -88,7 +88,7 @@
                     <label class="fw-semibold site-contact__element-18">Dịch vụ quan tâm<select class="form-select form-field" name="service_id"><option value="">Chọn dịch vụ</option>@foreach ($services as $service)<option value="{{ $service->id }}" @selected(old('service_id') == $service->id || request('service') == $service->id)>{{ $service->title }}</option>@endforeach</select></label>
                     <label class="fw-semibold site-contact__element-18">Ngân sách dự kiến<input class="form-control form-field" name="budget" value="{{ old('budget') }}"></label>
                     <label class="fw-semibold site-contact__element-18">Thời gian dự kiến<input class="form-control form-field" name="timeline" value="{{ old('timeline') }}"></label>
-                    <label class="fw-semibold site-contact__element-19">Nhu cầu của bạn<textarea class="form-control form-field" name="message" rows="7" required>{{ old('message', $pricingMessage ?? '') }}</textarea></label>
+                    <label class="fw-semibold site-contact__element-19">Nhu cầu của bạn<textarea class="form-control form-field" name="message" rows="7" required>{{ old('message') }}</textarea></label>
                 </div>
                 @if ($errors->any())<p class="site-contact__copy-20">{{ $errors->first() }}</p>@endif
                 <button class="btn btn-primary button-primary site-contact__action-15" type="submit">Gửi yêu cầu <span aria-hidden="true">↗</span></button>

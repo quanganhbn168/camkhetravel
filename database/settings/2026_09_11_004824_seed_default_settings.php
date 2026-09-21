@@ -6,9 +6,9 @@ return new class extends SettingsMigration
 {
     public function up(): void
     {
-        $this->migrator->add('website.site_name', 'DVTEC');
-        $this->migrator->add('website.tagline', 'Giải pháp PCCC toàn diện cho công trình');
-        $this->migrator->add('website.company_name', 'DVTEC Trading & Construction');
+        $this->migrator->add('website.site_name', 'Tên doanh nghiệp');
+        $this->migrator->add('website.tagline', 'Giải pháp đồng bộ cho công trình');
+        $this->migrator->add('website.company_name', 'Tên doanh nghiệp');
         $this->migrator->add('website.contact_email', '');
         $this->migrator->add('website.hotline', '');
         $this->migrator->add('website.contact_phone', '');
@@ -16,9 +16,9 @@ return new class extends SettingsMigration
         $this->migrator->add('website.facebook_url', '');
         $this->migrator->add('website.zalo_url', '');
         $this->migrator->add('website.youtube_url', '');
-        $this->migrator->add('website.seo_title', 'DVTEC | Giải pháp PCCC toàn diện');
-        $this->migrator->add('website.seo_description', 'DVTEC tư vấn, thiết kế, thi công, bảo trì và cung cấp thiết bị phòng cháy chữa cháy cho công trình.');
-        $this->migrator->add('website.seo_keywords', 'DVTEC, PCCC, phòng cháy chữa cháy, thi công hệ thống PCCC');
+        $this->migrator->add('website.seo_title', 'Tên doanh nghiệp | Giải pháp cho công trình');
+        $this->migrator->add('website.seo_description', 'Thông tin doanh nghiệp, dịch vụ, dự án và sản phẩm.');
+        $this->migrator->add('website.seo_keywords', 'doanh nghiệp, dịch vụ, dự án, sản phẩm');
         $this->migrator->add('website.logo_media_id', null);
         $this->migrator->add('website.favicon_media_id', null);
         $this->migrator->add('website.seo_image_media_id', null);
@@ -34,14 +34,14 @@ return new class extends SettingsMigration
         $this->migrator->add('website.phones', []);
         $this->migrator->add('website.branches', []);
 
-        $this->migrator->add('homepage.about_eyebrow', ['vi' => 'Về DVTEC']);
-        $this->migrator->add('homepage.about_title', ['vi' => 'Giải pháp PCCC thực tế cho công trình an toàn hơn.']);
-        $this->migrator->add('homepage.about_content', ['vi' => 'DVTEC kết nối tư vấn, thiết kế, thi công và bảo trì trong một quy trình rõ ràng, đồng bộ và đúng tiêu chuẩn.']);
+        $this->migrator->add('homepage.about_eyebrow', ['vi' => 'Về chúng tôi']);
+        $this->migrator->add('homepage.about_title', ['vi' => 'Giải pháp phù hợp cho từng công trình.']);
+        $this->migrator->add('homepage.about_content', ['vi' => 'Cập nhật nội dung giới thiệu doanh nghiệp tại trang quản trị.']);
         $this->migrator->add('homepage.stats', []);
         $this->migrator->add('homepage.commitments', ['vi' => "Khảo sát đúng hiện trạng\nThiết kế theo tiêu chuẩn\nBàn giao rõ ràng và đồng hành dài hạn"]);
         $this->migrator->add('homepage.capabilities', ['vi' => "Tư vấn & khảo sát\nThiết kế hệ thống PCCC\nThi công - lắp đặt\nBảo trì - bảo dưỡng"]);
         $this->migrator->add('homepage.consultation_title', ['vi' => 'Cần tư vấn giải pháp PCCC cho công trình?']);
-        $this->migrator->add('homepage.consultation_content', ['vi' => 'Gửi thông tin công trình để đội ngũ DVTEC khảo sát và đề xuất phương án phù hợp.']);
+        $this->migrator->add('homepage.consultation_content', ['vi' => 'Gửi thông tin công trình để nhận phương án phù hợp.']);
         $this->migrator->add('homepage.faq_title', ['vi' => 'Câu hỏi thường gặp']);
         $this->migrator->add('homepage.faq_description', ['vi' => 'Thông tin cần biết trước khi bắt đầu triển khai hệ thống PCCC.']);
 

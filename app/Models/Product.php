@@ -9,13 +9,14 @@ use App\Traits\HasSeoImage;
 use App\Traits\HasSlug;
 use App\Traits\HasTags;
 use Awcodes\Curator\Models\Media;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
-    use HasComments, HasFaqs, HasSlug, HasTags;
+    use HasComments, HasFactory, HasFaqs, HasSlug, HasTags;
     use HasSeoImage;
 
     protected $guarded = [];
