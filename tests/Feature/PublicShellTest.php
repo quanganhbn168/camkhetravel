@@ -40,6 +40,8 @@ class PublicShellTest extends TestCase
         $styles = file_get_contents(resource_path('css/frontend/site.css'));
 
         $this->assertStringContainsString('.floating-action {', $styles);
+        $this->assertStringContainsString('.floating-action--phone::before', $styles);
+        $this->assertStringContainsString('@keyframes phone-ring', $styles);
         $this->assertStringContainsString('.scroll-top.is-visible', $styles);
     }
 }
