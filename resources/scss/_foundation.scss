@@ -1,7 +1,7 @@
 @use 'tokens';
 :root {
-    --color-primary: var(--site-color-primary, #{tokens.$primary});
-    --color-primary-dark: var(--site-color-primary-hover, #{tokens.$primary-hover});
+    --color-primary: var(--primary-color, #{tokens.$primary});
+    --color-primary-dark: var(--primary-hover-color, #{tokens.$primary-hover});
     --color-dark: #{tokens.$dark};
     --color-ink: var(--site-color-ink, #17212b);
     --color-muted: #64748b;

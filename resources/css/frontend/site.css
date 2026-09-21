@@ -1,6 +1,6 @@
 :root {
-    --color-red: var(--site-color-primary, #e52327);
-    --color-red-dark: var(--site-color-primary-hover, #c9161a);
+    --color-red: var(--primary-color, #e52327);
+    --color-red-dark: var(--primary-hover-color, #c9161a);
     --color-navy: var(--site-color-ink, #061925);
     --color-pale: var(--site-color-surface, #f3f7fa);
     --color-line: #dce5eb;
@@ -1306,7 +1306,7 @@ h1, h2, h3, h4, h5, h6 {
     position: absolute;
     z-index: 0;
     inset: -0.35rem;
-    border: 1px solid rgb(229 35 39 / 0.72);
+    border: 1px solid rgb(var(--primary-color-rgb) / 0.72);
     border-radius: 50%;
     content: '';
     opacity: 0;

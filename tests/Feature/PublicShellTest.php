@@ -38,9 +38,13 @@ class PublicShellTest extends TestCase
     public function test_floating_contact_and_scroll_controls_have_usable_styles(): void
     {
         $styles = file_get_contents(resource_path('css/frontend/site.css'));
+        $tokens = file_get_contents(resource_path('views/components/site-design-tokens.blade.php'));
 
+        $this->assertStringContainsString('--primary-color:', $tokens);
+        $this->assertStringContainsString('--bs-primary: var(--primary-color);', $tokens);
         $this->assertStringContainsString('.floating-action {', $styles);
         $this->assertStringContainsString('.floating-action--phone::before', $styles);
+        $this->assertStringContainsString('rgb(var(--primary-color-rgb) / 0.72)', $styles);
         $this->assertStringContainsString('@keyframes phone-ring', $styles);
         $this->assertStringContainsString('.scroll-top.is-visible', $styles);
     }
