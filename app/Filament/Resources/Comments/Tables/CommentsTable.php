@@ -4,14 +4,14 @@ namespace App\Filament\Resources\Comments\Tables;
 
 use App\Models\Comment;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Filament\Support\Icons\Heroicon;
 
 class CommentsTable
 {
@@ -23,8 +23,8 @@ class CommentsTable
                     ->label('Loại')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => Comment::commentableTypeLabels()[$state] ?? 'Khác'),
-                TextColumn::make('commentable.title')->label('Nội dung')->searchable()->wrap()->limit(45),
-                TextColumn::make('author_name')->label('Người gửi')->searchable()->sortable(),
+                TextColumn::make('commentable.title')->copyable()->copyMessage('Đã sao chép')->label('Nội dung')->searchable()->wrap()->limit(45),
+                TextColumn::make('author_name')->copyable()->copyMessage('Đã sao chép')->label('Người gửi')->searchable()->sortable(),
                 TextColumn::make('author_email')->label('Email')->searchable()->toggleable(),
                 TextColumn::make('rating')->label('Đánh giá')->formatStateUsing(fn (?int $state): string => $state ? $state.'/5' : '—')->sortable(),
                 TextColumn::make('body')->label('Bình luận')->wrap()->lineClamp(2)->limit(80),

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Partner;
 use App\Models\Project;
 use App\Models\ProjectCategory;
+use App\Support\Categories\CategoryTree;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -38,8 +39,8 @@ class ProjectController extends Controller
         abort_unless($category->is_active, 404);
         $category->loadMissing('slugs');
 
-        $title = $category->name.' | Dự án';
-        $description = $category->description ?: 'Các dự án thuộc nhóm '.$category->name.'.';
+        $title = $category->seo_title ?: $category->name.' | Dự án';
+        $description = $category->seo_description ?: $category->description ?: 'Các dự án thuộc nhóm '.$category->name.'.';
 
         $request ??= request();
 
@@ -117,7 +118,7 @@ class ProjectController extends Controller
             ->with(['category', 'curatorMedia', 'slugs']);
 
         if ($activeCategory) {
-            $projectsQuery->where('project_category_id', $activeCategory->id);
+            $projectsQuery->whereIn('project_category_id', $activeCategory->subtreeIds(activeOnly: true));
         }
 
         $this->applyOrdering($projectsQuery, $sort);
@@ -136,6 +137,9 @@ class ProjectController extends Controller
 
         return [
             'activeCategory' => $activeCategory,
+            'pageBannerUrl' => $activeCategory?->banner_url,
+            'categoryImageUrl' => $activeCategory?->image_url,
+            'categoryBodyHtml' => (string) str((string) $activeCategory?->body)->sanitizeHtml(),
             'categories' => $this->categories(),
             'projects' => $projects,
             'heroImageUrl' => $heroProject ? MediaUrl::resolve($heroProject->curatorMedia) : null,
@@ -220,12 +224,12 @@ class ProjectController extends Controller
 
     private function categories()
     {
-        return ProjectCategory::query()
+        return CategoryTree::forDisplay(ProjectCategory::query()
             ->where('is_active', true)
             ->withCount(['projects' => fn (Builder $query) => $query->published()])
             ->with('slugs')
             ->orderBy('sort_order')
             ->get()
-            ->each(fn (ProjectCategory $category) => $category->setAttribute('public_url', route('projects.category', ['slug' => $category->slug])));
+            ->each(fn (ProjectCategory $category) => $category->setAttribute('public_url', route('projects.category', ['slug' => $category->slug]))), 'projects_count');
     }
 }

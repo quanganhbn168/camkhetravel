@@ -16,7 +16,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 final class ServiceForm
 {
@@ -27,7 +26,7 @@ final class ServiceForm
             ->components([
                 Group::make([
                     Section::make('Nội dung dịch vụ')
-                        ->icon(Heroicon::OutlinedDocumentText)
+
                         ->schema([
                             TextInput::make('title')
                                 ->label('Tên dịch vụ')
@@ -83,13 +82,13 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('SEO')
-                        ->icon(Heroicon::OutlinedMagnifyingGlass)
+
                         ->schema([
                             ...SeoFields::make(),
                         ])
                         ->columns(2),
                     Section::make('Giá trị nổi bật')
-                        ->icon(Heroicon::OutlinedSparkles)
+
                         ->schema([
                             TextInput::make('benefit_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
                             Textarea::make('benefit_description')->label('Mô tả')->rows(2)->columnSpanFull(),
@@ -109,7 +108,7 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('Quy trình triển khai')
-                        ->icon(Heroicon::OutlinedListBullet)
+
                         ->schema([
                             Textarea::make('process_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                             CuratorPicker::make('process_background_media_id')->label('Ảnh nền quy trình')->relationship('processBackgroundMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh nền cho toàn bộ section quy trình.')->columnSpanFull(),
@@ -138,7 +137,7 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('Cam kết dịch vụ')
-                        ->icon(Heroicon::OutlinedShieldCheck)
+
                         ->schema([
                             CuratorPicker::make('commitment_media_id')->label('Ảnh cam kết')->relationship('commitmentMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị ở một bên của khối cam kết.')->columnSpanFull(),
                             TextInput::make('commitment_title')->label('Tiêu đề')->placeholder('Cam kết của doanh nghiệp')->maxLength(255)->columnSpanFull(),
@@ -163,7 +162,7 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('Số liệu & video tham khảo')
-                        ->icon(Heroicon::OutlinedChartBar)
+
                         ->schema([
                             TextInput::make('stats_title')->label('Tiêu đề số liệu')->maxLength(255)->columnSpanFull(),
                             Textarea::make('stats_description')->label('Mô tả số liệu')->rows(2)->columnSpanFull(),
@@ -197,7 +196,7 @@ final class ServiceForm
                         ->columns(2),
                 ])->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')
-                    ->icon(Heroicon::OutlinedCog6Tooth)
+
                     ->schema([
                         Select::make('service_category_id')->label('Danh mục dịch vụ')->relationship('category', 'name')->searchable()->preload(),
                         Select::make('tags')

@@ -6,8 +6,8 @@ use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 class IntrosTable
@@ -20,10 +20,10 @@ class IntrosTable
                 CuratorColumn::make('curatorMedia')->label('Ảnh')->circular(),
                 TextColumn::make('kind')->label('Loại')->formatStateUsing(fn (string $state): string => $state === 'block' ? 'Khối giới thiệu / USP' : 'Bài giới thiệu')->badge(),
                 TextColumn::make('icon')->label('Icon class')->limit(30)->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('title')->label('Tiêu đề')->searchable()->sortable()->limit(50),
+                TextColumn::make('title')->copyable()->copyMessage('Đã sao chép')->label('Tiêu đề')->searchable()->sortable()->limit(50),
                 TextColumn::make('published_at')->label('Ngày xuất bản')->dateTime('d/m/Y H:i')->sortable(),
-                TextColumn::make('subtitle')->label('Tiêu đề phụ')->limit(40)->toggleable(isToggledHiddenByDefault: true),
-                IconColumn::make('is_active')->label('Hiển thị')->boolean(),
+                TextColumn::make('subtitle')->copyable()->copyMessage('Đã sao chép')->label('Tiêu đề phụ')->limit(40)->toggleable(isToggledHiddenByDefault: true),
+                ToggleColumn::make('is_active')->label('Hiển thị'),
             ])
             ->defaultSort('sort_order')
             ->reorderable('sort_order')

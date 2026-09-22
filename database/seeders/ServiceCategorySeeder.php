@@ -17,6 +17,9 @@ final class ServiceCategorySeeder extends Seeder
             ServiceCategory::query()->updateOrCreate(['name' => $name], [
                 'description' => $description, 'is_active' => true, 'is_featured' => true, 'is_home' => true,
                 'sort_order' => ($index + 1) * 10,
+                'parent_id' => null,
+                'curator_media_id' => MediaSeeder::id(['installation-team', 'engineering-team', 'technician'][$index]),
+                'banner_media_id' => MediaSeeder::id('facility'),
             ]);
         }
     }

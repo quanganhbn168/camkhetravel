@@ -8,7 +8,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 final class ContactRequestForm
 {
@@ -16,7 +15,7 @@ final class ContactRequestForm
     {
         return $schema->components([
             Section::make('Thông tin khách hàng')
-                ->icon(Heroicon::OutlinedUser)
+
                 ->schema([
                     TextInput::make('name')->label('Họ tên'),
                     TextInput::make('phone')->label('Điện thoại'),

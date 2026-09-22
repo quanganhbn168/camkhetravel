@@ -12,7 +12,7 @@ const initialiseHeroSwipers = () => {
             modules: [A11y, Autoplay, EffectFade, Keyboard],
             effect: 'fade',
             fadeEffect: { crossFade: true },
-            autoHeight: false,
+            autoHeight: true,
             speed: 700,
             loop: element.querySelectorAll('.swiper-slide').length > 1,
             autoplay: {

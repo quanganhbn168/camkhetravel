@@ -23,12 +23,10 @@
     }
     .hero .swiper-slide {
         position: relative;
-        min-height: clamp(520px, 70vh, 760px);
-        display: flex;
-        align-items: flex-end;
-        overflow: hidden;
+        height: auto;
+        display: grid;
+        grid-template-areas: 'slide';
     }
-    .hero__media,
     .hero__overlay {
         position: absolute;
         inset: 0;
@@ -36,7 +34,16 @@
         height: 100%;
     }
     .hero__media {
-        object-fit: cover;
+        grid-area: slide;
+        align-self: center;
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+    .hero__content-wrap {
+        grid-area: slide;
+        align-self: end;
+        min-width: 0;
     }
     .hero__overlay {
         background: rgba(var(--bs-dark-rgb), .58);
@@ -375,9 +382,6 @@
 
 @media (max-width: 767.98px) {
     .home-content {
-        .hero .swiper-slide {
-            min-height: 560px;
-        }
         .hero__content {
             padding-block: 4rem;
         }

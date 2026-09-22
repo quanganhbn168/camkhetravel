@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Support\Categories\CategoryTree;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -78,7 +79,7 @@ class ProductController extends Controller
         $productsQuery = Product::query()->published()->with(['category', 'curatorMedia', 'slugs', 'tags']);
 
         if ($activeCategory) {
-            $productsQuery->whereBelongsTo($activeCategory, 'category');
+            $productsQuery->whereIn('product_category_id', $activeCategory->subtreeIds(activeOnly: true));
         }
 
         match ($sort) {
@@ -92,13 +93,16 @@ class ProductController extends Controller
 
         return [
             'activeCategory' => $activeCategory,
-            'categories' => ProductCategory::query()
+            'pageBannerUrl' => $activeCategory?->banner_url,
+            'categoryImageUrl' => $activeCategory?->image_url,
+            'categoryBodyHtml' => (string) str((string) $activeCategory?->body)->sanitizeHtml(),
+            'categories' => CategoryTree::forDisplay(ProductCategory::query()
                 ->active()
                 ->withCount(['products' => fn (Builder $query) => $query->published()])
                 ->with('slugs')
                 ->orderBy('sort_order')
                 ->get()
-                ->each(fn (ProductCategory $category) => $category->setAttribute('public_url', route('products.category', ['slug' => $category->slug]))),
+                ->each(fn (ProductCategory $category) => $category->setAttribute('public_url', route('products.category', ['slug' => $category->slug]))), 'products_count'),
             'products' => $products,
             'heroImageUrl' => $hero?->image_url,
             'pageTitle' => $activeCategory?->name ?? 'Sản phẩm PCCC',

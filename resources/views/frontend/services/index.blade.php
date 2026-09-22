@@ -19,10 +19,8 @@
                     <a class="btn btn-dark mt-3" href="{{ route('contact') }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="resource-category-intro__visual">
-                    @if (($heroImageUrl ?: $defaultBannerUrl))
-                        <img src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="{{ $activeCategory->name }}">
-                    @else
-                        <span class="image-placeholder">DV</span>
+                    @if ($categoryImageUrl)
+                        <img src="{{ $categoryImageUrl }}" alt="{{ $activeCategory->name }}">
                     @endif
                 </div>
             </div>
@@ -60,6 +58,14 @@
             @endif
         </div>
     </section>
+
+    @if (filled($categoryBodyHtml ?? null))
+        <section class="section-space">
+            <div class="container">
+                <div class="resource-content">{!! $categoryBodyHtml !!}</div>
+            </div>
+        </section>
+    @endif
 
     @if ($processItems->isNotEmpty())
         <section class="archive-process section-space">

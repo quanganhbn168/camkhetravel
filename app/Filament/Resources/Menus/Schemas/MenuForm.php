@@ -22,7 +22,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 final class MenuForm
 {
@@ -32,8 +31,7 @@ final class MenuForm
             ->columns(['default' => 1, 'xl' => 3])
             ->components([
                 Section::make('Thêm vào menu')
-                    ->icon(Heroicon::OutlinedPlusCircle)
-                    ->description('Chọn nội dung có sẵn ở hệ thống hoặc thêm một liên kết riêng.')
+
                     ->schema([
                         ViewField::make('menu_source_picker')
                             ->label(null)
@@ -46,7 +44,7 @@ final class MenuForm
                     ->columnSpan(1),
                 Group::make([
                     Section::make('Thông tin menu')
-                        ->icon(Heroicon::OutlinedBars3)
+
                         ->schema([
                             TextInput::make('name')
                                 ->label('Tên menu')
@@ -68,8 +66,7 @@ final class MenuForm
                         ])
                         ->columns(2),
                     Section::make('Cấu trúc menu')
-                        ->icon(Heroicon::OutlinedListBullet)
-                        ->description('Kéo thả để sắp xếp; dùng thao tác vào trong / ra ngoài để thay đổi cấp menu. Các mục đóng mặc định để dễ quản lý.')
+
                         ->schema([
                             Repeater::make('topLevelItems')
                                 ->label('Danh sách menu item')
@@ -124,7 +121,6 @@ final class MenuForm
             ]);
     }
 
-    /** @return Repeater */
     private static function descendantItems(int $depth): Repeater
     {
         return Repeater::make('children')->label('Menu con')->relationship()->defaultItems(0)

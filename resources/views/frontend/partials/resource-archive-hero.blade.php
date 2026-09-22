@@ -1,7 +1,5 @@
 @php
-    $archiveBannerUrl = $activeCategory
-        ? ($heroImageUrl ?: $defaultBannerUrl)
-        : ($pageBannerUrl ?? null);
+    $archiveBannerUrl = $pageBannerUrl ?? null;
 @endphp
 
 <section class="resource-archive-hero" @if ($pageKey ?? null) data-system-page="{{ $pageKey }}" @endif>

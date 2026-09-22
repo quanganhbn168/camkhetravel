@@ -15,7 +15,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 final class PostForm
 {
@@ -26,7 +25,7 @@ final class PostForm
             ->components([
                 Group::make([
                     Section::make('Nội dung bài viết')
-                        ->icon(Heroicon::OutlinedDocumentText)
+
                         ->schema([
                             TextInput::make('title')
                                 ->label('Tiêu đề')
@@ -69,7 +68,7 @@ final class PostForm
                         ])
                         ->columns(2),
                     Section::make('SEO')
-                        ->icon(Heroicon::OutlinedMagnifyingGlass)
+
                         ->schema([
                             ...SeoFields::make(),
                         ])
@@ -77,7 +76,7 @@ final class PostForm
                 ])
                     ->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')
-                    ->icon(Heroicon::OutlinedCog6Tooth)
+
                     ->schema([
                         Select::make('post_category_id')->label('Chuyên mục')->relationship('category', 'name')->searchable()->preload(),
                         Select::make('tags')

@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Tags\Tables;
 
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 final class TagsTable
@@ -14,9 +14,8 @@ final class TagsTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Tên thẻ')->searchable()->sortable(),
-                TextColumn::make('slug')->label('Slug')->copyable(),
-                IconColumn::make('is_active')->label('Đang dùng')->boolean(),
+                TextColumn::make('name')->copyable()->copyMessage('Đã sao chép')->label('Tên thẻ')->searchable()->sortable(),
+                ToggleColumn::make('is_active')->label('Đang dùng'),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable(),
             ])
             ->defaultSort('name')

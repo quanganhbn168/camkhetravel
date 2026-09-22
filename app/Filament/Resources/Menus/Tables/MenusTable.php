@@ -14,7 +14,7 @@ final class MenusTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Menu')->searchable()->sortable(),
+                TextColumn::make('name')->copyable()->copyMessage('Đã sao chép')->label('Menu')->searchable()->sortable(),
                 TextColumn::make('location')->label('Vị trí')->badge()->searchable()->sortable(),
                 TextColumn::make('items_count')->label('Menu item')->counts('items')->sortable(),
                 ToggleColumn::make('is_active')->label('Kích hoạt'),

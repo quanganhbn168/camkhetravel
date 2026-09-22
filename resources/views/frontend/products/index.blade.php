@@ -26,4 +26,5 @@
         </div>
     </section>
 
+    @include('frontend.partials.category-content')
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostCategory;
+use App\Support\Categories\CategoryTree;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use DOMDocument;
@@ -62,10 +63,10 @@ class PostController extends Controller
         abort_unless($category->is_active, 404);
         $category->loadMissing('slugs');
 
-        $title = $category->name.' | Tin tức';
-        $description = $category->description ?: 'Các bài viết thuộc chuyên mục '.$category->name.'.';
+        $title = $category->seo_title ?: $category->name.' | Tin tức';
+        $description = $category->seo_description ?: $category->description ?: 'Các bài viết thuộc chuyên mục '.$category->name.'.';
         $sort = $this->selectedSort();
-        $posts = $this->withImages($this->sortPosts($category->posts()
+        $posts = $this->withImages($this->sortPosts(Post::query()->whereIn('post_category_id', $category->subtreeIds(activeOnly: true))
             ->published()
             ->with(['curatorMedia', 'slugs']), $sort)
             ->paginate(12)
@@ -80,6 +81,9 @@ class PostController extends Controller
             'categories' => $this->categories(),
             'posts' => $posts,
             'activeCategory' => $category,
+            'pageBannerUrl' => $category->banner_url,
+            'categoryImageUrl' => $category->image_url,
+            'categoryBodyHtml' => (string) str((string) $category->body)->sanitizeHtml(),
             'listingUrl' => route('posts.category', ['slug' => $category->slug]),
             'sort' => $sort,
             'sortOptions' => self::SORT_OPTIONS,
@@ -269,13 +273,13 @@ class PostController extends Controller
 
     private function categories()
     {
-        return PostCategory::query()
+        return CategoryTree::forDisplay(PostCategory::query()
             ->where('is_active', true)
             ->withCount(['posts' => fn ($query) => $query->published()])
             ->with('slugs')
             ->orderBy('sort_order')
             ->get()
-            ->each(fn (PostCategory $category) => $category->setAttribute('public_url', route('posts.category', ['slug' => $category->slug])));
+            ->each(fn (PostCategory $category) => $category->setAttribute('public_url', route('posts.category', ['slug' => $category->slug]))), 'posts_count');
     }
 
     private function adjacentPosts(Post $post): array

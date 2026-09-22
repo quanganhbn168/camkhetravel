@@ -8,8 +8,8 @@ use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -21,11 +21,11 @@ final class ServicesTable
         return $table
             ->columns([
                 CuratorColumn::make('curatorMedia')->label('Ảnh')->square(),
-                TextColumn::make('title')->label('Dịch vụ')->searchable()->sortable()->wrap(),
-                TextColumn::make('category.name')->label('Danh mục')->badge()->toggleable(),
+                TextColumn::make('title')->copyable()->copyMessage('Đã sao chép')->label('Dịch vụ')->searchable()->sortable()->wrap(),
+                TextColumn::make('category.name')->copyable()->copyMessage('Đã sao chép')->label('Danh mục')->badge()->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
-                IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
-                IconColumn::make('is_home')->label('Trang chủ')->boolean(),
+                ToggleColumn::make('is_featured')->label('Nổi bật'),
+                ToggleColumn::make('is_home')->label('Trang chủ'),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

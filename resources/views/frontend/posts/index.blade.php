@@ -6,8 +6,8 @@
 
 @section('content')
     <section class="position-relative overflow-hidden archive-hero">
-        @if (($heroImageUrl ?: $defaultBannerUrl))
-            <img class="position-absolute h-100 w-100 object-fit-cover archive-hero__image" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">
+        @if ($activeCategory ? ($pageBannerUrl ?? null) : ($heroImageUrl ?: $defaultBannerUrl))
+            <img class="position-absolute h-100 w-100 object-fit-cover archive-hero__image" data-page-banner-image src="{{ $activeCategory ? $pageBannerUrl : ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">
         @endif
         <div class="position-absolute archive-hero__overlay"></div>
         <div class="container position-relative">
@@ -48,4 +48,5 @@
             <div class="container mt-4">{{ $posts->onEachSide(1)->links('frontend.partials.pagination') }}</div>
         @endif
     </section>
+    @include('frontend.partials.category-content')
 @endsection

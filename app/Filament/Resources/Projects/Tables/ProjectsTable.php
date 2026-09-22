@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Projects\Tables;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
@@ -17,11 +17,11 @@ final class ProjectsTable
         return $table
             ->columns([
                 CuratorColumn::make('curatorMedia')->label('Ảnh')->square(),
-                TextColumn::make('title')->label('Dự án')->searchable()->sortable()->wrap(),
-                TextColumn::make('category.name')->label('Danh mục')->badge()->toggleable(),
-                TextColumn::make('client_name')->label('Khách hàng')->toggleable(),
+                TextColumn::make('title')->copyable()->copyMessage('Đã sao chép')->label('Dự án')->searchable()->sortable()->wrap(),
+                TextColumn::make('category.name')->copyable()->copyMessage('Đã sao chép')->label('Danh mục')->badge()->toggleable(),
+                TextColumn::make('client_name')->copyable()->copyMessage('Đã sao chép')->label('Khách hàng')->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
-                IconColumn::make('is_featured')->label('Nổi bật')->boolean(),
+                ToggleColumn::make('is_featured')->label('Nổi bật'),
             ])
             ->filters([
                 SelectFilter::make('project_category_id')->label('Danh mục')->relationship('category', 'name'),

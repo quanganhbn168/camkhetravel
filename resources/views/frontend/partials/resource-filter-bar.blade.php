@@ -3,7 +3,7 @@
         <a class="resource-filter  {{ ! $activeCategory ? 'is-active' : '' }}" href="{{ route($resourceIndexRoute) }}">Tất cả {{ mb_strtolower($resourceName) }}</a>
         @foreach ($categories as $category)
             <a class="resource-filter  {{ $activeCategory?->is($category) ? 'is-active' : '' }}" href="{{ $category->public_url ?? route('slug.show', ['slug' => $category->slug]) }}">
-                {{ $category->name }}
+                {{ $category->tree_label ?? $category->name }}
                 @if ($category->{$categoryCountAttribute})
                     <span class="resource-filter__count">{{ $category->{$categoryCountAttribute} }}</span>
                 @endif

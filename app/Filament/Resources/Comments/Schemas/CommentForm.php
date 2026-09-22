@@ -13,7 +13,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 class CommentForm
 {
@@ -21,7 +20,7 @@ class CommentForm
     {
         return $schema->components([
             Section::make('Nội dung bình luận')
-                ->icon(Heroicon::OutlinedChatBubbleBottomCenterText)
+
                 ->schema([
                     MorphToSelect::make('commentable')
                         ->label('Nội dung được bình luận')

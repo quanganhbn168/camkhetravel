@@ -13,23 +13,21 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 final class FaqForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
+        return $schema->columns(['default' => 1, 'lg' => 3])->components([
             Section::make('Nội dung câu hỏi')
-                ->icon(Heroicon::OutlinedQuestionMarkCircle)
+
                 ->schema([
                     TextInput::make('question')->label('Câu hỏi')->required()->maxLength(500),
                     Textarea::make('answer')->label('Trả lời')->required()->rows(5)->columnSpanFull(),
                 ])
-                ->columns(2),
+                ->columns(1)->columnSpan(['default' => 1, 'lg' => 2]),
             Section::make('Phạm vi hiển thị')
-                ->icon(Heroicon::OutlinedLink)
-                ->description('Một câu hỏi có thể thuộc trang chủ hoặc gắn với một nội dung cụ thể. Không cần thêm cột FAQ vào từng bảng nội dung.')
+
                 ->schema([
                     Select::make('faqable_type')
                         ->label('Gắn với')
@@ -66,7 +64,7 @@ final class FaqForm
                     TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(0),
                     Toggle::make('is_active')->label('Hiển thị')->default(true),
                 ])
-                ->columns(2),
+                ->columns(1)->columnSpan(1),
         ]);
     }
 

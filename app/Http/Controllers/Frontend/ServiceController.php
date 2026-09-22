@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use App\Models\Product;
+use App\Models\Project;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
+use App\Support\Categories\CategoryTree;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -48,10 +49,11 @@ class ServiceController extends Controller
         abort_unless($category->is_active, 404);
         $category->loadMissing('slugs');
 
-        $title = $category->name.' | Dịch vụ';
-        $description = $category->description ?: 'Dịch vụ PCCC thuộc nhóm '.$category->name.'.';
+        $title = $category->seo_title ?: $category->name.' | Dịch vụ';
+        $description = $category->seo_description ?: $category->description ?: 'Dịch vụ PCCC thuộc nhóm '.$category->name.'.';
 
         return view('frontend.services.index', $this->listingData($category) + [
+            'categoryBodyHtml' => (string) str((string) $category->body)->sanitizeHtml(),
             'seo' => $this->seo->listing($title, $description, route('services.category', ['category' => $category->slug]), image: $category->seoImageUrl()),
         ]);
     }
@@ -183,7 +185,7 @@ class ServiceController extends Controller
             ->with(['category', 'curatorMedia', 'slugs']);
 
         if ($activeCategory) {
-            $servicesQuery->where('service_category_id', $activeCategory->id);
+            $servicesQuery->whereIn('service_category_id', $activeCategory->subtreeIds(activeOnly: true));
         }
 
         $this->applyOrdering($servicesQuery, $sort);
@@ -214,28 +216,24 @@ class ServiceController extends Controller
             ->take(6)
             ->values();
 
-        $categories = $activeCategory
-            ? collect()
-            : ServiceCategory::query()
-                ->where('is_active', true)
-                ->withCount(['services' => fn (Builder $query) => $query->published()])
-                ->with(['slugs', 'services' => fn ($query) => $query
-                    ->published()
-                    ->with(['curatorMedia', 'slugs'])
-                    ->orderByDesc('is_featured')
-                    ->orderBy('sort_order')])
-                ->orderBy('sort_order')
-                ->get();
+        $categories = ServiceCategory::query()
+            ->where('is_active', true)
+            ->withCount(['services' => fn (Builder $query) => $query->published()])
+            ->with(['slugs', 'curatorMedia', 'services' => fn ($query) => $query
+                ->published()
+                ->with(['curatorMedia', 'slugs'])
+                ->orderByDesc('is_featured')
+                ->orderBy('sort_order')])
+            ->orderBy('sort_order')
+            ->get();
 
-        $categories->each(function (ServiceCategory $category): void {
-            $featuredService = $category->services->first();
-            $category->setAttribute('image_url', $featuredService
-                ? MediaUrl::resolve($featuredService->curatorMedia)
-                : null);
-        });
+        $categories = CategoryTree::forDisplay($categories, 'services_count');
+        $categories->each(fn (ServiceCategory $category) => $category->setAttribute('public_url', route('services.category', ['category' => $category->slug])));
 
         return [
             'activeCategory' => $activeCategory,
+            'pageBannerUrl' => $activeCategory?->banner_url,
+            'categoryImageUrl' => $activeCategory?->image_url,
             'categories' => $categories,
             'services' => $services,
             'heroImageUrl' => $heroService ? MediaUrl::resolve($heroService->curatorMedia) : null,

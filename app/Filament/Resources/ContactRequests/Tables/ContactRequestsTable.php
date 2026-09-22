@@ -14,9 +14,9 @@ final class ContactRequestsTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Khách hàng')->searchable()->sortable(),
+                TextColumn::make('name')->copyable()->copyMessage('Đã sao chép')->label('Khách hàng')->searchable()->sortable(),
                 TextColumn::make('phone')->label('Điện thoại')->copyable(),
-                TextColumn::make('service.title')->label('Dịch vụ')->toggleable(),
+                TextColumn::make('service.title')->copyable()->copyMessage('Đã sao chép')->label('Dịch vụ')->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
                 TextColumn::make('created_at')->label('Gửi lúc')->dateTime('d/m/Y H:i')->sortable(),
             ])

@@ -48,7 +48,14 @@ class HomeFeaturedServicesTest extends TestCase
         $this->actingAs($user);
         $category = ServiceCategory::create(['name' => 'Nhóm quản trị trang chủ QA', 'is_active' => true, 'is_featured' => false, 'is_home' => false]);
         Livewire::test(EditServiceCategory::class, ['record' => $category->id])
-            ->set('data.is_featured', true)->set('data.is_home', true)->call('save');
+            ->set('data.is_featured', true)->set('data.is_home', true)
+            ->set('data.description', 'Mô tả ngắn riêng')
+            ->set('data.body', '<h2>Nội dung danh mục kiểm thử</h2><p><strong>Nội dung có định dạng.</strong></p>')
+            ->call('save')->assertHasNoFormErrors();
+        $this->assertSame('Mô tả ngắn riêng', $category->fresh()->description);
+        $this->assertStringContainsString('<strong>', $category->fresh()->body);
+        $this->get(route('services.category', ['category' => $category->fresh()->slug]))
+            ->assertOk()->assertSee('<h2>Nội dung danh mục kiểm thử</h2>', false);
         $this->assertTrue($category->fresh()->is_featured);
         $this->assertTrue($category->fresh()->is_home);
         Livewire::test(EditServiceCategory::class, ['record' => $category->id])

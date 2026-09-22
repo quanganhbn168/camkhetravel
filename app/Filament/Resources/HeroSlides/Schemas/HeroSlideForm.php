@@ -20,9 +20,9 @@ final class HeroSlideForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
-            Section::make('Nội dung tiếng Việt')
-                ->icon(Heroicon::OutlinedPresentationChartLine)
+        return $schema->columns(['default' => 1, 'lg' => 3])->components([
+            Section::make('Nội dung')
+
                 ->schema([
                     CuratorPicker::make('curator_media_id')
                         ->label('Ảnh nền')
@@ -42,10 +42,9 @@ final class HeroSlideForm
                     TextInput::make('secondary_label')->label('Nhãn nút phụ')->maxLength(255),
                     TextInput::make('secondary_url')->label('URL nút phụ')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/']),
                 ])
-                ->columns(2),
+                ->columns(2)->columnSpan(['default' => 1, 'lg' => 2]),
             Section::make('Video cho slide')
-                ->icon(Heroicon::OutlinedVideoCamera)
-                ->description('Khi có video, trang chủ sẽ hiện nút Play dẫn tới video đó.')
+
                 ->schema([
                     ToggleButtons::make('video_source')
                         ->label('Nguồn video')
@@ -106,11 +105,10 @@ final class HeroSlideForm
                 ])
                 ->columns(2),
             Section::make('Hiển thị')
-                ->icon(Heroicon::OutlinedCog6Tooth)
+
                 ->schema([
                     Toggle::make('is_active')->label('Hiển thị trên trang chủ')->default(true),
-                ]),
+                ])->columnSpan(1),
         ]);
     }
-
 }

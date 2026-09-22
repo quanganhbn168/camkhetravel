@@ -12,7 +12,7 @@ class EditProjectCategory extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [DeleteAction::make()];
+        return [DeleteAction::make()->hidden(fn () => $this->record->children()->exists())];
     }
 
     protected function getRedirectUrl(): string

@@ -16,7 +16,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 final class ProjectForm
 {
@@ -27,7 +26,7 @@ final class ProjectForm
             ->components([
                 Group::make([
                     Section::make('Nội dung dự án')
-                        ->icon(Heroicon::OutlinedDocumentText)
+
                         ->schema([
                             TextInput::make('title')
                                 ->label('Tên dự án')
@@ -74,7 +73,7 @@ final class ProjectForm
                         ])
                         ->columns(2),
                     Section::make('SEO')
-                        ->icon(Heroicon::OutlinedMagnifyingGlass)
+
                         ->schema([
                             ...SeoFields::make(),
                         ])
@@ -82,7 +81,7 @@ final class ProjectForm
                 ])
                     ->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')
-                    ->icon(Heroicon::OutlinedCog6Tooth)
+
                     ->schema([
                         Select::make('project_category_id')->label('Danh mục')->relationship('category', 'name')->searchable()->preload(),
                         Select::make('tags')

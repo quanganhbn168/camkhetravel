@@ -4,7 +4,7 @@
         <div class="p-3">
             <a class="{{ ! $activeCategory ? 'text-primary' : 'link-body-emphasis' }} d-flex align-items-center justify-content-between fw-semibold p-2 text-decoration-none" href="{{ route('posts.index') }}"><span>Tất cả tin tức</span><span aria-hidden="true">›</span></a>
             @foreach ($categories as $category)
-                <a class="{{ $activeCategory?->is($category) ? 'fw-semibold text-primary' : 'link-body-emphasis' }} d-flex align-items-center justify-content-between p-2 text-decoration-none" href="{{ route('posts.category', ['slug' => $category->slug]) }}"><span>{{ $category->name }}</span><small class="text-body-secondary">{{ $category->posts_count }}</small></a>
+                <a class="{{ $activeCategory?->is($category) ? 'fw-semibold text-primary' : 'link-body-emphasis' }} d-flex align-items-center justify-content-between p-2 text-decoration-none" href="{{ route('posts.category', ['slug' => $category->slug]) }}"><span>{{ $category->tree_label ?? $category->name }}</span><small class="text-body-secondary">{{ $category->posts_count }}</small></a>
             @endforeach
         </div>
     </nav>

@@ -64,6 +64,8 @@ class HomeHeroSlidePresentationTest extends TestCase
             'type' => 'image/jpeg',
             'ext' => 'jpg',
             'size' => 10,
+            'width' => 1360,
+            'height' => 540,
         ]);
 
         HeroSlide::create([
@@ -74,6 +76,7 @@ class HomeHeroSlidePresentationTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('hero__media', false)
+            ->assertSee('width="1360" height="540"', false)
             ->assertDontSee('hero__overlay', false)
             ->assertDontSee('hero__content', false);
     }

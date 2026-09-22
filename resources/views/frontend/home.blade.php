@@ -31,7 +31,7 @@
 
             <article class="swiper-slide">
                 @if ($slide->curatorMedia?->url)
-                    <img class="hero__media" src="{{ $slide->curatorMedia->url }}" alt="" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                    <img class="hero__media" src="{{ $slide->curatorMedia->url }}" alt="" @if ($slide->curatorMedia->width && $slide->curatorMedia->height) width="{{ $slide->curatorMedia->width }}" height="{{ $slide->curatorMedia->height }}" @endif @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
                 @endif
                 @if ($slide->has_content)
                     <div class="hero__overlay"></div>
@@ -42,7 +42,7 @@
                         </a>
                     @endif
 
-                    <div class="container position-relative z-2">
+                    <div class="container hero__content-wrap position-relative z-2">
                         <div class="hero__content">
                             @if ($slide->title)
                                 <h2 class="display-4 fw-bold text-white mb-3">{{ $slide->title }}</h2>
@@ -72,7 +72,7 @@
         @empty
             <article class="swiper-slide">
                 <div class="hero__overlay"></div>
-                <div class="container position-relative z-2">
+                <div class="container hero__content-wrap position-relative z-2">
                     <div class="hero__content">
                         <h2 class="display-4 fw-bold text-white mb-0">Kiến tạo hệ thống PCCC an toàn, đồng bộ và bền vững.</h2>
                     </div>

@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Products\Schemas;
 use App\Filament\Forms\SeoFields;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Support\Categories\CategoryTree;
 use App\Support\Seo\ContentSeoFallbacks;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Forms\Components\RichEditor;
@@ -15,7 +17,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 
 final class ProductForm
 {
@@ -26,7 +27,7 @@ final class ProductForm
             ->components([
                 Group::make([
                     Section::make('Thông tin sản phẩm')
-                        ->icon(Heroicon::OutlinedCube)
+
                         ->schema([
                             TextInput::make('title')
                                 ->label('Tên sản phẩm')
@@ -78,14 +79,21 @@ final class ProductForm
                         ])
                         ->columns(2),
                     Section::make('SEO')
-                        ->icon(Heroicon::OutlinedMagnifyingGlass)
+
                         ->schema(SeoFields::make())
                         ->columns(2),
                 ])->columnSpan(['lg' => 2]),
                 Section::make('Phân loại & hiển thị')
-                    ->icon(Heroicon::OutlinedCog6Tooth)
+
                     ->schema([
-                        Select::make('product_category_id')->label('Danh mục sản phẩm')->relationship('category', 'name')->searchable()->preload(),
+                        Select::make('product_category_id')->label('Danh mục sản phẩm')
+                            ->options(fn () => CategoryTree::leafOptions(ProductCategory::class))
+                            ->searchable()->preload()
+                            ->rules([fn () => function (string $attribute, $value, $fail): void {
+                                if ($value !== null && ! array_key_exists($value, CategoryTree::leafOptions(ProductCategory::class))) {
+                                    $fail('Chỉ được chọn danh mục không có danh mục con.');
+                                }
+                            }]),
                         Select::make('tags')
                             ->label('Thẻ')
                             ->relationship('tags', 'name')

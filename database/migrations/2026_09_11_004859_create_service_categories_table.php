@@ -10,8 +10,12 @@ return new class extends Migration
     {
         Schema::create('service_categories', function (Blueprint $table): void {
             $table->id();
+            $table->foreignId('parent_id')->nullable()->constrained('service_categories')->restrictOnDelete();
+            $table->foreignId('curator_media_id')->nullable()->constrained('curator')->nullOnDelete();
+            $table->foreignId('banner_media_id')->nullable()->constrained('curator')->nullOnDelete();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->longText('body')->nullable();
             $table->text('seo_title')->nullable();
             $table->text('seo_description')->nullable();
             $table->foreignId('seo_image_media_id')->nullable()->constrained('curator')->nullOnDelete();

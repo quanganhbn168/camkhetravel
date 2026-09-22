@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Testimonials\Schemas;
 
 use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -13,7 +13,7 @@ final class TestimonialForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
+        return $schema->columns(['default' => 1, 'lg' => 3])->components([
             Section::make('Thông tin khách hàng')
                 ->schema([
                     CuratorPicker::make('curator_media_id')
@@ -28,11 +28,11 @@ final class TestimonialForm
                     TextInput::make('rating')->label('Số sao')->numeric()->minValue(1)->maxValue(5)->default(5),
                     Textarea::make('quote')->label('Nội dung phản hồi')->required()->rows(5)->columnSpanFull(),
                 ])
-                ->columns(2),
+                ->columns(2)->columnSpan(['default' => 1, 'lg' => 2]),
             Section::make('Hiển thị')
                 ->schema([
                     Toggle::make('is_active')->label('Hiển thị trên trang chủ')->default(true),
-                ]),
+                ])->columnSpan(1),
         ]);
     }
 }

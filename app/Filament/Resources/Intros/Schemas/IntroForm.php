@@ -11,6 +11,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -22,62 +23,65 @@ class IntroForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(['default' => 1, 'lg' => 3])
             ->components([
+                Group::make([
 
-                // ── Nội dung chính ────────────────────────────────────────
-                Section::make('Nội dung')
-                    ->icon('heroicon-o-document-text')
-                    ->schema([
-                        Hidden::make('kind')->default('article'),
-                        TextInput::make('title')->live(onBlur: true)->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
-                            if (! $get('slug') && $get('kind') === 'article') {
-                                $set('slug', Str::slug($state ?? ''));
-                            }
-                        })
-                            ->label('Tiêu đề')
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpanFull(),
+                    // ── Nội dung chính ────────────────────────────────────────
+                    Section::make('Nội dung')
 
-                        TextInput::make('slug')->label('Đường dẫn bài giới thiệu')->helperText('Chữ thường, số và dấu gạch ngang. Slug được lưu chung trong hệ thống URL; bài có trang riêng, độc lập với giới thiệu trên trang chủ.')
-                            ->maxLength(180)->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/')
-                            ->required(fn (Get $get): bool => $get('kind') === 'article')
-                            ->visible(fn (Get $get): bool => $get('kind') === 'article'),
-                        Textarea::make('summary')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
-                        TextInput::make('subtitle')->visible(fn (Get $get): bool => $get('kind') === 'block')
-                            ->label('Tiêu đề phụ')
-                            ->maxLength(255),
+                        ->schema([
+                            Hidden::make('kind')->default('article'),
+                            TextInput::make('title')->live(onBlur: true)->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
+                                if (! $get('slug') && $get('kind') === 'article') {
+                                    $set('slug', Str::slug($state ?? ''));
+                                }
+                            })
+                                ->label('Tiêu đề')
+                                ->required()
+                                ->maxLength(255)
+                                ->columnSpanFull(),
 
-                        TextInput::make('icon')->visible(fn (Get $get): bool => $get('kind') === 'block')
-                            ->label('Icon (Font Awesome)')
-                            ->placeholder('fa-solid fa-star')
-                            ->maxLength(100)
-                            ->helperText('Bỏ trống nếu dùng ảnh'),
+                            TextInput::make('slug')->label('Đường dẫn bài giới thiệu')->helperText('Chữ thường, số và dấu gạch ngang. Slug được lưu chung trong hệ thống URL; bài có trang riêng, độc lập với giới thiệu trên trang chủ.')
+                                ->maxLength(180)->regex('/^[a-z0-9]+(?:-[a-z0-9]+)*$/')
+                                ->required(fn (Get $get): bool => $get('kind') === 'article')
+                                ->visible(fn (Get $get): bool => $get('kind') === 'article'),
+                            Textarea::make('summary')->label('Mô tả ngắn')->rows(3)->columnSpanFull(),
+                            TextInput::make('subtitle')->visible(fn (Get $get): bool => $get('kind') === 'block')
+                                ->label('Tiêu đề phụ')
+                                ->maxLength(255),
 
-                        CuratorPicker::make('curator_media_id')
-                            ->label('Ảnh minh họa')
-                            ->relationship('curatorMedia', 'id')
-                            ->disk('public')
-                            ->constrained()
-                            ->acceptedFileTypes(['image/*'])
-                            ->columnSpanFull(),
+                            TextInput::make('icon')->visible(fn (Get $get): bool => $get('kind') === 'block')
+                                ->label('Icon (Font Awesome)')
+                                ->placeholder('fa-solid fa-star')
+                                ->maxLength(100)
+                                ->helperText('Bỏ trống nếu dùng ảnh'),
 
-                        RichEditor::make('content')
-                            ->label('Nội dung')
-                            ->plugins([ScopedAttachCuratorMediaPlugin::make()])
-                            ->enableToolbarButtons(['attachCuratorMedia'])
-                            ->disableToolbarButtons(['attachFiles'])
-                            ->columnSpanFull(),    // full toolbar mặc định — không cần chỉ định
-                    ])
-                    ->columns(2),
+                            CuratorPicker::make('curator_media_id')
+                                ->label('Ảnh minh họa')
+                                ->relationship('curatorMedia', 'id')
+                                ->disk('public')
+                                ->constrained()
+                                ->acceptedFileTypes(['image/*'])
+                                ->columnSpanFull(),
 
-                Section::make('SEO')
-                    ->icon('heroicon-o-magnifying-glass')
-                    ->collapsible()
-                    ->schema(SeoFields::make(titleSource: 'title', descriptionSource: 'summary')),
+                            RichEditor::make('content')
+                                ->label('Nội dung')
+                                ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                                ->enableToolbarButtons(['attachCuratorMedia'])
+                                ->disableToolbarButtons(['attachFiles'])
+                                ->columnSpanFull(),    // full toolbar mặc định — không cần chỉ định
+                        ])
+                        ->columns(2),
+
+                    Section::make('SEO')
+
+                        ->collapsible()
+                        ->schema(SeoFields::make(titleSource: 'title', descriptionSource: 'summary')),
+                ])->columnSpan(['default' => 1, 'lg' => 2]),
                 // ── Liên kết ──────────────────────────────────────────────
                 Section::make('Xuất bản')
-                    ->icon('heroicon-o-link')
+
                     ->schema([
                         TextInput::make('link')->visible(fn (Get $get): bool => $get('kind') === 'block')
                             ->label('URL')
@@ -96,7 +100,7 @@ class IntroForm
                             ->default(false)
                             ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columns(1)->columnSpan(1),
 
             ]);
     }
