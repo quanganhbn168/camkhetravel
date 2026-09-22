@@ -32,6 +32,7 @@ Route::group([], function (): void {
     Route::get('/', HomeController::class)->name('home');
     Route::get('/dich-vu', [ServiceController::class, 'index'])->name('services.index');
     Route::get('/giai-phap', SolutionsController::class)->name('solutions.index');
+    Route::get('/giai-phap/{solution}', [SolutionsController::class, 'show'])->name('solutions.show');
     Route::get('/dich-vu/danh-muc/{category:slug}', [ServiceController::class, 'redirectCategory']);
     Route::get('/dich-vu/{category:slug}', [ServiceController::class, 'category'])->name('services.category');
     Route::get('/tim-kiem', SearchController::class)->name('search');

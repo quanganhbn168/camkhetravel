@@ -33,7 +33,7 @@ class FrontendShellStandardTest extends TestCase
         $this->assertStringContainsString("header.classList.toggle('is-scroll-hidden', currentScroll > previousScroll)", $runtime);
         $this->assertStringNotContainsString('final-cta', $home);
         $this->assertStringNotContainsString('final-cta', $homeStyles);
-        $this->assertStringContainsString('Cần một phương án PCCC phù hợp cho công trình của bạn?', $home);
+        $this->assertStringContainsString('Liên hệ tư vấn miễn phí', $home);
         $this->assertStringContainsString('Gửi thông tin công trình để đội ngũ kỹ thuật tư vấn giải pháp tối ưu.', $home);
     }
 

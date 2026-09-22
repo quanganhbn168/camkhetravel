@@ -5,7 +5,7 @@
         @endif
         <div class="container footer__cta-content">
             <div>
-                <h2 class="footer__cta-title">Giải pháp PCCC an toàn cho công trình của anh/chị</h2>
+                <h2 class="footer__cta-title">Giải pháp PCCC an toàn cho công trình</h2>
                 <p class="footer__cta-description">{{ $website->site_name }} đồng hành từ khảo sát, thiết kế đến thi công và bảo trì hệ thống.</p>
             </div>
             <a class="btn btn-light" href="{{ route('contact') }}">Nhận tư vấn ngay <span aria-hidden="true">→</span></a>

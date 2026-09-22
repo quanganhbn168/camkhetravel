@@ -48,8 +48,25 @@ function initialiseScrollTop() {
 function initialise() {
     initialiseHeader();
     initialiseScrollTop();
+    const solutions = document.getElementById('giai-phap');
+    const background = solutions?.querySelector('[data-solution-background]');
+    if (background) {
+        solutions.addEventListener('shown.bs.tab', (event) => {
+            const panelId = event.target.getAttribute('aria-controls');
+            const panel = panelId ? document.getElementById(panelId) : null;
+            if (!panel || !solutions.contains(panel)) return;
+            const source = panel.querySelector('.solution-image img')?.getAttribute('src');
+            if (source) {
+                background.src = source;
+                background.hidden = false;
+            } else {
+                background.hidden = true;
+                background.removeAttribute('src');
+            }
+        });
+    }
 
-    if (document.querySelector('[data-hero-swiper], [data-post-swiper], [data-testimonial-swiper]')) {
+    if (document.querySelector('[data-hero-swiper], [data-post-swiper], [data-testimonial-swiper], [data-partner-swiper]')) {
         void import('./frontend/sliders').then((module) => module.initialiseSliders());
     }
 

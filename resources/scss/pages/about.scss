@@ -1,3 +1,19 @@
+.about-summary {
+    .about-page-hero__intro { max-width: 58rem; line-height: 1.85; margin-top: 1.5rem; }
+    .about-summary__fields ul { padding-left: 1.25rem; margin-bottom: 0; }
+    .about-summary__fields li { padding-left: .5rem; margin-bottom: 1.25rem; }
+    .about-summary__fields li:last-child { margin-bottom: 0; }
+    .about-summary__principle { padding: clamp(1.5rem, 3vw, 2rem); background: white; border-top: 3px solid var(--bs-primary); border-radius: .5rem; }
+    h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+    .about-summary__values { padding-top: 1rem; }
+    .about-summary__values ul { display: grid; gap: 1rem 2rem; padding-left: 1.25rem; margin-bottom: 0; }
+    .about-summary__values li { margin: 0; }
+    .about-page-cta h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+    @media (min-width: 768px) {
+        .about-summary__values ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+}
+
 .about-page-hero {
     padding-block: clamp(3rem, 6vw, 5rem);
     background: var(--bs-light);

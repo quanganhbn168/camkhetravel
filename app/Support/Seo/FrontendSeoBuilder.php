@@ -126,6 +126,22 @@ class FrontendSeoBuilder
         );
     }
 
+    public function solution(\App\Models\Solution $solution): array
+    {
+        $canonical = route('solutions.show', ['solution' => $solution->slug]);
+        return $this->page(
+            title: $solution->seo_title ?: $solution->title,
+            description: $solution->seo_description ?: $solution->excerpt,
+            canonical: $canonical,
+            image: $solution->seoImageUrl(),
+            schema: [$this->organizationSchema(), $this->breadcrumb([
+                ['name' => 'Trang chủ', 'url' => route('home')],
+                ['name' => 'Giải pháp', 'url' => route('solutions.index')],
+                ['name' => $solution->title, 'url' => $canonical],
+            ])],
+        );
+    }
+
     public function service(Service $service): array
     {
         $canonical = route('slug.show', ['slug' => $service->slug]);

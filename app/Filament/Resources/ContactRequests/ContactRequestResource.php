@@ -25,7 +25,7 @@ class ContactRequestResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Nội dung website';
+        return 'Khách hàng';
     }
 
     public static function getModelLabel(): string

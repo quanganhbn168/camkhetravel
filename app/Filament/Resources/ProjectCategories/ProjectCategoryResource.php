@@ -27,7 +27,7 @@ class ProjectCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Danh mục dự án';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 6;
 
     public static function getNavigationGroup(): ?string
     {

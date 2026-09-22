@@ -25,9 +25,9 @@ class PostCategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $navigationLabel = 'Chuyên mục bài viết';
+    protected static ?string $navigationLabel = 'Danh mục bài viết';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 10;
 
     public static function getNavigationGroup(): ?string
     {

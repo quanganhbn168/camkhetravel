@@ -154,41 +154,47 @@
     </section>
 
     {{-- SOLUTIONS --}}
-    <section class="section-space dark-section" id="giai-phap">
+    @if ($solutions->isNotEmpty())
+    <section class="section-space dark-section home-solutions" id="giai-phap">
+        <img class="home-solutions__section-background" data-solution-background @if ($solutions->first()->image_url) src="{{ $solutions->first()->image_url }}" @else hidden @endif alt="" aria-hidden="true">
         <div class="container">
+            <header class="text-center mb-5">
+                <h2 class="section-title">Giải pháp cho từng loại công trình</h2>
+                <p class="text-white-50 mt-3 mb-0 col-lg-8 mx-auto">Mỗi công trình có yêu cầu vận hành và mức độ rủi ro khác nhau. Giải pháp cần được thiết kế phù hợp ngay từ đầu.</p>
+            </header>
             <div class="row g-4 g-lg-5">
                 <div class="col-lg-3">
-                    <h2 class="section-title">Theo loại công trình</h2>
-                    <p class="text-white-50 mt-3">Mỗi công trình có yêu cầu vận hành và mức độ rủi ro khác nhau. Giải pháp cần được thiết kế phù hợp ngay từ đầu.</p>
-
-                    <div class="nav flex-column solution-nav mt-4" role="tablist">
+                    <div class="nav flex-column solution-nav" role="tablist" aria-label="Loại công trình" aria-orientation="vertical">
                         @foreach ($solutions as $solution)
-                            <button class="nav-link @if($loop->first) active @endif" data-bs-toggle="pill" data-bs-target="#solution-{{ $solution['key'] }}" type="button" role="tab">{{ $solution['name'] }}</button>
+                            <button class="nav-link @if($loop->first) active @endif" id="solution-tab-{{ $solution->id }}" data-bs-toggle="pill" data-bs-target="#solution-{{ $solution->id }}" type="button" role="tab" aria-controls="solution-{{ $solution->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $solution->short_title ?: $solution->title }}</button>
                         @endforeach
                     </div>
                 </div>
-
                 <div class="col-lg-9">
                     <div class="tab-content">
                         @foreach ($solutions as $solution)
-                            <div class="tab-pane fade @if($loop->first) show active @endif" id="solution-{{ $solution['key'] }}" role="tabpanel" tabindex="0">
+                            <div class="tab-pane fade @if($loop->first) show active @endif" id="solution-{{ $solution->id }}" role="tabpanel" aria-labelledby="solution-tab-{{ $solution->id }}" tabindex="0">
                                 <article class="solution-card">
                                     <div class="row g-0">
                                         <div class="col-lg-8">
                                             <div class="solution-image">
-                                                @if ($solutionImageUrl)<img src="{{ $solutionImageUrl }}" alt="{{ $solution['title'] }}" loading="lazy">@endif
+                                                @if ($solution->image_url)
+                                                    <img src="{{ $solution->image_url }}" alt="{{ $solution->title }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                                                @endif
                                                 <div class="solution-copy">
-                                                    <h3 class="h2 fw-bold text-white">{{ $solution['title'] }}</h3>
-                                                    <p class="text-white-50 mb-0">{{ $solution['description'] }}</p>
+                                                    <h3 class="h2 fw-bold text-white">{{ $solution->title }}</h3>
+                                                    @if ($solution->excerpt)<p class="mb-0">{{ $solution->excerpt }}</p>@endif
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="solution-list">
-                                                <ul class="check-list mt-0">
-                                                    @foreach ($solution['items'] as $item)<li>{{ $item }}</li>@endforeach
-                                                </ul>
-                                                <a class="btn btn-primary mt-4" href="{{ route('services.index') }}">Xem giải pháp</a>
+                                                @if ($solution->highlights)
+                                                    <ul class="list-unstyled mb-0">
+                                                        @foreach ($solution->highlights as $item)<li>{{ $item }}</li>@endforeach
+                                                    </ul>
+                                                @endif
+                                                <a class="btn btn-primary mt-4" href="{{ route('solutions.show', ['solution' => $solution->slug]) }}">Xem giải pháp <i class="fa-solid fa-arrow-right ms-2" aria-hidden="true"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -200,13 +206,14 @@
             </div>
         </div>
     </section>
+    @endif
 
     {{-- ABOUT --}}
     <section class="section-space" id="gioi-thieu">
         <div class="container">
             <div class="row g-4 g-lg-5 align-items-center">
                 <div class="col-lg-5">
-                    <h2 class="section-title">Một hệ thống PCCC tốt không chỉ nằm ở thiết bị</h2>
+                    <h2 class="section-title">Về chúng tôi — {{ $website->company_name }}</h2>
                     @if ($about['title'])<p class="fw-semibold text-body-emphasis mt-4">{{ $about['title'] }}</p>@endif
                     @if ($about['content'])<p class="section-copy">{{ $about['content'] }}</p>@endif
                     <ul class="check-list">
@@ -227,7 +234,7 @@
                             @if ($aboutImageUrl)<img src="{{ $aboutImageUrl }}" alt="{{ $companyName }}" loading="lazy">@endif
                         </div>
                         <div class="about-side">
-                            @if ($solutionImageUrl)<img src="{{ $solutionImageUrl }}" alt="Hệ thống PCCC" loading="lazy">@endif
+                            @if ($aboutImageUrl)<img src="{{ $aboutImageUrl }}" alt="Hệ thống PCCC" loading="lazy">@endif
                         </div>
                         <div class="about-side about-quote">Giải pháp an toàn cho hôm nay và tương lai bền vững.</div>
                     </div>
@@ -246,7 +253,7 @@
                 <div class="col-lg-7">
                     <div class="why-content">
                         <div class="w-100">
-                            <h2 class="section-title text-white">Năng lực thực tế · Cam kết lâu dài</h2>
+                            <h2 class="section-title text-white">Tại sao chọn chúng tôi</h2>
                             <div class="row g-4 mt-3">
                                 @foreach ($whyChooseUs as $item)
                                     <div class="col-sm-6 col-xl-3">
@@ -298,7 +305,7 @@
     {{-- PROCESS --}}
     <section class="section-space bg-light border-top border-bottom" id="quy-trinh">
         <div class="container">
-            <h2 class="section-title">Rõ ràng · Chuyên nghiệp · Minh bạch</h2>
+            <h2 class="section-title">Quy trình triển khai</h2>
 
             <div class="row g-3 mt-4">
                 @foreach ($processSteps as $step)
@@ -341,21 +348,34 @@
     {{-- PRODUCTS --}}
     <section class="section-space border-top" id="san-pham">
         <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
                 <div>
-                    <h2 class="section-title products-heading">Thiết bị PCCC</h2>
-                    <p class="section-copy mt-3 mb-0">Danh mục thiết bị phục vụ thi công, lắp đặt và vận hành hệ thống PCCC.</p>
+                    <h2 class="section-title">Danh mục thiết bị</h2>
+                    <p class="section-copy mt-3 mb-0">Thiết bị phục vụ thi công, lắp đặt và vận hành hệ thống PCCC.</p>
                 </div>
                 <a class="section-link" href="{{ route('products.index') }}">Xem tất cả sản phẩm →</a>
             </div>
-
-            <div class="row g-3 mt-4 row-cols-2 row-cols-sm-3 row-cols-lg-6">
-                @foreach ($productGroups as $product)
-                    <div class="col">
-                        <a class="product-card d-block text-body-emphasis" href="{{ route('products.index') }}">
-                            <span class="product-icon">{{ $product['code'] }}</span>
-                            <span class="d-block small fw-semibold mt-3">{{ $product['name'] }}</span>
-                        </a>
+            <div class="nav nav-pills gap-2 mb-4" role="tablist" aria-label="Danh mục thiết bị">
+                @foreach ($equipmentCategories as $category)
+                    <button class="nav-link @if($loop->first) active @endif" id="equipment-tab-{{ $category->id }}" data-bs-toggle="tab" data-bs-target="#equipment-{{ $category->id }}" type="button" role="tab" aria-controls="equipment-{{ $category->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $category->name }}</button>
+                @endforeach
+            </div>
+            <div class="tab-content">
+                @foreach ($equipmentCategories as $category)
+                    <div class="tab-pane fade @if($loop->first) show active @endif" id="equipment-{{ $category->id }}" role="tabpanel" aria-labelledby="equipment-tab-{{ $category->id }}" tabindex="0">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                            @forelse ($category->products as $product)
+                                <div class="col">
+                                    <a class="equipment-card" href="{{ route('products.show', ['slug' => $product->slug]) }}">
+                                        @if ($product->image_url)<img src="{{ $product->image_url }}" alt="{{ $product->title }}" loading="lazy">@endif
+                                        <span class="d-flex justify-content-between gap-3 p-4 fw-semibold">{{ $product->title }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                                    </a>
+                                </div>
+                            @empty
+                                <p class="text-body-secondary w-100">Chưa có sản phẩm trong danh mục này.</p>
+                            @endforelse
+                        </div>
+                        <a class="section-link d-inline-block mt-4" href="{{ route('products.category', ['slug' => $category->slug]) }}">Xem danh mục {{ $category->name }} →</a>
                     </div>
                 @endforeach
             </div>
@@ -363,29 +383,36 @@
     </section>
 
     {{-- PARTNERS --}}
-    <section class="partners py-5" aria-label="Đối tác và thương hiệu">
-        <div class="container mb-4">
-            <h2 class="h3 fw-bold text-uppercase mb-0">Đối tác · Thương hiệu</h2>
-        </div>
-        @if ($marqueePartners->isNotEmpty())
-            <div class="partner-marquee">
-                <div class="partner-marquee__track">
-                    @foreach ($marqueePartners as $partner)
-                        @if ($partner->website_url)
-                            <a class="partner-marquee__item" href="{{ $partner->website_url }}" target="_blank" rel="noopener noreferrer">
-                                @if ($partner->curatorMedia?->url)<img src="{{ $partner->curatorMedia->url }}" alt="{{ $partner->name }}" loading="lazy">@else {{ $partner->name }} @endif
-                            </a>
-                        @else
-                            <span class="partner-marquee__item">@if ($partner->curatorMedia?->url)<img src="{{ $partner->curatorMedia->url }}" alt="{{ $partner->name }}" loading="lazy">@else {{ $partner->name }} @endif</span>
-                        @endif
-                    @endforeach
-                    @foreach ($marqueePartners as $partner)
-                        <span class="partner-marquee__item" aria-hidden="true">@if ($partner->curatorMedia?->url)<img src="{{ $partner->curatorMedia->url }}" alt="" loading="lazy">@else {{ $partner->name }} @endif</span>
-                    @endforeach
+    @if ($homePartners->isNotEmpty())
+        <section class="partners py-5" aria-labelledby="partners-heading">
+            <div class="container">
+                <h2 class="section-title text-center mb-5" id="partners-heading">Đối tác của chúng tôi</h2>
+                <div class="swiper" data-partner-swiper>
+                    <div class="swiper-wrapper">
+                        @foreach ($homePartners as $partner)
+                            <div class="swiper-slide">
+                                @if ($partner->website_url)
+                                    <a class="partner-slide" href="{{ $partner->website_url }}" target="_blank" rel="noopener noreferrer">
+                                @else
+                                    <div class="partner-slide">
+                                @endif
+                                    @if ($partner->curatorMedia?->url)
+                                        <img src="{{ $partner->curatorMedia->url }}" alt="{{ $partner->name }}" loading="lazy">
+                                    @else
+                                        {{ $partner->name }}
+                                    @endif
+                                @if ($partner->website_url)</a>@else</div>@endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <button type="button" class="btn btn-outline-secondary" data-partner-swiper-prev aria-label="Đối tác trước">←</button>
+                    <button type="button" class="btn btn-outline-secondary" data-partner-swiper-next aria-label="Đối tác tiếp theo">→</button>
                 </div>
             </div>
-        @endif
-    </section>
+        </section>
+    @endif
 
     {{-- CERTIFICATES --}}
     <section class="section-space">
@@ -415,7 +442,7 @@
         <div class="container">
             <div class="row g-4 g-lg-5 align-items-center">
                 <div class="col-lg-5">
-                    <h2 class="section-title text-white">Cần một phương án PCCC phù hợp cho công trình của bạn?</h2>
+                    <h2 class="section-title text-white">Liên hệ tư vấn miễn phí</h2>
                     <p class="text-white-50 mt-3">Gửi thông tin công trình để đội ngũ kỹ thuật tư vấn giải pháp tối ưu.</p>
                     <div class="d-grid gap-2 mt-4">
                         @if ($primaryPhone)<a class="text-white fw-semibold" href="tel:{{ preg_replace('/\s+/', '', $primaryPhone) }}">☎ {{ $primaryPhone }}</a>@endif

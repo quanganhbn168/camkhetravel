@@ -17,7 +17,7 @@ class ShieldSeeder extends Seeder
     private const RESOURCES = [
         'Comment', 'ContactRequest', 'Faq', 'HeroSlide', 'Intro', 'Menu', 'Partner', 'PostCategory', 'Post',
         'ProductCategory', 'Product', 'ProjectCategory', 'Project',
-        'ServiceCategory', 'Service', 'Tag', 'Testimonial', 'Media', 'Role',
+        'ServiceCategory', 'Service', 'Solution', 'Tag', 'Testimonial', 'Media', 'Role',
         'AdminDashboard',
         'ManageSettings', 'ManageWebsiteSettings', 'WebsiteStatsOverview',
     ];

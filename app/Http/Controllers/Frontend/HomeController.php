@@ -7,10 +7,12 @@ use App\Models\Faq;
 use App\Models\HeroSlide;
 use App\Models\Partner;
 use App\Models\Post;
+use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use App\Models\Solution;
 use App\Models\Testimonial;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
@@ -130,9 +132,6 @@ class HomeController extends Controller
         $featuredProjects = $this->featuredProjects($projectTabs);
         $featuredPost = $posts->first();
         $sidePosts = $posts->slice(1, 3)->values();
-        $solutionImageUrl = $featuredServiceCategories->first()?->home_image_url
-            ?: $aboutImageUrl
-            ?: $defaultBannerUrl;
         $whyImageUrl = $featuredProjects->first()?->image_url
             ?: $aboutImageUrl
             ?: $defaultBannerUrl;
@@ -145,15 +144,17 @@ class HomeController extends Controller
             'featuredProjects' => $featuredProjects,
             'featuredPost' => $featuredPost,
             'sidePosts' => $sidePosts,
-            'solutionImageUrl' => $solutionImageUrl,
             'whyImageUrl' => $whyImageUrl,
             'uspItems' => $this->uspItems(),
-            'solutions' => $this->solutions(),
+            'solutions' => Solution::published()->where('is_home', true)->with(['slugs', 'curatorMedia'])->orderBy('sort_order')->orderBy('id')->get(),
             'whyChooseUs' => $this->whyChooseUs(),
             'processSteps' => $this->processSteps(),
-            'productGroups' => $this->productGroups(),
+            'equipmentCategories' => ProductCategory::active()
+                ->doesntHave('children')
+                ->with(['slugs', 'products' => fn ($query) => $query->published()->with(['curatorMedia', 'slugs'])->limit(6)])
+                ->orderBy('sort_order')->orderBy('id')->get(),
             'certificateItems' => $this->certificateItems(),
-            'marqueePartners' => Partner::query()
+            'homePartners' => Partner::query()
                 ->active()
                 ->with('curatorMedia')
                 ->orderBy('sort_order')
@@ -231,48 +232,6 @@ class HomeController extends Controller
         ];
     }
 
-    /** @return list<array{key: string, name: string, title: string, description: string, items: list<string>}> */
-    private function solutions(): array
-    {
-        return [
-            [
-                'key' => 'factory',
-                'name' => 'Nhà xưởng',
-                'title' => 'Giải pháp PCCC nhà xưởng',
-                'description' => 'Thiết kế đồng bộ theo đặc thù sản xuất, quy mô và mức độ rủi ro của từng nhà máy.',
-                'items' => ['Báo cháy tự động', 'Chữa cháy Sprinkler', 'Cấp nước chữa cháy', 'Bơm và van', 'Thoát hiểm và chỉ dẫn an toàn'],
-            ],
-            [
-                'key' => 'warehouse',
-                'name' => 'Kho bãi',
-                'title' => 'Giải pháp PCCC kho bãi',
-                'description' => 'Tập trung phát hiện sớm, kiểm soát cháy lan và bảo vệ hàng hóa, tài sản.',
-                'items' => ['Báo cháy tự động', 'Sprinkler chữa cháy', 'Họng nước chữa cháy', 'Bơm chữa cháy', 'Chiếu sáng và chỉ dẫn thoát nạn'],
-            ],
-            [
-                'key' => 'office',
-                'name' => 'Văn phòng',
-                'title' => 'Giải pháp PCCC văn phòng',
-                'description' => 'Đảm bảo an toàn, thẩm mỹ và phù hợp đặc thù vận hành của khối văn phòng.',
-                'items' => ['Hệ thống báo cháy', 'Bình chữa cháy', 'Đèn exit và chiếu sáng sự cố', 'Họng nước vách tường', 'Phương án thoát nạn'],
-            ],
-            [
-                'key' => 'hotel',
-                'name' => 'Khách sạn',
-                'title' => 'Giải pháp PCCC khách sạn',
-                'description' => 'Tăng khả năng phát hiện sớm và đảm bảo an toàn cho khu vực lưu trú đông người.',
-                'items' => ['Báo cháy địa chỉ', 'Sprinkler', 'Tăng áp và hút khói', 'Họng nước chữa cháy', 'Hệ thống thoát nạn'],
-            ],
-            [
-                'key' => 'apartment',
-                'name' => 'Chung cư',
-                'title' => 'Giải pháp PCCC chung cư',
-                'description' => 'Đồng bộ từ phát hiện cháy, chữa cháy đến thoát hiểm, chống khói và cứu nạn.',
-                'items' => ['Báo cháy tự động', 'Sprinkler', 'Tăng áp cầu thang', 'Hút khói hành lang', 'Họng nước chữa cháy'],
-            ],
-        ];
-    }
-
     /** @return list<array{number: string, title: string, description: string}> */
     private function whyChooseUs(): array
     {
@@ -294,20 +253,6 @@ class HomeController extends Controller
             ['number' => '04', 'title' => 'Thi công', 'description' => 'Lắp đặt đồng bộ'],
             ['number' => '05', 'title' => 'Kiểm tra', 'description' => 'Nghiệm thu bàn giao'],
             ['number' => '06', 'title' => 'Bảo trì', 'description' => 'Hỗ trợ lâu dài'],
-        ];
-    }
-
-    /** @return list<array{code: string, name: string}> */
-    private function productGroups(): array
-    {
-        return [
-            ['code' => 'BC', 'name' => 'Bình chữa cháy'],
-            ['code' => 'TB', 'name' => 'Trung tâm báo cháy'],
-            ['code' => 'DB', 'name' => 'Đầu báo khói'],
-            ['code' => 'BM', 'name' => 'Máy bơm chữa cháy'],
-            ['code' => 'VN', 'name' => 'Van tín hiệu'],
-            ['code' => 'TP', 'name' => 'Tủ điều khiển PCCC'],
-            ['code' => 'SP', 'name' => 'Sprinkler'],
         ];
     }
 

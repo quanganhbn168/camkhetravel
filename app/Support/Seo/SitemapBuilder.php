@@ -25,6 +25,9 @@ class SitemapBuilder
 
         $this->addNativePages();
         $this->addNativeContent();
+        foreach (\App\Models\Solution::published()->with('slugs')->get() as $solution) {
+            $this->addUrl(route('solutions.show', ['solution' => $solution->slug]), $solution->updated_at, 'monthly', 0.7);
+        }
 
         ProductCategory::query()
             ->active()

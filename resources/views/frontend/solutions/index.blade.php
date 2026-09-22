@@ -18,4 +18,19 @@
             <p class="lead mb-0">{{ $intro }}</p>
         </div>
     </section>
+    <section class="section-space"><div class="container">
+        <div class="row g-4">
+            @forelse ($solutions as $solution)
+                <div class="col-md-6 col-lg-4"><article class="card h-100 overflow-hidden">
+                    @if ($solution->image_url)<a href="{{ route('solutions.show', ['solution' => $solution->slug]) }}"><img class="card-img-top" style="aspect-ratio:16/10;object-fit:cover" src="{{ $solution->image_url }}" alt="{{ $solution->title }}" loading="lazy"></a>@endif
+                    <div class="card-body"><h2 class="h4"><a href="{{ route('solutions.show', ['solution' => $solution->slug]) }}">{{ $solution->title }}</a></h2>
+                        <p>{{ $solution->excerpt }}</p><a class="section-link" href="{{ route('solutions.show', ['solution' => $solution->slug]) }}">Xem giải pháp <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                </article></div>
+            @empty
+                <p>Giải pháp đang được cập nhật.</p>
+            @endforelse
+        </div>
+        <div class="mt-4">{{ $solutions->links() }}</div>
+    </div></section>
 @endsection

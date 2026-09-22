@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Solution;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\View\View;
@@ -23,8 +24,21 @@ class SolutionsController extends Controller
         return view('frontend.solutions.index', [
             'page' => $page,
             'intro' => self::INTRO,
+            'solutions' => Solution::published()->with(['slugs', 'curatorMedia'])->orderBy('sort_order')->orderBy('id')->paginate(12),
             'pageBannerUrl' => $page['banner_url'],
             'seo' => $this->seo->systemPage($page, 'solutions.index'),
+        ]);
+    }
+
+    public function show(Solution $solution): View
+    {
+        abort_unless($solution->is_active, 404);
+        $solution->load(['curatorMedia', 'bannerMedia', 'seoImageMedia']);
+
+        return view('frontend.solutions.show', [
+            'solution' => $solution,
+            'bodyHtml' => (string) str((string) $solution->body)->sanitizeHtml(),
+            'seo' => $this->seo->solution($solution),
         ]);
     }
 }

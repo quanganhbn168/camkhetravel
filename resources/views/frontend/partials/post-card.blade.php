@@ -11,5 +11,11 @@
     </a>
     <div class="card-body">
         <h3 class="display-title h4"><a class="link-body-emphasis text-decoration-none" href="{{ route('slug.show', ['slug' => $post->slug]) }}">{{ $post->title }}</a></h3>
+        @if (($showExcerpt ?? false) && filled($post->excerpt))
+            <p class="blog-card-excerpt text-body-secondary mb-3">{{ $post->excerpt }}</p>
+        @endif
+        @if ($showExcerpt ?? false)
+            <a class="section-link" href="{{ route('slug.show', ['slug' => $post->slug]) }}">Đọc bài viết →</a>
+        @endif
     </div>
 </article>

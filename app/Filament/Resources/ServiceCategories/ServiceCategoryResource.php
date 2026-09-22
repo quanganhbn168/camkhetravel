@@ -25,9 +25,9 @@ class ServiceCategoryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
 
-    protected static ?string $navigationLabel = 'Nhóm dịch vụ';
+    protected static ?string $navigationLabel = 'Danh mục dịch vụ';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {

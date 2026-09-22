@@ -41,5 +41,6 @@ final class AboutSettingsSeeder extends Seeder
         ]);
         $settings->settingsConfig()->resetDefaultValueLoadedProperties();
         $settings->save();
+        $this->call(AboutProfileContentSeeder::class);
     }
 }

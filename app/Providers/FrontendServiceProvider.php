@@ -14,6 +14,7 @@ use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
+use App\Models\Solution;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Models\User;
@@ -48,9 +49,13 @@ class FrontendServiceProvider extends ServiceProvider
             'project' => Project::class,
             'project-category' => ProjectCategory::class,
             'service' => Service::class,
+            'solution' => Solution::class,
             'service-category' => ServiceCategory::class,
             'user' => User::class,
         ]);
+
+        Solution::observe(SlugObserver::class);
+        Solution::observe(AssignNextOrderObserver::class);
 
         foreach ([
             Post::class,
@@ -258,6 +263,10 @@ class FrontendServiceProvider extends ServiceProvider
 
         if ($linkedSourceType === 'native_route') {
             $routeName = trim((string) $item->getRawOriginal('url'));
+
+            if ($routeName === 'solutions.index') {
+                return request()->routeIs('solutions.*');
+            }
 
             return $routeName !== '' && request()->routeIs($routeName);
         }
