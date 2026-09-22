@@ -62,7 +62,7 @@ class HomeController extends Controller
         $featuredServiceCategories = ServiceCategory::query()
             ->where('is_active', true)->where('is_featured', true)->where('is_home', true)
             ->whereHas('services', fn ($query) => $query->published()->where('is_home', true))
-            ->with('slugs')
+            ->with(['slugs', 'curatorMedia'])
             ->orderBy('sort_order')->orderBy('id')->get();
         foreach ($featuredServiceCategories as $category) {
             $services = $homeServicesByCategory
@@ -71,9 +71,6 @@ class HomeController extends Controller
                 ->values();
             $category->setRelation('services', $services);
             $this->attachImages($services);
-            $imageService = $services->first(fn ($service) => filled($service->image_url));
-            $category->setAttribute('home_image_url', $imageService?->image_url);
-            $category->setAttribute('home_image_alt', $imageService?->title ?: $category->name);
         }
 
         $showcaseProjects = Project::query()

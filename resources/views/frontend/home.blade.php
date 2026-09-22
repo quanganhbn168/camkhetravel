@@ -123,8 +123,8 @@
                             <div class="row g-4 g-lg-5 align-items-center">
                                 <div class="col-lg-7">
                                     <a class="service-image d-block" href="{{ route('services.category', ['category' => $category->slug]) }}">
-                                        @if ($category->home_image_url)
-                                            <img src="{{ $category->home_image_url }}" alt="{{ $category->home_image_alt ?: $category->name }}" loading="lazy">
+                                        @if ($category->image_url)
+                                            <img src="{{ $category->image_url }}" alt="{{ $category->name }}" loading="lazy">
                                         @endif
                                     </a>
                                 </div>
