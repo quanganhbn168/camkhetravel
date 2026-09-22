@@ -23,8 +23,7 @@ class SlugObserver
         $requestedSlug = method_exists($model, 'pullRequestedSlug')
             ? $model->pullRequestedSlug()
             : null;
-        $locale = app()->getLocale();
-        $currentSlug = $model->slugs()->where('locale', $locale)->first();
+        $currentSlug = $model->slugs()->first();
 
         if ($requestedSlug === null && $currentSlug) {
             return;
@@ -36,10 +35,9 @@ class SlugObserver
             return;
         }
 
-        $model->slugs()->updateOrCreate(
-            ['locale' => $locale],
-            ['slug' => $this->makeUniqueSlug($baseSlug, $model, $locale)],
-        );
+        $model->slugs()->updateOrCreate([], [
+            'slug' => $this->makeUniqueSlug($baseSlug, $model),
+        ]);
     }
 
     public function deleted(Model $model): void
@@ -49,14 +47,13 @@ class SlugObserver
         }
     }
 
-    private function makeUniqueSlug(string $baseSlug, Model $model, string $locale): string
+    private function makeUniqueSlug(string $baseSlug, Model $model): string
     {
         $slug = $baseSlug;
         $suffix = 2;
 
         while ($this->isReserved($slug) || Slug::query()
             ->where('slug', $slug)
-            ->where('locale', $locale)
             ->where(function ($query) use ($model): void {
                 $query->where('sluggable_type', '!=', $model->getMorphClass())
                     ->orWhere('sluggable_id', '!=', $model->getKey());
@@ -73,6 +70,7 @@ class SlugObserver
     {
         return in_array($slug, [
             'dich-vu',
+            'giai-phap',
             'du-an',
             'bang-gia',
             'gioi-thieu',

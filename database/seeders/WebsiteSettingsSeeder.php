@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Settings\CompanySettings;
-use App\Settings\DesignSettings;
-use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
 use Illuminate\Database\Seeder;
 
@@ -12,32 +9,35 @@ final class WebsiteSettingsSeeder extends Seeder
 {
     public function run(): void
     {
-        $website = app(WebsiteSettings::class);
-        $website->site_name = 'Tên doanh nghiệp';
-        $website->tagline = 'Giải pháp đồng bộ cho công trình';
-        $website->company_name = 'Tên doanh nghiệp';
-        $website->contact_email = 'hello@example.com';
-        $website->hotline = '0900 000 000';
-        $website->contact_phone = '0900 000 000';
-        $website->address = 'Việt Nam';
-        $website->save();
-
-        $homepage = app(HomepageSettings::class);
-        $homepage->about_eyebrow = ['vi' => 'VỀ CHÚNG TÔI'];
-        $homepage->about_title = ['vi' => 'Giải pháp phù hợp cho từng công trình'];
-        $homepage->about_content = ['vi' => 'Cập nhật nội dung giới thiệu doanh nghiệp tại trang quản trị.'];
-        $homepage->save();
-
-        $company = app(CompanySettings::class);
-        $company->founded_year = now()->year;
-        $company->save();
-
-        $design = app(DesignSettings::class);
-        $design->color_primary = '#e52327';
-        $design->color_primary_hover = '#c9161a';
-        $design->color_ink = '#212529';
-        $design->color_surface = '#f8f9fa';
-        $design->color_muted = '#e9ecef';
-        $design->save();
+        $settings = new WebsiteSettings([
+            'site_name' => 'Tên doanh nghiệp',
+            'tagline' => 'Giải pháp đồng bộ cho công trình',
+            'company_name' => 'Tên doanh nghiệp',
+            'contact_email' => 'hello@example.com',
+            'hotline' => '0900 000 000',
+            'contact_phone' => '0900 000 000',
+            'address' => 'Việt Nam',
+            'facebook_url' => '',
+            'zalo_url' => '',
+            'youtube_url' => '',
+            'seo_title' => 'Tên doanh nghiệp | Giải pháp cho công trình',
+            'seo_description' => 'Thông tin doanh nghiệp, dịch vụ, dự án và sản phẩm.',
+            'seo_keywords' => 'doanh nghiệp, dịch vụ, dự án, sản phẩm',
+            'logo_media_id' => null,
+            'favicon_media_id' => null,
+            'seo_image_media_id' => null,
+            'company_profile_media_id' => null,
+            'about_image_media_id' => null,
+            'banner_media_id' => null,
+            'header_menu_id' => null,
+            'footer_menu_id' => null,
+            'footer_background_media_id' => null,
+            'google_maps_embed_url' => null,
+            'google_maps_url' => null,
+            'phones' => [],
+            'branches' => [],
+        ]);
+        $settings->settingsConfig()->resetDefaultValueLoadedProperties();
+        $settings->save();
     }
 }

@@ -10,15 +10,11 @@ class AboutSettings extends Settings
 
     public array $page_stats = [];
 
-    public array $page_label;
+    public string $page_intro = '';
 
-    public array $page_title;
+    public string $story_title = '';
 
-    public array $page_intro;
-
-    public array $story_title = [];
-
-    public array $story;
+    public string $story = '';
 
     public ?int $story_image_media_id = null;
 
@@ -30,41 +26,41 @@ class AboutSettings extends Settings
 
     public ?int $video_poster_media_id = null;
 
-    public array $history;
+    public string $history = '';
 
-    public array $history_title = [];
+    public string $history_title = '';
 
-    public array $history_description = [];
+    public string $history_description = '';
 
     public array $history_timeline = [];
 
-    public array $mission;
+    public string $mission = '';
 
-    public array $vision;
+    public string $vision = '';
 
-    public array $core_values;
+    public string $core_values = '';
 
     public ?int $core_values_image_media_id = null;
 
-    public array $principles_title = [];
+    public string $principles_title = '';
 
-    public array $services_title = [];
+    public string $services_title = '';
 
-    public array $services_link_label = [];
+    public string $services_link_label = '';
 
-    public array $stats_title = [];
+    public string $stats_title = '';
 
-    public array $office_title = [];
+    public string $office_title = '';
 
-    public array $office_description = [];
+    public string $office_description = '';
 
     public ?int $office_image_media_id = null;
 
     public array $office_gallery = [];
 
-    public array $cta_title = [];
+    public string $cta_title = '';
 
-    public array $cta_button_label = [];
+    public string $cta_button_label = '';
 
     public static function group(): string
     {

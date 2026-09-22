@@ -17,7 +17,6 @@ final class HeroSlidesTable
             ->columns([
                 CuratorColumn::make('curatorMedia')->label('Ảnh')->square(),
                 TextColumn::make('title')->label('Nội dung')->searchable()->wrap(),
-                TextColumn::make('translations_count')->counts('translations')->label('Bản dịch')->badge(),
                 IconColumn::make('is_active')->label('Hiển thị')->boolean(),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable(),
             ])

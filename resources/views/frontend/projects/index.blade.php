@@ -1,24 +1,22 @@
 @extends('layouts.master')
 
-@push('styles')
-    @vite('resources/css/frontend/pages/projects-index.css')
-@endpush
 
-@use(App\Support\Localization\LocalizedUrl)
 
 @section('content')
     @include('frontend.partials.resource-archive-hero', [
-        'resourceName' => __('site.projects'),
+        'resourceName' => 'Dự án',
         'resourceIndexRoute' => 'projects.index',
+        'pageKey' => $page['key'] ?? null,
+        'pageBannerUrl' => $pageBannerUrl ?? null,
     ])
 
     @if ($activeCategory)
         <section class="resource-category-intro">
-            <div class="site-container resource-category-intro__grid w-100 mx-auto site-projects-index__div-1">
+            <div class="container resource-category-intro__grid">
                 <div>
-                    <h2 class="display-title site-projects-index__heading-2">Các dự án {{ mb_strtolower($activeCategory->name) }} đã triển khai.</h2>
-                    <p class="site-projects-index__copy-3">{{ $pageDescription }}</p>
-                    <a class="btn btn-dark button-dark site-projects-index__action-4" href="{{ LocalizedUrl::route('contact') }}">Trao đổi dự án <span aria-hidden="true">→</span></a>
+                    <h2 class="display-title h2">Các dự án {{ mb_strtolower($activeCategory->name) }} đã triển khai.</h2>
+                    <p class="lead">{{ $pageDescription }}</p>
+                    <a class="btn btn-dark mt-3" href="{{ route('contact') }}">Trao đổi dự án <span aria-hidden="true">→</span></a>
                 </div>
                 <div class="resource-category-intro__visual">
                     @if (($heroImageUrl ?: $defaultBannerUrl))
@@ -31,32 +29,32 @@
         </section>
     @endif
 
-    <section class="resource-project-listing section-space site-projects-index__section-5">
-        <div class="site-container w-100 mx-auto site-projects-index__div-1">
+    <section class="section-space">
+        <div class="container">
             @include('frontend.partials.resource-filter-bar', [
-                'resourceName' => __('site.projects'),
+                'resourceName' => 'Dự án',
                 'resourceIndexRoute' => 'projects.index',
                 'categoryCountAttribute' => 'projects_count',
             ])
 
-            <div class="resource-project-grid site-projects-index__div-11">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4 mt-4">
                 @forelse ($projects as $project)
-                    @include('frontend.partials.project-card')
+                    <div class="col">@include('frontend.partials.project-card')</div>
                 @empty
-                    <p class="site-projects-index__copy-12">Chưa có dự án được xuất bản trong danh mục này.</p>
+                    <p class="empty-state w-100">Chưa có dự án được xuất bản trong danh mục này.</p>
                 @endforelse
             </div>
 
             @if ($projects->hasPages())
-                <div class="site-projects-index__div-13">{{ $projects->onEachSide(1)->links('frontend.partials.pagination') }}</div>
+                <div class="mt-4">{{ $projects->onEachSide(1)->links('frontend.partials.pagination') }}</div>
             @endif
         </div>
     </section>
 
-    <section class="site-archive-stats">
-        <div class="site-container site-archive-stats__grid">
+    <section class="archive-stats">
+        <div class="container archive-stats__grid">
             @foreach ($archiveStats as $stat)
-                <div class="site-archive-stat">
+                <div class="archive-stat">
                     <strong>{{ $stat['value'] }}</strong>
                     <span>{{ $stat['label'] }}</span>
                 </div>
@@ -65,15 +63,14 @@
     </section>
 
     @if ($marqueePartners->isNotEmpty())
-        <section class="site-partner-strip" aria-label="Đối tác và khách hàng">
-            <div class="site-container">
-                <header class="site-partner-strip__heading">
-                    <p class="site-eyebrow">Đối tác - khách hàng tiêu biểu</p>
+        <section class="partner-strip" aria-label="Đối tác và khách hàng">
+            <div class="container">
+                <header class="partner-strip__heading">
                     <h2>Được tin tưởng trong nhiều loại công trình</h2>
                 </header>
-                <div class="site-partner-strip__items">
+                <div class="partner-strip__items">
                     @foreach ($marqueePartners as $partner)
-                        <span class="site-partner-strip__item">
+                        <span class="partner-strip__item">
                             @if ($partner->curatorMedia?->url)
                                 <img src="{{ $partner->curatorMedia->url }}" alt="{{ $partner->name }}" loading="lazy">
                             @else

@@ -9,7 +9,6 @@ class Slug extends Model
 {
     protected $fillable = [
         'slug',
-        'locale',
     ];
 
     public function sluggable(): MorphTo

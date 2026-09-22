@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -25,7 +24,7 @@ class ProductController extends Controller
             'seo' => $this->seo->listing(
                 'Sản phẩm | '.$this->seo->siteName(),
                 'Thiết bị và vật tư PCCC chính hãng cho các công trình.',
-                LocalizedUrl::route('products.index'),
+                route('products.index'),
                 image: $data['heroImageUrl'],
             ),
         ]);
@@ -36,6 +35,7 @@ class ProductController extends Controller
         $category = ProductCategory::query()
             ->active()
             ->whereHas('slugs', fn (Builder $query) => $query->where('slug', $slug))
+            ->with('slugs')
             ->firstOrFail();
         $data = $this->listingData($category, $request);
 
@@ -54,6 +54,7 @@ class ProductController extends Controller
         $product->load([
             'category',
             'curatorMedia',
+            'slugs',
             'faqs' => fn ($query) => $query->active()->ordered(),
             'tags',
         ]);
@@ -74,7 +75,7 @@ class ProductController extends Controller
         $request ??= request();
         $sort = $request->string('sort')->value();
         $sort = in_array($sort, ['latest', 'featured', 'title'], true) ? $sort : 'latest';
-        $productsQuery = Product::query()->published()->with(['category', 'curatorMedia', 'tags']);
+        $productsQuery = Product::query()->published()->with(['category', 'curatorMedia', 'slugs', 'tags']);
 
         if ($activeCategory) {
             $productsQuery->whereBelongsTo($activeCategory, 'category');
@@ -97,7 +98,7 @@ class ProductController extends Controller
                 ->with('slugs')
                 ->orderBy('sort_order')
                 ->get()
-                ->each(fn (ProductCategory $category) => $category->setAttribute('public_url', LocalizedUrl::productCategory($category))),
+                ->each(fn (ProductCategory $category) => $category->setAttribute('public_url', route('products.category', ['slug' => $category->slug]))),
             'products' => $products,
             'heroImageUrl' => $hero?->image_url,
             'pageTitle' => $activeCategory?->name ?? 'Sản phẩm PCCC',

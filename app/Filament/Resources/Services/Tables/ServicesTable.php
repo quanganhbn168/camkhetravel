@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Services\Tables;
 
 use App\Models\Service;
-use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -36,7 +35,7 @@ final class ServicesTable
             ])
             ->defaultSort('sort_order')
             ->recordActions([
-                Action::make('preview')->label('Xem dịch vụ')->icon(Heroicon::OutlinedArrowTopRightOnSquare)->url(fn (Service $record): string => LocalizedUrl::service($record))->openUrlInNewTab(),
+                Action::make('preview')->label('Xem dịch vụ')->icon(Heroicon::OutlinedArrowTopRightOnSquare)->url(fn (Service $record): string => route('slug.show', ['slug' => $record->slug]))->openUrlInNewTab(),
                 EditAction::make(),
                 DeleteAction::make(),
             ]);

@@ -1,17 +1,15 @@
-@use(App\Support\Localization\LocalizedUrl)
-
-<article class="content-card site-hover-group site-partials-post-card__article-1">
-    <a class="card-image site-partials-post-card__action-2" href="{{ LocalizedUrl::post($post) }}">
+<article class="card h-100">
+    <a class="card-image post-card__image" href="{{ route('slug.show', ['slug' => $post->slug]) }}">
         @if ($post->image_url)
             <img src="{{ $post->image_url }}" alt="{{ $post->title }}" loading="lazy">
         @else
             <span class="image-placeholder">DV</span>
         @endif
         @if ($post->published_at)
-            <time class="position-absolute d-inline-flex align-items-center fw-bold site-partials-post-card__copy-3" datetime="{{ $post->published_at->toDateString() }}"><i class="fa-regular fa-calendar-days site-partials-post-card__element-4" aria-hidden="true"></i>{{ $post->published_at->translatedFormat('d/m/Y') }}</time>
+            <time class="position-absolute d-inline-flex align-items-center fw-bold badge text-bg-light bottom-0 start-0 m-3 gap-2" datetime="{{ $post->published_at->toDateString() }}"><i class="fa-regular fa-calendar-days" aria-hidden="true"></i>{{ $post->published_at->translatedFormat('d/m/Y') }}</time>
         @endif
     </a>
-    <div class="card-body site-partials-post-card__div-5">
-        <h3 class="display-title site-partials-post-card__heading-6"><a class="site-partials-post-card__action-7" href="{{ LocalizedUrl::post($post) }}">{{ $post->title }}</a></h3>
+    <div class="card-body">
+        <h3 class="display-title h4"><a class="link-body-emphasis text-decoration-none" href="{{ route('slug.show', ['slug' => $post->slug]) }}">{{ $post->title }}</a></h3>
     </div>
 </article>

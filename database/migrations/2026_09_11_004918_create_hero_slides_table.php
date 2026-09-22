@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('video_source', 20)->nullable();
             $table->string('video_url', 1024)->nullable();
             $table->foreignId('video_media_id')->nullable()->constrained('curator')->nullOnDelete();
-            $table->string('eyebrow')->nullable();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->string('primary_label')->nullable();

@@ -8,8 +8,6 @@ use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
-use App\Support\Localization\LanguageCatalog;
-use App\Support\Localization\LocalizedUrl;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Str;
 
@@ -21,10 +19,7 @@ class FrontendSeoBuilder
 
     private ?string $defaultImage = null;
 
-    public function __construct(
-        private readonly WebsiteSettings $website,
-        private readonly LanguageCatalog $languages,
-    ) {}
+    public function __construct(private readonly WebsiteSettings $website) {}
 
     public function default(): array
     {
@@ -41,8 +36,11 @@ class FrontendSeoBuilder
         return $this->website->site_name;
     }
 
-    /** @param iterable<array{question: string, answer: string}> $faqItems */
-    public function home(iterable $faqItems = []): array
+    /**
+     * @param  array<string, mixed>  $profile
+     * @param  iterable<array{question: string, answer: string}>  $faqItems
+     */
+    public function home(array $profile, iterable $faqItems = []): array
     {
         $canonical = $this->homeCanonical();
         $faqSchemaItems = [];
@@ -74,7 +72,7 @@ class FrontendSeoBuilder
                 'url' => $this->baseUrl(),
                 'inLanguage' => $this->languageTag(),
             ],
-            $this->webPageSchema($canonical, $this->website->seo_title ?: $this->website->site_name, $this->website->seo_description),
+            $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description']),
         ];
 
         if ($faqSchemaItems !== []) {
@@ -86,10 +84,12 @@ class FrontendSeoBuilder
         }
 
         return $this->page(
-            title: $this->website->seo_title ?: $this->website->site_name,
-            description: $this->website->seo_description,
+            title: (string) $profile['seo_title'],
+            description: (string) $profile['seo_description'],
             canonical: $canonical,
             schema: $schema,
+            image: (string) $profile['og_image_url'],
+            useDefaultImage: false,
         );
     }
 
@@ -108,9 +108,27 @@ class FrontendSeoBuilder
         );
     }
 
+    /** @param array<string, mixed> $profile */
+    public function systemPage(array $profile, string $routeName): array
+    {
+        $canonical = route($routeName);
+
+        return $this->page(
+            title: (string) $profile['seo_title'],
+            description: (string) $profile['seo_description'],
+            canonical: $canonical,
+            image: (string) $profile['og_image_url'],
+            schema: [
+                $this->organizationSchema(),
+                $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description']),
+            ],
+            useDefaultImage: false,
+        );
+    }
+
     public function service(Service $service): array
     {
-        $canonical = LocalizedUrl::service($service);
+        $canonical = route('slug.show', ['slug' => $service->slug]);
         $title = $service->seo_title ?: $service->title.' | '.$this->website->site_name;
         $description = $service->seo_description ?: $service->excerpt ?: $service->title;
 
@@ -131,8 +149,8 @@ class FrontendSeoBuilder
                     'provider' => ['@id' => $this->baseUrl().'#organization'],
                 ],
                 $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => __('site.services'), 'url' => LocalizedUrl::route('services.index')],
+                    ['name' => 'Trang chủ', 'url' => route('home')],
+                    ['name' => 'Dịch vụ', 'url' => route('services.index')],
                     ['name' => $service->title, 'url' => $canonical],
                 ]),
             ],
@@ -141,7 +159,7 @@ class FrontendSeoBuilder
 
     public function project(Project $project): array
     {
-        $canonical = LocalizedUrl::project($project);
+        $canonical = route('projects.show', ['slug' => $project->slug]);
         $title = $project->seo_title ?: $project->title.' | '.$this->website->site_name;
         $description = $project->seo_description ?: $project->excerpt ?: $project->title;
 
@@ -168,8 +186,8 @@ class FrontendSeoBuilder
                 $this->organizationSchema(),
                 $creativeWork,
                 $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => __('site.projects'), 'url' => LocalizedUrl::route('projects.index')],
+                    ['name' => 'Trang chủ', 'url' => route('home')],
+                    ['name' => 'Dự án', 'url' => route('projects.index')],
                     ['name' => $project->title, 'url' => $canonical],
                 ]),
             ],
@@ -178,7 +196,7 @@ class FrontendSeoBuilder
 
     public function post(Post $post): array
     {
-        $canonical = LocalizedUrl::post($post);
+        $canonical = route('slug.show', ['slug' => $post->slug]);
         $title = $post->seo_title ?: $post->title.' | '.$this->website->site_name;
         $description = $post->seo_description ?: $post->excerpt ?: $post->title;
 
@@ -206,8 +224,8 @@ class FrontendSeoBuilder
                 $this->organizationSchema(),
                 $blogPosting,
                 $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => __('site.news'), 'url' => LocalizedUrl::route('posts.index')],
+                    ['name' => 'Trang chủ', 'url' => route('home')],
+                    ['name' => 'Tin tức', 'url' => route('posts.index')],
                     ['name' => $post->title, 'url' => $canonical],
                 ]),
             ],
@@ -216,7 +234,7 @@ class FrontendSeoBuilder
 
     public function product(Product $product): array
     {
-        $canonical = LocalizedUrl::product($product);
+        $canonical = route('products.show', ['slug' => $product->slug]);
         $title = $product->seo_title ?: $product->title.' | '.$this->website->site_name;
         $description = $product->seo_description ?: $product->excerpt ?: $product->title;
 
@@ -237,8 +255,8 @@ class FrontendSeoBuilder
                     'brand' => ['@id' => $this->baseUrl().'#organization'],
                 ],
                 $this->breadcrumb([
-                    ['name' => __('site.home'), 'url' => LocalizedUrl::route('home')],
-                    ['name' => 'Sản phẩm', 'url' => LocalizedUrl::route('products.index')],
+                    ['name' => 'Trang chủ', 'url' => route('home')],
+                    ['name' => 'Sản phẩm', 'url' => route('products.index')],
                     ['name' => $product->title, 'url' => $canonical],
                 ]),
             ],
@@ -250,7 +268,7 @@ class FrontendSeoBuilder
         return $this->listing(
             $category->seo_title ?: $category->name.' | Sản phẩm',
             $category->seo_description ?: $category->description ?: 'Sản phẩm thuộc nhóm '.$category->name.'.',
-            LocalizedUrl::productCategory($category),
+            route('products.category', ['slug' => $category->slug]),
             image: $category->seoImageUrl(),
         );
     }
@@ -263,9 +281,10 @@ class FrontendSeoBuilder
         string $type = 'website',
         array $schema = [],
         string $robots = self::INDEX_ROBOTS,
+        bool $useDefaultImage = true,
     ): array {
         $description = $this->description($description);
-        $image = $image ?: $this->defaultImageUrl();
+        $image = $image ?: ($useDefaultImage ? $this->defaultImageUrl() : null);
 
         return [
             'title' => $title,
@@ -274,7 +293,7 @@ class FrontendSeoBuilder
             'robots' => $robots,
             'canonical' => $canonical,
             'type' => $type,
-            'locale' => $this->languages->ogLocale(app()->getLocale()),
+            'locale' => 'vi_VN',
             'image' => $image,
             'image_alt' => $this->website->site_name,
             'schema_json' => json_encode([

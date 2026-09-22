@@ -3,7 +3,6 @@
 namespace App\Traits;
 
 use App\Models\Slug;
-use App\Support\Localization\LanguageCatalog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
@@ -28,13 +27,8 @@ trait HasSlug
             return $this->newQuery()->where($field, $value)->first();
         }
 
-        $locale = app()->getLocale();
-        $defaultLocale = app(LanguageCatalog::class)->defaultCode();
-
         return $this->newQuery()
-            ->whereHas('slugs', fn ($query) => $query
-                ->where('slug', $value)
-                ->whereIn('locale', array_unique([$locale, $defaultLocale])))
+            ->whereHas('slugs', fn ($query) => $query->where('slug', $value))
             ->first();
     }
 
@@ -48,17 +42,12 @@ trait HasSlug
             return $this->requestedSlug;
         }
 
-        $locale = app()->getLocale();
-        $defaultLocale = app(LanguageCatalog::class)->defaultCode();
-
         if ($this->relationLoaded('slugs')) {
-            return $this->slugs->firstWhere('locale', $locale)?->slug
-                ?: $this->slugs->firstWhere('locale', $defaultLocale)?->slug;
+            return $this->slugs->first()?->slug;
         }
 
         return $this->exists
-            ? $this->slugs()->where('locale', $locale)->value('slug')
-                ?: $this->slugs()->where('locale', $defaultLocale)->value('slug')
+            ? $this->slugs()->value('slug')
             : null;
     }
 

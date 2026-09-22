@@ -1,0 +1,16 @@
+.product-layout {
+    display: grid;
+    gap: 2rem;
+}
+
+.product-summary {
+    padding: 1.5rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+}
+
+@media (min-width: 992px) {
+    .product-layout {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+}

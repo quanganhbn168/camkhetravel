@@ -2,8 +2,8 @@
 
 use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
-use App\Settings\DesignSettings;
 use App\Settings\HomepageSettings;
+use App\Settings\SystemPageSettings;
 use App\Settings\WebsiteSettings;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelSettings\SettingsCasts\DataCast;
@@ -23,7 +23,7 @@ return [
         HomepageSettings::class,
         CompanySettings::class,
         AboutSettings::class,
-        DesignSettings::class,
+        SystemPageSettings::class,
     ],
 
     /*

@@ -22,7 +22,6 @@ use App\Observers\ContentSeoFallbackObserver;
 use App\Observers\SlugObserver;
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
-use App\Support\Localization\LanguageCatalog;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -38,11 +37,6 @@ use Illuminate\View\View as BladeView;
 
 class FrontendServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        $this->app->singleton(LanguageCatalog::class);
-    }
-
     public function boot(): void
     {
         Relation::enforceMorphMap([
@@ -110,18 +104,18 @@ class FrontendServiceProvider extends ServiceProvider
         }
 
         $website = app(WebsiteSettings::class);
-        $media = Media::query()
-            ->whereIn('id', array_filter([
-                $website->logo_media_id,
-                $website->seo_image_media_id,
-                $website->company_profile_media_id,
-                $website->about_image_media_id,
-                $website->contact_image_media_id,
-                $website->banner_media_id,
-                $website->footer_background_media_id,
-            ]))
-            ->get()
-            ->keyBy('id');
+        $mediaIds = array_values(array_filter([
+            $website->logo_media_id,
+            $website->seo_image_media_id,
+            $website->company_profile_media_id,
+            $website->about_image_media_id,
+            $website->banner_media_id,
+            $website->footer_background_media_id,
+        ]));
+
+        $media = $mediaIds === []
+            ? collect()
+            : Media::query()->whereIn('id', $mediaIds)->get()->keyBy('id');
 
         View::share([
             'website' => $website,
@@ -139,6 +133,9 @@ class FrontendServiceProvider extends ServiceProvider
             ]),
             'faviconLinks' => app(FaviconService::class)->links(),
             'seo' => app(FrontendSeoBuilder::class)->default(),
+            'footerContactPhones' => $this->phoneLinks($website),
+            'footerContactBranches' => $this->contactBranches($website),
+            'currentYear' => now()->year,
         ]);
 
         View::composer('partials.footer', function (BladeView $view) use ($website): void {
@@ -152,13 +149,19 @@ class FrontendServiceProvider extends ServiceProvider
                 )
                 ->first();
 
-            $view->with('footerServices', Service::query()
-                ->published()
-                ->with('slugs')
-                ->orderByDesc('is_featured')
-                ->orderBy('sort_order')
-                ->limit(4)
-                ->get(['id', 'title']))
+            $footerServices = request()->attributes->get('frontend.footer_services');
+
+            if (! $footerServices instanceof Collection) {
+                $footerServices = Service::query()
+                    ->published()
+                    ->with('slugs')
+                    ->orderByDesc('is_featured')
+                    ->orderBy('sort_order')
+                    ->limit(4)
+                    ->get(['id', 'title', 'is_featured', 'sort_order']);
+            }
+
+            $view->with('footerServices', $footerServices)
                 ->with('footerNavigation', $footerMenu?->items
                     ->whereNull('parent_id')
                     ->map(fn (MenuItem $item): array => $this->menuItemData($item, $footerMenu->items))
@@ -194,6 +197,12 @@ class FrontendServiceProvider extends ServiceProvider
     /** @return Collection<int, array{label: string, href: string}> */
     private function headerPhones(WebsiteSettings $website): Collection
     {
+        return $this->phoneLinks($website)->take(2)->values();
+    }
+
+    /** @return Collection<int, array{label: string, href: string}> */
+    private function phoneLinks(WebsiteSettings $website): Collection
+    {
         $phones = collect($website->phones ?? [])
             ->filter(fn ($phone) => is_array($phone) && filled($phone['number'] ?? null));
 
@@ -205,7 +214,21 @@ class FrontendServiceProvider extends ServiceProvider
         return $phones->map(fn (array $phone): array => [
             'label' => trim($phone['number']),
             'href' => 'tel:'.preg_replace('/\s+/', '', $phone['number']),
-        ])->unique('href')->take(2)->values();
+        ])->unique('href')->values();
+    }
+
+    /** @return Collection<int, array{name: string, address: string}> */
+    private function contactBranches(WebsiteSettings $website): Collection
+    {
+        return collect($website->branches ?? [])
+            ->filter(fn ($branch): bool => is_array($branch)
+                && ($branch['is_active'] ?? true)
+                && filled($branch['address'] ?? null))
+            ->map(fn (array $branch): array => [
+                'name' => (string) ($branch['name'] ?? 'Địa chỉ'),
+                'address' => trim((string) $branch['address']),
+            ])
+            ->values();
     }
 
     /** @return array{label: string, url: string, target: string, is_active: bool, home: bool, has_children: bool, children: Collection<int, array<string, mixed>>} */

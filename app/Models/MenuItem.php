@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Support\Localization\LocalizedUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -117,7 +116,7 @@ class MenuItem extends Model
         }
 
         return $routeName !== '' && Route::has($routeName)
-            ? LocalizedUrl::route($routeName)
+            ? route($routeName)
             : '#';
     }
 
@@ -128,6 +127,7 @@ class MenuItem extends Model
             'home',
             'about',
             'services.index',
+            'solutions.index',
             'projects.index',
             'posts.index',
             'products.index',
@@ -143,7 +143,7 @@ class MenuItem extends Model
             ->with('slugs')
             ->find($this->linked_source_id);
 
-        return $service?->slug ? LocalizedUrl::slug($service->slug) : '#';
+        return $service?->slug ? route('slug.show', ['slug' => $service->slug]) : '#';
     }
 
     private function serviceCategoryLink(): string
@@ -152,7 +152,7 @@ class MenuItem extends Model
             ->where('is_active', true)
             ->find($this->linked_source_id);
 
-        return $category ? LocalizedUrl::serviceCategory($category) : '#';
+        return $category ? route('services.category', ['category' => $category->slug]) : '#';
     }
 
     private function projectLink(): string
@@ -162,7 +162,7 @@ class MenuItem extends Model
             ->with('slugs')
             ->find($this->linked_source_id);
 
-        return $project ? LocalizedUrl::project($project) : '#';
+        return $project ? route('projects.show', ['slug' => $project->slug]) : '#';
     }
 
     private function projectCategoryLink(): string
@@ -171,7 +171,7 @@ class MenuItem extends Model
             ->where('is_active', true)
             ->find($this->linked_source_id);
 
-        return $category ? LocalizedUrl::projectCategory($category) : '#';
+        return $category ? route('projects.category', ['slug' => $category->slug]) : '#';
     }
 
     private function postLink(): string
@@ -181,7 +181,7 @@ class MenuItem extends Model
             ->with('slugs')
             ->find($this->linked_source_id);
 
-        return $post ? LocalizedUrl::post($post) : '#';
+        return $post ? route('slug.show', ['slug' => $post->slug]) : '#';
     }
 
     private function postCategoryLink(): string
@@ -190,21 +190,21 @@ class MenuItem extends Model
             ->where('is_active', true)
             ->find($this->linked_source_id);
 
-        return $category ? LocalizedUrl::postCategory($category) : '#';
+        return $category ? route('posts.category', ['slug' => $category->slug]) : '#';
     }
 
     private function productLink(): string
     {
         $product = Product::query()->published()->with('slugs')->find($this->linked_source_id);
 
-        return $product ? LocalizedUrl::product($product) : '#';
+        return $product ? route('products.show', ['slug' => $product->slug]) : '#';
     }
 
     private function productCategoryLink(): string
     {
         $category = ProductCategory::query()->active()->find($this->linked_source_id);
 
-        return $category ? LocalizedUrl::productCategory($category) : '#';
+        return $category ? route('products.category', ['slug' => $category->slug]) : '#';
     }
 
     private function pageLink(): string

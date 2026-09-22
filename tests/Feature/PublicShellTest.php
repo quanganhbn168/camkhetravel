@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Database\Seeders\WebsiteSettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,12 +14,11 @@ class PublicShellTest extends TestCase
     public function test_header_uses_bootstrap_navigation_without_alpine_markup(): void
     {
         $this->seed(WebsiteSettingsSeeder::class);
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('--primary-color: #e52327;', false)
-            ->assertSee('site-header__toggle', false)
+            ->assertSee('header__toggle', false)
             ->assertSee('offcanvas', false)
             ->assertSee('data-bs-toggle="modal"', false)
             ->assertDontSee('x-data', false);
@@ -40,16 +39,17 @@ class PublicShellTest extends TestCase
 
     public function test_floating_contact_and_scroll_controls_have_usable_styles(): void
     {
-        $styles = file_get_contents(resource_path('css/frontend/site.css'));
-        $tokens = file_get_contents(resource_path('views/components/site-design-tokens.blade.php'));
+        $styles = file_get_contents(resource_path('scss/components/_floating-actions.scss'));
+        $foundation = file_get_contents(resource_path('scss/frontend.scss'));
         $frontendStyles = file_get_contents(resource_path('scss/frontend.scss'));
 
-        $this->assertStringContainsString('--primary-color:', $tokens);
-        $this->assertStringNotContainsString('--bs-primary:', $tokens);
-        $this->assertStringContainsString('@include brand.overrides();', $frontendStyles);
+        $this->assertStringContainsString('$primary: #e52327;', $foundation);
+        $this->assertStringNotContainsString('--bs-primary:', $foundation);
+        $this->assertStringNotContainsString('brand.overrides', $frontendStyles);
+        $this->assertStringContainsString("@include meta.load-css('components/floating-actions');", $frontendStyles);
         $this->assertStringContainsString('.floating-action {', $styles);
-        $this->assertStringNotContainsString('.floating-action--phone::before', $styles);
-        $this->assertStringNotContainsString('@keyframes phone-ring', $styles);
+        $this->assertStringContainsString('.floating-action--phone::before', $styles);
+        $this->assertStringContainsString('@keyframes phone-ring', $styles);
         $this->assertStringContainsString('.scroll-top.is-visible', $styles);
     }
 }

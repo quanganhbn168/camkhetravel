@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Filament\Resources\ServiceCategories\Pages\EditServiceCategory;
 use App\Models\ServiceCategory;
 use App\Models\User;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -19,7 +19,7 @@ class HomeFeaturedServicesTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_featured_categories_require_both_flags_and_only_contain_published_home_services(): void

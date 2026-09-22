@@ -7,12 +7,10 @@ use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
 use App\Settings\AboutSettings;
-use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
-use App\Support\Localization\LanguageCatalog;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use App\Support\Media\MediaUrl as CuratorMediaUrl;
+use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Support\Collection;
@@ -23,32 +21,32 @@ class AboutController extends Controller
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
         private readonly AboutSettings $settings,
-        private readonly HomepageSettings $homepage,
         private readonly WebsiteSettings $website,
-        private readonly LanguageCatalog $languages,
+        private readonly SystemPageProfileResolver $systemPages,
     ) {}
 
     public function __invoke(): View
     {
+        $page = $this->systemPages->require('about');
         $managed = [
-            'title' => $this->translated($this->settings->page_title),
-            'intro' => $this->translated($this->settings->page_intro),
-            'story_title' => $this->translated($this->settings->story_title),
-            'story' => $this->translated($this->settings->story),
-            'history' => $this->translated($this->settings->history),
-            'history_title' => $this->translated($this->settings->history_title),
-            'history_description' => $this->translated($this->settings->history_description),
-            'mission' => $this->translated($this->settings->mission),
-            'vision' => $this->translated($this->settings->vision),
-            'core_values' => $this->translated($this->settings->core_values),
-            'principles_title' => $this->translated($this->settings->principles_title),
-            'services_title' => $this->translated($this->settings->services_title),
-            'services_link_label' => $this->translated($this->settings->services_link_label),
-            'stats_title' => $this->translated($this->settings->stats_title),
-            'office_title' => $this->translated($this->settings->office_title),
-            'office_description' => $this->translated($this->settings->office_description),
-            'cta_title' => $this->translated($this->settings->cta_title),
-            'cta_button_label' => $this->translated($this->settings->cta_button_label),
+            'title' => $page['title'],
+            'intro' => trim($this->settings->page_intro),
+            'story_title' => trim($this->settings->story_title),
+            'story' => $this->settings->story,
+            'history' => $this->settings->history,
+            'history_title' => trim($this->settings->history_title),
+            'history_description' => trim($this->settings->history_description),
+            'mission' => trim($this->settings->mission),
+            'vision' => trim($this->settings->vision),
+            'core_values' => $this->settings->core_values,
+            'principles_title' => trim($this->settings->principles_title),
+            'services_title' => trim($this->settings->services_title),
+            'services_link_label' => trim($this->settings->services_link_label),
+            'stats_title' => trim($this->settings->stats_title),
+            'office_title' => trim($this->settings->office_title),
+            'office_description' => trim($this->settings->office_description),
+            'cta_title' => trim($this->settings->cta_title),
+            'cta_button_label' => trim($this->settings->cta_button_label),
         ];
         $historyTimeline = $this->historyTimeline($this->settings->history_timeline ?? []);
         $hasManagedContent = collect($managed)->filter(fn (string $value): bool => filled($value))->isNotEmpty()
@@ -114,17 +112,13 @@ class AboutController extends Controller
         foreach ($services as $service) {
             $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia));
         }
-        $description = $about['intro'] ?: trim(strip_tags($about['story'])) ?: $about['title'];
-
         return view('frontend.about', compact('about') + [
             'historyTimeline' => $historyTimeline,
             'services' => $services,
             'stats' => $this->stats(),
-            'seo' => $this->seo->listing(
-                $about['title'].' | '.$this->seo->siteName(),
-                $description,
-                LocalizedUrl::route('about'),
-            ),
+            'page' => $page,
+            'pageBannerUrl' => $page['banner_url'],
+            'seo' => $this->seo->systemPage($page, 'about'),
         ]);
     }
 
@@ -146,8 +140,8 @@ class AboutController extends Controller
 
         return $items
             ->map(function (array $item, int $index) use ($media): array {
-                $title = $this->localizedValue($item['title'] ?? null);
-                $description = $this->localizedValue($item['description'] ?? null);
+                $title = $this->textValue($item['title'] ?? null);
+                $description = $this->textValue($item['description'] ?? null);
                 $mediaId = is_numeric($item['media_id'] ?? null) ? (int) $item['media_id'] : null;
 
                 return [
@@ -162,9 +156,9 @@ class AboutController extends Controller
             ->values();
     }
 
-    private function localizedValue(mixed $value): string
+    private function textValue(mixed $value): string
     {
-        return is_array($value) ? $this->translated($value) : trim((string) $value);
+        return trim((string) $value);
     }
 
     private function stats(): Collection
@@ -254,12 +248,4 @@ class AboutController extends Controller
         return 'https://www.youtube-nocookie.com/embed/'.$videoId.'?rel=0';
     }
 
-    private function translated(array $content): string
-    {
-        $locale = app()->getLocale();
-        $defaultLocale = $this->languages->defaultCode();
-        $fallback = reset($content);
-
-        return (string) ($content[$locale] ?? $content[$defaultLocale] ?? $fallback ?? '');
-    }
 }

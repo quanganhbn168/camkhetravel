@@ -10,29 +10,29 @@ function initialiseHeader() {
     const header = document.querySelector('[data-site-header]');
     const drawer = document.getElementById('mobile-drawer');
     const search = document.getElementById('header-search-modal');
-    let lastY = window.scrollY;
-
-    const sync = () => {
-        const y = Math.max(0, window.scrollY);
-        const overlayOpen = document.querySelector('.offcanvas.show, .modal.show, .dropdown-menu.show');
-        const focused = header?.contains(document.activeElement);
-
-        if (header && (Math.abs(y - lastY) >= 6 || y <= header.offsetHeight || overlayOpen || focused)) {
-            header.classList.toggle('is-scroll-hidden', y > header.offsetHeight && y > lastY && !overlayOpen && !focused);
-            lastY = y;
-        }
-    };
-
-    if (header) {
-        window.addEventListener('scroll', sync, { passive: true });
-        header.addEventListener('focusin', () => header.classList.remove('is-scroll-hidden'));
-    }
 
     search?.addEventListener('shown.bs.modal', () => document.getElementById('header-search-query')?.focus());
-    drawer?.addEventListener('show.bs.offcanvas', () => header?.classList.remove('is-scroll-hidden'));
     matchMedia('(min-width: 1200px)').addEventListener('change', ({ matches }) => {
         if (matches && drawer) Offcanvas.getInstance(drawer)?.hide();
     });
+
+    if (!header) return;
+
+    let previousScroll = Math.max(0, window.scrollY);
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = Math.max(0, window.scrollY);
+
+        if (currentScroll <= header.offsetHeight) {
+            header.classList.remove('is-scroll-hidden');
+        } else if (Math.abs(currentScroll - previousScroll) < 5) {
+            return;
+        } else {
+            header.classList.toggle('is-scroll-hidden', currentScroll > previousScroll);
+        }
+
+        previousScroll = currentScroll;
+    }, { passive: true });
 }
 
 function initialiseScrollTop() {

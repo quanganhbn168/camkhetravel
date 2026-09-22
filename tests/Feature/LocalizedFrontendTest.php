@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Intro;
-use App\Support\Localization\LanguageCatalog;
 use Awcodes\Curator\Models\Media;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class LocalizedFrontendTest extends TestCase
@@ -17,7 +17,7 @@ class LocalizedFrontendTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_the_public_website_is_vietnamese_only(): void
@@ -28,7 +28,10 @@ class LocalizedFrontendTest extends TestCase
             ->assertDontSee('hreflang=', false)
             ->assertDontSee('Chọn ngôn ngữ');
 
-        $this->assertSame(['vi'], app(LanguageCatalog::class)->active()->keys()->values()->all());
+        $this->assertFileDoesNotExist(app_path('Support/Localization/LanguageCatalog.php'));
+        $this->assertFileDoesNotExist(app_path('Support/Localization/LocalizedUrl.php'));
+        $this->assertFileDoesNotExist(app_path('Http/Middleware/SetFrontendLocale.php'));
+        $this->assertFileDoesNotExist(config_path('locales.php'));
     }
 
     public function test_old_locale_prefixed_urls_are_not_public_routes(): void
@@ -67,8 +70,8 @@ class LocalizedFrontendTest extends TestCase
             'sluggable_type' => 'intro',
             'sluggable_id' => $intro->id,
             'slug' => 'bai-gioi-thieu-kiem-thu',
-            'locale' => 'vi',
         ]);
+        $this->assertFalse(Schema::hasColumn('slugs', 'locale'));
         $this->get('/bai-gioi-thieu/bai-gioi-thieu-kiem-thu')
             ->assertOk()
             ->assertSee($intro->title)

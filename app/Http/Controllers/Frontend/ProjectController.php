@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Partner;
 use App\Models\Project;
 use App\Models\ProjectCategory;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
+use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,22 +18,25 @@ class ProjectController extends Controller
 {
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
+        private readonly SystemPageProfileResolver $systemPages,
     ) {}
 
     public function index(Request $request): View
     {
-        return view('frontend.projects.index', $this->listingData(request: $request) + [
-            'seo' => $this->seo->listing(
-                'Dự án | '.$this->seo->siteName(),
-                'Các công trình PCCC tiêu biểu do '.$this->seo->siteName().' triển khai.',
-                LocalizedUrl::route('projects.index'),
-            ),
-        ]);
+        $page = $this->systemPages->require('projects');
+        $data = $this->listingData(request: $request);
+        $data['page'] = $page;
+        $data['pageTitle'] = $page['title'];
+        $data['pageBannerUrl'] = $page['banner_url'];
+        $data['seo'] = $this->seo->systemPage($page, 'projects.index');
+
+        return view('frontend.projects.index', $data);
     }
 
     public function category(ProjectCategory $category, ?Request $request = null): View
     {
         abort_unless($category->is_active, 404);
+        $category->loadMissing('slugs');
 
         $title = $category->name.' | Dự án';
         $description = $category->description ?: 'Các dự án thuộc nhóm '.$category->name.'.';
@@ -41,7 +44,7 @@ class ProjectController extends Controller
         $request ??= request();
 
         return view('frontend.projects.index', $this->listingData($category, request: $request) + [
-            'seo' => $this->seo->listing($title, $description, LocalizedUrl::projectCategory($category), image: $category->seoImageUrl()),
+            'seo' => $this->seo->listing($title, $description, route('projects.category', ['slug' => $category->slug]), image: $category->seoImageUrl()),
         ]);
     }
 
@@ -50,8 +53,9 @@ class ProjectController extends Controller
         abort_unless($project->status === 'published' && (! $project->published_at || $project->published_at->isPast()), 404);
 
         $project->load([
-            'category',
+            'category.slugs',
             'curatorMedia',
+            'slugs',
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
@@ -61,7 +65,7 @@ class ProjectController extends Controller
             ->published()
             ->whereKeyNot($project->id)
             ->when($project->project_category_id, fn ($query) => $query->where('project_category_id', $project->project_category_id))
-            ->with(['category', 'curatorMedia'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->limit(3)
@@ -110,7 +114,7 @@ class ProjectController extends Controller
 
         $projectsQuery = Project::query()
             ->published()
-            ->with(['category', 'curatorMedia']);
+            ->with(['category', 'curatorMedia', 'slugs']);
 
         if ($activeCategory) {
             $projectsQuery->where('project_category_id', $activeCategory->id);
@@ -202,6 +206,7 @@ class ProjectController extends Controller
     {
         return Project::query()
             ->whereHas('slugs', fn (Builder $slugs) => $slugs->where('slug', $slug))
+            ->with('slugs')
             ->firstOrFail();
     }
 
@@ -209,6 +214,7 @@ class ProjectController extends Controller
     {
         return ProjectCategory::query()
             ->whereHas('slugs', fn (Builder $slugs) => $slugs->where('slug', $slug))
+            ->with('slugs')
             ->firstOrFail();
     }
 
@@ -217,8 +223,9 @@ class ProjectController extends Controller
         return ProjectCategory::query()
             ->where('is_active', true)
             ->withCount(['projects' => fn (Builder $query) => $query->published()])
+            ->with('slugs')
             ->orderBy('sort_order')
             ->get()
-            ->each(fn (ProjectCategory $category) => $category->setAttribute('public_url', LocalizedUrl::projectCategory($category)));
+            ->each(fn (ProjectCategory $category) => $category->setAttribute('public_url', route('projects.category', ['slug' => $category->slug])));
     }
 }

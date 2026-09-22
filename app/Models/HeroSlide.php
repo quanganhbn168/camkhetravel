@@ -34,18 +34,25 @@ class HeroSlide extends Model
         return $query->where('is_active', true);
     }
 
-    public function contentFor(): array
+    public function resolvedVideoUrl(): ?string
     {
-        return collect([
-            'eyebrow',
-            'title',
-            'description',
-            'primary_label',
-            'primary_url',
-            'secondary_label',
-            'secondary_url',
-        ])->mapWithKeys(fn (string $attribute): array => [
-            $attribute => $this->getAttribute($attribute),
-        ])->all();
+        if ($this->video_source === 'upload') {
+            return $this->videoMedia?->url;
+        }
+
+        if ($this->video_source !== 'youtube' || ! filter_var($this->video_url, FILTER_VALIDATE_URL)) {
+            return null;
+        }
+
+        $host = strtolower((string) parse_url($this->video_url, PHP_URL_HOST));
+
+        return in_array($host, [
+            'youtu.be',
+            'youtube.com',
+            'www.youtube.com',
+            'm.youtube.com',
+            'youtube-nocookie.com',
+            'www.youtube-nocookie.com',
+        ], true) ? $this->video_url : null;
     }
 }

@@ -1,25 +1,25 @@
 @if ($benefitItems !== [])
-    <section id="loi-ich" class="section-space site-services-partials-benefits__section-1">
-        <div class="site-container w-100 mx-auto site-services-partials-benefits__div-2">
-            <header class="mx-auto text-center site-services-partials-benefits__element-3">
-                <h2 class="display-title site-services-partials-benefits__heading-4">{{ $service->benefit_title ?: 'Lợi ích của '.$service->title }}</h2>
+    <section id="loi-ich" class="section-space bg-light">
+        <div class="container">
+            <header class="mx-auto text-center mb-4">
+                <h2 class="display-title h2">{{ $service->benefit_title ?: 'Lợi ích của '.$service->title }}</h2>
                 @if ($service->benefit_description)
-                    <p class="mx-auto site-services-partials-benefits__copy-5">{{ $service->benefit_description }}</p>
+                    <p class="mx-auto lead">{{ $service->benefit_description }}</p>
                 @endif
             </header>
-            <div class="site-services-partials-benefits__div-6">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
                 @foreach ($benefitItems as $item)
-                    <article class="overflow-hidden site-services-partials-benefits__article-7">
+                    <div class="col"><article class="overflow-hidden card h-100">
                         @if (($item['media_url'] ?? null) ?: ($service->image_url ?: $defaultBannerUrl))
-                            <img class="w-100 object-fit-cover site-services-partials-benefits__media-8" src="{{ ($item['media_url'] ?? null) ?: ($service->image_url ?: $defaultBannerUrl) }}" alt="{{ $item['title'] ?? $service->title }}" loading="lazy">
+                            <img class="w-100 object-fit-cover benefit-image" src="{{ ($item['media_url'] ?? null) ?: ($service->image_url ?: $defaultBannerUrl) }}" alt="{{ $item['title'] ?? $service->title }}" loading="lazy">
                         @endif
-                        <div class="site-services-partials-benefits__div-9">
-                            <h3 class="fw-bold site-services-partials-benefits__heading-10">{{ $item['title'] ?? '' }}</h3>
+                        <div class="card-body">
+                            <h3 class="fw-bold h4">{{ $item['title'] ?? '' }}</h3>
                             @if (filled($item['description'] ?? null))
-                                <p class="site-services-partials-benefits__copy-11">{{ $item['description'] }}</p>
+                                <p class="text-body">{{ $item['description'] }}</p>
                             @endif
                         </div>
-                    </article>
+                    </article></div>
                 @endforeach
             </div>
         </div>

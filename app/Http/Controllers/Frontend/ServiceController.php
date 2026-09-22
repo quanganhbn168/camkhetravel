@@ -8,8 +8,8 @@ use App\Models\Product;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
+use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,35 +18,41 @@ use Illuminate\View\View;
 
 class ServiceController extends Controller
 {
-    public function __construct(private readonly FrontendSeoBuilder $seo) {}
+    public function __construct(
+        private readonly FrontendSeoBuilder $seo,
+        private readonly SystemPageProfileResolver $systemPages,
+    ) {}
 
     public function index(): View
     {
-        return view('frontend.services.index', $this->listingData() + [
-            'seo' => $this->seo->listing(
-                'Dịch vụ | '.$this->seo->siteName(),
-                'Khám phá các dịch vụ tư vấn, thiết kế, thi công và bảo trì hệ thống PCCC.',
-                LocalizedUrl::route('services.index'),
-            ),
-        ]);
+        $page = $this->systemPages->require('services');
+        $data = $this->listingData();
+        $data['page'] = $page;
+        $data['pageTitle'] = $page['title'];
+        $data['pageBannerUrl'] = $page['banner_url'];
+        $data['seo'] = $this->seo->systemPage($page, 'services.index');
+
+        return view('frontend.services.index', $data);
     }
 
     public function redirectCategory(ServiceCategory $category): RedirectResponse
     {
         abort_unless($category->is_active, 404);
+        $category->loadMissing('slugs');
 
-        return redirect()->to(LocalizedUrl::serviceCategory($category), 301);
+        return redirect()->route('services.category', ['category' => $category->slug], 301);
     }
 
     public function category(ServiceCategory $category): View
     {
         abort_unless($category->is_active, 404);
+        $category->loadMissing('slugs');
 
         $title = $category->name.' | Dịch vụ';
         $description = $category->description ?: 'Dịch vụ PCCC thuộc nhóm '.$category->name.'.';
 
         return view('frontend.services.index', $this->listingData($category) + [
-            'seo' => $this->seo->listing($title, $description, LocalizedUrl::serviceCategory($category), image: $category->seoImageUrl()),
+            'seo' => $this->seo->listing($title, $description, route('services.category', ['category' => $category->slug]), image: $category->seoImageUrl()),
         ]);
     }
 
@@ -55,8 +61,9 @@ class ServiceController extends Controller
         abort_unless($service->status === 'published' && (! $service->published_at || $service->published_at->isPast()), 404);
 
         $service->load([
-            'category',
+            'category.slugs',
             'curatorMedia',
+            'slugs',
             'bannerVideoMedia',
             'processBackgroundMedia',
             'commitmentMedia',
@@ -73,7 +80,7 @@ class ServiceController extends Controller
             ->published()
             ->whereKeyNot($service->id)
             ->when($service->service_category_id, fn ($query) => $query->where('service_category_id', $service->service_category_id))
-            ->with(['category', 'curatorMedia'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->limit(3)
@@ -83,7 +90,7 @@ class ServiceController extends Controller
             $relatedServices = $this->withImages(Service::query()
                 ->published()
                 ->whereKeyNot($service->id)
-                ->with(['category', 'curatorMedia'])
+                ->with(['category', 'curatorMedia', 'slugs'])
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
                 ->limit(3)
@@ -112,9 +119,19 @@ class ServiceController extends Controller
             ])
             ->filter(fn (array $item): bool => $item['title'] !== '')
             ->values();
+        if ($commitmentItems->isEmpty()) {
+            $commitmentItems = collect([
+                ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Phạm vi, tiến độ và đầu ra được thống nhất trước khi triển khai.'],
+                ['title' => 'Đồng hành xuyên suốt', 'description' => 'Đội ngũ phối hợp cùng khách hàng từ định hướng đến bàn giao.'],
+                ['title' => 'Chỉn chu từng chi tiết', 'description' => 'Mỗi hạng mục được kiểm tra trước khi hoàn thiện và bàn giao.'],
+            ]);
+        }
+        $hasReferenceVideos = $referenceVideos !== [];
+        $hasReferenceImages = $galleryImages !== [];
+        $hasReferenceTabs = $hasReferenceVideos && $hasReferenceImages;
         $featuredProducts = Product::query()
             ->published()
-            ->with(['category', 'curatorMedia'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
             ->limit(6)
@@ -143,6 +160,9 @@ class ServiceController extends Controller
             'referenceVideos' => $referenceVideos,
             'referenceImages' => array_values(array_unique($galleryImages)),
             'backstageImages' => array_values(array_unique($backstageGalleryImages)),
+            'hasReferenceVideos' => $hasReferenceVideos,
+            'hasReferenceImages' => $hasReferenceImages,
+            'hasReferenceTabs' => $hasReferenceTabs,
             'faqItems' => $faqItems,
             'ratingSummary' => [
                 'count' => $ratedComments->count(),
@@ -160,7 +180,7 @@ class ServiceController extends Controller
 
         $servicesQuery = Service::query()
             ->published()
-            ->with(['category', 'curatorMedia']);
+            ->with(['category', 'curatorMedia', 'slugs']);
 
         if ($activeCategory) {
             $servicesQuery->where('service_category_id', $activeCategory->id);
@@ -182,7 +202,7 @@ class ServiceController extends Controller
 
         $featuredProjects = Project::query()
             ->published()
-            ->with(['category', 'curatorMedia'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->limit(4)
@@ -199,9 +219,9 @@ class ServiceController extends Controller
             : ServiceCategory::query()
                 ->where('is_active', true)
                 ->withCount(['services' => fn (Builder $query) => $query->published()])
-                ->with(['services' => fn ($query) => $query
+                ->with(['slugs', 'services' => fn ($query) => $query
                     ->published()
-                    ->with(['curatorMedia'])
+                    ->with(['curatorMedia', 'slugs'])
                     ->orderByDesc('is_featured')
                     ->orderBy('sort_order')])
                 ->orderBy('sort_order')

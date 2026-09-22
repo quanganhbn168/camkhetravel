@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Settings\WebsiteSettings;
+use App\Settings\SystemPageSettings;
 use App\Support\Media\MediaUrl;
 use Awcodes\Curator\Models\Media;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\View;
 use Tests\TestCase;
@@ -18,23 +18,27 @@ class SharedBannerTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
-    public function test_contact_prefers_its_own_banner_and_falls_back_when_cleared(): void
+    public function test_contact_uses_only_its_optional_page_banner(): void
     {
-        $website = app(WebsiteSettings::class);
+        $settings = app(SystemPageSettings::class);
         $image = Media::query()->create([
             'disk' => 'public', 'directory' => 'media/banner-test', 'name' => 'contact',
             'path' => 'media/banner-test/contact.webp', 'type' => 'image/webp', 'ext' => 'webp',
             'width' => 1600, 'height' => 400, 'size' => 100,
         ]);
         View::share('defaultBannerUrl', '/shared-banner-test.webp');
-        $website->contact_image_media_id = $image->id;
+        $settings->contact = [...$settings->contact, 'banner_media_id' => $image->id];
+        $settings->save();
         $this->get('/lien-he')->assertOk()
             ->assertSee('src="'.e(MediaUrl::versioned($image)).'"', false)
             ->assertDontSee('/shared-banner-test.webp');
-        $website->contact_image_media_id = null;
-        $this->get('/lien-he')->assertOk()->assertSee('src="/shared-banner-test.webp"', false);
+        $settings->contact = [...$settings->contact, 'banner_media_id' => null];
+        $settings->save();
+        $this->get('/lien-he')->assertOk()
+            ->assertDontSee('data-page-banner-image', false)
+            ->assertDontSee('/shared-banner-test.webp');
     }
 }

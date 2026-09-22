@@ -1,0 +1,116 @@
+.floating-actions {
+    position: fixed;
+    left: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 1030;
+    display: grid;
+    gap: 1rem;
+}
+
+.floating-action,
+.scroll-top {
+    display: inline-grid;
+    width: 3.5rem;
+    height: 3.5rem;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: var(--bs-primary);
+    color: #fff;
+    box-shadow: 0 .75rem 1.5rem rgb(0 0 0 / .16);
+}
+
+.floating-action {
+    position: relative;
+}
+
+.floating-action img,
+.floating-action svg,
+.scroll-top svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.floating-action--phone::before,
+.floating-action--phone::after {
+    position: absolute;
+    inset: -.45rem;
+    border: 1px solid color-mix(in srgb, var(--bs-primary) 55%, transparent);
+    border-radius: inherit;
+    content: '';
+    animation: phone-ring 2s ease-out infinite;
+}
+
+.floating-action--phone::after {
+    animation-delay: 1s;
+}
+
+@keyframes phone-ring {
+    0% {
+        opacity: .8;
+        transform: scale(.82);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.35);
+    }
+}
+
+.floating-action:hover,
+.scroll-top:hover {
+    background: var(--bs-link-hover-color);
+    color: #fff;
+}
+
+.scroll-top {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 1010;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(.75rem);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+}
+
+.scroll-top.is-visible {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 575.98px) {
+    .floating-action,
+    .scroll-top {
+        width: 3rem;
+        height: 3rem;
+    }
+    .scroll-top {
+        right: 1rem;
+        bottom: 1rem;
+    }
+}
+
+.floating-action--phone > svg {
+    animation: phone-shake 1.5s ease-in-out infinite;
+}
+
+@keyframes phone-shake {
+    0%, 30%, 100% {
+        transform: rotate(0);
+    }
+    5%, 15%, 25% {
+        transform: rotate(-15deg);
+    }
+    10%, 20% {
+        transform: rotate(15deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-action--phone::before,
+    .floating-action--phone::after,
+    .floating-action--phone > svg {
+        animation: none;
+    }
+}

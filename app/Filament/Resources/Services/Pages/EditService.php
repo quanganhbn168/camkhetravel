@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Services\Pages;
 
 use App\Filament\Resources\Services\ServiceResource;
-use App\Support\Localization\LocalizedUrl;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -19,7 +18,7 @@ class EditService extends EditRecord
             Action::make('preview')
                 ->label('Xem dịch vụ')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
-                ->url(fn (): string => LocalizedUrl::slug($this->record->slug))
+                ->url(fn (): string => route('slug.show', ['slug' => $this->record->slug]))
                 ->openUrlInNewTab(),
             DeleteAction::make(),
         ];

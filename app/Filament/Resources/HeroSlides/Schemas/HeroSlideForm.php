@@ -31,7 +31,6 @@ final class HeroSlideForm
                         ->constrained()
                         ->acceptedFileTypes(['image/*'])
                         ->columnSpanFull(),
-                    TextInput::make('eyebrow')->label('Nhãn nhỏ')->maxLength(255),
                     TextInput::make('title')
                         ->label('Tiêu đề')
                         ->helperText('Để trống toàn bộ phần nội dung và nút nếu slide chỉ hiển thị ảnh.')
@@ -39,9 +38,9 @@ final class HeroSlideForm
                         ->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                     TextInput::make('primary_label')->label('Nhãn nút chính')->maxLength(255),
-                    TextInput::make('primary_url')->label('URL nút chính')->url()->maxLength(255),
+                    TextInput::make('primary_url')->label('URL nút chính')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/']),
                     TextInput::make('secondary_label')->label('Nhãn nút phụ')->maxLength(255),
-                    TextInput::make('secondary_url')->label('URL nút phụ')->url()->maxLength(255),
+                    TextInput::make('secondary_url')->label('URL nút phụ')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/']),
                 ])
                 ->columns(2),
             Section::make('Video cho slide')
@@ -113,4 +112,5 @@ final class HeroSlideForm
                 ]),
         ]);
     }
+
 }

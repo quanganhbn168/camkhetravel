@@ -1,26 +1,20 @@
-@php
-    $hasReferenceVideos = $referenceVideos !== [];
-    $hasReferenceImages = $referenceImages !== [];
-    $hasReferenceTabs = $hasReferenceVideos && $hasReferenceImages;
-@endphp
-
 @if ($hasReferenceVideos || $hasReferenceImages)
-    <section class="service-reference resource-related-section site-services-partials-reference-videos__section-1" id="tai-lieu-tham-khao">
-        <div class="site-container w-100 mx-auto site-services-partials-reference-videos__div-2">
-            <header class="mx-auto text-center site-services-partials-reference-videos__element-3">
-                <h2 class="display-title site-services-partials-reference-videos__heading-4">Các dự án nổi bật</h2>
+    <section class="resource-related-section" id="tai-lieu-tham-khao">
+        <div class="container">
+            <header class="mx-auto text-center mb-4">
+                <h2 class="display-title h2">Các dự án nổi bật</h2>
             </header>
 
             @if ($hasReferenceTabs)
-                <div class="service-reference__tabs site-services-partials-reference-videos__div-5" role="tablist" aria-label="Tài liệu tham khảo">
-                    <button class="service-reference__tab {{ $hasReferenceVideos ? 'active' : '' }}" type="button" role="tab" data-bs-toggle="tab" data-bs-target="#service-reference-videos" aria-controls="service-reference-videos" aria-selected="{{ $hasReferenceVideos ? 'true' : 'false' }}">Video</button>
-                    <button class="service-reference__tab {{ $hasReferenceVideos ? '' : 'active' }}" type="button" role="tab" data-bs-toggle="tab" data-bs-target="#service-reference-images" aria-controls="service-reference-images" aria-selected="{{ $hasReferenceVideos ? 'false' : 'true' }}">Ảnh</button>
+                <div class="nav nav-pills gap-2 mb-4" role="tablist" aria-label="Tài liệu tham khảo">
+                    <button class="nav-link {{ $hasReferenceVideos ? 'active' : '' }}" type="button" role="tab" data-bs-toggle="tab" data-bs-target="#service-reference-videos" aria-controls="service-reference-videos" aria-selected="{{ $hasReferenceVideos ? 'true' : 'false' }}">Video</button>
+                    <button class="nav-link {{ $hasReferenceVideos ? '' : 'active' }}" type="button" role="tab" data-bs-toggle="tab" data-bs-target="#service-reference-images" aria-controls="service-reference-images" aria-selected="{{ $hasReferenceVideos ? 'false' : 'true' }}">Ảnh</button>
                 </div>
             @endif
 
             <div class="tab-content">
             @if ($hasReferenceVideos)
-                <div class="service-reference__panel site-services-partials-reference-videos__div-6 tab-pane fade {{ $hasReferenceVideos ? 'show active' : '' }}" id="service-reference-videos" role="tabpanel">
+                <div class="service-reference__panel  tab-pane fade {{ $hasReferenceVideos ? 'show active' : '' }}" id="service-reference-videos" role="tabpanel">
                     <div class="service-reference__grid">
                         @foreach ($referenceVideos as $video)
                             <a class="service-reference__card" href="{{ $video['url'] }}" target="_blank" rel="noopener" aria-label="Xem video {{ $video['title'] }}">
@@ -45,7 +39,7 @@
             @endif
 
             @if ($hasReferenceImages)
-                <div class="service-reference__panel site-services-partials-reference-videos__div-6 tab-pane fade {{ $hasReferenceVideos ? '' : 'show active' }}" id="service-reference-images" role="tabpanel">
+                <div class="service-reference__panel  tab-pane fade {{ $hasReferenceVideos ? '' : 'show active' }}" id="service-reference-images" role="tabpanel">
                     <div class="service-reference__grid">
                         @foreach ($referenceImages as $imageUrl)
                             <a class="service-reference__card" href="{{ $imageUrl }}" target="_blank" rel="noopener" aria-label="Mở ảnh tham khảo {{ $loop->iteration }} của {{ $service->title }}">

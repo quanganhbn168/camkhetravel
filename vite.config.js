@@ -10,7 +10,7 @@ export default defineConfig({
             input: [
                 'resources/scss/frontend.scss',
                 'resources/js/app.js',
-                ...fs.readdirSync('resources/css/frontend/pages').filter((file) => file.endsWith('.css')).map((file) => path.posix.join('resources/css/frontend/pages', file)),
+                ...fs.readdirSync('resources/scss/pages').filter((file) => file.endsWith('.scss') && !file.startsWith('_')).map((file) => path.posix.join('resources/scss/pages', file)),
                 'resources/css/filament/admin/theme.css',
                 'resources/js/filament/curator-rich-editor-integration.js',
             ],

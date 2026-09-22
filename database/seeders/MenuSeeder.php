@@ -19,7 +19,7 @@ final class MenuSeeder extends Seeder
 
         foreach ([
             ['Trang chủ', 'home'], ['Giới thiệu', 'about'], ['Dịch vụ', 'services.index'],
-            ['Dự án', 'projects.index'], ['Sản phẩm', 'products.index'], ['Kiến thức', 'posts.index'], ['Liên hệ', 'contact'],
+            ['Giải pháp', 'solutions.index'], ['Dự án', 'projects.index'], ['Sản phẩm', 'products.index'], ['Kiến thức', 'posts.index'], ['Liên hệ', 'contact'],
         ] as $index => [$label, $url]) {
             MenuItem::query()->create([
                 'menu_id' => $menu->getKey(), 'label' => $label, 'url' => $url,

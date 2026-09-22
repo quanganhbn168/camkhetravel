@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,7 +14,7 @@ class SeoEndpointsTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_robots_uses_app_url_and_allows_public_crawling(): void

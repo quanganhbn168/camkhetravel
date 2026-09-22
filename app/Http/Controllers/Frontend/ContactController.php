@@ -6,14 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Maps\GoogleMapsUrl;
 use App\Support\Media\MediaUrl;
+use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class ContactController extends Controller
@@ -21,10 +22,12 @@ class ContactController extends Controller
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
         private readonly WebsiteSettings $website,
+        private readonly SystemPageProfileResolver $systemPages,
     ) {}
 
     public function index(Request $request): View
     {
+        $page = $this->systemPages->require('contact');
         $googleMapsEmbedUrl = GoogleMapsUrl::normalizeEmbed($this->website->google_maps_embed_url);
 
         if ($googleMapsEmbedUrl === null && filled($this->website->address)) {
@@ -34,18 +37,15 @@ class ContactController extends Controller
         return view('frontend.contact', [
             'prefilledMessage' => '',
             'services' => Service::query()->published()->orderBy('sort_order')->get(['id', 'title']),
-            'contactHeroImageUrl' => MediaUrl::versioned(
-                Media::query()->find($this->website->contact_image_media_id),
-            ),
+            'contactPhones' => $this->contactPhones(),
+            'contactBranches' => $this->contactBranches(),
+            'page' => $page,
+            'pageBannerUrl' => $page['banner_url'],
             'googleMapsUrl' => filled($this->website->google_maps_url)
                 ? trim($this->website->google_maps_url)
                 : null,
             'googleMapsEmbedUrl' => $googleMapsEmbedUrl,
-            'seo' => $this->seo->listing(
-                'Liên hệ | '.$this->seo->siteName(),
-                'Liên hệ để trao đổi nhu cầu khảo sát, thiết kế, thi công và bảo trì hệ thống PCCC.',
-                LocalizedUrl::route('contact'),
-            ),
+            'seo' => $this->seo->systemPage($page, 'contact'),
         ]);
     }
 
@@ -66,12 +66,46 @@ class ContactController extends Controller
 
         if ($request->expectsJson()) {
             return response()->json([
-                'message' => __('site.contact_success'),
+                'message' => 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất có thể.',
             ]);
         }
 
-        return redirect()->to($this->safeReturnPath($request->input('return_to')) ?? LocalizedUrl::route('contact'))
-            ->with('success', __('site.contact_success'));
+        return redirect()->to($this->safeReturnPath($request->input('return_to')) ?? route('contact'))
+            ->with('success', 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất có thể.');
+    }
+
+    /** @return Collection<int, array{label: string, href: string}> */
+    private function contactPhones(): Collection
+    {
+        $phones = collect($this->website->phones ?? [])
+            ->filter(fn ($phone): bool => is_array($phone) && filled($phone['number'] ?? null))
+            ->values();
+
+        if ($phones->isEmpty()) {
+            $phones = collect([
+                ['number' => $this->website->hotline],
+                ['number' => $this->website->contact_phone],
+            ])->filter(fn (array $phone): bool => filled($phone['number'] ?? null))->values();
+        }
+
+        return $phones->map(fn (array $phone): array => [
+            'label' => trim((string) $phone['number']),
+            'href' => 'tel:'.preg_replace('/\s+/', '', (string) $phone['number']),
+        ])->unique('href')->values();
+    }
+
+    /** @return Collection<int, array{name: string, address: string}> */
+    private function contactBranches(): Collection
+    {
+        return collect($this->website->branches ?? [])
+            ->filter(fn ($branch): bool => is_array($branch)
+                && ($branch['is_active'] ?? true)
+                && filled($branch['address'] ?? null))
+            ->map(fn (array $branch): array => [
+                'name' => (string) ($branch['name'] ?? 'Địa chỉ'),
+                'address' => trim((string) $branch['address']),
+            ])
+            ->values();
     }
 
     private function safeReturnPath(mixed $returnTo): ?string

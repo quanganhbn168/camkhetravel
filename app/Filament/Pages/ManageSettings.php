@@ -8,8 +8,8 @@ use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Menu;
 use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
-use App\Settings\DesignSettings;
 use App\Settings\HomepageSettings;
+use App\Settings\SystemPageSettings;
 use App\Settings\WebsiteSettings;
 use App\Support\Branding\FaviconService;
 use App\Support\Maps\GoogleMapsShareResolver;
@@ -19,7 +19,6 @@ use Awcodes\Curator\Models\Media;
 use BackedEnum;
 use ErrorException;
 use Filament\Actions\Action;
-use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -63,12 +62,21 @@ class ManageSettings extends Page
 
     public ?array $data = [];
 
+    private const SYSTEM_PAGE_LABELS = [
+        'home' => 'Trang chủ',
+        'about' => 'Giới thiệu',
+        'services' => 'Dịch vụ',
+        'solutions' => 'Giải pháp',
+        'contact' => 'Liên hệ',
+        'projects' => 'Dự án',
+    ];
+
     public function mount(
         WebsiteSettings $website,
         HomepageSettings $homepage,
         CompanySettings $company,
         AboutSettings $about,
-        DesignSettings $design,
+        SystemPageSettings $systemPages,
     ): void {
         $this->fillSettingsForm([
             'site_name' => $website->site_name,
@@ -94,8 +102,6 @@ class ManageSettings extends Page
             'footer_menu_id' => $website->footer_menu_id,
             'footer_background_media_id' => $website->footer_background_media_id,
             'banner_media_id' => $website->banner_media_id,
-            'contact_image_media_id' => $website->contact_image_media_id,
-            'about_eyebrow' => $homepage->about_eyebrow,
             'about_title' => $homepage->about_title,
             'about_content' => $homepage->about_content,
             'stats' => $homepage->stats,
@@ -110,7 +116,6 @@ class ManageSettings extends Page
             'founded_year' => $company->founded_year,
             'business_license' => $company->business_license,
             'about_image_media_id' => $website->about_image_media_id,
-            'page_title' => $about->page_title,
             'page_intro' => $about->page_intro,
             'story_title' => $about->story_title,
             'story' => $about->story,
@@ -138,18 +143,9 @@ class ManageSettings extends Page
             'office_gallery' => $about->office_gallery,
             'cta_title' => $about->cta_title,
             'cta_button_label' => $about->cta_button_label,
-            'color_primary' => $design->color_primary,
-            'color_primary_hover' => $design->color_primary_hover,
-            'color_ink' => $design->color_ink,
-            'color_surface' => $design->color_surface,
-            'color_muted' => $design->color_muted,
-            'font_size_base' => $design->font_size_base,
-            'font_size_body' => $design->font_size_body,
-            'font_size_small' => $design->font_size_small,
-            'font_size_h1' => $design->font_size_h1,
-            'font_size_h2' => $design->font_size_h2,
-            'font_size_h3' => $design->font_size_h3,
-            'font_size_stat' => $design->font_size_stat,
+            'system_pages' => collect(array_keys(self::SYSTEM_PAGE_LABELS))
+                ->mapWithKeys(fn (string $key): array => [$key => $systemPages->{$key}])
+                ->all(),
         ]);
     }
 
@@ -171,11 +167,11 @@ class ManageSettings extends Page
                         Tab::make('Trang Giới thiệu')
                             ->icon(Heroicon::OutlinedInformationCircle)
                             ->schema($this->aboutSchema()),
+                        Tab::make('Trang hệ thống')
+                            ->icon(Heroicon::OutlinedDocumentText)
+                            ->schema($this->systemPagesSchema()),
                         Tab::make('Liên hệ')->icon(Heroicon::OutlinedPhone)->schema($this->contactSchema()),
                         Tab::make('SEO')->icon(Heroicon::OutlinedMagnifyingGlass)->schema($this->seoSchema()),
-                        Tab::make('Giao diện')
-                            ->icon(Heroicon::OutlinedSwatch)
-                            ->schema($this->designSchema()),
                     ])
                     ->persistTabInQueryString('tab')
                     ->columnSpanFull(),
@@ -209,7 +205,7 @@ class ManageSettings extends Page
         HomepageSettings $homepage,
         CompanySettings $company,
         AboutSettings $about,
-        DesignSettings $design,
+        SystemPageSettings $systemPages,
         FaviconService $favicons,
         GoogleMapsShareResolver $maps,
     ): void {
@@ -219,7 +215,7 @@ class ManageSettings extends Page
         $this->saveHomepage($homepage, $data);
         $this->saveCompany($company, $data);
         $this->saveAbout($about, $data);
-        $this->saveDesign($design, $data);
+        $this->saveSystemPages($systemPages, $data);
 
         app()->call([$this, 'mount']);
 
@@ -250,8 +246,7 @@ class ManageSettings extends Page
                 ->columns(2),
             Section::make('Banner')
                 ->schema([
-                    CuratorPicker::make('banner_media_id')->label('Banner chung')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Dùng cho các banner chưa có ảnh riêng.'),
-                    CuratorPicker::make('contact_image_media_id')->label('Banner trang liên hệ')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Để trống sẽ dùng banner chung. Ảnh hiển thị theo tỷ lệ gốc.'),
+                    CuratorPicker::make('banner_media_id')->label('Ảnh mặc định cho nội dung động')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Chỉ dùng cho nội dung động chưa có ảnh riêng; không dùng cho 6 trang hệ thống.'),
                 ])->columns(2),
             Section::make('Nền footer')
                 ->schema([
@@ -414,16 +409,16 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedSparkles)
                     ->description('Mỗi dòng là một ý hiển thị trên trang chủ.')
                     ->schema([
-                        Textarea::make('commitments.vi')->label('Cam kết')->rows(5),
-                        Textarea::make('capabilities.vi')->label('Năng lực')->rows(5),
+                        Textarea::make('commitments')->label('Cam kết')->rows(5),
+                        Textarea::make('capabilities')->label('Năng lực')->rows(5),
                     ])
                     ->columns(2),
                 Section::make('Câu hỏi thường gặp')
                     ->icon(Heroicon::OutlinedQuestionMarkCircle)
                     ->description('Câu hỏi được quản lý riêng tại mục “Câu hỏi thường gặp”.')
                     ->schema([
-                        TextInput::make('faq_title.vi')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                        Textarea::make('faq_description.vi')->label('Mô tả')->rows(2)->columnSpanFull(),
+                        TextInput::make('faq_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                        Textarea::make('faq_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                     ]),
         ];
     }
@@ -431,15 +426,11 @@ class ManageSettings extends Page
     private function homepageIntroSchema(): array
     {
         return [
-                TextInput::make('about_eyebrow.vi')
-                    ->label('Tiêu đề phần giới thiệu')
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Textarea::make('about_title.vi')
+                Textarea::make('about_title')
                     ->label('Mô tả ngắn')
                     ->rows(3)
                     ->columnSpanFull(),
-                Textarea::make('about_content.vi')
+                Textarea::make('about_content')
                     ->label('Nội dung chi tiết')
                     ->rows(4)
                     ->columnSpanFull(),
@@ -558,18 +549,17 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedDocumentText)
                     ->description('Nhập nội dung quản trị trực tiếp cho trang giới thiệu.')
                     ->schema([
-                        TextInput::make('page_title.vi')->label('Tiêu đề trang')->maxLength(255)->columnSpanFull(),
-                        Textarea::make('page_intro.vi')->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
+                        Textarea::make('page_intro')->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
                     ])
                     ->columns(1),
                 Section::make('Câu chuyện doanh nghiệp')
                     ->icon(Heroicon::OutlinedInformationCircle)
                     ->schema([
-                        TextInput::make('story_title.vi')
+                        TextInput::make('story_title')
                             ->label('Tiêu đề khối câu chuyện')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        RichEditor::make('story.vi')
+                        RichEditor::make('story')
                             ->label('Nội dung câu chuyện')
                             ->plugins([ScopedAttachCuratorMediaPlugin::make()])
                             ->enableToolbarButtons(['attachCuratorMedia'])
@@ -580,13 +570,13 @@ class ManageSettings extends Page
                 Section::make('Sứ mệnh, tầm nhìn và giá trị')
                     ->icon(Heroicon::OutlinedSparkles)
                     ->schema([
-                        TextInput::make('principles_title.vi')
+                        TextInput::make('principles_title')
                             ->label('Tiêu đề khối')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make('mission.vi')->label('Sứ mệnh')->rows(4),
-                        Textarea::make('vision.vi')->label('Tầm nhìn')->rows(4),
-                        RichEditor::make('core_values.vi')
+                        Textarea::make('mission')->label('Sứ mệnh')->rows(4),
+                        Textarea::make('vision')->label('Tầm nhìn')->rows(4),
+                        RichEditor::make('core_values')
                             ->label('Giá trị cốt lõi')
                             ->plugins([ScopedAttachCuratorMediaPlugin::make()])
                             ->enableToolbarButtons(['attachCuratorMedia'])
@@ -598,15 +588,15 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedClock)
                     ->description('Có thể dùng nội dung lịch sử đơn hoặc danh sách mốc. Mỗi mốc gồm năm, ảnh nguồn từ Curator, tiêu đề và mô tả.')
                     ->schema([
-                        TextInput::make('history_title.vi')
+                        TextInput::make('history_title')
                             ->label('Tiêu đề khối')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make('history_description.vi')
+                        Textarea::make('history_description')
                             ->label('Mô tả khối')
                             ->rows(3)
                             ->columnSpanFull(),
-                        Textarea::make('history.vi')
+                        Textarea::make('history')
                             ->label('Nội dung lịch sử đơn')
                             ->helperText('Chỉ dùng khi không có danh sách mốc bên dưới.')
                             ->rows(5)
@@ -623,12 +613,12 @@ class ManageSettings extends Page
                                     ->disk('public')
                                     ->constrained()
                                     ->acceptedFileTypes(['image/*']),
-                                TextInput::make('title.vi')
+                                TextInput::make('title')
                                     ->label('Tiêu đề')
                                     ->required()
                                     ->maxLength(255)
                                     ->columnSpanFull(),
-                                Textarea::make('description.vi')
+                                Textarea::make('description')
                                     ->label('Mô tả')
                                     ->required()
                                     ->rows(4)
@@ -639,20 +629,20 @@ class ManageSettings extends Page
                             ->addActionLabel('Thêm mốc lịch sử')
                             ->reorderable()
                             ->collapsible()
-                            ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title']['vi'] ?? '')))
+                            ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title'] ?? '')))
                             ->columnSpanFull(),
                     ]),
                 Section::make('Dịch vụ và số liệu')
                     ->icon(Heroicon::OutlinedChartBar)
                     ->description('Các dịch vụ lấy từ danh sách dịch vụ đã xuất bản; tại đây chỉ nhập tiêu đề của khối và tiêu đề liên kết.')
                     ->schema([
-                        TextInput::make('services_title.vi')
+                        TextInput::make('services_title')
                             ->label('Tiêu đề khối dịch vụ')
                             ->maxLength(255),
-                        TextInput::make('services_link_label.vi')
+                        TextInput::make('services_link_label')
                             ->label('Nhãn liên kết xem dịch vụ')
                             ->maxLength(255),
-                        TextInput::make('stats_title.vi')
+                        TextInput::make('stats_title')
                             ->label('Tiêu đề khối số liệu')
                             ->maxLength(255)
                             ->columnSpanFull(),
@@ -661,11 +651,11 @@ class ManageSettings extends Page
                 Section::make('Văn phòng doanh nghiệp')
                     ->icon(Heroicon::OutlinedBuildingOffice2)
                     ->schema([
-                        TextInput::make('office_title.vi')
+                        TextInput::make('office_title')
                             ->label('Tiêu đề khối')
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Textarea::make('office_description.vi')
+                        Textarea::make('office_description')
                             ->label('Mô tả')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -675,45 +665,14 @@ class ManageSettings extends Page
                     ->icon(Heroicon::OutlinedPhone)
                     ->description('Nếu để trống, khối kêu gọi liên hệ sẽ không hiển thị trên trang giới thiệu.')
                     ->schema([
-                        TextInput::make('cta_title.vi')
+                        TextInput::make('cta_title')
                             ->label('Tiêu đề kêu gọi liên hệ')
                             ->maxLength(255),
-                        TextInput::make('cta_button_label.vi')
+                        TextInput::make('cta_button_label')
                             ->label('Nhãn nút liên hệ')
                             ->maxLength(255),
                     ])
                     ->columns(2),
-        ];
-    }
-
-    /** @return array<int, Section> */
-    private function designSchema(): array
-    {
-        return [
-            Section::make('Bảng màu frontend')
-                ->icon(Heroicon::OutlinedSwatch)
-                ->description('Cam là màu chủ đạo; màu đậm dùng cho điều hướng và điểm nhấn. Màu chữ, nền sáng và nền phụ giữ trung tính.')
-                ->schema([
-                    ColorPicker::make('color_primary')->label('Cam chủ đạo')->required(),
-                    ColorPicker::make('color_primary_hover')->label('Cam khi hover')->required(),
-                    ColorPicker::make('color_ink')->label('Chữ / nền đậm trung tính')->required(),
-                    ColorPicker::make('color_surface')->label('Nền sáng trung tính')->required(),
-                    ColorPicker::make('color_muted')->label('Nền phụ trung tính')->required(),
-                ])
-                ->columns(3),
-            Section::make('Typography website')
-                ->icon(Heroicon::OutlinedAdjustmentsHorizontal)
-                ->description('Các cỡ chữ semantic dùng xuyên suốt frontend. Có thể nhập đơn vị rem hoặc biểu thức clamp().')
-                ->schema([
-                    TextInput::make('font_size_base')->label('Cỡ chữ gốc')->required()->maxLength(100),
-                    TextInput::make('font_size_body')->label('Nội dung')->required()->maxLength(100),
-                    TextInput::make('font_size_small')->label('Nội dung nhỏ')->required()->maxLength(100),
-                    TextInput::make('font_size_h1')->label('Tiêu đề H1')->required()->maxLength(100),
-                    TextInput::make('font_size_h2')->label('Tiêu đề H2')->required()->maxLength(100),
-                    TextInput::make('font_size_h3')->label('Tiêu đề H3')->required()->maxLength(100),
-                    TextInput::make('font_size_stat')->label('Số liệu nổi bật')->required()->maxLength(100),
-                ])
-                ->columns(2),
         ];
     }
 
@@ -765,7 +724,7 @@ class ManageSettings extends Page
         $website->google_maps_embed_url = GoogleMapsUrl::normalizeEmbed($data['google_maps_embed_url'] ?? null)
             ?? $maps->resolveEmbed($website->google_maps_url);
 
-        foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id', 'contact_image_media_id'] as $key) {
+        foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id'] as $key) {
             $website->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 
@@ -868,9 +827,13 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveHomepage(HomepageSettings $homepage, array $data): void
     {
-        foreach (['about_eyebrow', 'about_title', 'about_content', 'stats', 'commitments', 'capabilities', 'faq_title', 'faq_description'] as $key) {
-            $homepage->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
-        }
+        $homepage->about_title = trim((string) ($data['about_title'] ?? ''));
+        $homepage->about_content = trim((string) ($data['about_content'] ?? ''));
+        $homepage->stats = is_array($data['stats'] ?? null) ? $data['stats'] : [];
+        $homepage->commitments = trim((string) ($data['commitments'] ?? ''));
+        $homepage->capabilities = trim((string) ($data['capabilities'] ?? ''));
+        $homepage->faq_title = trim((string) ($data['faq_title'] ?? ''));
+        $homepage->faq_description = trim((string) ($data['faq_description'] ?? ''));
 
         $homepage->save();
 
@@ -901,9 +864,12 @@ class ManageSettings extends Page
     /** @param array<string, mixed> $data */
     private function saveAbout(AboutSettings $about, array $data): void
     {
-        foreach (['page_stats', 'page_title', 'page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'history_timeline', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
-            $about->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
+        foreach (['page_intro', 'story_title', 'story', 'history', 'history_title', 'history_description', 'mission', 'vision', 'core_values', 'principles_title', 'services_title', 'services_link_label', 'stats_title', 'office_title', 'office_description', 'cta_title', 'cta_button_label'] as $key) {
+            $about->{$key} = trim((string) ($data[$key] ?? ''));
         }
+
+        $about->page_stats = is_array($data['page_stats'] ?? null) ? $data['page_stats'] : [];
+        $about->history_timeline = is_array($data['history_timeline'] ?? null) ? $data['history_timeline'] : [];
 
         $about->video_source = in_array($data['video_source'] ?? null, ['youtube', 'upload'], true)
             ? $data['video_source']
@@ -928,13 +894,72 @@ class ManageSettings extends Page
         $about->save();
     }
 
-    /** @param array<string, mixed> $data */
-    private function saveDesign(DesignSettings $design, array $data): void
+    /** @return array<int, Tabs> */
+    private function systemPagesSchema(): array
     {
-        foreach (['color_primary', 'color_primary_hover', 'color_ink', 'color_surface', 'color_muted', 'font_size_base', 'font_size_body', 'font_size_small', 'font_size_h1', 'font_size_h2', 'font_size_h3', 'font_size_stat'] as $key) {
-            $design->{$key} = (string) ($data[$key] ?? '');
+        return [
+            Tabs::make('fixed-system-pages')
+                ->tabs(collect(self::SYSTEM_PAGE_LABELS)
+                    ->map(fn (string $label, string $key): Tab => Tab::make($label)
+                        ->schema($this->systemPageProfileSchema('system_pages.'.$key)))
+                    ->values()
+                    ->all())
+                ->columnSpanFull(),
+        ];
+    }
+
+    /** @return array<int, TextInput|Textarea|CuratorPicker> */
+    private function systemPageProfileSchema(string $prefix): array
+    {
+        return [
+            TextInput::make($prefix.'.title')
+                ->label('Tiêu đề trang')
+                ->required()
+                ->maxLength(255)
+                ->columnSpanFull(),
+            TextInput::make($prefix.'.seo_title')
+                ->label('SEO title')
+                ->required()
+                ->maxLength(255)
+                ->columnSpanFull(),
+            Textarea::make($prefix.'.seo_description')
+                ->label('Meta description')
+                ->required()
+                ->rows(3)
+                ->columnSpanFull(),
+            CuratorPicker::make($prefix.'.og_image_media_id')
+                ->label('Ảnh Open Graph')
+                ->required()
+                ->disk('public')
+                ->constrained()
+                ->acceptedFileTypes(['image/*'])
+                ->helperText('Bắt buộc và độc lập với banner hiển thị trên trang.'),
+            CuratorPicker::make($prefix.'.banner_media_id')
+                ->label('Banner trang')
+                ->disk('public')
+                ->constrained()
+                ->acceptedFileTypes(['image/*'])
+                ->helperText('Không bắt buộc. Để trống thì trang không hiển thị ảnh banner.'),
+        ];
+    }
+
+    /** @param array<string, mixed> $data */
+    private function saveSystemPages(SystemPageSettings $settings, array $data): void
+    {
+        $pages = is_array($data['system_pages'] ?? null) ? $data['system_pages'] : [];
+
+        foreach (array_keys(self::SYSTEM_PAGE_LABELS) as $key) {
+            $profile = is_array($pages[$key] ?? null) ? $pages[$key] : [];
+            $settings->{$key} = [
+                'title' => trim((string) ($profile['title'] ?? '')),
+                'seo_title' => trim((string) ($profile['seo_title'] ?? '')),
+                'seo_description' => trim((string) ($profile['seo_description'] ?? '')),
+                'og_image_media_id' => filled($profile['og_image_media_id'] ?? null) ? (int) $profile['og_image_media_id'] : null,
+                'banner_media_id' => filled($profile['banner_media_id'] ?? null) ? (int) $profile['banner_media_id'] : null,
+            ];
         }
 
-        $design->save();
+        $settings->save();
     }
+
 }

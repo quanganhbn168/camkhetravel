@@ -209,6 +209,7 @@ final class MenuForm
             'home' => 'Trang chủ',
             'about' => 'Giới thiệu',
             'services.index' => 'Tất cả dịch vụ',
+            'solutions.index' => 'Giải pháp',
             'projects.index' => 'Tất cả dự án',
             'posts.index' => 'Blog',
             'contact' => 'Liên hệ',

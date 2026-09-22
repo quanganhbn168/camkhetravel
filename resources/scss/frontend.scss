@@ -1,33 +1,31 @@
-@use 'tokens';
-@use 'fonts';
-@use 'foundation';
-@use '../css/frontend/components.css';
-@use '../css/frontend/site.css';
-@use 'components/header';
-@use 'pages/home';
-@use 'components/media';
-@use 'brand';
+@use 'sass:meta';
 
-$primary: tokens.$primary;
-$secondary: tokens.$secondary;
-$dark: tokens.$dark;
-$light: tokens.$light;
-$body-color: tokens.$body-color;
-$body-bg: tokens.$body-bg;
-$link-color: tokens.$primary;
-$link-hover-color: tokens.$primary-hover;
-$border-color: tokens.$border-color;
-$border-radius: .5rem;
-$border-radius-sm: .375rem;
-$border-radius-lg: .75rem;
-$btn-border-radius: .4rem;
-$btn-border-radius-sm: .35rem;
-$btn-border-radius-lg: .5rem;
-$font-family-sans-serif: tokens.$body-font;
-$headings-font-family: tokens.$heading-font;
+// Configure Bootstrap here. Changing $primary updates components and utilities.
+$primary: #e52327;
+$secondary: #10233e;
+$dark: #071620;
+$light: #f8fafc;
+$body-color: #475569;
+$body-emphasis-color: #212529;
+$body-bg: #fff;
+$border-color: #e2e8f0;
+$font-family-sans-serif: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+$headings-font-family: 'Roboto Condensed Variable', 'Be Vietnam Pro', system-ui, sans-serif;
 $headings-font-weight: 700;
-$enable-shadows: false;
+$headings-color: var(--bs-emphasis-color);
 
-@import 'bootstrap/dist/css/bootstrap.css';
+@import 'bootstrap/scss/bootstrap';
 
-@include brand.overrides();
+@include meta.load-css('reset');
+@include meta.load-css('fonts');
+
+html {
+    font-size: 16px;
+}
+
+@include meta.load-css('components/header');
+@include meta.load-css('components/footer');
+@include meta.load-css('components/floating-actions');
+@include meta.load-css('components/page');
+@include meta.load-css('components/cards');
+@include meta.load-css('components/forms');

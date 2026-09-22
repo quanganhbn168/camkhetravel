@@ -13,8 +13,6 @@ use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Slug;
-use App\Support\Localization\LanguageCatalog;
-use App\Support\Localization\LocalizedUrl;
 use Illuminate\Http\Request;
 
 class PublicSlugController extends Controller
@@ -29,23 +27,23 @@ class PublicSlugController extends Controller
 
     private function resolve(Request $request, string $slug)
     {
-        $defaultLocale = app(LanguageCatalog::class)->defaultCode();
         $sluggable = Slug::query()
             ->where('slug', $slug)
-            ->where('locale', $defaultLocale)
             ->with('sluggable')
             ->first()?->sluggable;
+
+        $sluggable?->loadMissing('slugs');
 
         return match (true) {
             $sluggable instanceof Intro => redirect()->to($sluggable->url, 301),
             $sluggable instanceof Service => app(ServiceController::class)->show($sluggable),
             $sluggable instanceof ServiceCategory => app(ServiceController::class)->redirectCategory($sluggable),
-            $sluggable instanceof Project => redirect()->to(LocalizedUrl::project($sluggable), 301),
-            $sluggable instanceof ProjectCategory => redirect()->to(LocalizedUrl::projectCategory($sluggable), 301),
+            $sluggable instanceof Project => redirect()->route('projects.show', ['slug' => $sluggable->slug], 301),
+            $sluggable instanceof ProjectCategory => redirect()->route('projects.category', ['slug' => $sluggable->slug], 301),
             $sluggable instanceof Post => app(PostController::class)->show($sluggable),
-            $sluggable instanceof PostCategory => redirect()->to(LocalizedUrl::postCategory($sluggable), 301),
-            $sluggable instanceof Product => redirect()->to(LocalizedUrl::product($sluggable), 301),
-            $sluggable instanceof ProductCategory => redirect()->to(LocalizedUrl::productCategory($sluggable), 301),
+            $sluggable instanceof PostCategory => redirect()->route('posts.category', ['slug' => $sluggable->slug], 301),
+            $sluggable instanceof Product => redirect()->route('products.show', ['slug' => $sluggable->slug], 301),
+            $sluggable instanceof ProductCategory => redirect()->route('products.category', ['slug' => $sluggable->slug], 301),
             default => abort(404),
         };
     }

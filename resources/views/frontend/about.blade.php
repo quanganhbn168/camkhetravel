@@ -1,20 +1,25 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/css/frontend/pages/about.css')
+    @vite('resources/scss/pages/about.scss')
 @endpush
 
-@use(App\Support\Localization\LocalizedUrl)
-
 @section('content')
+    <div data-system-page="about">
+    @if ($pageBannerUrl)
+        <section class="resource-archive-hero" aria-label="{{ $page['title'] }}">
+            <img class="resource-archive-hero__image" data-page-banner-image src="{{ $pageBannerUrl }}" alt="{{ $page['title'] }}">
+            <div class="resource-archive-hero__overlay"></div>
+        </section>
+    @endif
     <section class="about-page-hero">
-        <div class="site-container about-page-hero__shell w-100 mx-auto site-about__div-1">
-            <div class="about-page-hero__content">
+        <div class="container about-page-hero__shell">
+            <div >
                 <h1>{{ $about['title'] }}</h1>
                 @if ($about['intro'])
                     <p class="about-page-hero__intro">{{ $about['intro'] }}</p>
                 @endif
-                <a class="btn btn-dark button-dark site-about__action-2" href="{{ LocalizedUrl::route('contact') }}">{{ __('site.discuss_project') }}</a>
+                <a class="btn btn-dark mt-4" href="{{ route('contact') }}">Trao đổi dự án</a>
             </div>
 
             <div class="about-page-hero__media">
@@ -29,7 +34,7 @@
 
     @if (filled(trim(strip_tags($about['story'] ?? ''))))
         <section class="about-page-story section-space">
-            <div class="site-container about-page-story__shell w-100 mx-auto site-about__div-1">
+            <div class="container about-page-story__shell">
                 <div class="about-page-story__media">
                     @if ($about['story_image_url'])
                         <img src="{{ $about['story_image_url'] }}" alt="{{ $about['story_title'] ?: $about['title'] }}" loading="lazy">
@@ -37,23 +42,24 @@
                     <span class="image-placeholder">DV</span>
                     @endif
                 </div>
-                <div class="about-page-story__content">
+                <div >
                     @if ($about['story_title'])
-                        <div class="about-page-story__heading">
+                        <div >
                             <h2 class="display-title">{{ $about['story_title'] }}</h2>
                         </div>
                     @endif
-                    <div class="article-prose about-page-story__body">
+                    <div class="article-prose">
                         {!! $about['story'] !!}
                     </div>
                 </div>
             </div>
         </section>
     @endif
+    </div>
 
     @if ($about['video'])
-        <section class="about-page-video section-space" aria-labelledby="about-page-video-title">
-            <div class="site-container w-100 mx-auto site-about__div-1">
+        <section class="section-space" aria-labelledby="about-page-video-title">
+            <div class="container">
                 <header class="about-page-section-heading">
                     <h2 class="display-title" id="about-page-video-title">Video giới thiệu</h2>
                 </header>
@@ -72,15 +78,15 @@
     @endif
 
     @if ($services->isNotEmpty())
-        <section class="about-page-services section-space">
-            <div class="site-container w-100 mx-auto site-about__div-1">
+        <section class="section-space">
+            <div class="container">
                 @if ($about['services_title'] || $about['services_link_label'])
                     <header class="about-page-section-heading about-page-section-heading--split">
                         @if ($about['services_title'])
                             <h2 class="display-title">{{ $about['services_title'] }}</h2>
                         @endif
                         @if ($about['services_link_label'])
-                            <a class="section-link" href="{{ LocalizedUrl::route('services.index') }}">{{ $about['services_link_label'] }} <span aria-hidden="true">→</span></a>
+                            <a class="section-link" href="{{ route('services.index') }}">{{ $about['services_link_label'] }} <span aria-hidden="true">→</span></a>
                         @endif
                     </header>
                 @endif
@@ -88,7 +94,7 @@
                 <div class="about-services__grid">
                     @foreach ($services as $service)
                         <article class="about-service-card">
-                            <a class="about-service-card__media" href="{{ LocalizedUrl::slug($service->slug) }}" aria-label="{{ $service->title }}">
+                            <a class="about-service-card__media" href="{{ route('slug.show', ['slug' => $service->slug]) }}" aria-label="{{ $service->title }}">
                                 @if ($service->image_url)
                                     <img src="{{ $service->image_url }}" alt="{{ $service->title }}" loading="lazy">
                                 @else
@@ -96,7 +102,7 @@
                                 @endif
                             </a>
                             <div class="about-service-card__body">
-                                <h3><a href="{{ LocalizedUrl::slug($service->slug) }}">{{ $service->title }}</a></h3>
+                                <h3><a href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></h3>
                                 @if ($service->excerpt)
                                     <p>{{ $service->excerpt }}</p>
                                 @endif
@@ -110,14 +116,14 @@
 
     @if ($about['mission'] || $about['vision'] || $about['core_values'])
         <section class="about-page-principles section-space">
-            <div class="site-container w-100 mx-auto site-about__div-1">
+            <div class="container">
                 @if ($about['principles_title'])
                     <header class="about-page-section-heading">
                         <h2 class="display-title">{{ $about['principles_title'] }}</h2>
                     </header>
                 @endif
 
-                <div class="about-page-principles__grid">
+                <div >
                     <div class="about-page-principles__top">
                         @if ($about['vision'])
                             <article class="about-principle-card">
@@ -149,7 +155,7 @@
                                     <span class="image-placeholder">DV</span>
                                 @endif
                             </div>
-                            <div class="about-principle-values__content">
+                            <div >
                                 <span class="about-principle-card__icon" aria-hidden="true">
                                     <i class="fa-solid fa-gem"></i>
                                 </span>
@@ -164,15 +170,15 @@
     @endif
 
     @if ($historyTimeline->isNotEmpty())
-        <section class="about-page-history section-space">
-            <div class="site-container w-100 mx-auto site-about__div-1">
+        <section class="section-space">
+            <div class="container">
                 @if ($about['history_title'] || $about['history_description'])
                     <header class="about-page-section-heading">
                         @if ($about['history_title'])
                             <h2 class="display-title">{{ $about['history_title'] }}</h2>
                         @endif
                         @if ($about['history_description'])
-                            <p class="about-page-section-heading__intro">{{ $about['history_description'] }}</p>
+                            <p >{{ $about['history_description'] }}</p>
                         @endif
                     </header>
                 @endif
@@ -188,13 +194,13 @@
                             aria-selected="{{ $loop->first ? 'true' : 'false' }}"
                             aria-controls="history-panel-{{ $loop->index }}"
                         >
-                            <span class="about-history__tab-year">{{ $item['year'] }}</span>
-                            <span class="about-history__tab-line" aria-hidden="true"></span>
+                            <span >{{ $item['year'] }}</span>
+                            <span  aria-hidden="true"></span>
                         </button>
                     @endforeach
                 </div>
 
-                <div class="about-history__panels tab-content">
+                <div class="tab-content">
                     @foreach ($historyTimeline as $item)
                         <article
                             id="history-panel-{{ $loop->index }}"
@@ -208,7 +214,7 @@
                                     <span class="image-placeholder" aria-hidden="true">•</span>
                                 @endif
                             </div>
-                            <div class="about-history__content">
+                            <div >
                                 <p class="about-history__year">{{ $item['year'] }}</p>
                                 <h3>{{ $item['title'] }}</h3>
                                 @if ($item['description'])
@@ -221,8 +227,8 @@
             </div>
         </section>
     @elseif ($about['history'])
-        <section class="about-page-history section-space">
-            <div class="site-container about-page-history__fallback w-100 mx-auto site-about__div-1">
+        <section class="section-space">
+            <div class="container">
                 @if ($about['history_title'])
                     <h2 class="display-title">{{ $about['history_title'] }}</h2>
                 @endif
@@ -235,8 +241,8 @@
     @endif
 
     @if ($stats->isNotEmpty())
-        <section class="about-page-stats section-space">
-            <div class="site-container w-100 mx-auto site-about__div-1">
+        <section class="section-space">
+            <div class="container">
                 @if ($about['stats_title'])
                     <header class="about-page-section-heading">
                         <h2 class="display-title">{{ $about['stats_title'] }}</h2>
@@ -255,15 +261,15 @@
     @endif
 
     @if ($about['office_title'] || $about['office_description'] || $about['office_gallery']->isNotEmpty())
-        <section class="about-page-showcase about-page-office section-space">
-            <div class="site-container w-100 mx-auto site-about__div-1">
+        <section class="section-space">
+            <div class="container">
                 @if ($about['office_title'] || $about['office_description'])
                     <header class="about-page-section-heading">
                         @if ($about['office_title'])
                             <h2 class="display-title">{{ $about['office_title'] }}</h2>
                         @endif
                         @if ($about['office_description'])
-                            <p class="about-page-section-heading__intro">{{ $about['office_description'] }}</p>
+                            <p >{{ $about['office_description'] }}</p>
                         @endif
                     </header>
                 @endif
@@ -292,12 +298,12 @@
 
     @if ($about['cta_title'])
         <section class="about-page-cta">
-            <div class="site-container about-page-cta__shell w-100 mx-auto site-about__div-1">
+            <div class="container about-page-cta__shell">
                 <div>
                     <h2>{{ $about['cta_title'] }}</h2>
                 </div>
                 @if ($about['cta_button_label'])
-                    <a class="btn btn-primary button-primary" href="{{ LocalizedUrl::route('contact') }}">{{ $about['cta_button_label'] }} <span aria-hidden="true">↗</span></a>
+                    <a class="btn btn-light" href="{{ route('contact') }}">{{ $about['cta_button_label'] }} <span aria-hidden="true">↗</span></a>
                 @endif
             </div>
         </section>

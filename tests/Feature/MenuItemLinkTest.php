@@ -3,8 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\MenuItem;
-use App\Support\Localization\LocalizedUrl;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,7 +15,7 @@ class MenuItemLinkTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_a_native_route_menu_item_uses_its_saved_route_name(): void
@@ -26,7 +25,7 @@ class MenuItemLinkTest extends TestCase
             'url' => 'contact',
         ]);
 
-        $this->assertSame(LocalizedUrl::route('contact'), $item->link);
+        $this->assertSame(route('contact'), $item->link);
     }
 
     public function test_an_empty_native_route_does_not_fall_back_to_the_homepage(): void

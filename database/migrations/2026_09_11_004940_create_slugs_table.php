@@ -10,12 +10,10 @@ return new class extends Migration
     {
         Schema::create('slugs', function (Blueprint $table): void {
             $table->id();
-            $table->string('slug');
+            $table->string('slug')->unique();
             $table->morphs('sluggable');
-            $table->string('locale', 10)->default('vi');
             $table->timestamps();
-            $table->unique(['slug', 'locale']);
-            $table->unique(['sluggable_type', 'sluggable_id', 'locale']);
+            $table->unique(['sluggable_type', 'sluggable_id']);
         });
     }
 

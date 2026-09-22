@@ -5,8 +5,7 @@ namespace Tests\Feature;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Tag;
-use App\Support\Localization\LocalizedUrl;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -19,7 +18,7 @@ class ProductCatalogueTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_products_have_their_own_category_and_public_routes(): void
@@ -37,14 +36,14 @@ class ProductCatalogueTest extends TestCase
             'published_at' => now()->subMinute(),
         ]);
 
-        $this->get(LocalizedUrl::route('products.index'))
+        $this->get(route('products.index'))
             ->assertOk()
             ->assertSee($product->title);
-        $this->get(LocalizedUrl::productCategory($category))
+        $this->get(route('products.category', ['slug' => $category->slug]))
             ->assertOk()
             ->assertSee($category->name)
             ->assertSee($product->title);
-        $this->get(LocalizedUrl::product($product))
+        $this->get(route('products.show', ['slug' => $product->slug]))
             ->assertOk()
             ->assertSee($product->title)
             ->assertSee('<meta name="description"', false);

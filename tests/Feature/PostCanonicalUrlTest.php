@@ -3,8 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Post;
-use App\Support\Localization\LocalizedUrl;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,12 +15,12 @@ class PostCanonicalUrlTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_posts_listing_uses_blog_path_and_legacy_listing_redirects(): void
     {
-        $blogUrl = LocalizedUrl::route('posts.index');
+        $blogUrl = route('posts.index');
 
         $this->assertSame(url('/blog'), $blogUrl);
 
@@ -43,8 +42,8 @@ class PostCanonicalUrlTest extends TestCase
             'status' => 'published',
             'published_at' => now()->subMinute(),
         ]);
-        $canonicalUrl = LocalizedUrl::post($post);
-        $listingUrl = LocalizedUrl::route('posts.show', ['slug' => $post->slug]);
+        $canonicalUrl = route('slug.show', ['slug' => $post->slug]);
+        $listingUrl = route('posts.show', ['slug' => $post->slug]);
 
         $this->assertSame(url('/'.$post->slug), $canonicalUrl);
 

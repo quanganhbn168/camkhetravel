@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Project;
 use App\Models\Service;
-use App\Support\Localization\LocalizedUrl;
 use DateTimeInterface;
 
 class SitemapBuilder
@@ -33,7 +32,7 @@ class SitemapBuilder
             ->get()
             ->each(function (ProductCategory $category): void {
                 $this->addUrl(
-                    LocalizedUrl::productCategory($category),
+                    route('products.category', ['slug' => $category->slug]),
                     $category->updated_at,
                     'monthly',
                     0.6,
@@ -88,13 +87,14 @@ class SitemapBuilder
         foreach ([
             ['home', 'weekly', 1.0],
             ['services.index', 'weekly', 0.9],
+            ['solutions.index', 'weekly', 0.9],
             ['products.index', 'weekly', 0.8],
             ['projects.index', 'weekly', 0.9],
             ['posts.index', 'weekly', 0.8],
             ['about', 'monthly', 0.6],
             ['contact', 'monthly', 0.5],
         ] as [$route, $frequency, $priority]) {
-            $this->addUrl(LocalizedUrl::route($route), null, $frequency, $priority);
+            $this->addUrl(route($route), null, $frequency, $priority);
         }
     }
 
@@ -112,10 +112,10 @@ class SitemapBuilder
                 ->get()
                 ->each(function (Service|Project|Post|Product $item) use ($frequency, $priority): void {
                     $url = match (true) {
-                        $item instanceof Service => LocalizedUrl::service($item),
-                        $item instanceof Project => LocalizedUrl::project($item),
-                        $item instanceof Post => LocalizedUrl::post($item),
-                        $item instanceof Product => LocalizedUrl::product($item),
+                        $item instanceof Service => route('slug.show', ['slug' => $item->slug]),
+                        $item instanceof Project => route('projects.show', ['slug' => $item->slug]),
+                        $item instanceof Post => route('slug.show', ['slug' => $item->slug]),
+                        $item instanceof Product => route('products.show', ['slug' => $item->slug]),
                     };
 
                     if ($url !== '') {

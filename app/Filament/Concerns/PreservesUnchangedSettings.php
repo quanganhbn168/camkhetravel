@@ -32,10 +32,6 @@ trait PreservesUnchangedSettings
 
                 continue;
             }
-            // Preserve languages that are not represented in the active form.
-            if (is_array($original) && $original !== [] && collect(array_keys($original))->every(fn ($locale): bool => is_string($locale) && (bool) preg_match('/^[a-z]{2}(?:[-_][A-Za-z]{2})?$/', $locale))) {
-                $validated[$key] = array_replace($original, $validated[$key] ?? []);
-            }
         }
 
         return $validated;

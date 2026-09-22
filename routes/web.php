@@ -10,9 +10,9 @@ use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\PublicSlugController;
 use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\ServiceController;
+use App\Http\Controllers\Frontend\SolutionsController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\SeoController;
-use App\Http\Middleware\SetFrontendLocale;
 use App\Support\Branding\FaviconService;
 use Illuminate\Support\Facades\Route;
 
@@ -28,9 +28,10 @@ Route::get('/favicon.ico', function (FaviconService $favicons) {
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
 
-Route::middleware(SetFrontendLocale::class)->group(function (): void {
+Route::group([], function (): void {
     Route::get('/', HomeController::class)->name('home');
     Route::get('/dich-vu', [ServiceController::class, 'index'])->name('services.index');
+    Route::get('/giai-phap', SolutionsController::class)->name('solutions.index');
     Route::get('/dich-vu/danh-muc/{category:slug}', [ServiceController::class, 'redirectCategory']);
     Route::get('/dich-vu/{category:slug}', [ServiceController::class, 'category'])->name('services.category');
     Route::get('/tim-kiem', SearchController::class)->name('search');
@@ -55,6 +56,5 @@ Route::middleware(SetFrontendLocale::class)->group(function (): void {
 });
 
 Route::get('/{slug}', PublicSlugController::class)
-    ->middleware(SetFrontendLocale::class)
     ->where('slug', '[^/]+')
     ->name('slug.show');

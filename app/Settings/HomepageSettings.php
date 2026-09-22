@@ -6,25 +6,23 @@ use Spatie\LaravelSettings\Settings;
 
 class HomepageSettings extends Settings
 {
-    public array $about_eyebrow;
+    public string $about_title = '';
 
-    public array $about_title;
+    public string $about_content = '';
 
-    public array $about_content;
+    public array $stats = [];
 
-    public array $stats;
+    public string $commitments = '';
 
-    public array $commitments;
+    public string $capabilities = '';
 
-    public array $capabilities;
+    public string $consultation_title = '';
 
-    public array $consultation_title;
+    public string $consultation_content = '';
 
-    public array $consultation_content;
+    public string $faq_title = '';
 
-    public array $faq_title;
-
-    public array $faq_description;
+    public string $faq_description = '';
 
     public static function group(): string
     {

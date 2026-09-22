@@ -7,7 +7,7 @@ use App\Models\HeroSlide;
 use App\Models\User;
 use App\Support\Media\VideoMediaLibrary;
 use Awcodes\Curator\Models\Media;
-use Database\Seeders\WebsiteSeeder;
+use Database\Seeders\MenuSeeder;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +23,7 @@ class HeroVideoLibraryTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(WebsiteSeeder::class);
+        $this->seed(MenuSeeder::class);
     }
 
     public function test_library_search_filters_out_images_even_when_their_names_match(): void
@@ -53,7 +53,9 @@ class HeroVideoLibraryTest extends TestCase
         $this->assertSame($video->id, collect($component->get('data.video_media_id'))->first()['id']);
         $component->call('save');
         $this->assertSame($video->id, $slide->fresh()->video_media_id);
-        $this->get('/')->assertOk()->assertViewHas('heroSlides', fn ($slides) => $slides->contains(fn ($item) => $item['title'] === 'Hero video QA' && $item['video_url'] === $video->url));
+        $this->get('/')->assertOk()->assertViewHas('heroSlides', fn ($slides) => $slides->contains(
+            fn (HeroSlide $item): bool => $item->title === 'Hero video QA' && $item->resolvedVideoUrl() === $video->url
+        ));
     }
 
     private function media(string $name, string $type, string $ext): Media

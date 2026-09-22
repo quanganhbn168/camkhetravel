@@ -1,7 +1,5 @@
-@use(App\Support\Localization\LocalizedUrl)
-
-<article class="resource-card site-hover-group">
-    <a class="resource-card__media" href="{{ LocalizedUrl::project($project) }}" aria-label="Xem dự án {{ $project->title }}">
+<article class="resource-card">
+    <a class="resource-card__media" href="{{ route('projects.show', ['slug' => $project->slug]) }}" aria-label="Xem dự án {{ $project->title }}">
         @if ($project->image_url ?: ($defaultBannerUrl ?? null))
             <img src="{{ $project->image_url ?: $defaultBannerUrl }}" alt="{{ $project->title }}" loading="lazy">
         @else
@@ -15,11 +13,11 @@
         @endif
     </a>
     <div class="resource-card__body">
-        <h3 class="fw-bold site-partials-project-card__heading-1"><a class="site-partials-project-card__action-2" href="{{ LocalizedUrl::project($project) }}">{{ $project->title }}</a></h3>
-        <div class="d-flex flex-wrap site-partials-project-card__div-3">
+        <h3 class="fw-bold h4"><a class="link-body-emphasis text-decoration-none" href="{{ route('projects.show', ['slug' => $project->slug]) }}">{{ $project->title }}</a></h3>
+        <div class="d-flex flex-wrap gap-2 small text-body-secondary">
             @if ($project->client_name)<span>{{ $project->client_name }}</span>@endif
             @if ($project->completed_at)<span>{{ $project->completed_at->translatedFormat('m/Y') }}</span>@endif
         </div>
-        <a class="resource-card__link" href="{{ LocalizedUrl::project($project) }}">Xem dự án <span aria-hidden="true">→</span></a>
+        <a class="resource-card__link" href="{{ route('projects.show', ['slug' => $project->slug]) }}">Xem dự án <span aria-hidden="true">→</span></a>
     </div>
 </article>

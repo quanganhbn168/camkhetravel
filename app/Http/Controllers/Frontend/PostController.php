@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostCategory;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use DOMDocument;
@@ -33,10 +32,10 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts(Post::query()
             ->published()
-            ->with(['category', 'curatorMedia']), $sort)
+            ->with(['curatorMedia', 'slugs']), $sort)
             ->paginate(12)
             ->withQueryString());
-        $canonicalUrl = LocalizedUrl::route('posts.index');
+        $canonicalUrl = route('posts.index');
 
         if ($posts->currentPage() > 1) {
             $canonicalUrl .= '?page='.$posts->currentPage();
@@ -46,7 +45,7 @@ class PostController extends Controller
             'categories' => $this->categories(),
             'posts' => $posts,
             'activeCategory' => null,
-            'listingUrl' => LocalizedUrl::route('posts.index'),
+            'listingUrl' => route('posts.index'),
             'sort' => $sort,
             'sortOptions' => self::SORT_OPTIONS,
             'heroImageUrl' => $posts->first()?->image_url,
@@ -61,16 +60,17 @@ class PostController extends Controller
     public function category(PostCategory $category): View
     {
         abort_unless($category->is_active, 404);
+        $category->loadMissing('slugs');
 
         $title = $category->name.' | Tin tức';
         $description = $category->description ?: 'Các bài viết thuộc chuyên mục '.$category->name.'.';
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts($category->posts()
             ->published()
-            ->with(['category', 'curatorMedia']), $sort)
+            ->with(['curatorMedia', 'slugs']), $sort)
             ->paginate(12)
             ->withQueryString());
-        $canonicalUrl = LocalizedUrl::postCategory($category);
+        $canonicalUrl = route('posts.category', ['slug' => $category->slug]);
 
         if ($posts->currentPage() > 1) {
             $canonicalUrl .= '?page='.$posts->currentPage();
@@ -80,7 +80,7 @@ class PostController extends Controller
             'categories' => $this->categories(),
             'posts' => $posts,
             'activeCategory' => $category,
-            'listingUrl' => LocalizedUrl::postCategory($category),
+            'listingUrl' => route('posts.category', ['slug' => $category->slug]),
             'sort' => $sort,
             'sortOptions' => self::SORT_OPTIONS,
             'heroImageUrl' => $posts->first()?->image_url,
@@ -95,6 +95,7 @@ class PostController extends Controller
         $post->load([
             'category',
             'curatorMedia',
+            'slugs',
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
         $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia));
@@ -105,13 +106,13 @@ class PostController extends Controller
         $featuredPosts = $this->withImages(Post::query()
             ->published()
             ->whereKeyNot($post->id)
-            ->with(['category', 'curatorMedia'])
+            ->with(['curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->latest('published_at')
             ->limit(4)
             ->get());
         [$previousPost, $nextPost] = $this->adjacentPosts($post);
-        $shareUrl = LocalizedUrl::post($post);
+        $shareUrl = route('slug.show', ['slug' => $post->slug]);
 
         return view('frontend.posts.show', compact('post') + [
             'categories' => $this->categories(),
@@ -133,7 +134,7 @@ class PostController extends Controller
 
     public function showBySlug(string $slug): RedirectResponse
     {
-        return redirect()->to(LocalizedUrl::post($this->postForSlug($slug)), 301);
+        return redirect()->route('slug.show', ['slug' => $this->postForSlug($slug)->slug], 301);
     }
 
     public function categoryBySlug(string $slug): View
@@ -254,6 +255,7 @@ class PostController extends Controller
     {
         return Post::query()
             ->whereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug))
+            ->with('slugs')
             ->firstOrFail();
     }
 
@@ -261,6 +263,7 @@ class PostController extends Controller
     {
         return PostCategory::query()
             ->whereHas('slugs', fn ($slugs) => $slugs->where('slug', $slug))
+            ->with('slugs')
             ->firstOrFail();
     }
 
@@ -269,9 +272,10 @@ class PostController extends Controller
         return PostCategory::query()
             ->where('is_active', true)
             ->withCount(['posts' => fn ($query) => $query->published()])
+            ->with('slugs')
             ->orderBy('sort_order')
             ->get()
-            ->each(fn (PostCategory $category) => $category->setAttribute('public_url', LocalizedUrl::postCategory($category)));
+            ->each(fn (PostCategory $category) => $category->setAttribute('public_url', route('posts.category', ['slug' => $category->slug])));
     }
 
     private function adjacentPosts(Post $post): array
@@ -280,7 +284,7 @@ class PostController extends Controller
             return [null, null];
         }
 
-        $withMedia = ['curatorMedia'];
+        $withMedia = ['curatorMedia', 'slugs'];
         $previousPost = Post::query()
             ->published()
             ->where(function ($query) use ($post): void {

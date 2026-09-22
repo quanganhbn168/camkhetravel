@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Service;
-use App\Support\Localization\LocalizedUrl;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -25,7 +24,7 @@ class SearchController extends Controller
         $seo = $this->seo->listing(
             $keyword === '' ? 'Tìm kiếm' : 'Tìm kiếm: '.$keyword,
             'Tìm kiếm dịch vụ và bài viết tại '.$this->seo->siteName().'.',
-            LocalizedUrl::route('search'),
+            route('search'),
         );
 
         return view('frontend.search.index', compact('keyword', 'services', 'posts', 'seo'));
@@ -35,7 +34,7 @@ class SearchController extends Controller
     {
         $services = Service::query()
             ->published()
-            ->with(['category', 'curatorMedia'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->when($keyword === '', fn (Builder $query) => $query->whereRaw('1 = 0'), fn (Builder $query) => $this->applyKeyword($query, $keyword))
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -54,7 +53,7 @@ class SearchController extends Controller
     {
         $posts = Post::query()
             ->published()
-            ->with(['categories', 'curatorMedia'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->when($keyword === '', fn (Builder $query) => $query->whereRaw('1 = 0'), fn (Builder $query) => $this->applyKeyword($query, $keyword))
             ->orderByDesc('published_at')
             ->paginate(9, ['*'], 'posts_page')

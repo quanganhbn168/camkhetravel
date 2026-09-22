@@ -1,33 +1,24 @@
-@php
-    $defaultCommitmentItems = [
-        ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Phạm vi, tiến độ và đầu ra được thống nhất trước khi triển khai.'],
-        ['title' => 'Đồng hành xuyên suốt', 'description' => 'Đội ngũ phối hợp cùng khách hàng từ định hướng đến bàn giao.'],
-        ['title' => 'Chỉn chu từng chi tiết', 'description' => 'Mỗi hạng mục được kiểm tra trước khi hoàn thiện và bàn giao.'],
-    ];
-    $visibleCommitmentItems = $commitmentItems->isNotEmpty() ? $commitmentItems->all() : $defaultCommitmentItems;
-@endphp
-
-<section id="cam-ket" class="section-space site-services-partials-commitments__section-1">
-    <div class="site-container w-100 mx-auto site-services-partials-commitments__div-2">
-        <div class="overflow-hidden site-services-partials-commitments__div-3">
-            <div class="site-services-partials-commitments__div-4">
+<section id="cam-ket" class="section-space">
+    <div class="container">
+        <div class="overflow-hidden commitment-layout">
+            <div>
                 @if ($commitmentImageUrl)
-                    <img class="h-100 w-100 object-fit-cover site-services-partials-commitments__media-5" src="{{ $commitmentImageUrl }}" alt="{{ $service->commitment_title ?: 'Cam kết của '.$website->site_name }}" loading="lazy">
+                    <img class="h-100 w-100 object-fit-cover" src="{{ $commitmentImageUrl }}" alt="{{ $service->commitment_title ?: 'Cam kết của '.$website->site_name }}" loading="lazy">
                 @else
-                    <div class="image-placeholder site-services-partials-commitments__div-6">{{ $website->site_name }}</div>
+                    <div class="image-placeholder h-100">{{ $website->site_name }}</div>
                 @endif
             </div>
-            <div class="site-services-partials-commitments__div-7">
-                <h2 class="display-title site-services-partials-commitments__heading-8">{{ $service->commitment_title ?: 'Cam kết của '.$website->site_name }}</h2>
-                <p class="site-services-partials-commitments__copy-9">{{ $service->commitment_description ?: 'Một quy trình rõ ràng và một đầu mối phối hợp xuyên suốt để dịch vụ được triển khai hiệu quả.' }}</p>
-                <ul class="d-grid site-services-partials-commitments__ul-10">
-                    @foreach ($visibleCommitmentItems as $item)
-                        <li class="d-flex site-services-partials-commitments__li-11">
-                            <span class="d-grid flex-shrink-0 fw-bold site-services-partials-commitments__copy-12" aria-hidden="true">✓</span>
+            <div class="p-4">
+                <h2 class="display-title h2">{{ $service->commitment_title ?: 'Cam kết của '.$website->site_name }}</h2>
+                <p class="lead">{{ $service->commitment_description ?: 'Một quy trình rõ ràng và một đầu mối phối hợp xuyên suốt để dịch vụ được triển khai hiệu quả.' }}</p>
+                <ul class="d-grid gap-4 list-unstyled mt-4">
+                    @foreach ($commitmentItems as $item)
+                        <li class="d-flex gap-3">
+                            <span class="d-grid flex-shrink-0 fw-bold text-primary fs-4" aria-hidden="true">✓</span>
                             <div>
-                                <h3 class="fw-bold site-services-partials-commitments__heading-13">{{ $item['title'] }}</h3>
+                                <h3 class="fw-bold h5">{{ $item['title'] }}</h3>
                                 @if (filled($item['description'] ?? null))
-                                    <p class="site-services-partials-commitments__copy-14">{{ $item['description'] }}</p>
+                                    <p class="mb-0">{{ $item['description'] }}</p>
                                 @endif
                             </div>
                         </li>
