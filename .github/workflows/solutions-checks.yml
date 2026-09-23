@@ -71,9 +71,13 @@ jobs:
           test "$DB_DATABASE" = dvtec_testing
           php artisan migrate --force
           vendor/bin/phpunit tests/Integration/SolutionMigrationTest.php --log-junit test-results/solution-migrations.xml 2>&1 | tee test-results/solution-migrations.log
-      - name: Prepare HTTP test database
+      - name: Prepare isolated HTTP test database
         run: |
-          php artisan migrate --force
+          # DatabaseMigrations rolls back tables; the legacy settings migration has no down().
+          # Reset only this disposable CI database before booting the HTTP test suite.
+          test "$APP_ENV" = testing
+          test "$DB_DATABASE" = dvtec_testing
+          php artisan migrate:fresh --force
           php artisan db:seed --force
           php artisan view:cache
           php artisan view:clear

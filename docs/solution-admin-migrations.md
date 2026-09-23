@@ -49,7 +49,10 @@ Chỉ chạy các lệnh kiểm thử trên database riêng (ví dụ `dvtec_tes
 # Trong môi trường test: APP_ENV=testing, DB_DATABASE=dvtec_testing.
 # APP_TESTING_HTTP=false cho quá trình bootstrap kiểm tra migration.
 APP_TESTING_HTTP=false vendor/bin/phpunit tests/Integration/SolutionMigrationTest.php
-php artisan migrate --force
+# Chỉ reset database test: migration settings cũ không có down().
+test "$APP_ENV" = testing && test "$DB_DATABASE" = dvtec_testing
+APP_TESTING_HTTP=false php artisan migrate:fresh --force
+APP_TESTING_HTTP=false php artisan db:seed --force
 APP_TESTING_HTTP=true vendor/bin/phpunit --filter 'Solution(Admin|CategoryAdmin|Feature)Test|ContentNavigationTest'
 APP_TESTING_HTTP=true vendor/bin/phpunit
 ```
