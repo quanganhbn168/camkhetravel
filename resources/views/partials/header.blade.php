@@ -1,6 +1,6 @@
 <div class="topbar">
     <div class="container topbar__inner">
-        <span>Giải pháp PCCC toàn diện · Đồng hành cùng công trình an toàn</span>
+        <span>CamKheTravel · Đồng hành cùng những hành trình đáng nhớ</span>
         <div class="topbar__links">
             <span>Thứ 2 - Thứ 7: 8:00 - 17:00</span>
             @if ($website->contact_email)

@@ -10,7 +10,7 @@
             </div>
             <div class="p-4">
                 <h2 class="display-title h2">{{ $service->commitment_title ?: 'Cam kết của '.$website->site_name }}</h2>
-                <p class="lead">{{ $service->commitment_description ?: 'Một quy trình rõ ràng và một đầu mối phối hợp xuyên suốt để dịch vụ được triển khai hiệu quả.' }}</p>
+                <p class="lead">{{ $service->commitment_description ?: 'Thông tin chuyến đi được trao đổi rõ ràng trước khi xác nhận phương án xe.' }}</p>
                 <ul class="d-grid gap-4 list-unstyled mt-4">
                     @foreach ($commitmentItems as $item)
                         <li class="d-flex gap-3">

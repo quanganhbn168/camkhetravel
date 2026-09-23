@@ -7,7 +7,7 @@
         <div class="container position-relative">
             <header class="mx-auto text-center mb-5">
                 <h2 class="display-title h2 text-white">Quy trình</h2>
-                <p class="mx-auto lead">{{ $service->process_description ?: 'Từng bước được thống nhất rõ ràng để dịch vụ được triển khai đúng mục tiêu và tiến độ.' }}</p>
+                <p class="mx-auto lead">{{ $service->process_description ?: 'Từng bước được thống nhất theo lịch trình và nhu cầu của chuyến đi.' }}</p>
             </header>
             <ol class="service-process__timeline">
                 @foreach ($processItems as $item)

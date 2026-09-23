@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             ServiceCategorySeeder::class,
             ServiceSeeder::class,
+            PostSeeder::class,
             TestimonialSeeder::class,
             HeroSlideSeeder::class,
         ]);

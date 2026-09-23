@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/scss/pages/home.scss')
+    @vite('resources/css/pages/home.css')
 @endpush
 
 @section('body_class', 'camkhetravel-home')
@@ -10,35 +10,12 @@
 
 @section('before_header')
     <a class="skip-link" href="#camkhe-noi-dung">Bỏ qua điều hướng</a>
-    <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></symbol>
-        <symbol id="i-car" viewBox="0 0 24 24"><path d="m5 9 2-5h10l2 5M3 10l2-1h14l2 1v8H3zM5 18v2m14-2v2M6 13h2m8 0h2M8 16h8" /></symbol>
-        <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></symbol>
-        <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m4 0h2m-8 3h2" /></symbol>
-        <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3" /><path d="M2 21v-3a7 7 0 0 1 14 0v3m1-17a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 5v2" /></symbol>
-        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.5a5.5 5.5 0 0 0 0-7.8Z" /></symbol>
-        <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2" /><path d="M8 7V3h8v4M3 12l9 3 9-3m-9 0v4" /></symbol>
-        <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6zM8 12l3 3 5-6" /></symbol>
-        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 6v6l4 2" /></symbol>
-        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
-        <symbol id="i-phone" viewBox="0 0 24 24"><path d="m7 3 3 5-3 3a18 18 0 0 0 6 6l3-3 5 3-1 4C10 23 1 14 3 4z" /></symbol>
-        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11a9 9 0 0 1-9 9 11 11 0 0 1-4-1l-6 3 2-6a9 9 0 1 1 17-5Z" /><path d="M7 9h10m-10 4h7" /></symbol>
-        <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m2 8 4-4 5 2 3-2 8 5-4 7-5 5-7-5zM11 6l-4 5 3 2 4-4 5 5M7 17l2-2m1 5 2-3m3 2 1-3" /></symbol>
-        <symbol id="i-file" viewBox="0 0 24 24"><path d="M5 2h9l5 5v15H5zM14 2v6h5M8 12h8m-8 4h8" /></symbol>
-        <symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 14v-3a9 9 0 0 1 18 0v3M5 12H3v7h4v-7Zm14 0h2v7h-4v-7Zm2 7c0 3-5 3-7 3" /></symbol>
-        <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11z" /><circle cx="7.5" cy="7.5" r="1" /></symbol>
-        <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 5 10 8L22 5" /></symbol>
-        <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2" /><path d="M16 8V3H3v13h5" /></symbol>
-        <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" /></symbol>
-        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" /></symbol>
-        <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6" /></symbol>
-    </svg>
 
     <header class="site-header" id="siteHeader">
         <nav class="navbar navbar-expand-lg container" aria-label="Điều hướng chính">
             <a class="navbar-brand brand-wordmark" href="/#trang-chu" aria-label="CamKheTravel – Trang chủ">CamKheTravel</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở hoặc đóng menu">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-menu"></use></svg>
+                <x-site-icon name="menu" />
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mx-auto">
@@ -47,7 +24,7 @@
                     @endforeach
                 </ul>
                 <button type="button" class="btn btn-brand" data-quote-type="trip">
-                    Nhận báo giá <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg>
+                    Nhận báo giá <x-site-icon name="arrow" />
                 </button>
             </div>
         </nav>
@@ -75,15 +52,15 @@
                     <p class="signature hero-signature">Mỗi hành trình<br><span>là một trải nghiệm đáng nhớ.</span></p>
                     <div class="hero-actions">
                         <button type="button" class="btn btn-brand" data-quote-type="trip">
-                            {{ $heroSlide?->primary_label ?: 'Nhận báo giá chuyến đi' }} <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg>
+                            {{ $heroSlide?->primary_label ?: 'Nhận báo giá chuyến đi' }} <x-site-icon name="arrow" />
                         </button>
-                        <a class="btn btn-zalo" href="{{ $heroSlide?->secondary_url ?: '/#dich-vu' }}">{{ $heroSlide?->secondary_label ?: 'Xem dịch vụ' }} <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
+                        <a class="btn btn-zalo" href="{{ $heroSlide?->secondary_url ?: '/#dich-vu' }}">{{ $heroSlide?->secondary_label ?: 'Xem dịch vụ' }} <x-site-icon name="arrow" /></a>
                     </div>
                     <div class="hero-trust">
-                        <span><svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg> Trao đổi rõ ràng</span>
-                        <span><svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg> Theo nhu cầu</span>
-                        <span><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg> Chủ động lịch trình</span>
-                        <span><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg> Điểm đón trao đổi trước</span>
+                        <span><x-site-icon name="shield" /> Trao đổi rõ ràng</span>
+                        <span><x-site-icon name="users" /> Theo nhu cầu</span>
+                        <span><x-site-icon name="clock" /> Chủ động lịch trình</span>
+                        <span><x-site-icon name="pin" /> Điểm đón trao đổi trước</span>
                     </div>
                 </div>
             </div>
@@ -91,23 +68,23 @@
 
         <div class="container booking-wrap">
             <form class="quick-quote" id="quickQuote" aria-label="Yêu cầu báo giá nhanh">
-                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg><div><label for="quickPickup">Điểm đón</label><input id="quickPickup" name="pickup" placeholder="Nhập địa chỉ đón" maxlength="180" autocomplete="off"></div></div>
-                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg><div><label for="quickDestination">Điểm đến</label><input id="quickDestination" name="destination" placeholder="Bạn muốn đi đâu?" maxlength="180" autocomplete="off"></div></div>
-                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg><div><label for="quickDate">Ngày đi</label><input id="quickDate" name="departure" type="date" aria-label="Ngày khởi hành"></div></div>
-                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg><div><label for="quickPassengers">Số khách</label><select id="quickPassengers" name="passengers"><option value="">Chọn số khách</option><option value="1–4">1–4 khách</option><option value="5–6">5–6 khách</option><option value="7–15">7–15 khách</option><option value="Cần tư vấn thêm">Cần tư vấn thêm</option></select></div></div>
-                <button type="submit" class="btn btn-brand">Yêu cầu báo giá <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                <div class="quick-field"><x-site-icon name="pin" /><div><label for="quickPickup">Điểm đón</label><input id="quickPickup" name="pickup" placeholder="Nhập địa chỉ đón" maxlength="180" autocomplete="off"></div></div>
+                <div class="quick-field"><x-site-icon name="pin" /><div><label for="quickDestination">Điểm đến</label><input id="quickDestination" name="destination" placeholder="Bạn muốn đi đâu?" maxlength="180" autocomplete="off"></div></div>
+                <div class="quick-field"><x-site-icon name="calendar" /><div><label for="quickDate">Ngày đi</label><input id="quickDate" name="departure" type="date" aria-label="Ngày khởi hành"></div></div>
+                <div class="quick-field"><x-site-icon name="users" /><div><label for="quickPassengers">Số khách</label><select id="quickPassengers" name="passengers"><option value="">Chọn số khách</option><option value="1–4">1–4 khách</option><option value="5–6">5–6 khách</option><option value="7–15">7–15 khách</option><option value="Cần tư vấn thêm">Cần tư vấn thêm</option></select></div></div>
+                <button type="submit" class="btn btn-brand">Yêu cầu báo giá <x-site-icon name="arrow" /></button>
             </form>
         </div>
 
         <section class="section services-section" id="dich-vu" aria-labelledby="services-title">
             <div class="container">
-                <div class="section-heading"><h2 id="services-title">Dịch vụ của CamKheTravel</h2><p>Chọn dịch vụ phù hợp với hành trình <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></p></div>
+                <div class="section-heading"><h2 id="services-title">Dịch vụ của CamKheTravel</h2><p>Chọn dịch vụ phù hợp với hành trình <x-site-icon name="arrow" /></p></div>
                 <div class="services-grid">
                     @forelse ($services as $service)
                         <article class="service-card">
                             <img src="{{ $service->image_url }}" alt="{{ $service->title }}" width="650" height="390" loading="lazy" decoding="async">
                             <div class="service-card-body">
-                                <span class="icon-bubble {{ $service->quote_type === 'wedding' ? 'rose' : ($service->quote_type === 'shared' ? 'sand' : '') }}"><svg class="icon" aria-hidden="true"><use href="#i-{{ $service->quote_icon }}"></use></svg></span>
+                                <span class="icon-bubble {{ $service->quote_type === 'wedding' ? 'rose' : ($service->quote_type === 'shared' ? 'sand' : '') }}"><x-site-icon :name="$service->quote_icon" /></span>
                                 <div><h3><button type="button" class="stretched-button" data-quote-type="{{ $service->quote_type }}" data-service="{{ $service->title }}" data-service-id="{{ $service->id }}">{{ $service->title }}</button></h3><p>{{ $service->excerpt }}</p></div>
                             </div>
                         </article>
@@ -120,7 +97,7 @@
 
         <section class="section fleet-section" id="doi-xe" aria-labelledby="fleet-title">
             <div class="container">
-                <div class="section-heading"><h2 id="fleet-title">Lựa chọn xe cho hành trình</h2><button type="button" class="text-link" data-quote-type="trip">Tư vấn chọn xe <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div>
+                <div class="section-heading"><h2 id="fleet-title">Lựa chọn xe cho hành trình</h2><button type="button" class="text-link" data-quote-type="trip">Tư vấn chọn xe <x-site-icon name="arrow" /></button></div>
                 <div class="fleet-grid">
                     @foreach ($fleetTypes as $vehicle)
                         <article class="fleet-card">
@@ -128,9 +105,9 @@
                             <div class="fleet-content">
                                 <h3>{{ $vehicle['title'] }}</h3>
                                 @foreach ($vehicle['features'] as $feature)
-                                    <p><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>{{ $feature }}</p>
+                                    <p><x-site-icon name="check" />{{ $feature }}</p>
                                 @endforeach
-                                <button type="button" class="btn btn-outline-brand btn-sm" data-vehicle="{{ $vehicle['code'] }}" data-vehicle-name="{{ $vehicle['title'] }}" data-vehicle-description="{{ $vehicle['features']->implode('. ') }}" data-vehicle-image="{{ $noImageUrl }}">Xem chi tiết <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                                <button type="button" class="btn btn-outline-brand btn-sm" data-vehicle="{{ $vehicle['code'] }}" data-vehicle-name="{{ $vehicle['title'] }}" data-vehicle-description="{{ $vehicle['features']->implode('. ') }}" data-vehicle-image="{{ $noImageUrl }}">Xem chi tiết <x-site-icon name="arrow" /></button>
                             </div>
                         </article>
                     @endforeach
@@ -147,7 +124,7 @@
                         <h2 id="partner-title">Đối tác cung cấp xe<br>cho tour du lịch</h2>
                         <p class="partner-lead"><strong>Đối tác lên chương trình.<br>CamKheTravel đồng hành cùng chuyến đi.</strong></p>
                         <p>Cung cấp phương tiện theo nhu cầu của công ty du lịch, đại lý lữ hành và đơn vị tổ chức tour. Lịch trình, quy mô đoàn và phương án xe được trao đổi trước khi xác nhận.</p>
-                        <div class="partner-actions"><button type="button" class="btn btn-brand" data-quote-type="partner">Đăng ký đối tác <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button><button type="button" class="btn btn-outline-brand" data-quote-type="partner">Nhận báo giá hợp tác <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div>
+                        <div class="partner-actions"><button type="button" class="btn btn-brand" data-quote-type="partner">Đăng ký đối tác <x-site-icon name="arrow" /></button><button type="button" class="btn btn-outline-brand" data-quote-type="partner">Nhận báo giá hợp tác <x-site-icon name="arrow" /></button></div>
                     </div>
                     <p class="signature partner-signature">Cùng đối tác<br>tạo nên những hành trình<br>trọn vẹn.</p>
                 </div>
@@ -155,7 +132,7 @@
             <div class="container partner-bottom">
                 <div class="partner-benefits">
                     @foreach ($homepage->partner_benefits as $benefit)
-                        <div class="partner-benefit"><span class="icon-bubble"><svg class="icon" aria-hidden="true"><use href="#i-handshake"></use></svg></span><div><h3>{{ $benefit['title'] }}</h3><p>{{ $benefit['description'] }}</p></div></div>
+                        <div class="partner-benefit"><span class="icon-bubble"><x-site-icon name="handshake" /></span><div><h3>{{ $benefit['title'] }}</h3><p>{{ $benefit['description'] }}</p></div></div>
                     @endforeach
                 </div>
                 <div class="partner-panels">
@@ -171,10 +148,10 @@
                         <h3>Quy trình hợp tác</h3><p class="panel-intro">Thống nhất nhu cầu, phương án và đầu mối liên hệ.</p>
                         <ol class="process-list">
                             @foreach ($homepage->partner_steps as $step)
-                                <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-{{ $loop->first ? 'file' : ($loop->last ? 'car' : 'chat') }}"></use></svg><b>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</b></span><h4>{{ $step['title'] }}</h4><p>{{ $step['description'] }}</p></li>
+                                <li><span class="step-icon"><x-site-icon :name="$loop->first ? 'file' : ($loop->last ? 'car' : 'chat')" /><b>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</b></span><h4>{{ $step['title'] }}</h4><p>{{ $step['description'] }}</p></li>
                             @endforeach
                         </ol>
-                        <button type="button" class="btn btn-brand" data-quote-type="partner">Trở thành đối tác <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+                        <button type="button" class="btn btn-brand" data-quote-type="partner">Trở thành đối tác <x-site-icon name="arrow" /></button>
                     </div>
                     <aside class="partner-quote"><p class="signature">Hành trình<br>tốt đẹp hơn<br>khi có người<br>đồng hành.</p><span>CAMKHETRAVEL</span></aside>
                 </div>
@@ -183,13 +160,13 @@
 
         <section class="wedding-section" id="xe-cuoi" aria-labelledby="wedding-title">
             <picture class="wedding-picture"><source media="(max-width: 767px)" srcset="{{ $noImageUrl }}"><img src="{{ $noImageUrl }}" alt="Ảnh mặc định" width="1800" height="567" loading="lazy" decoding="async"></picture>
-            <div class="container wedding-inner"><div class="wedding-copy"><h2 id="wedding-title">Xe cưới Phú Thọ</h2><p class="wedding-subtitle">Đồng hành trong ngày trọng đại.</p><p class="wedding-models">Xe dâu <span>•</span> Đưa đón gia đình</p><p class="wedding-description">Lịch trình và yêu cầu xe được trao đổi theo kế hoạch của gia đình.</p><button type="button" class="btn btn-brand" data-quote-type="wedding">Tư vấn dịch vụ xe cưới <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div><p class="signature wedding-signature">Hạnh phúc<br>bắt đầu từ<br>những hành trình đẹp.</p></div>
+            <div class="container wedding-inner"><div class="wedding-copy"><h2 id="wedding-title">Xe cưới Phú Thọ</h2><p class="wedding-subtitle">Đồng hành trong ngày trọng đại.</p><p class="wedding-models">Xe dâu <span>•</span> Đưa đón gia đình</p><p class="wedding-description">Lịch trình và yêu cầu xe được trao đổi theo kế hoạch của gia đình.</p><button type="button" class="btn btn-brand" data-quote-type="wedding">Tư vấn dịch vụ xe cưới <x-site-icon name="arrow" /></button></div><p class="signature wedding-signature">Hạnh phúc<br>bắt đầu từ<br>những hành trình đẹp.</p></div>
         </section>
 
         <section class="section commitments-section" id="cam-ket" aria-labelledby="commitments-title">
             <div class="container"><div class="section-heading"><h2 id="commitments-title">CamKheTravel đồng hành cùng hành trình</h2></div><div class="commitments-grid">
                 @foreach ($homepage->commitment_items as $commitment)
-                    <article class="commitment"><span class="icon-bubble"><svg class="icon" aria-hidden="true"><use href="#i-{{ $loop->first ? 'file' : ($loop->last ? 'headset' : ($loop->iteration === 2 ? 'car' : 'clock')) }}"></use></svg></span><div><h3>{{ $commitment['title'] }}</h3><p>{{ $commitment['description'] }}</p></div></article>
+                    <article class="commitment"><span class="icon-bubble"><x-site-icon :name="$loop->first ? 'file' : ($loop->last ? 'headset' : ($loop->iteration === 2 ? 'car' : 'clock'))" /></span><div><h3>{{ $commitment['title'] }}</h3><p>{{ $commitment['description'] }}</p></div></article>
                 @endforeach
             </div></div>
         </section>
@@ -200,7 +177,7 @@
                     @foreach ($testimonials as $testimonial)
                         <article class="review-card">
                             <div class="review-stars" aria-label="Đánh giá {{ $testimonial->rating ?? 0 }} trên 5 sao">
-                                @for ($star = 1; $star <= 5; $star++)<svg class="icon {{ $star <= (int) ($testimonial->rating ?? 0) ? 'is-active' : '' }}" aria-hidden="true"><use href="#i-star"></use></svg>@endfor
+                                @for ($star = 1; $star <= 5; $star++)<x-site-icon name="star" class="{{ $star <= (int) ($testimonial->rating ?? 0) ? 'is-active' : '' }}" />@endfor
                                 @if ($testimonial->is_illustrative)<span>Minh họa</span>@endif
                             </div>
                             <blockquote>“{{ $testimonial->quote }}”</blockquote>
@@ -211,8 +188,24 @@
             </section>
         @endif
 
+        <section class="section journal-section" id="tin-tuc" aria-labelledby="journal-title">
+            <div class="container">
+                <div class="section-heading">
+                    <h2 id="journal-title">Tin tức & kinh nghiệm hành trình</h2>
+                    <a class="text-link" href="{{ route('posts.index') }}">Xem tất cả bài viết <x-site-icon name="arrow" /></a>
+                </div>
+                <div class="journal-grid">
+                    @forelse ($latestPosts as $post)
+                        @include('frontend.partials.post-card', ['showExcerpt' => true])
+                    @empty
+                        <p class="empty-state">Bài viết đang được cập nhật. Anh/chị có thể xem dịch vụ và gửi lịch trình để được tư vấn.</p>
+                    @endforelse
+                </div>
+            </div>
+        </section>
+
         <section class="contact-banner" id="lien-he" aria-labelledby="contact-title">
-            <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button><button type="button" class="btn btn-white" data-contact="phone"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg> Liên hệ</button></div></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
+            <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <x-site-icon name="arrow" /></button><button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" /> Liên hệ</button></div></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
         </section>
     </div>
 @endsection
@@ -222,16 +215,16 @@
         <div class="container">
             <div class="row gy-4 footer-top">
                 <div class="col-lg-4 col-sm-6"><a href="/#trang-chu" class="footer-brand brand-wordmark">CamKheTravel</a><p class="footer-about">{{ $website->tagline ?: 'Dịch vụ xe và tư vấn phương tiện theo lịch trình.' }}<br>Thông tin chuyến đi được trao đổi trước khi xác nhận.</p></div>
-                <div class="col-lg-3 col-sm-6"><h2>Thông tin liên hệ</h2><ul class="footer-contact"><li><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><button type="button" data-contact="phone" data-phone-label>Liên hệ tư vấn</button></li><li><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg><button type="button" data-contact="zalo">Tư vấn qua Zalo</button></li><li><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg><span data-company-region>{{ $frontendConfig['region'] }}</span></li><li data-email-row hidden><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><a data-email-link></a></li></ul></div>
+                <div class="col-lg-3 col-sm-6"><h2>Thông tin liên hệ</h2><ul class="footer-contact"><li><x-site-icon name="phone" /><button type="button" data-contact="phone" data-phone-label>Liên hệ tư vấn</button></li><li><x-site-icon name="chat" /><button type="button" data-contact="zalo">Tư vấn qua Zalo</button></li><li><x-site-icon name="pin" /><span data-company-region>{{ $frontendConfig['region'] }}</span></li><li data-email-row hidden><x-site-icon name="mail" /><a data-email-link></a></li></ul></div>
                 <div class="col-lg-3 col-sm-6"><h2>Liên kết nhanh</h2><div class="footer-links">@foreach ($navigation as $item)<a href="{{ $item['url'] }}">{{ $item['label'] }}</a>@endforeach</div></div>
-                <div class="col-lg-2 col-sm-6"><h2>Kết nối</h2><div class="social-buttons"><button type="button" data-contact="phone" aria-label="Liên hệ qua điện thoại"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg></button><button type="button" data-contact="zalo" class="social-zalo" aria-label="Liên hệ qua Zalo">Zalo</button><button type="button" data-quote-type="partner" aria-label="Đăng ký đối tác"><svg class="icon" aria-hidden="true"><use href="#i-handshake"></use></svg></button></div><p class="signature footer-signature">Kết nối những hành trình.</p></div>
+                <div class="col-lg-2 col-sm-6"><h2>Kết nối</h2><div class="social-buttons"><button type="button" data-contact="phone" aria-label="Liên hệ qua điện thoại"><x-site-icon name="phone" /></button><button type="button" data-contact="zalo" class="social-zalo" aria-label="Liên hệ qua Zalo">Zalo</button><button type="button" data-quote-type="partner" aria-label="Đăng ký đối tác"><x-site-icon name="handshake" /></button></div><p class="signature footer-signature">Kết nối những hành trình.</p></div>
             </div>
             <div class="footer-bottom"><span>© <span data-year>{{ now()->year }}</span> CamKheTravel.</span><span>Ảnh mặc định được dùng khi chưa có ảnh nội dung.</span><button type="button" data-bs-toggle="modal" data-bs-target="#privacyModal">Thông tin dữ liệu</button></div>
         </div>
     </footer>
 
-    <div class="mobile-actions" aria-label="Liên hệ nhanh"><button type="button" data-contact="phone"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><span>Gọi tư vấn</span></button><button type="button" data-contact="zalo"><span class="zalo-symbol">Z</span><span>Zalo</span></button><button type="button" data-quote-type="trip"><svg class="icon" aria-hidden="true"><use href="#i-file"></use></svg><span>Nhận báo giá</span></button></div>
-    <button type="button" class="back-top" id="backTop" aria-label="Về đầu trang" hidden><svg class="icon" aria-hidden="true"><use href="#i-up"></use></svg></button>
+    <div class="mobile-actions" aria-label="Liên hệ nhanh"><button type="button" data-contact="phone"><x-site-icon name="phone" /><span>Gọi tư vấn</span></button><button type="button" data-contact="zalo"><span class="zalo-symbol">Z</span><span>Zalo</span></button><button type="button" data-quote-type="trip"><x-site-icon name="file" /><span>Nhận báo giá</span></button></div>
+    <button type="button" class="back-top" id="backTop" aria-label="Về đầu trang" hidden><x-site-icon name="up" /></button>
     <noscript><div class="noscript-notice">Bật JavaScript để sử dụng form báo giá và các chức năng tương tác. Nội dung trang vẫn xem được.</div></noscript>
 
     <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><p class="modal-brand">CAMKHETRAVEL</p><h2 class="modal-title fs-4" id="quoteTitle">Nhận báo giá chuyến đi</h2></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body">
@@ -253,12 +246,12 @@
                 <div class="col-12"><div class="form-check"><input class="form-check-input" id="requestConsent" name="consent" type="checkbox" required><label class="form-check-label" for="requestConsent">Tôi đồng ý cung cấp thông tin để được liên hệ tư vấn về yêu cầu này.</label><div class="invalid-feedback">Cần đồng ý trước khi tiếp tục.</div></div><p class="form-hint">Đây là yêu cầu tư vấn, chưa phải xác nhận đặt xe hoặc giá cuối cùng.</p></div>
             </div>
             <div id="formError" class="alert alert-danger mt-3" role="alert" hidden></div>
-            <div class="form-submit"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Để sau</button><button type="submit" class="btn btn-brand" id="requestSubmit"><span data-submit-label>Gửi yêu cầu tư vấn</span> <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div>
+            <div class="form-submit"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Để sau</button><button type="submit" class="btn btn-brand" id="requestSubmit"><span data-submit-label>Gửi yêu cầu tư vấn</span> <x-site-icon name="arrow" /></button></div>
         </form>
-        <div id="requestResult" hidden aria-live="polite"><span class="result-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><h3 id="resultTitle">Đã gửi yêu cầu tư vấn</h3><p id="resultDescription">Hệ thống đã tiếp nhận yêu cầu. Đây chưa phải xác nhận đặt xe; CamKheTravel cần liên hệ để thống nhất lịch trình và chi phí.</p><label class="form-label" for="requestSummary">Nội dung yêu cầu</label><textarea id="requestSummary" class="form-control request-summary" rows="9" readonly></textarea><div class="result-actions"><button type="button" class="btn btn-brand" id="copySummary"><svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg> Sao chép nội dung</button><button type="button" class="btn btn-outline-brand" id="editRequest">Chỉnh sửa yêu cầu</button></div><p id="copyStatus" class="form-hint mt-3" role="status"></p></div>
+        <div id="requestResult" hidden aria-live="polite"><span class="result-icon"><x-site-icon name="check" /></span><h3 id="resultTitle">Đã gửi yêu cầu tư vấn</h3><p id="resultDescription">Hệ thống đã tiếp nhận yêu cầu. Đây chưa phải xác nhận đặt xe; CamKheTravel cần liên hệ để thống nhất lịch trình và chi phí.</p><label class="form-label" for="requestSummary">Nội dung yêu cầu</label><textarea id="requestSummary" class="form-control request-summary" rows="9" readonly></textarea><div class="result-actions"><button type="button" class="btn btn-brand" id="copySummary"><x-site-icon name="copy" /> Sao chép nội dung</button><button type="button" class="btn btn-outline-brand" id="editRequest">Chỉnh sửa yêu cầu</button></div><p id="copyStatus" class="form-hint mt-3" role="status"></p></div>
     </div></div></div></div>
 
-    <div class="modal fade" id="vehicleModal" tabindex="-1" aria-labelledby="vehicleTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-4" id="vehicleTitle">Thông tin xe</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><img id="vehicleDetailImage" class="vehicle-detail-image" src="{{ $noImageUrl }}" alt="Ảnh xe mặc định" width="700" height="500"><p id="vehicleDetailDescription"></p><p class="form-hint">Ảnh mặc định. Dòng xe thực tế, sức chứa và hành lý sẽ được xác nhận khi trao đổi lịch trình.</p><button type="button" class="btn btn-brand w-100" id="quoteVehicle">Nhận báo giá xe này <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div></div></div></div>
+    <div class="modal fade" id="vehicleModal" tabindex="-1" aria-labelledby="vehicleTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-4" id="vehicleTitle">Thông tin xe</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><img id="vehicleDetailImage" class="vehicle-detail-image" src="{{ $noImageUrl }}" alt="Ảnh xe mặc định" width="700" height="500"><p id="vehicleDetailDescription"></p><p class="form-hint">Ảnh mặc định. Dòng xe thực tế, sức chứa và hành lý sẽ được xác nhận khi trao đổi lịch trình.</p><button type="button" class="btn btn-brand w-100" id="quoteVehicle">Nhận báo giá xe này <x-site-icon name="arrow" /></button></div></div></div></div>
 
     <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 id="privacyTitle" class="modal-title fs-4">Thông tin dữ liệu</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><p id="privacyDataText">Thông tin trong biểu mẫu được gửi về website và lưu thành yêu cầu liên hệ để CamKheTravel xử lý. Việc gửi yêu cầu chưa xác nhận chuyến xe, lịch trình hoặc giá.</p><p>Ảnh mặc định được sử dụng tại các vị trí chưa có ảnh nội dung.</p><p>Quản trị viên cần cập nhật thông tin liên hệ và chính sách dữ liệu áp dụng cho hoạt động thực tế.</p></div></div></div></div>
 @endsection

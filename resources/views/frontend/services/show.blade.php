@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/scss/pages/service.scss')
+    @vite('resources/css/pages/service.css')
 @endpush
 
 @section('content')
@@ -37,15 +37,15 @@
         <section id="noi-dung-dich-vu" class="service-intro section-space">
             <div class="container service-intro__grid">
                 <div >
-                    <h2 class="display-title">{{ $service->benefit_title ?: 'Giải pháp phù hợp từng công trình' }}</h2>
+                    <h2 class="display-title">{{ $service->benefit_title ?: 'Chuyến đi theo lịch trình của bạn' }}</h2>
                     <p class="service-intro__lead">{{ $service->excerpt }}</p>
                     <ul class="service-intro__checks" aria-label="Điểm nổi bật của dịch vụ">
                         @forelse (collect($benefitItems)->pluck('title')->filter()->take(4) as $benefitTitle)
                             <li><span aria-hidden="true">✓</span>{{ $benefitTitle }}</li>
                         @empty
-                            <li><span aria-hidden="true">✓</span>Đúng tiêu chuẩn và hồ sơ được duyệt</li>
-                            <li><span aria-hidden="true">✓</span>Đồng bộ thiết bị, vật tư và thi công</li>
-                            <li><span aria-hidden="true">✓</span>Dễ kiểm tra, nghiệm thu và vận hành</li>
+                            <li><span aria-hidden="true">✓</span>Trao đổi trước điểm đón và thời gian</li>
+                            <li><span aria-hidden="true">✓</span>Tư vấn loại xe theo số khách</li>
+                            <li><span aria-hidden="true">✓</span>Thống nhất lịch trình trước chuyến đi</li>
                         @endforelse
                     </ul>
                     <a class="btn btn-primary" href="{{ route('contact', ['service' => $service->id]) }}">Nhận tư vấn dịch vụ <span aria-hidden="true">→</span></a>
@@ -72,43 +72,6 @@
     @endif
 
     @include('frontend.services.partials.benefits')
-
-    <section id="thiet-bi" class="service-equipment section-space">
-        <div class="container">
-            <header class="resource-list-heading">
-                <div>
-                    <h2 class="display-title text-uppercase h2">Vật tư, thiết bị PCCC đồng bộ</h2>
-                    <p class="lead">Các thiết bị được lựa chọn theo hồ sơ, tiêu chuẩn áp dụng và điều kiện vận hành của từng công trình.</p>
-                </div>
-                <a class="section-link" href="{{ route('products.index') }}">Xem toàn bộ thiết bị <span aria-hidden="true">→</span></a>
-            </header>
-            <div class="service-equipment-grid">
-                @forelse ($featuredProducts as $product)
-                    <article class="service-equipment-card">
-                        <a class="service-equipment-card__media" href="{{ route('products.show', ['slug' => $product->slug]) }}" aria-label="Xem {{ $product->title }}">
-                            @if ($product->image_url ?: $defaultBannerUrl)
-                                <img src="{{ $product->image_url ?: $defaultBannerUrl }}" alt="{{ $product->title }}" loading="lazy">
-                            @else
-                                <span class="image-placeholder">DV</span>
-                            @endif
-                        </a>
-                        <div class="service-equipment-card__body">
-                            @if ($product->category)<p class="service-equipment-card__category">{{ $product->category->name }}</p>@endif
-                            <h3><a href="{{ route('products.show', ['slug' => $product->slug]) }}">{{ $product->title }}</a></h3>
-                            <a class="service-equipment-card__link" href="{{ route('products.show', ['slug' => $product->slug]) }}">Xem thiết bị <span aria-hidden="true">→</span></a>
-                        </div>
-                    </article>
-                @empty
-                    @foreach (['Hệ thống báo cháy tự động', 'Hệ thống chữa cháy Sprinkler', 'Máy bơm chữa cháy', 'Van & phụ kiện đường ống', 'Tủ điều khiển PCCC', 'Thiết bị thoát nạn'] as $equipment)
-                        <article class="service-equipment-card service-equipment-card--fallback">
-                            <span class="service-equipment-card__icon" aria-hidden="true">+</span>
-                            <div class="service-equipment-card__body"><h3>{{ $equipment }}</h3><p>Hạng mục được tư vấn theo đặc thù công trình.</p></div>
-                        </article>
-                    @endforeach
-                @endforelse
-            </div>
-        </div>
-    </section>
 
     @include('frontend.services.partials.reference-videos')
     @include('frontend.services.partials.process')
@@ -142,7 +105,7 @@
 
     @if ($faqItems->isNotEmpty())
         <section class="faq section-space" id="cau-hoi-thuong-gap">
-            <div class="container"><header class="faq__header"><h2 class="display-title h2">Câu hỏi thường gặp</h2><p class="text-body">Thông tin cần biết trước khi triển khai dịch vụ PCCC.</p></header><div class="faq__list">@foreach ($faqItems as $item)<details class="faq__item" @if ($loop->first) open @endif><summary class="faq__question"><span>{{ $item['question'] }}</span><span class="faq__indicator" aria-hidden="true">+</span></summary><div class="faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
+            <div class="container"><header class="faq__header"><h2 class="display-title h2">Câu hỏi thường gặp</h2><p class="text-body">Thông tin cần biết trước khi đặt xe và xác nhận lịch trình.</p></header><div class="faq__list">@foreach ($faqItems as $item)<details class="faq__item" @if ($loop->first) open @endif><summary class="faq__question"><span>{{ $item['question'] }}</span><span class="faq__indicator" aria-hidden="true">+</span></summary><div class="faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
         </section>
     @endif
 

@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/scss/pages/contact.scss')
+    @vite('resources/css/pages/contact.css')
 @endpush
 
 @section('content')
@@ -29,8 +29,8 @@
             <h1>{{ $page['title'] }}</h1>
 
             <p class="contact-page-hero__intro">
-                {{ $website->site_name }} luôn sẵn sàng lắng nghe và tư vấn
-                giải pháp PCCC phù hợp cho công trình của anh/chị.
+                {{ $website->site_name }} tiếp nhận nhu cầu di chuyển và tư vấn
+                phương án xe phù hợp với lịch trình của anh/chị.
             </p>
         </div>
     </section>

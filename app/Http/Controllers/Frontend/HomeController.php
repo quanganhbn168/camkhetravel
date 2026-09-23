@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\HeroSlide;
 use App\Models\Menu;
+use App\Models\Post;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Settings\HomepageSettings;
@@ -64,6 +65,15 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
+        $latestPosts = Post::query()
+            ->published()
+            ->with(['category', 'curatorMedia', 'slugs'])
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->limit(3)
+            ->get()
+            ->each(fn (Post $post): mixed => $post->setAttribute('image_url', MediaUrl::versioned($post->curatorMedia) ?: asset('images/no-image.svg')));
+
         $menuQuery = Menu::query()
             ->where('is_active', true)
             ->with(['items' => fn ($query) => $query->whereNull('parent_id')]);
@@ -111,6 +121,7 @@ class HomeController extends Controller
             'heroSlide' => $heroSlide,
             'services' => $services,
             'testimonials' => $testimonials,
+            'latestPosts' => $latestPosts,
             'hasIllustrativeTestimonials' => $testimonials->contains(fn (Testimonial $item) => $item->is_illustrative),
             'navigation' => $navigation,
             'homepage' => $this->homepage,

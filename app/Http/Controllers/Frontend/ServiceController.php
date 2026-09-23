@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\ServiceCategory;
@@ -50,7 +49,7 @@ class ServiceController extends Controller
         $category->loadMissing('slugs');
 
         $title = $category->seo_title ?: $category->name.' | Dịch vụ';
-        $description = $category->seo_description ?: $category->description ?: 'Dịch vụ PCCC thuộc nhóm '.$category->name.'.';
+        $description = $category->seo_description ?: $category->description ?: 'Tìm hiểu dịch vụ thuộc nhóm '.$category->name.' của CamKheTravel.';
 
         return view('frontend.services.index', $this->listingData($category) + [
             'categoryBodyHtml' => (string) str((string) $category->body)->sanitizeHtml(),
@@ -123,23 +122,14 @@ class ServiceController extends Controller
             ->values();
         if ($commitmentItems->isEmpty()) {
             $commitmentItems = collect([
-                ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Phạm vi, tiến độ và đầu ra được thống nhất trước khi triển khai.'],
-                ['title' => 'Đồng hành xuyên suốt', 'description' => 'Đội ngũ phối hợp cùng khách hàng từ định hướng đến bàn giao.'],
-                ['title' => 'Chỉn chu từng chi tiết', 'description' => 'Mỗi hạng mục được kiểm tra trước khi hoàn thiện và bàn giao.'],
+                ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Điểm đón, thời gian và nhu cầu xe được trao đổi trước chuyến đi.'],
+                ['title' => 'Đồng hành theo lịch trình', 'description' => 'Đầu mối liên hệ hỗ trợ khi cần điều chỉnh thông tin chuyến đi.'],
+                ['title' => 'Xác nhận phương án xe', 'description' => 'Loại xe và chi phí được thống nhất trước khi khởi hành.'],
             ]);
         }
         $hasReferenceVideos = $referenceVideos !== [];
         $hasReferenceImages = $galleryImages !== [];
         $hasReferenceTabs = $hasReferenceVideos && $hasReferenceImages;
-        $featuredProducts = Product::query()
-            ->published()
-            ->with(['category', 'curatorMedia', 'slugs'])
-            ->orderByDesc('is_featured')
-            ->orderBy('sort_order')
-            ->limit(6)
-            ->get();
-        $featuredProducts->each(fn (Product $product): mixed => $product->setAttribute('image_url', MediaUrl::resolve($product->curatorMedia)));
-
         return view('frontend.services.show', compact('service') + [
             'relatedServices' => $relatedServices,
             'bannerVideoUrl' => $bannerVideoUrl,
@@ -149,7 +139,6 @@ class ServiceController extends Controller
             'processItems' => $processItems,
             'benefitItems' => $benefitItems,
             'commitmentItems' => $commitmentItems,
-            'featuredProducts' => $featuredProducts,
             'testimonials' => Testimonial::query()
                 ->active()
                 ->with('curatorMedia')
@@ -244,12 +233,12 @@ class ServiceController extends Controller
             'featuredProjects' => $featuredProjects,
             'archiveStats' => [
                 ['value' => (string) Service::query()->published()->count(), 'label' => 'hạng mục dịch vụ'],
-                ['value' => (string) Project::query()->published()->count(), 'label' => 'công trình đã triển khai'],
-                ['value' => (string) ServiceCategory::query()->where('is_active', true)->count(), 'label' => 'nhóm giải pháp'],
-                ['value' => '24/7', 'label' => 'sẵn sàng hỗ trợ'],
+                ['value' => (string) Project::query()->published()->count(), 'label' => 'hành trình đã đăng tải'],
+                ['value' => (string) ServiceCategory::query()->where('is_active', true)->count(), 'label' => 'nhóm dịch vụ'],
+                ['value' => 'Theo lịch', 'label' => 'tư vấn phương án xe'],
             ],
-            'pageTitle' => $activeCategory?->name ?? 'Dịch vụ PCCC',
-            'pageDescription' => $activeCategory?->description ?: 'Các giải pháp PCCC được xây dựng theo mục tiêu, quy mô và đặc thù riêng của từng công trình.',
+            'pageTitle' => $activeCategory?->name ?? 'Dịch vụ xe và du lịch',
+            'pageDescription' => $activeCategory?->description ?: 'CamKheTravel tư vấn phương án xe theo điểm đón, lịch trình và quy mô đoàn.',
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',

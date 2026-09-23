@@ -75,9 +75,6 @@ function initialise() {
         void import('./frontend/camkhetravel-home');
     }
 
-    if (document.querySelector('.fa-solid, .fa-regular, .fa-brands, .fas, .far, .fab, .fa')) {
-        void import('./frontend/icons');
-    }
 }
 
 if (document.readyState === 'loading') {

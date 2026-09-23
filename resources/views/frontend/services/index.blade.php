@@ -2,6 +2,12 @@
 
 
 
+@push('styles')
+    @vite('resources/css/pages/services.css')
+@endpush
+
+@section('body_class', 'services-page')
+
 @section('content')
     @include('frontend.partials.resource-archive-hero', [
         'resourceName' => 'Dịch vụ',
@@ -14,7 +20,7 @@
         <section class="resource-category-intro">
             <div class="container resource-category-intro__grid">
                 <div>
-                    <h2 class="display-title h2">Giải pháp {{ mb_strtolower($activeCategory->name) }} theo đúng nhu cầu thực tế.</h2>
+                    <h2 class="display-title h2">{{ $activeCategory->name }} theo nhu cầu hành trình.</h2>
                     <p class="lead">{{ $pageDescription }}</p>
                     <a class="btn btn-dark mt-3" href="{{ route('contact') }}">Nhận tư vấn <span aria-hidden="true">→</span></a>
                 </div>
@@ -31,8 +37,9 @@
         <div class="container">
             <header class="resource-list-heading">
                 <div>
-                    <h2 class="display-title text-uppercase h2">{{ $activeCategory?->name ?: 'Hệ sinh thái dịch vụ PCCC' }}</h2>
-                    <p class="text-body">{{ $activeCategory?->description ?: 'Giải pháp đồng bộ từ khảo sát, thiết kế, thi công đến bảo trì cho từng loại công trình.' }}</p>
+                    <p class="service-list-eyebrow"><i class="fa-solid fa-car-side" aria-hidden="true"></i> Theo hành trình của bạn</p>
+                    <h2 class="display-title text-uppercase h2">{{ $activeCategory?->name ?: 'Dịch vụ xe và du lịch' }}</h2>
+                    <p class="text-body">{{ $activeCategory?->description ?: 'Chọn dịch vụ phù hợp với điểm đón, điểm đến và quy mô đoàn của bạn.' }}</p>
                 </div>
                 @if ($activeCategory)
                     <a class="section-link" href="{{ route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">←</span></a>
@@ -76,7 +83,7 @@
             <div class="container">
                 <header class="archive-process__heading">
                     <h2>Rõ ràng - Minh bạch - Hiệu quả</h2>
-                    <p>{{ $website->site_name }} đồng hành theo từng bước, từ tiếp nhận nhu cầu đến bàn giao và hỗ trợ vận hành.</p>
+                    <p>{{ $website->site_name }} trao đổi từng bước, từ tiếp nhận lịch trình đến xác nhận phương án xe.</p>
                 </header>
                 <ol class="archive-process__steps">
                     @foreach ($processItems as $item)
@@ -111,7 +118,7 @@
             <div class="container">
                 <header class="resource-list-heading">
                     <div>
-                        <h2 class="display-title text-uppercase h2">Những công trình chúng tôi đã triển khai</h2>
+                        <h2 class="display-title text-uppercase h2">Những hành trình đã đồng hành</h2>
                         <p class="text-body">Minh chứng rõ ràng cho năng lực, quy trình và sự đồng hành của {{ $website->site_name }}.</p>
                     </div>
                     <a class="section-link" href="{{ route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a>

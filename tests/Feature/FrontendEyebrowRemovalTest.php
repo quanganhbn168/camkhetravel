@@ -15,7 +15,7 @@ class FrontendEyebrowRemovalTest extends TestCase
 
         $this->assertStringNotContainsString('eyebrow', $frontendViews);
         $this->assertStringNotContainsString('section-kicker', $frontendViews);
-        $this->assertStringNotContainsString('section-kicker', file_get_contents(resource_path('scss/pages/home.scss')));
+        $this->assertStringNotContainsString('section-kicker', file_get_contents(resource_path('css/pages/home.css')));
         $this->assertStringNotContainsString('about_eyebrow', file_get_contents(app_path('Settings/HomepageSettings.php')));
         $this->assertStringNotContainsString('eyebrow', file_get_contents(app_path('Models/HeroSlide.php')));
         $this->assertStringNotContainsString('eyebrow', file_get_contents(app_path('Filament/Resources/HeroSlides/Schemas/HeroSlideForm.php')));

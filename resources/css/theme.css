@@ -1,0 +1,82 @@
+/* Shared public palette and type. Change the site colors here. */
+:root,
+[data-bs-theme='light'] {
+  --site-primary: #07543f;
+  --site-primary-dark: #003c2f;
+  --site-primary-hover: #026749;
+  --site-ink: #092f2c;
+  --site-text: #28423e;
+  --site-muted: #677975;
+  --site-mint: #eaf6ef;
+  --site-surface: #f6faf8;
+  --site-line: #dfeae5;
+  --site-gold: #bd9850;
+  --site-sand: #fff7e8;
+  --site-font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+  --site-font-heading: 'Lora', Georgia, serif;
+
+  --bs-primary: var(--site-primary);
+  --bs-primary-rgb: 7, 84, 63;
+  --bs-secondary: var(--site-text);
+  --bs-secondary-rgb: 40, 66, 62;
+  --bs-dark: var(--site-ink);
+  --bs-dark-rgb: 9, 47, 44;
+  --bs-light: var(--site-surface);
+  --bs-light-rgb: 246, 250, 248;
+  --bs-body-color: var(--site-text);
+  --bs-body-color-rgb: 40, 66, 62;
+  --bs-emphasis-color: var(--site-ink);
+  --bs-emphasis-color-rgb: 9, 47, 44;
+  --bs-border-color: var(--site-line);
+  --bs-font-sans-serif: var(--site-font-body);
+  --bs-body-font-family: var(--site-font-body);
+  --bs-heading-color: var(--site-ink);
+  --bs-link-color: var(--site-primary);
+  --bs-link-color-rgb: 7, 84, 63;
+  --bs-link-hover-color: var(--site-primary-dark);
+  --bs-link-hover-color-rgb: 0, 60, 47;
+  --bs-primary-text-emphasis: var(--site-primary-dark);
+  --bs-primary-bg-subtle: var(--site-mint);
+  --bs-primary-border-subtle: #a9d6c2;
+}
+
+body { font-family: var(--site-font-body); color: var(--site-text); }
+h1, h2, h3, h4, h5, h6, .display-title { font-family: var(--site-font-heading); color: var(--site-ink); }
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--site-primary);
+  --bs-btn-border-color: var(--site-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--site-primary-hover);
+  --bs-btn-hover-border-color: var(--site-primary-hover);
+  --bs-btn-focus-shadow-rgb: 7, 84, 63;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--site-primary-dark);
+  --bs-btn-active-border-color: var(--site-primary-dark);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--site-primary);
+  --bs-btn-disabled-border-color: var(--site-primary);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--site-primary);
+  --bs-btn-border-color: var(--site-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--site-primary);
+  --bs-btn-hover-border-color: var(--site-primary);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--site-primary-dark);
+  --bs-btn-active-border-color: var(--site-primary-dark);
+}
+.btn-dark {
+  --bs-btn-bg: var(--site-ink);
+  --bs-btn-border-color: var(--site-ink);
+  --bs-btn-hover-bg: var(--site-primary-dark);
+  --bs-btn-hover-border-color: var(--site-primary-dark);
+}
+.nav-pills { --bs-nav-pills-link-active-bg: var(--site-primary); }
+.pagination { --bs-pagination-active-bg: var(--site-primary); --bs-pagination-active-border-color: var(--site-primary); }
+.form-control:focus, .form-select:focus { border-color: var(--site-primary-hover); box-shadow: 0 0 0 .25rem rgb(7 84 63 / .15); }
+.form-check-input:checked { background-color: var(--site-primary); border-color: var(--site-primary); }
+.dropdown-item.active, .dropdown-item:active { background-color: var(--site-primary); }
+.text-bg-primary { color: #fff !important; background-color: var(--site-primary) !important; }

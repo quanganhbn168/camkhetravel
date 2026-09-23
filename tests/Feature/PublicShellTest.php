@@ -11,16 +11,16 @@ class PublicShellTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_header_uses_bootstrap_navigation_without_alpine_markup(): void
+    public function test_home_header_uses_bootstrap_navigation_without_alpine_markup(): void
     {
         $this->seed(WebsiteSettingsSeeder::class);
         $this->seed(MenuSeeder::class);
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('header__toggle', false)
-            ->assertSee('offcanvas', false)
-            ->assertSee('data-bs-toggle="modal"', false)
+            ->assertSee('class="navbar-toggler"', false)
+            ->assertSee('data-bs-toggle="collapse"', false)
+            ->assertSee('id="mainNav"', false)
             ->assertDontSee('x-data', false);
     }
 
@@ -39,14 +39,14 @@ class PublicShellTest extends TestCase
 
     public function test_floating_contact_and_scroll_controls_have_usable_styles(): void
     {
-        $styles = file_get_contents(resource_path('scss/components/_floating-actions.scss'));
-        $foundation = file_get_contents(resource_path('scss/frontend.scss'));
-        $frontendStyles = file_get_contents(resource_path('scss/frontend.scss'));
+        $styles = file_get_contents(resource_path('css/components/floating-actions.css'));
+        $foundation = file_get_contents(resource_path('css/theme.css'));
+        $frontendStyles = file_get_contents(resource_path('css/frontend.css'));
 
-        $this->assertStringContainsString('$primary: #e52327;', $foundation);
-        $this->assertStringNotContainsString('--bs-primary:', $foundation);
+        $this->assertStringContainsString('--site-primary: #07543f;', $foundation);
+        $this->assertStringContainsString('--bs-primary: var(--site-primary);', $foundation);
         $this->assertStringNotContainsString('brand.overrides', $frontendStyles);
-        $this->assertStringContainsString("@include meta.load-css('components/floating-actions');", $frontendStyles);
+        $this->assertStringContainsString("@import './components/floating-actions.css';", $frontendStyles);
         $this->assertStringContainsString('.floating-action {', $styles);
         $this->assertStringContainsString('.floating-action--phone::before', $styles);
         $this->assertStringContainsString('@keyframes phone-ring', $styles);

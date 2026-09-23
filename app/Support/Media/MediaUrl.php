@@ -8,19 +8,25 @@ class MediaUrl
 {
     public static function resolve(?Media $media): ?string
     {
+        if ($media?->disk === 'public' && $media->path === 'media/site/no-image.svg') {
+            return asset('images/no-image.svg');
+        }
+
         return $media?->url;
     }
 
     public static function versioned(?Media $media): ?string
     {
-        if (! $media?->url) {
+        $url = self::resolve($media);
+
+        if (! $url) {
             return null;
         }
 
-        $separator = str_contains($media->url, '?') ? '&' : '?';
+        $separator = str_contains($url, '?') ? '&' : '?';
         $version = $media->updated_at?->getTimestamp() ?? $media->getKey();
 
-        return "{$media->url}{$separator}v={$version}";
+        return "{$url}{$separator}v={$version}";
     }
 
     public static function mimeType(?Media $media): string

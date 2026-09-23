@@ -1,20 +1,24 @@
 /* CamKheTravel homepage theme, adapted to the project's Bootstrap and Vite bundles. */
+@import '@fontsource/dancing-script/latin-500.css';
+@import '@fontsource/dancing-script/vietnamese-500.css';
+@import '@fontsource/dancing-script/latin-600.css';
+@import '@fontsource/dancing-script/vietnamese-600.css';
 :root {
-  --camkhe-green: #07543f;
-  --camkhe-green-dark: #003c2f;
-  --camkhe-green-hover: #026749;
-  --camkhe-ink: #092f2c;
-  --camkhe-text: #28423e;
-  --camkhe-muted: #677975;
-  --camkhe-mint: #eaf6ef;
-  --camkhe-surface: #f6faf8;
-  --camkhe-line: #dfeae5;
-  --camkhe-gold: #bd9850;
-  --camkhe-sand: #fff7e8;
+  --camkhe-green: var(--site-primary);
+  --camkhe-green-dark: var(--site-primary-dark);
+  --camkhe-green-hover: var(--site-primary-hover);
+  --camkhe-ink: var(--site-ink);
+  --camkhe-text: var(--site-text);
+  --camkhe-muted: var(--site-muted);
+  --camkhe-mint: var(--site-mint);
+  --camkhe-surface: var(--site-surface);
+  --camkhe-line: var(--site-line);
+  --camkhe-gold: var(--site-gold);
+  --camkhe-sand: var(--site-sand);
   --camkhe-radius: 12px;
   --camkhe-shadow: 0 8px 30px rgba(9, 61, 43, .09);
-  --camkhe-body: var(--bs-body-font-family), 'Segoe UI', Arial, sans-serif;
-  --camkhe-heading: Georgia, 'Times New Roman', serif;
+  --camkhe-body: var(--site-font-body);
+  --camkhe-heading: var(--site-font-heading);
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 94px; }
@@ -28,8 +32,7 @@ button { touch-action: manipulation; }
 img { max-width: 100%; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #ba9342; outline-offset: 4px; }
 [hidden] { display: none !important; }
-.svg-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
-.icon { display: inline-block; width: 23px; height: 23px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+.icon { display: inline-flex; align-items: center; justify-content: center; width: 23px; height: 23px; flex: 0 0 auto; font-size: 1rem; line-height: 1; vertical-align: middle; }
 .skip-link { position: fixed; top: -100px; left: 15px; z-index: 2000; padding: 12px 20px; background: white; border: 2px solid var(--camkhe-green); }
 .skip-link:focus { top: 10px; }
 .btn { min-height: 46px; padding: 11px 21px; border-radius: 8px; font-family: var(--camkhe-body); font-size: 14px; line-height: 1.5; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: background .2s ease, box-shadow .2s ease, transform .2s ease; white-space: normal; }
@@ -46,7 +49,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .text-link { display: inline-flex; align-items: center; gap: 9px; padding: 5px 0; border: 0; background: transparent; color: var(--camkhe-green); font-size: 13px; font-weight: 600; }
 .text-link .icon { width: 18px; height: 18px; }
 .text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
-.signature { font-family: 'Segoe Print', 'URW Chancery L', Georgia, serif; font-style: italic; font-weight: 500; line-height: 1.35; color: #1a624d; }
+.signature { font-family: 'Dancing Script', 'Segoe Print', 'URW Chancery L', Georgia, serif; font-style: italic; font-weight: 500; line-height: 1.35; color: #1a624d; }
 .icon-bubble { width: 45px; height: 45px; border-radius: 50%; color: var(--camkhe-green); background: var(--camkhe-mint); flex: 0 0 45px; display: inline-flex; align-items: center; justify-content: center; }
 .icon-bubble.rose { color: #ba6955; background: #fff0e9; }
 .icon-bubble.sand { color: #987d2d; background: #fcf5df; }
@@ -122,7 +125,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .fleet-content { padding: 20px 15px 20px 3px; }
 .fleet-content h3 { font-size: 18px; line-height: 1.4; margin: 0 0 12px; }
 .fleet-content p { display: flex; align-items: flex-start; gap: 5px; font-size: 11px; color: var(--camkhe-muted); line-height: 1.65; margin: 6px 0; }
-.fleet-content p .icon { width: 12px; height: 12px; margin-top: 3px; color: var(--camkhe-green); stroke-width: 2.4; }
+.fleet-content p .icon { width: 12px; height: 12px; margin-top: 3px; color: var(--camkhe-green); font-size: 10px; }
 .fleet-content .btn { margin-top: 10px; }
 .section-note { font-size: 11px; color: #74847d; margin: 13px 0 0; }
 /* Dedicated partner block — not a compressed service card */
@@ -195,11 +198,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .commitment p { margin: 0; font-size: 10px; color: var(--camkhe-muted); }
 .reviews-section { padding-top: 20px; padding-bottom: 35px; }
 .reviews-section .section-heading h2 { font-size: 26px; }
+.journal-section { background: var(--camkhe-surface); padding-top: 42px; padding-bottom: 48px; }
+.journal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.journal-grid > * { min-width: 0; }
+.journal-grid .empty-state { grid-column: 1 / -1; background: #fff; }
+@media (max-width: 991.98px) { .journal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767.98px) { .journal-grid { grid-template-columns: 1fr; gap: 13px; } }
 .demo-label { padding: 4px 8px; border-radius: 4px; border: 1px solid #e4eae5; color: #73847a; font-size: 10px; }
 .reviews-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 21px; }
 .review-card { padding: 22px 25px; border: 1px solid var(--camkhe-line); border-radius: 11px; background: #fcfefd; }
 .review-stars { display: flex; align-items: center; gap: 3px; color: #c6952f; margin-bottom: 12px; }
-.review-stars .icon { width: 13px; height: 13px; fill: currentColor; stroke-width: 1; }
+.review-stars .icon { width: 13px; height: 13px; font-size: 11px; }
+.review-stars .icon:not(.is-active) { color: #cbd5cf; }
 .review-stars span { margin-left: auto; color: #7f8d84; font-size: 9px; }
 .review-card blockquote { font-size: 12px; color: #4c6057; line-height: 1.8; margin: 0 0 17px; min-height: 64px; }
 .review-person { display: flex; align-items: center; gap: 12px; }
@@ -347,5 +357,4 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .camkhe-home-main { padding: 0; }
 .brand-wordmark { color: var(--camkhe-green-dark) !important; font-family: var(--camkhe-heading); font-size: 1.55rem; font-weight: 700; letter-spacing: -.045em; white-space: nowrap; }
 .site-footer .brand-wordmark { display: inline-block; color: #fff !important; }
-.review-stars .is-active { fill: currentColor; }
 .empty-state { grid-column: 1 / -1; padding: 1.5rem; border: 1px dashed var(--camkhe-line); border-radius: var(--camkhe-radius); color: var(--camkhe-muted); }

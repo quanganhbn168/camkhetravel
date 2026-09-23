@@ -24,7 +24,7 @@ class ProductController extends Controller
         return view('frontend.products.index', $data + [
             'seo' => $this->seo->listing(
                 'Sản phẩm | '.$this->seo->siteName(),
-                'Thiết bị và vật tư PCCC chính hãng cho các công trình.',
+                'Thông tin sản phẩm và lựa chọn phù hợp cho hành trình của bạn.',
                 route('products.index'),
                 image: $data['heroImageUrl'],
             ),
@@ -105,8 +105,8 @@ class ProductController extends Controller
                 ->each(fn (ProductCategory $category) => $category->setAttribute('public_url', route('products.category', ['slug' => $category->slug]))), 'products_count'),
             'products' => $products,
             'heroImageUrl' => $hero?->image_url,
-            'pageTitle' => $activeCategory?->name ?? 'Sản phẩm PCCC',
-            'pageDescription' => $activeCategory?->description ?: 'Thiết bị báo cháy, chữa cháy, sprinkler và vật tư đồng bộ cho từng loại công trình.',
+            'pageTitle' => $activeCategory?->name ?? 'Sản phẩm',
+            'pageDescription' => $activeCategory?->description ?: 'Danh mục sản phẩm do CamKheTravel giới thiệu.',
             'sort' => $sort,
             'sortOptions' => [
                 'latest' => 'Mới nhất',

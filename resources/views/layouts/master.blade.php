@@ -4,7 +4,7 @@
     @include('partials.head.seo')
     @yield('head')
     @stack('head')
-    @vite(['resources/scss/frontend.scss', 'resources/js/app.js'])
+    @vite(['resources/css/frontend.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
 <body class="@yield('body_class', '')">

@@ -2,7 +2,7 @@
     <section class="section-space home-featured-services" id="dich-vu-noi-bat" aria-labelledby="home-featured-services-title">
         <div class="container">
             <div class="d-flex flex-wrap align-items-end justify-content-between gap-4 mb-4">
-                <h2 class="display-title text-uppercase" id="home-featured-services-title">Dịch vụ PCCC nổi bật</h2>
+                <h2 class="display-title text-uppercase" id="home-featured-services-title">Dịch vụ xe nổi bật</h2>
                 <a class="section-link" href="{{ route('services.index') }}">Tất cả dịch vụ <span aria-hidden="true">↗</span></a>
             </div>
             <div class="home-service-groups">

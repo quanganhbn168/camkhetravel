@@ -9,7 +9,7 @@
                 <form action="{{ route('search') }}" method="GET" role="search">
                     <label class="visually-hidden" for="header-search-query">Từ khóa tìm kiếm</label>
                     <div class="input-group">
-                        <input class="form-control" id="header-search-query" name="q" type="search" value="{{ request('q') }}" placeholder="Ví dụ: thi công PCCC, bảo trì báo cháy…" maxlength="100">
+                        <input class="form-control" id="header-search-query" name="q" type="search" value="{{ request('q') }}" placeholder="Ví dụ: bao xe du lịch, xe cưới…" maxlength="100">
                         <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                     </div>
                 </form>

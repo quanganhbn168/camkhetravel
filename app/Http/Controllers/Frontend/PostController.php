@@ -33,7 +33,7 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts(Post::query()
             ->published()
-            ->with(['curatorMedia', 'slugs']), $sort)
+            ->with(['category', 'curatorMedia', 'slugs']), $sort)
             ->paginate(12)
             ->withQueryString());
         $canonicalUrl = route('posts.index');
@@ -52,7 +52,7 @@ class PostController extends Controller
             'heroImageUrl' => $posts->first()?->image_url,
             'seo' => $this->listingSeo(
                 'Tin tức | '.$this->seo->siteName(),
-                'Tin tức, kiến thức và góc nhìn thực tế về phòng cháy chữa cháy.',
+                'Tin tức và thông tin hữu ích cho những hành trình cùng CamKheTravel.',
                 $canonicalUrl,
             ),
         ]);
@@ -68,7 +68,7 @@ class PostController extends Controller
         $sort = $this->selectedSort();
         $posts = $this->withImages($this->sortPosts(Post::query()->whereIn('post_category_id', $category->subtreeIds(activeOnly: true))
             ->published()
-            ->with(['curatorMedia', 'slugs']), $sort)
+            ->with(['category', 'curatorMedia', 'slugs']), $sort)
             ->paginate(12)
             ->withQueryString());
         $canonicalUrl = route('posts.category', ['slug' => $category->slug]);
@@ -110,7 +110,7 @@ class PostController extends Controller
         $featuredPosts = $this->withImages(Post::query()
             ->published()
             ->whereKeyNot($post->id)
-            ->with(['curatorMedia', 'slugs'])
+            ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->latest('published_at')
             ->limit(4)

@@ -1,0 +1,14 @@
+@import '@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '@fortawesome/fontawesome-free/css/solid.css';
+@import '@fortawesome/fontawesome-free/css/regular.css';
+@import '@fortawesome/fontawesome-free/css/brands.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import './reset.css';
+@import './fonts.css';
+@import './theme.css';
+@import './components/header.css';
+@import './components/footer.css';
+@import './components/floating-actions.css';
+@import './components/page.css';
+@import './components/cards.css';
+@import './components/forms.css';

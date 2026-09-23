@@ -16,7 +16,7 @@
     <div class="container position-relative row-gap-4 consultation__layout">
         <aside class="d-flex flex-column gap-3">
                 <h2 class="display-title text-uppercase h2 text-white">{{ $heading }}</h2>
-                <p class="lead">{{ $description ?: 'Trao đổi nhanh về hạng mục '.mb_strtolower($content->title).' cùng đội ngũ '.$website->site_name.'.' }}</p>
+                <p class="lead">{{ $description ?: 'Trao đổi lịch trình cho dịch vụ '.mb_strtolower($content->title).' cùng đội ngũ '.$website->site_name.'.' }}</p>
 
                 <div class="mt-auto pt-4">
                     <p class="text-primary fw-bold text-uppercase small">{{ $website->company_name ?: $website->site_name }}</p>

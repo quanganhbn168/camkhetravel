@@ -23,6 +23,7 @@ final class MenuSeeder extends Seeder
             ['Đội xe', '/#doi-xe', 'native_page'],
             ['Đối tác', '/#doi-tac', 'native_page'],
             ['Xe cưới', '/#xe-cuoi', 'native_page'],
+            ['Tin tức', '/blog', 'native_page'],
             ['Liên hệ', '/#lien-he', 'native_page'],
         ] as $index => [$label, $url, $linkType]) {
             MenuItem::query()->create([

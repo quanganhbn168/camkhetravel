@@ -1,10 +1,12 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/scss/pages/posts.scss')
+    @vite('resources/css/pages/posts.css')
 @endpush
 
 @use(Illuminate\Support\Str)
+
+@section('body_class', 'post-detail-page')
 
 @section('content')
     <article>

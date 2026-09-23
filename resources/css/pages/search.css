@@ -1,0 +1,17 @@
+.search-field {
+  flex: 1;
+}
+
+.search-field__icon {
+  top: 50%;
+  left: 0.75rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  transform: translateY(-50%);
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+}
+
+.search-field .form-control {
+  padding-left: 2.5rem;
+}

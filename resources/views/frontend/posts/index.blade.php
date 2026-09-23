@@ -1,8 +1,10 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/scss/pages/posts.scss')
+    @vite('resources/css/pages/posts.css')
 @endpush
+
+@section('body_class', 'blog-page')
 
 @section('content')
     <section class="position-relative overflow-hidden archive-hero">
@@ -13,6 +15,7 @@
         <div class="container position-relative">
             <p class="small"><a class="link-light" href="{{ route('home') }}">Trang chủ</a><span class="mx-2">›</span><span>Tin tức</span></p>
             <h1 class="display-title text-white">{{ $activeCategory?->name ?? 'Tin tức & kiến thức' }}</h1>
+            <p class="lead mb-0">Kinh nghiệm chuẩn bị lịch trình và lựa chọn xe cho chuyến đi.</p>
         </div>
     </section>
 

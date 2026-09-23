@@ -8,9 +8,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/scss/frontend.scss',
+                'resources/css/frontend.css',
                 'resources/js/app.js',
-                ...fs.readdirSync('resources/scss/pages').filter((file) => file.endsWith('.scss') && !file.startsWith('_')).map((file) => path.posix.join('resources/scss/pages', file)),
+                ...fs.readdirSync('resources/css/pages').filter((file) => file.endsWith('.css')).map((file) => path.posix.join('resources/css/pages', file)),
                 'resources/css/filament/admin/theme.css',
                 'resources/js/filament/curator-rich-editor-integration.js',
             ],

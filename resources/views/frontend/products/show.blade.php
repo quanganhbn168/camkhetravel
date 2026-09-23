@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @push('styles')
-    @vite('resources/scss/pages/product.scss')
+    @vite('resources/css/pages/product.css')
 @endpush
 
 @section('content')
