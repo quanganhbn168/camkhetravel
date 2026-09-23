@@ -1,3 +1,6 @@
+.skip-link { position: fixed; top: -100px; left: 15px; z-index: 2000; padding: 12px 20px; background: white; border: 2px solid var(--site-primary); }
+.skip-link:focus { top: 10px; }
+
 .header-sticky {
   position: sticky;
   top: 0;

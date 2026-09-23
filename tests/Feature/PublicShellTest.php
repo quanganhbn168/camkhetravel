@@ -11,16 +11,16 @@ class PublicShellTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_home_header_uses_bootstrap_navigation_without_alpine_markup(): void
+    public function test_home_uses_the_shared_bootstrap_navigation(): void
     {
         $this->seed(WebsiteSettingsSeeder::class);
         $this->seed(MenuSeeder::class);
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('class="navbar-toggler"', false)
-            ->assertSee('data-bs-toggle="collapse"', false)
-            ->assertSee('id="mainNav"', false)
+            ->assertSee('class="header-sticky" data-site-header', false)
+            ->assertSee('data-bs-toggle="offcanvas"', false)
+            ->assertSee('id="mobile-drawer"', false)
             ->assertDontSee('x-data', false);
     }
 

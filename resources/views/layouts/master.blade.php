@@ -8,6 +8,7 @@
     @stack('styles')
 </head>
 <body class="@yield('body_class', '')">
+    <a class="skip-link" href="#@yield('main_id', 'main')">Bỏ qua điều hướng</a>
     @yield('before_header')
     @unless ($hideHeader ?? false)
         <x-site-header />

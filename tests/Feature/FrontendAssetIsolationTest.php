@@ -21,12 +21,13 @@ class FrontendAssetIsolationTest extends TestCase
         }
     }
 
-    public function test_home_header_exposes_bootstrap_accessible_navigation(): void
+    public function test_home_uses_shared_header_and_footer(): void
     {
         $this->seed(MenuSeeder::class);
-        $this->get('/')->assertOk()->assertSee('id="mainNav"', false)
-            ->assertSee('data-bs-toggle="collapse"', false)
-            ->assertSee('aria-controls="mainNav"', false)
-            ->assertDontSee('syncBodyLock', false);
+        $this->get('/')->assertOk()
+            ->assertSee('class="header-sticky" data-site-header', false)
+            ->assertSee('data-bs-target="#mobile-drawer"', false)
+            ->assertSee('<footer class="footer">', false)
+            ->assertDontSee('id="mainNav"', false);
     }
 }

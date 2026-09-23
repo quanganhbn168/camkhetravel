@@ -1,6 +1,6 @@
 /* CamKheTravel homepage interactions.
  * All user-entered text is inserted via textContent or value, never innerHTML.
- * Demo requests are NOT sent, stored in localStorage, or silently tracked.
+ * Quote requests use the configured same-origin contact endpoint.
  */
 (function (root, factory) {
   'use strict';
@@ -74,11 +74,9 @@
   function init(win) {
     const doc = win.document;
     const configElement = doc.querySelector('[data-camkhe-config]');
-    const config = Object.assign({phone:'',zaloUrl:'',email:'',region:'Cẩm Khê, Phú Thọ – phục vụ theo lịch trình',leadEndpoint:''}, configElement ? {
+    const config = Object.assign({phone:'',zaloUrl:'',leadEndpoint:''}, configElement ? {
       phone: configElement.dataset.phone,
       zaloUrl: configElement.dataset.zaloUrl,
-      email: configElement.dataset.email,
-      region: configElement.dataset.region,
       leadEndpoint: configElement.dataset.leadEndpoint
     } : {});
     const $ = selector => doc.querySelector(selector);
@@ -98,15 +96,7 @@
     let pendingController = null;
     const today = localDate();
     ['#quickDate','#requestDeparture','#requestReturn'].forEach(s => { $(s).min = today; });
-    $$('[data-year]').forEach(el => { el.textContent = String(new Date().getFullYear()); });
-    if (text(config.region)) $$('[data-company-region]').forEach(el => { el.textContent = config.region; });
     const phone = normalizeContactPhone(config.phone);
-    if (phone) $$('[data-phone-label]').forEach(el => { el.textContent = phone.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3'); });
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text(config.email))) {
-      $('[data-email-row]').hidden = false;
-      $('[data-email-link]').textContent = config.email;
-      $('[data-email-link]').href = 'mailto:' + config.email;
-    }
     if (!isDemo) {
       $('#demoNotice').hidden = true;
       $('[data-submit-label]').textContent = 'Gửi yêu cầu tư vấn';
@@ -116,8 +106,6 @@
     function openQuote(options = {}) {
       if (submitting) return;
       const type = TYPE_LABELS[options.type] ? options.type : 'trip';
-      const nav = $('#mainNav');
-      if (nav.classList.contains('show')) win.bootstrap.Collapse.getOrCreateInstance(nav).hide();
       form.reset(); clearValidity(); form.classList.remove('was-validated');
       form.hidden = false; requestResult.hidden = true; errorBox.hidden = true; errorBox.textContent = '';
       $('#copyStatus').textContent = '';
@@ -254,28 +242,6 @@
         $('#copyStatus').textContent = copied ? 'Đã sao chép nội dung.' : 'Nội dung đã được chọn. Nhấn Ctrl+C hoặc chọn Sao chép trên điện thoại.';
       }
     });
-    const nav = $('#mainNav');
-    $$('#mainNav .nav-link').forEach(link => link.addEventListener('click', () => { if (nav.classList.contains('show')) win.bootstrap.Collapse.getOrCreateInstance(nav).hide(); }));
-    const navLinks = $$('#mainNav .nav-link');
-    function updateScroll() {
-      const y = win.scrollY;
-      $('#siteHeader').classList.toggle('is-scrolled',y>12);
-      $('#backTop').hidden = y<650;
-      let current = 'trang-chu';
-      navLinks.forEach(link => {
-        const target = doc.getElementById(link.hash.slice(1));
-        if (target && target.getBoundingClientRect().top <= 140) current = target.id;
-      });
-      navLinks.forEach(link => {
-        const active = link.hash === '#' + current;
-        link.classList.toggle('active',active);
-        if (active) link.setAttribute('aria-current','location'); else link.removeAttribute('aria-current');
-      });
-    }
-    let scrollQueued = false;
-    win.addEventListener('scroll', () => { if (!scrollQueued) { scrollQueued = true; win.requestAnimationFrame(() => { updateScroll(); scrollQueued = false; }); } }, {passive:true});
-    $('#backTop').addEventListener('click', () => win.scrollTo({top:0,behavior:win.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}));
-    updateScroll();
   }
   function normalizeContactPhone(value) {
     let phone = text(value).replace(/\D/g, '');

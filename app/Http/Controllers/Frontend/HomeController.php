@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\HeroSlide;
-use App\Models\Menu;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\Testimonial;
@@ -74,17 +73,6 @@ class HomeController extends Controller
             ->get()
             ->each(fn (Post $post): mixed => $post->setAttribute('image_url', MediaUrl::versioned($post->curatorMedia) ?: asset('images/no-image.svg')));
 
-        $menuQuery = Menu::query()
-            ->where('is_active', true)
-            ->with(['items' => fn ($query) => $query->whereNull('parent_id')]);
-        $menu = filled($this->website->header_menu_id)
-            ? $menuQuery->whereKey($this->website->header_menu_id)->first()
-            : $menuQuery->where('location', 'header')->first();
-
-        $navigation = $menu?->items
-            ->map(fn ($item) => ['label' => $item->label, 'url' => $item->link])
-            ->values() ?? collect();
-
         $fleetTypes = collect($this->homepage->fleet_types)->map(fn (array $item) => [
             ...$item,
             'features' => collect(preg_split('/\r\n|\r|\n/', (string) ($item['features'] ?? '')))
@@ -105,14 +93,9 @@ class HomeController extends Controller
             ->filter(fn (mixed $item): bool => is_array($item) && filled($item['number'] ?? null));
         $primaryPhone = $configuredPhones->first(fn (array $item): bool => (bool) ($item['is_primary'] ?? false))
             ?? $configuredPhones->first();
-        $activeBranch = collect($this->website->branches)
-            ->first(fn (mixed $item): bool => is_array($item) && ($item['is_active'] ?? true) && filled($item['address'] ?? null));
-
         $frontendConfig = [
             'phone' => ($primaryPhone['number'] ?? null) ?: ($this->website->hotline ?: $this->website->contact_phone),
             'zaloUrl' => $this->website->zalo_url,
-            'email' => $this->website->contact_email,
-            'region' => ($activeBranch['address'] ?? null) ?: ($this->website->address ?: 'Cẩm Khê, Phú Thọ – phục vụ theo lịch trình'),
             'leadEndpoint' => route('contact.store'),
         ];
 
@@ -123,15 +106,12 @@ class HomeController extends Controller
             'testimonials' => $testimonials,
             'latestPosts' => $latestPosts,
             'hasIllustrativeTestimonials' => $testimonials->contains(fn (Testimonial $item) => $item->is_illustrative),
-            'navigation' => $navigation,
             'homepage' => $this->homepage,
             'fleetTypes' => $fleetTypes,
             'heroFleetLabel' => $fleetCapacityLabels->isNotEmpty() ? $fleetCapacityLabels->implode(' – ').' chỗ' : '',
             'noImageUrl' => asset('images/no-image.svg'),
             'frontendConfig' => $frontendConfig,
             'seo' => $this->seo->home($page),
-            'hideHeader' => true,
-            'hideFooter' => true,
         ]);
     }
 }

@@ -8,36 +8,11 @@
 @section('main_id', 'camkhe-noi-dung')
 @section('main_class', 'camkhe-home-main')
 
-@section('before_header')
-    <a class="skip-link" href="#camkhe-noi-dung">Bỏ qua điều hướng</a>
-
-    <header class="site-header" id="siteHeader">
-        <nav class="navbar navbar-expand-lg container" aria-label="Điều hướng chính">
-            <a class="navbar-brand brand-wordmark" href="/#trang-chu" aria-label="CamKheTravel – Trang chủ">CamKheTravel</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở hoặc đóng menu">
-                <x-site-icon name="menu" />
-            </button>
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav mx-auto">
-                    @foreach ($navigation as $item)
-                        <li class="nav-item"><a class="nav-link" href="{{ $item['url'] }}">{{ $item['label'] }}</a></li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn btn-brand" data-quote-type="trip">
-                    Nhận báo giá <x-site-icon name="arrow" />
-                </button>
-            </div>
-        </nav>
-    </header>
-@endsection
-
 @section('content')
     <div class="camkhe-home" data-camkhe-home style="--camkhe-no-image: url('{{ $noImageUrl }}')">
         <div hidden data-camkhe-config
             data-phone="{{ $frontendConfig['phone'] }}"
             data-zalo-url="{{ $frontendConfig['zaloUrl'] }}"
-            data-email="{{ $frontendConfig['email'] }}"
-            data-region="{{ $frontendConfig['region'] }}"
             data-lead-endpoint="{{ $frontendConfig['leadEndpoint'] }}"></div>
 
         <section class="hero" id="trang-chu" aria-labelledby="hero-title">
@@ -205,26 +180,13 @@
         </section>
 
         <section class="contact-banner" id="lien-he" aria-labelledby="contact-title">
-            <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <x-site-icon name="arrow" /></button><button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" /> Liên hệ</button></div></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
+            <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <x-site-icon name="arrow" /></button><button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" /> Liên hệ</button></div><button type="button" class="text-link mx-auto mt-2" data-bs-toggle="modal" data-bs-target="#privacyModal">Thông tin dữ liệu</button></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
         </section>
     </div>
 @endsection
 
-@section('before_footer')
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row gy-4 footer-top">
-                <div class="col-lg-4 col-sm-6"><a href="/#trang-chu" class="footer-brand brand-wordmark">CamKheTravel</a><p class="footer-about">{{ $website->tagline ?: 'Dịch vụ xe và tư vấn phương tiện theo lịch trình.' }}<br>Thông tin chuyến đi được trao đổi trước khi xác nhận.</p></div>
-                <div class="col-lg-3 col-sm-6"><h2>Thông tin liên hệ</h2><ul class="footer-contact"><li><x-site-icon name="phone" /><button type="button" data-contact="phone" data-phone-label>Liên hệ tư vấn</button></li><li><x-site-icon name="chat" /><button type="button" data-contact="zalo">Tư vấn qua Zalo</button></li><li><x-site-icon name="pin" /><span data-company-region>{{ $frontendConfig['region'] }}</span></li><li data-email-row hidden><x-site-icon name="mail" /><a data-email-link></a></li></ul></div>
-                <div class="col-lg-3 col-sm-6"><h2>Liên kết nhanh</h2><div class="footer-links">@foreach ($navigation as $item)<a href="{{ $item['url'] }}">{{ $item['label'] }}</a>@endforeach</div></div>
-                <div class="col-lg-2 col-sm-6"><h2>Kết nối</h2><div class="social-buttons"><button type="button" data-contact="phone" aria-label="Liên hệ qua điện thoại"><x-site-icon name="phone" /></button><button type="button" data-contact="zalo" class="social-zalo" aria-label="Liên hệ qua Zalo">Zalo</button><button type="button" data-quote-type="partner" aria-label="Đăng ký đối tác"><x-site-icon name="handshake" /></button></div><p class="signature footer-signature">Kết nối những hành trình.</p></div>
-            </div>
-            <div class="footer-bottom"><span>© <span data-year>{{ now()->year }}</span> CamKheTravel.</span><span>Ảnh mặc định được dùng khi chưa có ảnh nội dung.</span><button type="button" data-bs-toggle="modal" data-bs-target="#privacyModal">Thông tin dữ liệu</button></div>
-        </div>
-    </footer>
-
-    <div class="mobile-actions" aria-label="Liên hệ nhanh"><button type="button" data-contact="phone"><x-site-icon name="phone" /><span>Gọi tư vấn</span></button><button type="button" data-contact="zalo"><span class="zalo-symbol">Z</span><span>Zalo</span></button><button type="button" data-quote-type="trip"><x-site-icon name="file" /><span>Nhận báo giá</span></button></div>
-    <button type="button" class="back-top" id="backTop" aria-label="Về đầu trang" hidden><x-site-icon name="up" /></button>
+@section('after_footer')
+    <div class="camkhe-home-dialogs">
     <noscript><div class="noscript-notice">Bật JavaScript để sử dụng form báo giá và các chức năng tương tác. Nội dung trang vẫn xem được.</div></noscript>
 
     <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><p class="modal-brand">CAMKHETRAVEL</p><h2 class="modal-title fs-4" id="quoteTitle">Nhận báo giá chuyến đi</h2></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body">
@@ -254,4 +216,5 @@
     <div class="modal fade" id="vehicleModal" tabindex="-1" aria-labelledby="vehicleTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-4" id="vehicleTitle">Thông tin xe</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><img id="vehicleDetailImage" class="vehicle-detail-image" src="{{ $noImageUrl }}" alt="Ảnh xe mặc định" width="700" height="500"><p id="vehicleDetailDescription"></p><p class="form-hint">Ảnh mặc định. Dòng xe thực tế, sức chứa và hành lý sẽ được xác nhận khi trao đổi lịch trình.</p><button type="button" class="btn btn-brand w-100" id="quoteVehicle">Nhận báo giá xe này <x-site-icon name="arrow" /></button></div></div></div></div>
 
     <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 id="privacyTitle" class="modal-title fs-4">Thông tin dữ liệu</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><p id="privacyDataText">Thông tin trong biểu mẫu được gửi về website và lưu thành yêu cầu liên hệ để CamKheTravel xử lý. Việc gửi yêu cầu chưa xác nhận chuyến xe, lịch trình hoặc giá.</p><p>Ảnh mặc định được sử dụng tại các vị trí chưa có ảnh nội dung.</p><p>Quản trị viên cần cập nhật thông tin liên hệ và chính sách dữ liệu áp dụng cho hoạt động thực tế.</p></div></div></div></div>
+    </div>
 @endsection
