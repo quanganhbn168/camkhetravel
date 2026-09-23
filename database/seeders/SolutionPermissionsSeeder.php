@@ -11,9 +11,16 @@ final class SolutionPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['ViewAny', 'View', 'Create', 'Update', 'Delete', 'Restore', 'ForceDelete', 'ForceDeleteAny', 'RestoreAny', 'Replicate', 'Reorder'] as $action) {
-            $permission = Permission::findOrCreate($action.':Solution', 'web');
-            Role::where('name', 'super_admin')->where('guard_name', 'web')->first()?->givePermissionTo($permission);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $admin = Role::findOrCreate('super_admin', 'web');
+        $actions = ['ViewAny', 'View', 'Create', 'Update', 'Delete', 'Restore', 'ForceDelete', 'ForceDeleteAny', 'RestoreAny', 'Replicate', 'Reorder'];
+
+        foreach (['SolutionCategory', 'Solution'] as $resource) {
+            foreach ($actions as $action) {
+                $permission = Permission::findOrCreate($action.':'.$resource, 'web');
+                // Add permissions; do not revoke permissions for other modules or roles.
+                $admin->givePermissionTo($permission);
+            }
         }
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }

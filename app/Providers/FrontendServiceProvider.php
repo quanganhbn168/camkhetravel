@@ -15,6 +15,7 @@ use App\Models\Project;
 use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\Solution;
+use App\Models\SolutionCategory;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Models\User;
@@ -50,12 +51,13 @@ class FrontendServiceProvider extends ServiceProvider
             'project-category' => ProjectCategory::class,
             'service' => Service::class,
             'solution' => Solution::class,
+            'solution-category' => SolutionCategory::class,
             'service-category' => ServiceCategory::class,
             'user' => User::class,
         ]);
 
         Solution::observe(SlugObserver::class);
-        Solution::observe(AssignNextOrderObserver::class);
+        SolutionCategory::observe(SlugObserver::class);
 
         foreach ([
             Post::class,

@@ -19,6 +19,7 @@ class EditSolution extends EditRecord
                 ->label('Xem giải pháp')
                 ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
                 ->url(fn (): string => route('solutions.show', ['solution' => $this->record->slug]))
+                ->visible(fn (): bool => $this->record->is_active && (bool) $this->record->category?->is_active)
                 ->openUrlInNewTab(),
             DeleteAction::make(),
         ];

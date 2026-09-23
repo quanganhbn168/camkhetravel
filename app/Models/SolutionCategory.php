@@ -9,29 +9,36 @@ use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Validation\ValidationException;
 
-class Solution extends Model
+class SolutionCategory extends Model
 {
     use HasSeoImage, HasSlug;
 
     protected $guarded = ['id'];
 
-    protected $attributes = ['sort_order' => 0, 'is_active' => false, 'is_home' => false];
+    protected $attributes = ['sort_order' => 0, 'is_active' => false];
 
     protected function casts(): array
     {
-        return [
-            'solution_category_id' => 'integer',
-            'is_active' => 'boolean',
-            'is_home' => 'boolean',
-            'sort_order' => 'integer',
-            'highlights' => 'array',
-        ];
+        return ['is_active' => 'boolean', 'sort_order' => 'integer'];
     }
 
-    public function category(): BelongsTo
+    protected static function booted(): void
     {
-        return $this->belongsTo(SolutionCategory::class, 'solution_category_id');
+        static::deleting(function (SolutionCategory $category): void {
+            if ($category->solutions()->exists()) {
+                throw ValidationException::withMessages([
+                    'solution_category_id' => 'Chuyển hoặc xóa các giải pháp trong danh mục trước khi xóa danh mục.',
+                ]);
+            }
+        });
+    }
+
+    public function solutions(): HasMany
+    {
+        return $this->hasMany(Solution::class, 'solution_category_id');
     }
 
     public function curatorMedia(): BelongsTo
@@ -54,15 +61,8 @@ class Solution extends Model
         return MediaUrl::versioned($this->bannerMedia);
     }
 
-    /** Read-only compatibility for the existing homepage; no database column. */
-    public function getShortTitleAttribute(): string
+    public function scopeActive(Builder $query): Builder
     {
-        return (string) $this->title;
-    }
-
-    public function scopePublished(Builder $query): Builder
-    {
-        return $query->where('is_active', true)
-            ->whereHas('category', fn (Builder $category): Builder => $category->active());
+        return $query->where('is_active', true);
     }
 }

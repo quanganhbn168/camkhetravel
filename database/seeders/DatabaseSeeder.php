@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             PostCategorySeeder::class,
             TagSeeder::class,
             ServiceSeeder::class,
-            SolutionSeeder::class,
+            SolutionCategorySeeder::class,
             ProjectSeeder::class,
             ProductSeeder::class,
             PostSeeder::class,

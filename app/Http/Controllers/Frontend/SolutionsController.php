@@ -24,7 +24,7 @@ class SolutionsController extends Controller
         return view('frontend.solutions.index', [
             'page' => $page,
             'intro' => self::INTRO,
-            'solutions' => Solution::published()->with(['slugs', 'curatorMedia'])->orderBy('sort_order')->orderBy('id')->paginate(12),
+            'solutions' => Solution::published()->with(['category', 'slugs', 'curatorMedia'])->orderBy('sort_order')->orderBy('id')->paginate(12),
             'pageBannerUrl' => $page['banner_url'],
             'seo' => $this->seo->systemPage($page, 'solutions.index'),
         ]);
@@ -32,8 +32,8 @@ class SolutionsController extends Controller
 
     public function show(Solution $solution): View
     {
-        abort_unless($solution->is_active, 404);
-        $solution->load(['curatorMedia', 'bannerMedia', 'seoImageMedia']);
+        $solution->load(['category', 'curatorMedia', 'bannerMedia', 'seoImageMedia']);
+        abort_unless($solution->is_active && $solution->category?->is_active, 404);
 
         return view('frontend.solutions.show', [
             'solution' => $solution,
