@@ -51,6 +51,10 @@ class ContactController extends Controller
 
     public function store(Request $request): RedirectResponse|JsonResponse
     {
+        if ($request->expectsJson() && $request->exists('type')) {
+            return $this->storeQuoteRequest($request);
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -62,16 +66,117 @@ class ContactController extends Controller
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
-        $contactRequest = ContactRequest::query()->create($data);
+        ContactRequest::query()->create($data + ['request_type' => 'contact']);
 
         if ($request->expectsJson()) {
             return response()->json([
+                'success' => true,
                 'message' => 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất có thể.',
             ]);
         }
 
         return redirect()->to($this->safeReturnPath($request->input('return_to')) ?? route('contact'))
             ->with('success', 'Cảm ơn bạn đã liên hệ. Chúng tôi sẽ phản hồi sớm nhất có thể.');
+    }
+
+    private function storeQuoteRequest(Request $request): JsonResponse
+    {
+        if ($request->filled('website')) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Yêu cầu đã được tiếp nhận.',
+            ], 202);
+        }
+
+        $request->merge(['phone' => $this->normalizePhone($request->input('phone'))]);
+        $data = $request->validate([
+            'type' => ['required', 'string', 'in:trip,partner,wedding,shared'],
+            'service_id' => ['nullable', 'integer', 'exists:services,id'],
+            'name' => ['required', 'string', 'min:2', 'max:100'],
+            'phone' => ['required', 'string', 'regex:/^0[35789]\d{8}$/'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'company' => ['required_if:type,partner', 'nullable', 'string', 'max:180'],
+            'pickup' => ['nullable', 'string', 'max:180'],
+            'destination' => ['nullable', 'string', 'max:180'],
+            'departure' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:today', 'required_with:returnDate'],
+            'returnDate' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:departure'],
+            'vehicle' => ['nullable', 'string', 'max:100'],
+            'passengers' => ['nullable', 'string', 'max:80'],
+            'notes' => ['nullable', 'string', 'max:2000'],
+            'consent' => ['required', 'accepted'],
+            'website' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $service = filled($data['service_id'] ?? null)
+            ? Service::query()->published()->find($data['service_id'])
+            : null;
+
+        if (filled($data['service_id'] ?? null) && $service === null) {
+            abort(422, 'Dịch vụ đã chọn không còn khả dụng.');
+        }
+
+        $typeLabels = [
+            'trip' => 'Bao xe / Du lịch / Đi tỉnh',
+            'partner' => 'Hợp tác cung cấp xe du lịch',
+            'wedding' => 'Xe cưới – Xe dâu',
+            'shared' => 'Xe ghép Hà Nội – Cẩm Khê / Yên Lập',
+        ];
+        $details = array_filter([
+            'service' => $service?->title,
+            'pickup' => $data['pickup'] ?? null,
+            'destination' => $data['destination'] ?? null,
+            'departure_date' => $data['departure'] ?? null,
+            'return_date' => $data['returnDate'] ?? null,
+            'vehicle' => $data['vehicle'] ?? null,
+            'passengers' => $data['passengers'] ?? null,
+            'notes' => $data['notes'] ?? null,
+            'source' => 'camkhetravel_homepage',
+        ], fn (mixed $value): bool => filled($value));
+
+        $message = collect([
+            'Loại yêu cầu: '.($typeLabels[$data['type']] ?? $data['type']),
+            filled($service?->title) ? 'Dịch vụ: '.$service->title : null,
+            filled($data['pickup'] ?? null) ? 'Điểm đón: '.$data['pickup'] : null,
+            filled($data['destination'] ?? null) ? 'Điểm đến: '.$data['destination'] : null,
+            filled($data['departure'] ?? null) ? 'Ngày đi: '.$data['departure'] : null,
+            filled($data['returnDate'] ?? null) ? 'Ngày về: '.$data['returnDate'] : null,
+            filled($data['vehicle'] ?? null) ? 'Loại xe: '.$data['vehicle'] : null,
+            filled($data['passengers'] ?? null) ? 'Quy mô đoàn: '.$data['passengers'] : null,
+            filled($data['notes'] ?? null) ? 'Ghi chú: '.$data['notes'] : null,
+        ])->filter()->implode("\n");
+
+        ContactRequest::query()->create([
+            'request_type' => $data['type'],
+            'service_id' => $service?->getKey(),
+            'name' => $data['name'],
+            'email' => $data['email'] ?? null,
+            'phone' => $data['phone'],
+            'company' => $data['company'] ?? null,
+            'message' => $message,
+            'details' => $details,
+            'privacy_consent_at' => now(),
+            'status' => 'new',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'CamKheTravel đã tiếp nhận yêu cầu tư vấn. Đây chưa phải xác nhận đặt xe.',
+        ], 201);
+    }
+
+    private function normalizePhone(mixed $phone): string
+    {
+        $normalized = preg_replace('/\D+/', '', (string) $phone) ?: '';
+
+        if (str_starts_with($normalized, '0084')) {
+            return '0'.substr($normalized, 4);
+        }
+
+        if (str_starts_with($normalized, '84')) {
+            return '0'.substr($normalized, 2);
+        }
+
+        return $normalized;
     }
 
     /** @return Collection<int, array{label: string, href: string}> */

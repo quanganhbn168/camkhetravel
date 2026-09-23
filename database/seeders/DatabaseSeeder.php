@@ -27,15 +27,8 @@ class DatabaseSeeder extends Seeder
             SystemPageSettingsSeeder::class,
             MenuSeeder::class,
             ServiceCategorySeeder::class,
-            ProjectCategorySeeder::class,
-            ProductCategorySeeder::class,
-            PostCategorySeeder::class,
-            TagSeeder::class,
             ServiceSeeder::class,
-            SolutionCategorySeeder::class,
-            ProjectSeeder::class,
-            ProductSeeder::class,
-            PostSeeder::class,
+            TestimonialSeeder::class,
             HeroSlideSeeder::class,
         ]);
     }

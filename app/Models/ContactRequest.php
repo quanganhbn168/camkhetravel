@@ -13,6 +13,8 @@ class ContactRequest extends Model
     {
         return [
             'contacted_at' => 'datetime',
+            'details' => 'array',
+            'privacy_consent_at' => 'datetime',
         ];
     }
 

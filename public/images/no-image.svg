@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="title desc">
+  <title id="title">Chưa có hình ảnh</title>
+  <desc id="desc">Ảnh mặc định của CamKheTravel</desc>
+  <rect width="960" height="600" fill="#eef3f0"/>
+  <path d="M0 435 238 226l133 116 153-158 436 329v87H0z" fill="#d8e4dd"/>
+  <circle cx="686" cy="173" r="52" fill="#c6d7ce"/>
+  <g fill="none" stroke="#587567" stroke-linecap="round" stroke-linejoin="round" stroke-width="15">
+    <rect x="377" y="214" width="206" height="157" rx="21"/>
+    <circle cx="480" cy="292" r="43"/>
+    <path d="m417 214 20-32h86l20 32m-146 126 51-48 32 29 32-36 40 55"/>
+  </g>
+  <text x="480" y="438" fill="#435e50" font-family="Arial, sans-serif" font-size="29" text-anchor="middle">Chưa có hình ảnh</text>
+</svg>

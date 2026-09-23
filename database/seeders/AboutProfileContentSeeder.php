@@ -5,22 +5,22 @@ namespace Database\Seeders;
 use App\Settings\AboutSettings;
 use Illuminate\Database\Seeder;
 
-/** Nội dung rút gọn từ brief DVTEC; chỉ cập nhật chữ, giữ nguyên ảnh đã chọn. */
+/** Nội dung mặc định CamKheTravel; chỉ cập nhật chữ, giữ nguyên ảnh đã chọn. */
 final class AboutProfileContentSeeder extends Seeder
 {
     public function run(): void
     {
         $settings = app(AboutSettings::class);
-        $settings->page_intro = 'Công ty TNHH Thương mại và Xây dựng DVTEC có trụ sở tại Bắc Ninh, hoạt động trong lĩnh vực phòng cháy chữa cháy, cơ điện và xây dựng công nghiệp. Chúng tôi cung cấp dịch vụ tư vấn, thiết kế, thi công và cung ứng thiết bị cho nhà xưởng, nhà máy và các công trình công nghiệp.';
-        $settings->story_title = 'Lĩnh vực hoạt động';
-        $settings->story = '<ul><li><strong>Phòng cháy chữa cháy:</strong> Tư vấn, thiết kế, thi công hệ thống báo cháy, chữa cháy và cung ứng thiết bị PCCC.</li><li><strong>Cơ điện công nghiệp:</strong> Thi công hệ thống điện, điều hòa, thông gió và điện nhẹ; lắp đặt camera, kiểm soát ra vào và âm thanh thông báo.</li><li><strong>Xây dựng và hạ tầng kỹ thuật:</strong> Triển khai hạ tầng công nghiệp, cơ khí, trần nhà xưởng, vách ngăn và các hạng mục kỹ thuật liên quan.</li><li><strong>Tư vấn giám sát và cung ứng:</strong> Giám sát thi công, cung cấp vật tư điện và thiết bị công nghiệp phù hợp nhu cầu công trình.</li></ul>';
-        $settings->services_link_label = 'Xem các dịch vụ';
-        $settings->principles_title = 'Định hướng và giá trị';
-        $settings->vision = 'Hướng tới trở thành doanh nghiệp hàng đầu trong lĩnh vực giải pháp an toàn, cơ điện và xây dựng công nghiệp, được khách hàng tin cậy bởi năng lực chuyên môn, chất lượng và uy tín.';
-        $settings->mission = 'Mang đến những giải pháp kỹ thuật an toàn, chất lượng và hiệu quả; đồng hành cùng khách hàng để xây dựng những công trình bền vững.';
-        $settings->core_values = '<ul><li><strong>Chất lượng</strong> — Chú trọng từng sản phẩm, giải pháp và công trình.</li><li><strong>An toàn</strong> — Lấy an toàn và tuân thủ tiêu chuẩn kỹ thuật làm nền tảng.</li><li><strong>Uy tín</strong> — Giữ cam kết, minh bạch trong hợp tác.</li><li><strong>Tận tâm</strong> — Chủ động đồng hành, lấy khách hàng làm trọng tâm.</li><li><strong>Đoàn kết</strong> — Xây dựng đội ngũ gắn kết, cùng phát triển bền vững.</li></ul>';
-        $settings->cta_title = 'Đồng hành cùng công trình của bạn';
-        $settings->cta_button_label = 'Trao đổi về công trình';
+        $settings->page_intro = 'CamKheTravel tiếp nhận nhu cầu di chuyển, tư vấn phương tiện và trao đổi lịch trình trước chuyến đi.';
+        $settings->story_title = 'Dịch vụ và cách phối hợp';
+        $settings->story = '<p>Khách hàng có thể gửi điểm đón, điểm đến, thời gian và quy mô đoàn để CamKheTravel tiếp nhận yêu cầu tư vấn.</p><p>Với đối tác lữ hành, thông tin về tuyến đi, số khách và kế hoạch dự kiến giúp hai bên trao đổi phương án xe và lịch trình.</p>';
+        $settings->services_link_label = 'Xem dịch vụ';
+        $settings->principles_title = 'Nguyên tắc đồng hành';
+        $settings->vision = 'Cùng khách hàng và đối tác chuẩn bị những hành trình thuận tiện.';
+        $settings->mission = 'Tiếp nhận yêu cầu rõ ràng và tư vấn phương tiện theo lịch trình được trao đổi.';
+        $settings->core_values = '<ul><li><strong>Rõ ràng</strong> — Thống nhất thông tin chuyến đi trước khi triển khai.</li><li><strong>Chủ động</strong> — Trao đổi điểm đón, thời gian và quy mô đoàn.</li><li><strong>Đồng hành</strong> — Duy trì đầu mối hỗ trợ trong quá trình chuẩn bị.</li></ul>';
+        $settings->cta_title = 'Bắt đầu trao đổi về hành trình của bạn';
+        $settings->cta_button_label = 'Gửi yêu cầu tư vấn';
         $settings->save();
     }
 }

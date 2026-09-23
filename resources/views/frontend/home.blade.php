@@ -4,551 +4,261 @@
     @vite('resources/scss/pages/home.scss')
 @endpush
 
-@section('body_class', 'home-page bg-white')
-@section('main_class', '')
+@section('body_class', 'camkhetravel-home')
+@section('main_id', 'camkhe-noi-dung')
+@section('main_class', 'camkhe-home-main')
 
-@section('content')
-<div class="home-content" data-system-page="home">
-    <h1 class="visually-hidden">{{ $page['title'] }}</h1>
+@section('before_header')
+    <a class="skip-link" href="#camkhe-noi-dung">Bỏ qua điều hướng</a>
+    <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" /></symbol>
+        <symbol id="i-car" viewBox="0 0 24 24"><path d="m5 9 2-5h10l2 5M3 10l2-1h14l2 1v8H3zM5 18v2m14-2v2M6 13h2m8 0h2M8 16h8" /></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m4 0h2m-8 3h2" /></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3" /><path d="M2 21v-3a7 7 0 0 1 14 0v3m1-17a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 5v2" /></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.5a5.5 5.5 0 0 0 0-7.8Z" /></symbol>
+        <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2" /><path d="M8 7V3h8v4M3 12l9 3 9-3m-9 0v4" /></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6zM8 12l3 3 5-6" /></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 6v6l4 2" /></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" /></symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24"><path d="m7 3 3 5-3 3a18 18 0 0 0 6 6l3-3 5 3-1 4C10 23 1 14 3 4z" /></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11a9 9 0 0 1-9 9 11 11 0 0 1-4-1l-6 3 2-6a9 9 0 1 1 17-5Z" /><path d="M7 9h10m-10 4h7" /></symbol>
+        <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m2 8 4-4 5 2 3-2 8 5-4 7-5 5-7-5zM11 6l-4 5 3 2 4-4 5 5M7 17l2-2m1 5 2-3m3 2 1-3" /></symbol>
+        <symbol id="i-file" viewBox="0 0 24 24"><path d="M5 2h9l5 5v15H5zM14 2v6h5M8 12h8m-8 4h8" /></symbol>
+        <symbol id="i-headset" viewBox="0 0 24 24"><path d="M3 14v-3a9 9 0 0 1 18 0v3M5 12H3v7h4v-7Zm14 0h2v7h-4v-7Zm2 7c0 3-5 3-7 3" /></symbol>
+        <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11z" /><circle cx="7.5" cy="7.5" r="1" /></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m2 5 10 8L22 5" /></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2" /><path d="M16 8V3H3v13h5" /></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" /></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" /></symbol>
+        <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6" /></symbol>
+    </svg>
 
-    @if ($pageBannerUrl)
-        <section class="resource-archive-hero" aria-label="{{ $page['title'] }}">
-            <img class="resource-archive-hero__image" data-page-banner-image src="{{ $pageBannerUrl }}" alt="{{ $page['title'] }}">
-            <div class="resource-archive-hero__overlay"></div>
-            <div class="container resource-archive-hero__content">
-                <h2 class="display-title text-white">{{ $page['title'] }}</h2>
-            </div>
-        </section>
-    @endif
-
-    {{-- HERO --}}
-    <section class="hero" data-hero-section>
-        @forelse ($heroSlides as $slide)
-            @if ($loop->first)
-                <div class="swiper" data-hero-swiper>
-                    <div class="swiper-wrapper">
-            @endif
-
-            <article class="swiper-slide">
-                @if ($slide->curatorMedia?->url)
-                    <img class="hero__media" src="{{ $slide->curatorMedia->url }}" alt="" @if ($slide->curatorMedia->width && $slide->curatorMedia->height) width="{{ $slide->curatorMedia->width }}" height="{{ $slide->curatorMedia->height }}" @endif @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
-                @endif
-                @if ($slide->has_content)
-                    <div class="hero__overlay"></div>
-
-                    @if ($slide->video_url)
-                        <a class="hero-video-play btn btn-light btn-lg rounded-circle" href="{{ $slide->video_url }}" target="_blank" rel="noopener" aria-label="Phát video {{ $slide->title ?: $website->site_name }}">
-                            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.1v13.8L19 12 8 5.1Z"/></svg>
-                        </a>
-                    @endif
-
-                    <div class="container hero__content-wrap position-relative z-2">
-                        <div class="hero__content">
-                            @if ($slide->title)
-                                <h2 class="display-4 fw-bold text-white mb-3">{{ $slide->title }}</h2>
-                            @endif
-                            @if ($slide->description)
-                                <p class="lead text-white-50 mb-0">{{ $slide->description }}</p>
-                            @endif
-                            @if (($slide->primary_label && $slide->primary_url) || ($slide->secondary_label && $slide->secondary_url))
-                                <div class="d-flex flex-wrap gap-2 mt-4">
-                                    @if ($slide->primary_label && $slide->primary_url)
-                                        <a class="btn btn-primary" href="{{ $slide->primary_url }}">{{ $slide->primary_label }} <span aria-hidden="true">↗</span></a>
-                                    @endif
-                                    @if ($slide->secondary_label && $slide->secondary_url)
-                                        <a class="btn btn-outline-light" href="{{ $slide->secondary_url }}">{{ $slide->secondary_label }}</a>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-            </article>
-
-            @if ($loop->last)
-                    </div>
-                </div>
-            @endif
-        @empty
-            <article class="swiper-slide">
-                <div class="hero__overlay"></div>
-                <div class="container hero__content-wrap position-relative z-2">
-                    <div class="hero__content">
-                        <h2 class="display-4 fw-bold text-white mb-0">Kiến tạo hệ thống PCCC an toàn, đồng bộ và bền vững.</h2>
-                    </div>
-                </div>
-            </article>
-        @endforelse
-    </section>
-
-    {{-- USP --}}
-    <section class="usp">
-        <div class="container">
-            <div class="row g-0">
-                @foreach ($uspItems as $item)
-                    <div class="col-6 col-lg-3">
-                        <article class="usp__item h-100">
-                            <span class="icon-circle">✓</span>
-                            <div>
-                                <h3 class="h6 fw-bold text-uppercase mb-1">{{ $item['title'] }}</h3>
-                                <p class="small text-body mb-0">{{ $item['description'] }}</p>
-                            </div>
-                        </article>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- SERVICES --}}
-    <section class="section-space" id="dich-vu">
-        <div class="container">
-            <div class="text-center mx-auto" style="max-width: 760px">
-                <h2 class="section-title">Dịch vụ PCCC toàn diện</h2>
-                <p class="section-copy mt-3 mb-0">Đồng hành cùng doanh nghiệp từ khảo sát, thiết kế, thi công đến cải tạo, bảo trì và tư vấn hệ thống PCCC.</p>
-            </div>
-
-            @if ($featuredServiceCategories->isNotEmpty())
-                <ul class="nav tabs flex-nowrap overflow-x-auto mt-5" role="tablist">
-                    @foreach ($featuredServiceCategories as $category)
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link @if($loop->first) active @endif" id="service-tab-{{ $category->id }}" aria-controls="service-pane-{{ $category->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}" data-bs-toggle="tab" data-bs-target="#service-pane-{{ $category->id }}" type="button" role="tab">{{ $category->name }}</button>
-                        </li>
+    <header class="site-header" id="siteHeader">
+        <nav class="navbar navbar-expand-lg container" aria-label="Điều hướng chính">
+            <a class="navbar-brand brand-wordmark" href="/#trang-chu" aria-label="CamKheTravel – Trang chủ">CamKheTravel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở hoặc đóng menu">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-menu"></use></svg>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mx-auto">
+                    @foreach ($navigation as $item)
+                        <li class="nav-item"><a class="nav-link" href="{{ $item['url'] }}">{{ $item['label'] }}</a></li>
                     @endforeach
                 </ul>
+                <button type="button" class="btn btn-brand" data-quote-type="trip">
+                    Nhận báo giá <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+@endsection
 
-                <div class="tab-content pt-4">
-                    @foreach ($featuredServiceCategories as $category)
-                        <div class="tab-pane fade @if($loop->first) show active @endif" id="service-pane-{{ $category->id }}" role="tabpanel" aria-labelledby="service-tab-{{ $category->id }}" tabindex="0">
-                            <div class="row g-4 g-lg-5 align-items-center">
-                                <div class="col-lg-7">
-                                    <a class="service-image d-block" href="{{ route('services.category', ['category' => $category->slug]) }}">
-                                        @if ($category->image_url)
-                                            <img src="{{ $category->image_url }}" alt="{{ $category->name }}" loading="lazy">
-                                        @endif
-                                    </a>
-                                </div>
-                                <div class="col-lg-5">
-                                    <h3 class="h2 fw-bold text-uppercase">{{ $category->name }}</h3>
-                                    @if ($category->description)
-                                        <p class="section-copy mt-3">{{ $category->description }}</p>
-                                    @endif
-                                    <ul class="check-list">
-                                        @foreach ($category->services->take(5) as $service)
-                                            <li><a class="text-body-emphasis" href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></li>
-                                        @endforeach
-                                    </ul>
-                                    <div class="d-flex flex-wrap gap-2 mt-4">
-                                        <a class="btn btn-primary" href="{{ route('services.category', ['category' => $category->slug]) }}">Xem chi tiết</a>
-                                        <a class="btn btn-outline-secondary" href="{{ route('services.index') }}">Tất cả dịch vụ</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="alert alert-light border mt-5">Dịch vụ sẽ được cập nhật sớm.</div>
-            @endif
-        </div>
-    </section>
+@section('content')
+    <div class="camkhe-home" data-camkhe-home style="--camkhe-no-image: url('{{ $noImageUrl }}')">
+        <div hidden data-camkhe-config
+            data-phone="{{ $frontendConfig['phone'] }}"
+            data-zalo-url="{{ $frontendConfig['zaloUrl'] }}"
+            data-email="{{ $frontendConfig['email'] }}"
+            data-region="{{ $frontendConfig['region'] }}"
+            data-lead-endpoint="{{ $frontendConfig['leadEndpoint'] }}"></div>
 
-    {{-- SOLUTIONS --}}
-    @if ($solutions->isNotEmpty())
-    <section class="section-space dark-section home-solutions" id="giai-phap">
-        <img class="home-solutions__section-background" data-solution-background @if ($solutions->first()->image_url) src="{{ $solutions->first()->image_url }}" @else hidden @endif alt="" aria-hidden="true">
-        <div class="container">
-            <header class="text-center mb-5">
-                <h2 class="section-title">Giải pháp cho từng loại công trình</h2>
-                <p class="text-white-50 mt-3 mb-0 mx-auto">Mỗi công trình có yêu cầu vận hành và mức độ rủi ro khác nhau. Giải pháp cần được thiết kế phù hợp ngay từ đầu.</p>
-            </header>
-            <div class="row g-4 g-lg-5">
-                <div class="col-lg-3">
-                    <div class="nav flex-column solution-nav" role="tablist" aria-label="Loại công trình" aria-orientation="vertical">
-                        @foreach ($solutions as $solution)
-                            <button class="nav-link @if($loop->first) active @endif" id="solution-tab-{{ $solution->id }}" data-bs-toggle="pill" data-bs-target="#solution-{{ $solution->id }}" type="button" role="tab" aria-controls="solution-{{ $solution->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $solution->short_title ?: $solution->title }}</button>
-                        @endforeach
+        <section class="hero" id="trang-chu" aria-labelledby="hero-title">
+            <picture class="hero-picture">
+                <source media="(max-width: 767px)" srcset="{{ $noImageUrl }}">
+                <img src="{{ $noImageUrl }}" alt="Ảnh mặc định" width="1800" height="625" fetchpriority="high">
+            </picture>
+            <div class="container hero-inner">
+                <div class="hero-copy">
+                    <h1 id="hero-title">{{ $heroSlide?->title ?: 'CamKheTravel – đồng hành cùng hành trình của bạn' }}@if (filled($heroFleetLabel))<br><span>{{ $heroFleetLabel }}</span>@endif</h1>
+                    <p class="hero-services">{{ $heroSlide?->description ?: $homepage->capabilities }}</p>
+                    <p class="signature hero-signature">Mỗi hành trình<br><span>là một trải nghiệm đáng nhớ.</span></p>
+                    <div class="hero-actions">
+                        <button type="button" class="btn btn-brand" data-quote-type="trip">
+                            {{ $heroSlide?->primary_label ?: 'Nhận báo giá chuyến đi' }} <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow"></use></svg>
+                        </button>
+                        <a class="btn btn-zalo" href="{{ $heroSlide?->secondary_url ?: '/#dich-vu' }}">{{ $heroSlide?->secondary_label ?: 'Xem dịch vụ' }} <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></a>
                     </div>
-                </div>
-                <div class="col-lg-9">
-                    <div class="tab-content">
-                        @foreach ($solutions as $solution)
-                            <div class="tab-pane fade @if($loop->first) show active @endif" id="solution-{{ $solution->id }}" role="tabpanel" aria-labelledby="solution-tab-{{ $solution->id }}" tabindex="0">
-                                <article class="solution-card">
-                                    <div class="row g-0">
-                                        <div class="col-lg-8">
-                                            <div class="solution-image">
-                                                @if ($solution->image_url)
-                                                    <img src="{{ $solution->image_url }}" alt="{{ $solution->title }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
-                                                @endif
-                                                <div class="solution-copy">
-                                                    <h3 class="h2 fw-bold text-white">{{ $solution->title }}</h3>
-                                                    @if ($solution->excerpt)<p class="mb-0">{{ $solution->excerpt }}</p>@endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="solution-list">
-                                                @if ($solution->highlights)
-                                                    <ul class="list-unstyled mb-0">
-                                                        @foreach ($solution->highlights as $item)<li>{{ $item }}</li>@endforeach
-                                                    </ul>
-                                                @endif
-                                                <a class="btn btn-primary mt-4" href="{{ route('solutions.show', ['solution' => $solution->slug]) }}">Xem giải pháp <i class="fa-solid fa-arrow-right ms-2" aria-hidden="true"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                            </div>
-                        @endforeach
+                    <div class="hero-trust">
+                        <span><svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg> Trao đổi rõ ràng</span>
+                        <span><svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg> Theo nhu cầu</span>
+                        <span><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg> Chủ động lịch trình</span>
+                        <span><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg> Điểm đón trao đổi trước</span>
                     </div>
                 </div>
             </div>
+        </section>
+
+        <div class="container booking-wrap">
+            <form class="quick-quote" id="quickQuote" aria-label="Yêu cầu báo giá nhanh">
+                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg><div><label for="quickPickup">Điểm đón</label><input id="quickPickup" name="pickup" placeholder="Nhập địa chỉ đón" maxlength="180" autocomplete="off"></div></div>
+                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg><div><label for="quickDestination">Điểm đến</label><input id="quickDestination" name="destination" placeholder="Bạn muốn đi đâu?" maxlength="180" autocomplete="off"></div></div>
+                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg><div><label for="quickDate">Ngày đi</label><input id="quickDate" name="departure" type="date" aria-label="Ngày khởi hành"></div></div>
+                <div class="quick-field"><svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg><div><label for="quickPassengers">Số khách</label><select id="quickPassengers" name="passengers"><option value="">Chọn số khách</option><option value="1–4">1–4 khách</option><option value="5–6">5–6 khách</option><option value="7–15">7–15 khách</option><option value="Cần tư vấn thêm">Cần tư vấn thêm</option></select></div></div>
+                <button type="submit" class="btn btn-brand">Yêu cầu báo giá <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
+            </form>
         </div>
-    </section>
-    @endif
 
-    {{-- ABOUT --}}
-    <section class="section-space" id="gioi-thieu">
-        <div class="container">
-            <div class="row g-4 g-lg-5 align-items-center">
-                <div class="col-lg-5">
-                    <h2 class="section-title">Về chúng tôi — {{ $website->company_name }}</h2>
-                    @if ($about['title'])<p class="fw-semibold text-body-emphasis mt-4">{{ $about['title'] }}</p>@endif
-                    @if ($about['content'])<p class="section-copy">{{ $about['content'] }}</p>@endif
-                    <ul class="check-list">
-                        <li>Đội ngũ kỹ sư và kỹ thuật viên có kinh nghiệm</li>
-                        <li>Quy trình triển khai rõ ràng, minh bạch</li>
-                        <li>Giải pháp tối ưu theo từng loại công trình</li>
-                        <li>Hỗ trợ vận hành và bảo trì sau bàn giao</li>
-                    </ul>
-                    <div class="d-flex flex-wrap gap-3 mt-4">
-                        <a class="btn btn-primary" href="{{ route('about') }}">Tìm hiểu về chúng tôi</a>
-                        @if ($companyProfileUrl)<a class="btn btn-outline-secondary" href="{{ $companyProfileUrl }}" download>Tải hồ sơ năng lực</a>@endif
-                    </div>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="about-grid">
-                        <div class="about-main">
-                            @if ($aboutImageUrl)<img src="{{ $aboutImageUrl }}" alt="{{ $companyName }}" loading="lazy">@endif
-                        </div>
-                        <div class="about-side">
-                            @if ($aboutImageUrl)<img src="{{ $aboutImageUrl }}" alt="Hệ thống PCCC" loading="lazy">@endif
-                        </div>
-                        <div class="about-side about-quote">Giải pháp an toàn cho hôm nay và tương lai bền vững.</div>
-                    </div>
+        <section class="section services-section" id="dich-vu" aria-labelledby="services-title">
+            <div class="container">
+                <div class="section-heading"><h2 id="services-title">Dịch vụ của CamKheTravel</h2><p>Chọn dịch vụ phù hợp với hành trình <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></p></div>
+                <div class="services-grid">
+                    @forelse ($services as $service)
+                        <article class="service-card">
+                            <img src="{{ $service->image_url }}" alt="{{ $service->title }}" width="650" height="390" loading="lazy" decoding="async">
+                            <div class="service-card-body">
+                                <span class="icon-bubble {{ $service->quote_type === 'wedding' ? 'rose' : ($service->quote_type === 'shared' ? 'sand' : '') }}"><svg class="icon" aria-hidden="true"><use href="#i-{{ $service->quote_icon }}"></use></svg></span>
+                                <div><h3><button type="button" class="stretched-button" data-quote-type="{{ $service->quote_type }}" data-service="{{ $service->title }}" data-service-id="{{ $service->id }}">{{ $service->title }}</button></h3><p>{{ $service->excerpt }}</p></div>
+                            </div>
+                        </article>
+                    @empty
+                        <p class="empty-state">Dịch vụ đang được cập nhật. Anh/chị có thể gửi lịch trình để CamKheTravel tiếp nhận tư vấn.</p>
+                    @endforelse
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    {{-- WHY US --}}
-    <section id="tai-sao-chon-chung-toi">
-        <div class="container-fluid px-0">
-            <div class="row g-0">
-                <div class="col-lg-5">
-                    <div class="why-image h-100" @if($whyImageUrl) style="background-image:url('{{ $whyImageUrl }}')" @endif></div>
-                </div>
-                <div class="col-lg-7">
-                    <div class="why-content">
-                        <div class="w-100">
-                            <h2 class="section-title text-white">Tại sao chọn chúng tôi</h2>
-                            <div class="row g-4 mt-3">
-                                @foreach ($whyChooseUs as $item)
-                                    <div class="col-sm-6 col-xl-3">
-                                        <article class="why-card">
-                                            <div class="why-number">{{ $item['number'] }}</div>
-                                            <h3 class="h6 fw-bold text-white text-uppercase mt-3">{{ $item['title'] }}</h3>
-                                            <p class="small text-white-50 mb-0">{{ $item['description'] }}</p>
-                                        </article>
-                                    </div>
+        <section class="section fleet-section" id="doi-xe" aria-labelledby="fleet-title">
+            <div class="container">
+                <div class="section-heading"><h2 id="fleet-title">Lựa chọn xe cho hành trình</h2><button type="button" class="text-link" data-quote-type="trip">Tư vấn chọn xe <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div>
+                <div class="fleet-grid">
+                    @foreach ($fleetTypes as $vehicle)
+                        <article class="fleet-card">
+                            <div class="fleet-image"><img src="{{ $noImageUrl }}" alt="{{ $vehicle['title'] }} – ảnh mặc định" width="700" height="500" loading="lazy" decoding="async"></div>
+                            <div class="fleet-content">
+                                <h3>{{ $vehicle['title'] }}</h3>
+                                @foreach ($vehicle['features'] as $feature)
+                                    <p><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg>{{ $feature }}</p>
                                 @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    {{-- PROJECTS --}}
-    <section class="section-space" id="du-an">
-        <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
-                <div>
-                    <h2 class="section-title">Dự án tiêu biểu</h2>
-                </div>
-                <a class="section-link" href="{{ route('projects.index') }}">Xem tất cả dự án →</a>
-            </div>
-
-            <div class="row g-4 mt-2">
-                @forelse ($featuredProjects as $project)
-                    <div class="col-md-6 col-lg-3">
-                        <article class="project-card">
-                            <a class="project-image d-block" href="{{ route('projects.show', ['slug' => $project->slug]) }}">
-                                @if ($project->image_url)<img src="{{ $project->image_url }}" alt="{{ $project->title }}" loading="lazy">@endif
-                            </a>
-                            <div class="p-4">
-                                @if ($project->category)<p class="small fw-bold text-primary text-uppercase mb-2">{{ $project->category->name }}</p>@endif
-                                <h3 class="h6 fw-bold mb-0"><a class="text-body-emphasis" href="{{ route('projects.show', ['slug' => $project->slug]) }}">{{ $project->title }}</a></h3>
+                                <button type="button" class="btn btn-outline-brand btn-sm" data-vehicle="{{ $vehicle['code'] }}" data-vehicle-name="{{ $vehicle['title'] }}" data-vehicle-description="{{ $vehicle['features']->implode('. ') }}" data-vehicle-image="{{ $noImageUrl }}">Xem chi tiết <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
                             </div>
                         </article>
-                    </div>
-                @empty
-                    <div class="col-12"><div class="alert alert-light border">Dự án đang được cập nhật.</div></div>
-                @endforelse
-            </div>
-        </div>
-    </section>
-
-    {{-- PROCESS --}}
-    <section class="section-space bg-light border-top border-bottom" id="quy-trinh">
-        <div class="container">
-            <h2 class="section-title">Quy trình triển khai</h2>
-
-            <div class="row g-3 mt-4">
-                @foreach ($processSteps as $step)
-                    <div class="col-6 col-md-4 col-xl-2">
-                        <article class="process-card">
-                            <div class="process-number">{{ $step['number'] }}</div>
-                            <h3 class="h6 fw-bold text-uppercase mt-4">{{ $step['title'] }}</h3>
-                            <p class="small text-body mb-0">{{ $step['description'] }}</p>
-                        </article>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- STATS --}}
-    @if ($stats->isNotEmpty())
-        <section class="py-5 bg-white">
-            <div class="container">
-                <div class="row g-4">
-                    @foreach ($stats as $stat)
-                        <div class="col-6 col-md-3">
-                            <article class="stat">
-                                <p class="stat__value">
-                                    @if (filled($stat['prefix'])){{ $stat['prefix'] }}@endif
-                                    @foreach ($stat['segments'] as $segment)
-                                        {{ $segment['value'] }}
-                                    @endforeach
-                                    @if (filled($stat['suffix'])){{ $stat['suffix'] }}@endif
-                                </p>
-                                <p class="small text-body mt-2 mb-0">{{ $stat['label'] }}</p>
-                            </article>
-                        </div>
                     @endforeach
                 </div>
+                <p class="section-note">Ảnh mặc định. Loại xe thực tế, số ghế và hành lý sẽ được xác nhận khi trao đổi lịch trình.</p>
             </div>
         </section>
-    @endif
 
-    {{-- PRODUCTS --}}
-    <section class="section-space border-top" id="san-pham">
-        <div class="container">
-            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
-                <div>
-                    <h2 class="section-title">Danh mục thiết bị</h2>
-                    <p class="section-copy mt-3 mb-0">Thiết bị phục vụ thi công, lắp đặt và vận hành hệ thống PCCC.</p>
+        <section class="partner-section" id="doi-tac" aria-labelledby="partner-title">
+            <div class="partner-intro">
+                <picture class="partner-picture"><source media="(max-width: 767px)" srcset="{{ $noImageUrl }}"><img src="{{ $noImageUrl }}" alt="Ảnh mặc định" width="1800" height="588" loading="lazy" decoding="async"></picture>
+                <div class="container partner-intro-inner">
+                    <div class="partner-copy">
+                        <h2 id="partner-title">Đối tác cung cấp xe<br>cho tour du lịch</h2>
+                        <p class="partner-lead"><strong>Đối tác lên chương trình.<br>CamKheTravel đồng hành cùng chuyến đi.</strong></p>
+                        <p>Cung cấp phương tiện theo nhu cầu của công ty du lịch, đại lý lữ hành và đơn vị tổ chức tour. Lịch trình, quy mô đoàn và phương án xe được trao đổi trước khi xác nhận.</p>
+                        <div class="partner-actions"><button type="button" class="btn btn-brand" data-quote-type="partner">Đăng ký đối tác <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button><button type="button" class="btn btn-outline-brand" data-quote-type="partner">Nhận báo giá hợp tác <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div>
+                    </div>
+                    <p class="signature partner-signature">Cùng đối tác<br>tạo nên những hành trình<br>trọn vẹn.</p>
                 </div>
-                <a class="section-link" href="{{ route('products.index') }}">Xem tất cả sản phẩm →</a>
             </div>
-            <div class="nav nav-pills gap-2 mb-4" role="tablist" aria-label="Danh mục thiết bị">
-                @foreach ($equipmentCategories as $category)
-                    <button class="nav-link @if($loop->first) active @endif" id="equipment-tab-{{ $category->id }}" data-bs-toggle="tab" data-bs-target="#equipment-{{ $category->id }}" type="button" role="tab" aria-controls="equipment-{{ $category->id }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $category->name }}</button>
-                @endforeach
-            </div>
-            <div class="tab-content">
-                @foreach ($equipmentCategories as $category)
-                    <div class="tab-pane fade @if($loop->first) show active @endif" id="equipment-{{ $category->id }}" role="tabpanel" aria-labelledby="equipment-tab-{{ $category->id }}" tabindex="0">
-                        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                            @forelse ($category->products as $product)
-                                <div class="col">
-                                    <a class="equipment-card" href="{{ route('products.show', ['slug' => $product->slug]) }}">
-                                        @if ($product->image_url)<img src="{{ $product->image_url }}" alt="{{ $product->title }}" loading="lazy">@endif
-                                        <span class="d-flex justify-content-between gap-3 p-4 fw-semibold">{{ $product->title }}<i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
-                                    </a>
-                                </div>
-                            @empty
-                                <p class="text-body-secondary w-100">Chưa có sản phẩm trong danh mục này.</p>
-                            @endforelse
+            <div class="container partner-bottom">
+                <div class="partner-benefits">
+                    @foreach ($homepage->partner_benefits as $benefit)
+                        <div class="partner-benefit"><span class="icon-bubble"><svg class="icon" aria-hidden="true"><use href="#i-handshake"></use></svg></span><div><h3>{{ $benefit['title'] }}</h3><p>{{ $benefit['description'] }}</p></div></div>
+                    @endforeach
+                </div>
+                <div class="partner-panels">
+                    <div class="tour-panel">
+                        <h3>Phù hợp nhiều loại hình tour</h3><p class="panel-intro">Cung cấp phương tiện theo chương trình của đối tác.</p>
+                        <div class="tour-grid">
+                            @foreach ($homepage->tour_types as $tour)
+                                <article class="tour-type"><img src="{{ $noImageUrl }}" alt="{{ $tour['title'] }} – ảnh mặc định" width="360" height="260" loading="lazy"><h4>{{ $tour['title'] }}</h4><p>{{ $tour['description'] }}</p></article>
+                            @endforeach
                         </div>
-                        <a class="section-link d-inline-block mt-4" href="{{ route('products.category', ['slug' => $category->slug]) }}">Xem danh mục {{ $category->name }} →</a>
                     </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-
-    {{-- PARTNERS --}}
-    @if ($homePartners->isNotEmpty())
-        <section class="partners py-5" aria-labelledby="partners-heading">
-            <div class="container">
-                <h2 class="section-title text-center mb-5" id="partners-heading">Đối tác của chúng tôi</h2>
-                <div class="swiper" data-partner-swiper>
-                    <div class="swiper-wrapper">
-                        @foreach ($homePartners as $partner)
-                            <div class="swiper-slide">
-                                @if ($partner->website_url)
-                                    <a class="partner-slide" href="{{ $partner->website_url }}" target="_blank" rel="noopener noreferrer">
-                                @else
-                                    <div class="partner-slide">
-                                @endif
-                                    @if ($partner->curatorMedia?->url)
-                                        <img src="{{ $partner->curatorMedia->url }}" alt="{{ $partner->name }}" loading="lazy">
-                                    @else
-                                        {{ $partner->name }}
-                                    @endif
-                                @if ($partner->website_url)</a>@else</div>@endif
-                            </div>
-                        @endforeach
+                    <div class="process-panel">
+                        <h3>Quy trình hợp tác</h3><p class="panel-intro">Thống nhất nhu cầu, phương án và đầu mối liên hệ.</p>
+                        <ol class="process-list">
+                            @foreach ($homepage->partner_steps as $step)
+                                <li><span class="step-icon"><svg class="icon" aria-hidden="true"><use href="#i-{{ $loop->first ? 'file' : ($loop->last ? 'car' : 'chat') }}"></use></svg><b>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</b></span><h4>{{ $step['title'] }}</h4><p>{{ $step['description'] }}</p></li>
+                            @endforeach
+                        </ol>
+                        <button type="button" class="btn btn-brand" data-quote-type="partner">Trở thành đối tác <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button>
                     </div>
-                </div>
-                <div class="d-flex justify-content-center gap-2 mt-4">
-                    <button type="button" class="btn btn-outline-secondary" data-partner-swiper-prev aria-label="Đối tác trước">←</button>
-                    <button type="button" class="btn btn-outline-secondary" data-partner-swiper-next aria-label="Đối tác tiếp theo">→</button>
+                    <aside class="partner-quote"><p class="signature">Hành trình<br>tốt đẹp hơn<br>khi có người<br>đồng hành.</p><span>CAMKHETRAVEL</span></aside>
                 </div>
             </div>
         </section>
-    @endif
 
-    {{-- CERTIFICATES --}}
-    <section class="section-space">
-        <div class="container">
-            <div class="row g-4 align-items-center">
-                <div class="col-lg-3">
-                    <h2 class="section-title">Chứng chỉ - Năng lực</h2>
-                    <p class="section-copy mt-3">Minh bạch hồ sơ, năng lực và tài liệu liên quan.</p>
-                </div>
-                <div class="col-lg-9">
-                    <div class="row g-3 row-cols-2 row-cols-md-5">
-                        @foreach ($certificateItems as $certificate)
-                            <div class="col">
-                                @if ($loop->first && $companyProfileUrl)<a class="certificate text-body-emphasis" href="{{ $companyProfileUrl }}" target="_blank">@else<div class="certificate">@endif
-                                    <div><div class="display-6 text-primary">▤</div><div class="small fw-bold text-uppercase mt-3">{{ $certificate }}</div></div>
-                                @if ($loop->first && $companyProfileUrl)</a>@else</div>@endif
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section class="wedding-section" id="xe-cuoi" aria-labelledby="wedding-title">
+            <picture class="wedding-picture"><source media="(max-width: 767px)" srcset="{{ $noImageUrl }}"><img src="{{ $noImageUrl }}" alt="Ảnh mặc định" width="1800" height="567" loading="lazy" decoding="async"></picture>
+            <div class="container wedding-inner"><div class="wedding-copy"><h2 id="wedding-title">Xe cưới Phú Thọ</h2><p class="wedding-subtitle">Đồng hành trong ngày trọng đại.</p><p class="wedding-models">Xe dâu <span>•</span> Đưa đón gia đình</p><p class="wedding-description">Lịch trình và yêu cầu xe được trao đổi theo kế hoạch của gia đình.</p><button type="button" class="btn btn-brand" data-quote-type="wedding">Tư vấn dịch vụ xe cưới <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div><p class="signature wedding-signature">Hạnh phúc<br>bắt đầu từ<br>những hành trình đẹp.</p></div>
+        </section>
 
-    {{-- CONSULTATION --}}
-    <section class="section-space consultation" id="tu-van">
-        <div class="container">
-            <div class="row g-4 g-lg-5 align-items-center">
-                <div class="col-lg-5">
-                    <h2 class="section-title text-white">Liên hệ tư vấn miễn phí</h2>
-                    <p class="text-white-50 mt-3">Gửi thông tin công trình để đội ngũ kỹ thuật tư vấn giải pháp tối ưu.</p>
-                    <div class="d-grid gap-2 mt-4">
-                        @if ($primaryPhone)<a class="text-white fw-semibold" href="tel:{{ preg_replace('/\s+/', '', $primaryPhone) }}">☎ {{ $primaryPhone }}</a>@endif
-                        @if ($website->contact_email)<a class="text-white fw-semibold" href="mailto:{{ $website->contact_email }}">✉ {{ $website->contact_email }}</a>@endif
-                    </div>
-                </div>
-                <div class="col-lg-7">
-                    <form method="POST" action="{{ route('contact.store') }}" class="consultation__form">
-                        @csrf
-                        <input type="hidden" name="return_to" value="{{ request()->getPathInfo() }}#tu-van">
-                        @if ($errors->any())
-                            <div class="col-12"><div class="alert alert-danger" role="alert">
-                                @foreach ($errors->all() as $error)<p class="mb-1">{{ $error }}</p>@endforeach
-                            </div></div>
-                        @endif
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Họ và tên</label>
-                                <input class="form-control" id="home-name" name="name" autocomplete="name" maxlength="255" value="{{ old('name') }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Số điện thoại</label>
-                                <input class="form-control" id="home-phone" name="phone" autocomplete="tel" maxlength="32" value="{{ old('phone') }}">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Dịch vụ quan tâm</label>
-                                <select class="form-select" id="home-service_id" name="service_id">
-                                    <option value="">Chọn dịch vụ</option>
-                                    @foreach ($contactServices as $service)<option value="{{ $service->id }}" @selected(old('service_id') == $service->id)>{{ $service->title }}</option>@endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Nhu cầu của bạn</label>
-                                <input class="form-control" id="home-message" name="message" maxlength="5000" value="{{ old('message') }}" placeholder="Ví dụ: Khảo sát nhà xưởng..." required>
-                            </div>
-                            <div class="col-12"><button class="btn btn-primary w-100" type="submit">Gửi yêu cầu tư vấn →</button></div>
-                            <div class="col-12"><p class="small text-success mb-0" data-form-success hidden></p></div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section class="section commitments-section" id="cam-ket" aria-labelledby="commitments-title">
+            <div class="container"><div class="section-heading"><h2 id="commitments-title">CamKheTravel đồng hành cùng hành trình</h2></div><div class="commitments-grid">
+                @foreach ($homepage->commitment_items as $commitment)
+                    <article class="commitment"><span class="icon-bubble"><svg class="icon" aria-hidden="true"><use href="#i-{{ $loop->first ? 'file' : ($loop->last ? 'headset' : ($loop->iteration === 2 ? 'car' : 'clock')) }}"></use></svg></span><div><h3>{{ $commitment['title'] }}</h3><p>{{ $commitment['description'] }}</p></div></article>
+                @endforeach
+            </div></div>
+        </section>
 
-    {{-- NEWS --}}
-    <section class="section-space" id="tin-tuc">
-        <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
-                <div>
-                    <h2 class="section-title">Tin tức PCCC</h2>
-                </div>
-                <a class="section-link" href="{{ route('posts.index') }}">Xem tất cả bài viết →</a>
-            </div>
-
-            @if ($featuredPost)
-                <div class="row g-4 mt-2">
-                    <div class="col-lg-7">
-                        <article class="post-card">
-                            <a class="post-image d-block" href="{{ route('posts.show', ['slug' => $featuredPost->slug]) }}">
-                                @if ($featuredPost->image_url)<img src="{{ $featuredPost->image_url }}" alt="{{ $featuredPost->title }}" loading="lazy">@endif
-                            </a>
-                            <div class="p-4">
-                                @if ($featuredPost->category)<p class="small fw-bold text-primary text-uppercase mb-2">{{ $featuredPost->category->name }}</p>@endif
-                                <h3 class="h4 fw-bold"><a class="text-body-emphasis" href="{{ route('posts.show', ['slug' => $featuredPost->slug]) }}">{{ $featuredPost->title }}</a></h3>
-                                @if ($featuredPost->excerpt)<p class="text-body mb-0">{{ $featuredPost->excerpt }}</p>@endif
+        @if ($testimonials->isNotEmpty())
+            <section class="section reviews-section" id="danh-gia" aria-labelledby="reviews-title">
+                <div class="container"><div class="section-heading"><h2 id="reviews-title">Khách hàng nói về CamKheTravel</h2>@if ($hasIllustrativeTestimonials)<span class="demo-label">Có phản hồi minh họa</span>@endif</div><div class="reviews-grid">
+                    @foreach ($testimonials as $testimonial)
+                        <article class="review-card">
+                            <div class="review-stars" aria-label="Đánh giá {{ $testimonial->rating ?? 0 }} trên 5 sao">
+                                @for ($star = 1; $star <= 5; $star++)<svg class="icon {{ $star <= (int) ($testimonial->rating ?? 0) ? 'is-active' : '' }}" aria-hidden="true"><use href="#i-star"></use></svg>@endfor
+                                @if ($testimonial->is_illustrative)<span>Minh họa</span>@endif
                             </div>
+                            <blockquote>“{{ $testimonial->quote }}”</blockquote>
+                            <div class="review-person"><span class="avatar">{{ mb_substr($testimonial->client_name, 0, 2) }}</span><div><h3>{{ $testimonial->client_name }}</h3><p>{{ $testimonial->client_role ?: $testimonial->company_name }}</p></div></div>
                         </article>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="d-grid gap-3">
-                            @foreach ($sidePosts as $post)
-                                <article class="d-flex gap-3 border rounded-3 p-3 bg-white">
-                                    <a class="post-side-image" href="{{ route('posts.show', ['slug' => $post->slug]) }}">@if ($post->image_url)<img src="{{ $post->image_url }}" alt="{{ $post->title }}" loading="lazy">@endif</a>
-                                    <div class="align-self-center"><h3 class="h6 fw-bold mb-1"><a class="text-body-emphasis" href="{{ route('posts.show', ['slug' => $post->slug]) }}">{{ $post->title }}</a></h3>@if ($post->published_at)<small class="text-secondary">{{ $post->published_at->format('d/m/Y') }}</small>@endif</div>
-                                </article>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            @endif
-        </div>
-    </section>
+                    @endforeach
+                </div></div>
+            </section>
+        @endif
 
-    {{-- FAQ --}}
-    @if ($faqItems->isNotEmpty())
-        <section class="section-space bg-light border-top" id="cau-hoi">
-            <div class="container">
-                <div class="row g-4 g-lg-5">
-                    <div class="col-lg-4">
-                        <h2 class="section-title">{{ $faqTitle ?: 'Câu hỏi thường gặp' }}</h2>
-                        @if (filled($faqDescription))<p class="section-copy mt-3">{{ $faqDescription }}</p>@endif
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="accordion" id="homeFaq">
-                            @foreach ($faqItems as $item)
-                                <div class="accordion-item">
-                                    <h3 class="accordion-header"><button class="accordion-button @unless($loop->first) collapsed @endunless" type="button" data-bs-toggle="collapse" data-bs-target="#faq-{{ $loop->index }}" aria-controls="faq-{{ $loop->index }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}">{{ $item['question'] }}</button></h3>
-                                    <div id="faq-{{ $loop->index }}" class="accordion-collapse collapse @if($loop->first) show @endif" data-bs-parent="#homeFaq"><div class="accordion-body text-body">{{ $item['answer'] }}</div></div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <section class="contact-banner" id="lien-he" aria-labelledby="contact-title">
+            <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button><button type="button" class="btn btn-white" data-contact="phone"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg> Liên hệ</button></div></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
         </section>
-    @endif
+    </div>
+@endsection
 
-</div>
+@section('before_footer')
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row gy-4 footer-top">
+                <div class="col-lg-4 col-sm-6"><a href="/#trang-chu" class="footer-brand brand-wordmark">CamKheTravel</a><p class="footer-about">{{ $website->tagline ?: 'Dịch vụ xe và tư vấn phương tiện theo lịch trình.' }}<br>Thông tin chuyến đi được trao đổi trước khi xác nhận.</p></div>
+                <div class="col-lg-3 col-sm-6"><h2>Thông tin liên hệ</h2><ul class="footer-contact"><li><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><button type="button" data-contact="phone" data-phone-label>Liên hệ tư vấn</button></li><li><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg><button type="button" data-contact="zalo">Tư vấn qua Zalo</button></li><li><svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg><span data-company-region>{{ $frontendConfig['region'] }}</span></li><li data-email-row hidden><svg class="icon" aria-hidden="true"><use href="#i-mail"></use></svg><a data-email-link></a></li></ul></div>
+                <div class="col-lg-3 col-sm-6"><h2>Liên kết nhanh</h2><div class="footer-links">@foreach ($navigation as $item)<a href="{{ $item['url'] }}">{{ $item['label'] }}</a>@endforeach</div></div>
+                <div class="col-lg-2 col-sm-6"><h2>Kết nối</h2><div class="social-buttons"><button type="button" data-contact="phone" aria-label="Liên hệ qua điện thoại"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg></button><button type="button" data-contact="zalo" class="social-zalo" aria-label="Liên hệ qua Zalo">Zalo</button><button type="button" data-quote-type="partner" aria-label="Đăng ký đối tác"><svg class="icon" aria-hidden="true"><use href="#i-handshake"></use></svg></button></div><p class="signature footer-signature">Kết nối những hành trình.</p></div>
+            </div>
+            <div class="footer-bottom"><span>© <span data-year>{{ now()->year }}</span> CamKheTravel.</span><span>Ảnh mặc định được dùng khi chưa có ảnh nội dung.</span><button type="button" data-bs-toggle="modal" data-bs-target="#privacyModal">Thông tin dữ liệu</button></div>
+        </div>
+    </footer>
+
+    <div class="mobile-actions" aria-label="Liên hệ nhanh"><button type="button" data-contact="phone"><svg class="icon" aria-hidden="true"><use href="#i-phone"></use></svg><span>Gọi tư vấn</span></button><button type="button" data-contact="zalo"><span class="zalo-symbol">Z</span><span>Zalo</span></button><button type="button" data-quote-type="trip"><svg class="icon" aria-hidden="true"><use href="#i-file"></use></svg><span>Nhận báo giá</span></button></div>
+    <button type="button" class="back-top" id="backTop" aria-label="Về đầu trang" hidden><svg class="icon" aria-hidden="true"><use href="#i-up"></use></svg></button>
+    <noscript><div class="noscript-notice">Bật JavaScript để sử dụng form báo giá và các chức năng tương tác. Nội dung trang vẫn xem được.</div></noscript>
+
+    <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><p class="modal-brand">CAMKHETRAVEL</p><h2 class="modal-title fs-4" id="quoteTitle">Nhận báo giá chuyến đi</h2></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body">
+        <div class="alert demo-notice" id="demoNotice" role="note" hidden>Gửi form để CamKheTravel tiếp nhận yêu cầu tư vấn. Đây chưa phải xác nhận đặt xe.</div>
+        <form id="requestForm" novalidate>
+            <input type="hidden" name="type" id="requestType" value="trip"><input type="hidden" name="service" id="requestService" value=""><input type="hidden" name="service_id" id="requestServiceId" value="">
+            <div class="honeypot" aria-hidden="true"><label for="requestWebsite">Website phụ</label><input id="requestWebsite" name="website" tabindex="-1" autocomplete="off"></div>
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label" for="requestName">Họ và tên <span aria-hidden="true">*</span></label><input class="form-control" id="requestName" name="name" required minlength="2" maxlength="100" autocomplete="name"><div class="invalid-feedback">Nhập họ tên từ 2 đến 100 ký tự.</div></div>
+                <div class="col-md-6"><label class="form-label" for="requestPhone">Số điện thoại <span aria-hidden="true">*</span></label><input class="form-control" id="requestPhone" name="phone" type="tel" inputmode="tel" required maxlength="24" autocomplete="tel"><div class="invalid-feedback">Nhập số di động Việt Nam hợp lệ.</div></div>
+                <div class="col-12" id="companyGroup" hidden><label class="form-label" for="requestCompany">Công ty / Đơn vị tổ chức tour <span aria-hidden="true">*</span></label><input class="form-control" id="requestCompany" name="company" maxlength="180" autocomplete="organization"><div class="invalid-feedback">Nhập tên công ty hoặc đơn vị tổ chức.</div></div>
+                <div class="col-md-6"><label class="form-label" for="requestPickup">Điểm đón</label><input class="form-control" id="requestPickup" name="pickup" maxlength="180" placeholder="Ví dụ: Cẩm Khê, Phú Thọ"><div class="invalid-feedback">Nhập điểm đón.</div></div>
+                <div class="col-md-6"><label class="form-label" for="requestDestination">Điểm đến</label><input class="form-control" id="requestDestination" name="destination" maxlength="180" placeholder="Địa điểm hoặc lịch trình dự kiến"><div class="invalid-feedback">Nhập điểm đến.</div></div>
+                <div class="col-md-6"><label class="form-label" for="requestDeparture">Ngày đi dự kiến</label><input class="form-control" id="requestDeparture" name="departure" type="date"><div class="invalid-feedback">Ngày đi không được trước hôm nay.</div></div>
+                <div class="col-md-6"><label class="form-label" for="requestReturn">Ngày về (nếu có)</label><input class="form-control" id="requestReturn" name="returnDate" type="date"><div class="invalid-feedback">Ngày về không được trước ngày đi.</div></div>
+                <div class="col-md-6"><label class="form-label" for="requestVehicle">Loại xe</label><select class="form-select" id="requestVehicle" name="vehicle"><option value="Cần tư vấn">Cần tư vấn</option>@foreach ($fleetTypes as $vehicle)<option value="{{ $vehicle['title'] }}">{{ $vehicle['title'] }}</option>@endforeach<option value="Xe cưới">Xe cưới</option></select></div>
+                <div class="col-md-6"><label class="form-label" for="requestPassengers">Số khách / Quy mô đoàn</label><input class="form-control" id="requestPassengers" name="passengers" maxlength="80" placeholder="Ví dụ: 4 người, 2 vali"></div>
+                <div class="col-12"><label class="form-label" for="requestNotes">Yêu cầu thêm</label><textarea class="form-control" id="requestNotes" name="notes" rows="3" maxlength="2000" placeholder="Giờ đón, điểm dừng, số chuyến, nhu cầu hợp tác..."></textarea></div>
+                <div class="col-12"><div class="form-check"><input class="form-check-input" id="requestConsent" name="consent" type="checkbox" required><label class="form-check-label" for="requestConsent">Tôi đồng ý cung cấp thông tin để được liên hệ tư vấn về yêu cầu này.</label><div class="invalid-feedback">Cần đồng ý trước khi tiếp tục.</div></div><p class="form-hint">Đây là yêu cầu tư vấn, chưa phải xác nhận đặt xe hoặc giá cuối cùng.</p></div>
+            </div>
+            <div id="formError" class="alert alert-danger mt-3" role="alert" hidden></div>
+            <div class="form-submit"><button type="button" class="btn btn-soft" data-bs-dismiss="modal">Để sau</button><button type="submit" class="btn btn-brand" id="requestSubmit"><span data-submit-label>Gửi yêu cầu tư vấn</span> <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div>
+        </form>
+        <div id="requestResult" hidden aria-live="polite"><span class="result-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg></span><h3 id="resultTitle">Đã gửi yêu cầu tư vấn</h3><p id="resultDescription">Hệ thống đã tiếp nhận yêu cầu. Đây chưa phải xác nhận đặt xe; CamKheTravel cần liên hệ để thống nhất lịch trình và chi phí.</p><label class="form-label" for="requestSummary">Nội dung yêu cầu</label><textarea id="requestSummary" class="form-control request-summary" rows="9" readonly></textarea><div class="result-actions"><button type="button" class="btn btn-brand" id="copySummary"><svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg> Sao chép nội dung</button><button type="button" class="btn btn-outline-brand" id="editRequest">Chỉnh sửa yêu cầu</button></div><p id="copyStatus" class="form-hint mt-3" role="status"></p></div>
+    </div></div></div></div>
+
+    <div class="modal fade" id="vehicleModal" tabindex="-1" aria-labelledby="vehicleTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 class="modal-title fs-4" id="vehicleTitle">Thông tin xe</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><img id="vehicleDetailImage" class="vehicle-detail-image" src="{{ $noImageUrl }}" alt="Ảnh xe mặc định" width="700" height="500"><p id="vehicleDetailDescription"></p><p class="form-hint">Ảnh mặc định. Dòng xe thực tế, sức chứa và hành lý sẽ được xác nhận khi trao đổi lịch trình.</p><button type="button" class="btn btn-brand w-100" id="quoteVehicle">Nhận báo giá xe này <svg class="icon" aria-hidden="true"><use href="#i-arrow"></use></svg></button></div></div></div></div>
+
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h2 id="privacyTitle" class="modal-title fs-4">Thông tin dữ liệu</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body"><p id="privacyDataText">Thông tin trong biểu mẫu được gửi về website và lưu thành yêu cầu liên hệ để CamKheTravel xử lý. Việc gửi yêu cầu chưa xác nhận chuyến xe, lịch trình hoặc giá.</p><p>Ảnh mặc định được sử dụng tại các vị trí chưa có ảnh nội dung.</p><p>Quản trị viên cần cập nhật thông tin liên hệ và chính sách dữ liệu áp dụng cho hoạt động thực tế.</p></div></div></div></div>
 @endsection

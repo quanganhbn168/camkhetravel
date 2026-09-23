@@ -10,19 +10,22 @@ final class ServiceSeeder extends Seeder
 {
     public function run(): void
     {
+        $category = ServiceCategory::query()->where('name', 'Dịch vụ xe và du lịch')->firstOrFail();
+
         foreach ([
-            ['Tư vấn & khảo sát', 'Khảo sát hiện trạng và đề xuất phương án phù hợp.', 'Tư vấn, khảo sát và làm rõ nhu cầu thực tế trước khi triển khai.', 'hero'],
-            ['Thiết kế & thi công', 'Triển khai giải pháp đồng bộ cho công trình.', 'Từ hồ sơ đến thi công, mỗi hạng mục được quản lý theo một quy trình rõ ràng.', 'engineering'],
-            ['Bảo trì & hỗ trợ', 'Duy trì khả năng vận hành ổn định.', 'Kiểm tra định kỳ và hỗ trợ kỹ thuật khi doanh nghiệp cần.', 'technician'],
-        ] as $index => [$categoryName, $title, $excerpt, $image]) {
-            $category = ServiceCategory::query()->where('name', $categoryName)->firstOrFail();
+            ['Bao xe đi tỉnh', 'Đón tận nơi, chủ động thời gian và hành trình.', 'Đón tại điểm đã trao đổi, thống nhất thời gian và lộ trình trước chuyến đi.'],
+            ['Bao xe du lịch', 'Xe riêng cho gia đình, nhóm bạn và chuyến đi nhiều ngày.', 'Gửi lịch trình và quy mô đoàn để CamKheTravel tư vấn phương án xe phù hợp.'],
+            ['Xe cưới – xe dâu', 'Đồng hành trong ngày trọng đại.', 'Trao đổi trước về điểm đón, thời gian và các điểm dừng trong ngày.'],
+            ['Xe hợp đồng', 'Cung cấp phương tiện cho doanh nghiệp và đối tác lữ hành.', 'Phương án xe và lịch trình được trao đổi theo nhu cầu từng đoàn.'],
+            ['Xe ghép Hà Nội ⇄ Cẩm Khê', 'Kết nối Hà Nội, Cẩm Khê và Yên Lập theo lịch chạy.', 'Liên hệ để hỏi lịch, điểm đón và chỗ còn phù hợp với chuyến đi.'],
+        ] as $index => [$title, $excerpt, $body]) {
 
             Service::query()->updateOrCreate(['title' => $title], [
-                'service_category_id' => $category->getKey(), 'curator_media_id' => MediaSeeder::id($image),
-                'excerpt' => $excerpt, 'body' => '<p>'.$excerpt.'</p>', 'status' => 'published',
+                'service_category_id' => $category->getKey(), 'curator_media_id' => MediaSeeder::id('no-image'),
+                'excerpt' => $excerpt, 'body' => '<p>'.$body.'</p>', 'status' => 'published',
                 'is_home' => true, 'is_featured' => $index === 0, 'sort_order' => ($index + 1) * 10,
                 'published_at' => now(), 'seo_title' => $title, 'seo_description' => $excerpt,
-                'seo_image_media_id' => MediaSeeder::id($image),
+                'seo_image_media_id' => MediaSeeder::id('no-image'),
             ]);
         }
     }

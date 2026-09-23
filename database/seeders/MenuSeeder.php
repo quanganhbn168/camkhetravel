@@ -18,12 +18,16 @@ final class MenuSeeder extends Seeder
         $menu->items()->delete();
 
         foreach ([
-            ['Trang chủ', 'home'], ['Giới thiệu', 'about'], ['Dịch vụ', 'services.index'],
-            ['Giải pháp', 'solutions.index'], ['Dự án', 'projects.index'], ['Sản phẩm', 'products.index'], ['Kiến thức', 'posts.index'], ['Liên hệ', 'contact'],
-        ] as $index => [$label, $url]) {
+            ['Trang chủ', '/', 'native_page'],
+            ['Dịch vụ', '/#dich-vu', 'native_page'],
+            ['Đội xe', '/#doi-xe', 'native_page'],
+            ['Đối tác', '/#doi-tac', 'native_page'],
+            ['Xe cưới', '/#xe-cuoi', 'native_page'],
+            ['Liên hệ', '/#lien-he', 'native_page'],
+        ] as $index => [$label, $url, $linkType]) {
             MenuItem::query()->create([
                 'menu_id' => $menu->getKey(), 'label' => $label, 'url' => $url,
-                'linked_source_type' => 'native_route', 'position' => ($index + 1) * 10, 'target' => '_self',
+                'linked_source_type' => $linkType, 'position' => ($index + 1) * 10, 'target' => '_self',
             ]);
         }
     }

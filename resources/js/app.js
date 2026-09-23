@@ -71,6 +71,10 @@ function initialise() {
         void import('./frontend/sliders').then((module) => module.initialiseSliders());
     }
 
+    if (document.querySelector('[data-camkhe-home]')) {
+        void import('./frontend/camkhetravel-home');
+    }
+
     if (document.querySelector('.fa-solid, .fa-regular, .fa-brands, .fas, .far, .fab, .fa')) {
         void import('./frontend/icons');
     }

@@ -12,7 +12,7 @@ final class CompanySettingsSeeder extends Seeder
         $settings = new CompanySettings([
             'tax_code' => '',
             'representative' => '',
-            'founded_year' => now()->year,
+            'founded_year' => null,
             'business_license' => '',
         ]);
         $settings->settingsConfig()->resetDefaultValueLoadedProperties();

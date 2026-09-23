@@ -15,6 +15,7 @@ class Testimonial extends Model
     {
         return [
             'is_active' => 'boolean',
+            'is_illustrative' => 'boolean',
             'rating' => 'integer',
             'sort_order' => 'integer',
         ];

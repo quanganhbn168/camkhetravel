@@ -22,6 +22,9 @@ final class TestimonialsTable
                     ->label('Sao')
                     ->formatStateUsing(fn (?int $state): string => $state ? "{$state}/5" : 'Chưa có')
                     ->sortable(),
+                TextColumn::make('is_illustrative')->label('Nội dung')->badge()
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Minh họa' : 'Thực tế')
+                    ->color(fn (bool $state): string => $state ? 'warning' : 'success'),
                 ToggleColumn::make('is_active')->label('Hiển thị'),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable(),
             ])

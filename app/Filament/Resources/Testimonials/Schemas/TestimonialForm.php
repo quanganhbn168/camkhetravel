@@ -27,6 +27,7 @@ final class TestimonialForm
                     TextInput::make('company_name')->label('Doanh nghiệp')->maxLength(255),
                     TextInput::make('rating')->label('Số sao')->numeric()->minValue(1)->maxValue(5)->default(5),
                     Textarea::make('quote')->label('Nội dung phản hồi')->required()->rows(5)->columnSpanFull(),
+                    Toggle::make('is_illustrative')->label('Nội dung minh họa')->helperText('Bật khi đây chưa phải phản hồi thực tế đã được xác nhận.'),
                 ])
                 ->columns(2)->columnSpan(['default' => 1, 'lg' => 2]),
             Section::make('Hiển thị')

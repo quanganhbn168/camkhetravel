@@ -24,6 +24,16 @@ class HomepageSettings extends Settings
 
     public string $faq_description = '';
 
+    public array $fleet_types = [];
+
+    public array $tour_types = [];
+
+    public array $partner_benefits = [];
+
+    public array $partner_steps = [];
+
+    public array $commitment_items = [];
+
     public static function group(): string
     {
         return 'homepage';

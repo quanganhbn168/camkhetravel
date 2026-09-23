@@ -109,6 +109,11 @@ class ManageSettings extends Page
             'capabilities' => $homepage->capabilities,
             'faq_title' => $homepage->faq_title,
             'faq_description' => $homepage->faq_description,
+            'fleet_types' => $homepage->fleet_types,
+            'tour_types' => $homepage->tour_types,
+            'partner_benefits' => $homepage->partner_benefits,
+            'partner_steps' => $homepage->partner_steps,
+            'commitment_items' => $homepage->commitment_items,
             'company_name' => $website->company_name,
             'company_profile_media_id' => $website->company_profile_media_id,
             'tax_code' => $company->tax_code,
@@ -405,6 +410,52 @@ class ManageSettings extends Page
     private function homepageContentSchema(): array
     {
         return [
+                Section::make('Nội dung CamKheTravel')
+                    ->icon(Heroicon::OutlinedTruck)
+                    ->description('Quản lý nhóm xe, loại hình tour, lợi ích hợp tác, quy trình và cam kết hiển thị ở trang chủ.')
+                    ->schema([
+                        Repeater::make('fleet_types')
+                            ->label('Nhóm xe')
+                            ->schema([
+                                TextInput::make('code')->label('Mã nhận diện')->required()->maxLength(40),
+                                TextInput::make('title')->label('Tên nhóm xe')->required()->maxLength(120),
+                                Textarea::make('features')->label('Mô tả (mỗi dòng một ý)')->rows(3)->columnSpanFull(),
+                            ])
+                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhóm xe mới')
+                            ->addActionLabel('Thêm nhóm xe')->columnSpanFull(),
+                        Repeater::make('tour_types')
+                            ->label('Loại hình tour phục vụ')
+                            ->schema([
+                                TextInput::make('title')->label('Tên loại hình')->required()->maxLength(120),
+                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                            ])
+                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Loại hình mới')
+                            ->addActionLabel('Thêm loại hình')->columnSpanFull(),
+                        Repeater::make('partner_benefits')
+                            ->label('Lợi ích hợp tác')
+                            ->schema([
+                                TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
+                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                            ])
+                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Lợi ích mới')
+                            ->addActionLabel('Thêm lợi ích')->columnSpanFull(),
+                        Repeater::make('partner_steps')
+                            ->label('Quy trình hợp tác')
+                            ->schema([
+                                TextInput::make('title')->label('Bước')->required()->maxLength(120),
+                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                            ])
+                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
+                            ->addActionLabel('Thêm bước')->columnSpanFull(),
+                        Repeater::make('commitment_items')
+                            ->label('Cam kết dịch vụ')
+                            ->schema([
+                                TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
+                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                            ])
+                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Cam kết mới')
+                            ->addActionLabel('Thêm cam kết')->columnSpanFull(),
+                    ]),
                 Section::make('Cam kết và năng lực')
                     ->icon(Heroicon::OutlinedSparkles)
                     ->description('Mỗi dòng là một ý hiển thị trên trang chủ.')
@@ -834,6 +885,11 @@ class ManageSettings extends Page
         $homepage->capabilities = trim((string) ($data['capabilities'] ?? ''));
         $homepage->faq_title = trim((string) ($data['faq_title'] ?? ''));
         $homepage->faq_description = trim((string) ($data['faq_description'] ?? ''));
+        $homepage->fleet_types = is_array($data['fleet_types'] ?? null) ? array_values($data['fleet_types']) : [];
+        $homepage->tour_types = is_array($data['tour_types'] ?? null) ? array_values($data['tour_types']) : [];
+        $homepage->partner_benefits = is_array($data['partner_benefits'] ?? null) ? array_values($data['partner_benefits']) : [];
+        $homepage->partner_steps = is_array($data['partner_steps'] ?? null) ? array_values($data['partner_steps']) : [];
+        $homepage->commitment_items = is_array($data['commitment_items'] ?? null) ? array_values($data['commitment_items']) : [];
 
         $homepage->save();
 

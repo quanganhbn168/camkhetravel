@@ -11,35 +11,27 @@ final class MediaSeeder extends Seeder
     public function run(): void
     {
         $disk = Storage::disk('public');
+        $source = public_path('images/no-image.svg');
 
-        foreach ([
-            'hero' => 'installation-team.png', 'equipment' => 'equipment.png', 'facility' => 'facility.png',
-            'engineering' => 'engineering-team.png', 'warehouse' => 'warehouse.png', 'technician' => 'technician.png',
-            'sprinkler' => 'sprinkler-system.png', 'pump' => 'pump-room.png',
-        ] as $name => $filename) {
-            $source = base_path('resources/content/site/'.$filename);
-
-            if (! is_file($source)) {
-                continue;
-            }
-
-            $path = 'media/site/'.$filename;
-            if (! $disk->exists($path)) {
-                $disk->put($path, file_get_contents($source));
-            }
-            $dimensions = @getimagesize($disk->path($path)) ?: [null, null, 'mime' => 'image/png'];
-
-            Media::query()->firstOrCreate(['disk' => 'public', 'path' => $path], [
-                'directory' => 'media/site', 'visibility' => 'public', 'name' => pathinfo($filename, PATHINFO_FILENAME),
-                'width' => $dimensions[0] ?? null, 'height' => $dimensions[1] ?? null, 'size' => filesize($source) ?: 0,
-                'type' => $dimensions['mime'] ?? 'image/png', 'ext' => pathinfo($filename, PATHINFO_EXTENSION),
-                'alt' => 'Ảnh minh họa '.$name, 'title' => 'Ảnh minh họa '.$name,
-            ]);
+        if (! is_file($source)) {
+            throw new \RuntimeException('Thiếu ảnh mặc định public/images/no-image.svg.');
         }
+
+        $path = 'media/site/no-image.svg';
+        $disk->put($path, file_get_contents($source));
+
+        Media::query()->updateOrCreate(['disk' => 'public', 'path' => $path], [
+            'directory' => 'media/site', 'visibility' => 'public', 'name' => 'no-image',
+            'width' => 960, 'height' => 600, 'size' => filesize($source) ?: 0,
+            'type' => 'image/svg+xml', 'ext' => 'svg',
+            'alt' => 'Ảnh mặc định CamKheTravel', 'title' => 'Ảnh mặc định CamKheTravel',
+        ]);
     }
 
     public static function id(string $name): ?int
     {
-        return Media::query()->where('disk', 'public')->where('path', 'media/site/'.$name.'.png')->value('id');
+        return $name === 'no-image'
+            ? Media::query()->where('disk', 'public')->where('path', 'media/site/no-image.svg')->value('id')
+            : null;
     }
 }
