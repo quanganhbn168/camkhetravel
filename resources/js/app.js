@@ -36,6 +36,55 @@ function initialiseHeader() {
     }, { passive: true });
 }
 
+function initialiseHomeNavigation() {
+    if (!document.querySelector('[data-camkhe-home]')) return;
+
+    const header = document.querySelector('[data-site-header]');
+    const drawer = document.getElementById('mobile-drawer');
+    const links = Array.from(document.querySelectorAll('.header-nav__link, .mobile-nav__link'));
+    const samePageLinks = links.filter(link => link.origin === location.origin
+        && link.pathname === location.pathname && link.getAttribute('href') !== '#');
+    const sections = samePageLinks
+        .map(link => {
+            try {
+                return { link, section: link.hash ? document.getElementById(decodeURIComponent(link.hash.slice(1))) : null };
+            } catch {
+                return { link, section: null };
+            }
+        })
+        .filter(({ section }) => section);
+
+    if (!sections.length) return;
+
+    const setActive = hash => {
+        samePageLinks.forEach(link => {
+            const active = link.hash === hash;
+            link.classList.toggle('is-active', active);
+            if (active) link.setAttribute('aria-current', hash ? 'location' : 'page');
+            else link.removeAttribute('aria-current');
+        });
+    };
+
+    const update = () => {
+        const threshold = (header?.offsetHeight || 0) + 24;
+        let activeHash = '';
+        sections.forEach(({ link, section }) => {
+            if (section.getBoundingClientRect().top <= threshold) activeHash = link.hash;
+        });
+        setActive(activeHash);
+    };
+
+    sections.forEach(({ link }) => link.addEventListener('click', () => {
+        setActive(link.hash);
+        if (drawer?.contains(link)) Offcanvas.getInstance(drawer)?.hide();
+    }));
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('hashchange', update);
+    window.addEventListener('load', update, { once: true });
+}
+
 function initialiseScrollTop() {
     const button = document.querySelector('[data-scroll-top]');
     if (!button) return;
@@ -48,6 +97,7 @@ function initialiseScrollTop() {
 
 function initialise() {
     initialiseHeader();
+    initialiseHomeNavigation();
     initialiseScrollTop();
     const solutions = document.getElementById('giai-phap');
     const background = solutions?.querySelector('[data-solution-background]');

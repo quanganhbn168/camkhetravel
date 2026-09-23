@@ -33,6 +33,7 @@ class PublicSlugController extends Controller
             ->first()?->sluggable;
 
         $sluggable?->loadMissing('slugs');
+        $request->attributes->set('frontend.content_type', $sluggable?->getMorphClass());
 
         return match (true) {
             $sluggable instanceof Intro => redirect()->to($sluggable->url, 301),

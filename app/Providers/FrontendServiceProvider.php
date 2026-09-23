@@ -242,7 +242,7 @@ class FrontendServiceProvider extends ServiceProvider
     private function menuItemData(MenuItem $item, Collection $allItems): array
     {
         $link = $item->link;
-        $isActive = $this->menuItemMatchesCurrentRoute($item);
+        $isActive = $this->menuItemMatchesCurrentRoute($item, $link);
         $children = $allItems
             ->where('parent_id', $item->getKey())
             ->map(fn (MenuItem $child): array => $this->menuItemData($child, $allItems))
@@ -259,8 +259,45 @@ class FrontendServiceProvider extends ServiceProvider
         ];
     }
 
-    private function menuItemMatchesCurrentRoute(MenuItem $item): bool
+    private function menuItemMatchesCurrentRoute(MenuItem $item, string $link): bool
     {
+        if ($link !== '#' && ! str_starts_with($link, '#')) {
+            $parts = parse_url($link);
+
+            if ($parts !== false
+                && ! isset($parts['fragment'])
+                && (! isset($parts['host']) || strcasecmp($parts['host'], request()->getHost()) === 0)) {
+                $path = '/'.trim((string) ($parts['path'] ?? ''), '/');
+                $currentPath = '/'.trim(request()->path(), '/');
+
+                if ($path === $currentPath) {
+                    return true;
+                }
+
+                if ($path === '/dich-vu' && (request()->routeIs('services.*')
+                    || request()->attributes->get('frontend.content_type') === 'service')) {
+                    return true;
+                }
+
+                if ($path === '/blog' && (request()->routeIs('posts.*')
+                    || request()->attributes->get('frontend.content_type') === 'post')) {
+                    return true;
+                }
+
+                if ($path === '/giai-phap' && request()->routeIs('solutions.*')) {
+                    return true;
+                }
+
+                if ($path === '/du-an' && request()->routeIs('projects.*')) {
+                    return true;
+                }
+
+                if ($path === '/san-pham' && request()->routeIs('products.*')) {
+                    return true;
+                }
+            }
+        }
+
         $linkedSourceType = (string) $item->linked_source_type;
 
         if ($linkedSourceType === 'native_route') {
