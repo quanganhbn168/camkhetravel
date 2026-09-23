@@ -19,7 +19,7 @@ php artisan optimize:clear
 php artisan up
 ```
 
-Chạy lệnh từ thư mục dự án với đúng `.env` và bộ `vendor` hiện tại. Không cần cập nhật Composer/Node để sử dụng các thay đổi quản trị này; không có thay đổi dependency. Migration và seeder trên là thao tác chạy tại môi trường triển khai, không tự được chạy chỉ vì push Git.
+Chạy lần lượt từng lệnh; nếu `migrate` hoặc seeder báo lỗi thì dừng, không tiếp tục `up` trước khi xử lý. Chạy lệnh từ thư mục dự án với đúng `.env` và bộ `vendor` hiện tại. Không cần cập nhật Composer/Node để sử dụng các thay đổi quản trị này; không có thay đổi dependency. Migration và seeder trên là thao tác chạy tại môi trường triển khai, không tự được chạy chỉ vì push Git.
 
 Migrations mới giữ baseline `2026_09_22_120000_create_solutions_table.php`, tạo `solution_categories`, thêm khóa ngoại bắt buộc vào `solutions`, sau đó bỏ cột `short_title`. Bảng `slugs` dùng chung tiếp tục là nguồn slug; không thêm một cột slug thứ hai vào hai bảng nội dung.
 
@@ -45,18 +45,26 @@ Nếu đang có giải pháp cũ, migration giữ nguyên ID, tiêu đề, nội
 
 Chỉ chạy các lệnh kiểm thử trên database riêng (ví dụ `dvtec_testing`), tuyệt đối không dùng database production. Test migration thực thi DDL, tạo/xóa schema bằng `DatabaseMigrations`, nên chạy ở process riêng, không dùng transaction của `RefreshDatabase`.
 
+Khối Bash bên dưới yêu cầu đã export `APP_ENV=testing` và `DB_DATABASE=dvtec_testing` trong môi trường test riêng. Kiểm tra cả host và thông tin kết nối trỏ tới database dùng để kiểm thử. Guard đặt trước tất cả lệnh kiểm thử vì bản thân test migration cũng có thể xóa bảng. Subshell `set -eu` dừng ngay khi điều kiện hoặc một lệnh thất bại, kể cả khi dán khối này vào terminal không bật `set -e`.
+
 ```bash
-# Trong môi trường test: APP_ENV=testing, DB_DATABASE=dvtec_testing.
-# APP_TESTING_HTTP=false cho quá trình bootstrap kiểm tra migration.
-APP_TESTING_HTTP=false vendor/bin/phpunit tests/Integration/SolutionMigrationTest.php
-# Chỉ reset database test: migration settings cũ không có down().
-test "$APP_ENV" = testing && test "$DB_DATABASE" = dvtec_testing
-APP_TESTING_HTTP=false php artisan migrate:fresh --force
-APP_TESTING_HTTP=false php artisan db:seed --force
-APP_TESTING_HTTP=true vendor/bin/phpunit --filter 'Solution(Admin|CategoryAdmin|Feature)Test|ContentNavigationTest'
-APP_TESTING_HTTP=true vendor/bin/phpunit
+(
+    set -eu
+    test "${APP_ENV:-}" = testing
+    test "${DB_DATABASE:-}" = dvtec_testing
+
+    # Loại cấu hình cache cũ trước khi boot với kết nối của môi trường test.
+    APP_TESTING_HTTP=false php artisan config:clear
+    APP_TESTING_HTTP=false vendor/bin/phpunit tests/Integration/SolutionMigrationTest.php
+
+    # Chỉ reset database test: migration settings cũ không có down().
+    APP_TESTING_HTTP=false php artisan migrate:fresh --force
+    APP_TESTING_HTTP=false php artisan db:seed --force
+    APP_TESTING_HTTP=true vendor/bin/phpunit --filter 'Solution(Admin|CategoryAdmin|Feature)Test|ContentNavigationTest'
+    APP_TESTING_HTTP=true vendor/bin/phpunit
+)
 ```
 
-Trên Windows PowerShell, đặt `$env:APP_TESTING_HTTP = 'false'` hoặc `'true'` trước lệnh thay vì dùng cú pháp prefix của Bash. Bộ test HTTP sử dụng `Tests\TestCase` và fixtures của repo; suite toàn bộ cần assets đã build. Workflow `Solution admin and migration checks` tự tạo MySQL test riêng, chạy migration mới/cũ/rollback, bộ test module, rồi suite PHP toàn bộ. Workflow kiểm tra frontend/Sass hiện hữu không bị thay đổi.
+Không dán nguyên khối Bash này vào Windows PowerShell. Với PowerShell, kiểm tra môi trường test trước mọi lệnh, đặt `$env:APP_TESTING_HTTP = 'false'` hoặc `'true'` trước lệnh tương ứng, và kiểm tra `$LASTEXITCODE` sau từng lệnh để dừng khi thất bại. Bộ test HTTP sử dụng `Tests\TestCase` và fixtures của repo; suite toàn bộ cần assets đã build. Workflow `Solution admin and migration checks` tự tạo MySQL test riêng, chạy migration mới/cũ/rollback, bộ test module, rồi suite PHP toàn bộ. Workflow kiểm tra frontend/Sass hiện hữu không bị thay đổi.
 
 Rollback cấu trúc trong môi trường test/đã có sao lưu: rollback migration liên kết `solutions` trước, migration tạo danh mục sau. Mất phân loại/thiết lập danh mục là hệ quả của rollback; nội dung giải pháp và slug của giải pháp vẫn còn. Sau khi rollback phải dùng code tương ứng với schema cũ.
