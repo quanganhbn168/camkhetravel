@@ -15,6 +15,7 @@ final class MediaSeeder extends Seeder
         foreach ([
             'hero' => 'installation-team.png', 'equipment' => 'equipment.png', 'facility' => 'facility.png',
             'engineering' => 'engineering-team.png', 'warehouse' => 'warehouse.png', 'technician' => 'technician.png',
+            'sprinkler' => 'sprinkler-system.png', 'pump' => 'pump-room.png',
         ] as $name => $filename) {
             $source = base_path('resources/content/site/'.$filename);
 
@@ -23,10 +24,12 @@ final class MediaSeeder extends Seeder
             }
 
             $path = 'media/site/'.$filename;
-            $disk->put($path, file_get_contents($source));
+            if (! $disk->exists($path)) {
+                $disk->put($path, file_get_contents($source));
+            }
             $dimensions = @getimagesize($disk->path($path)) ?: [null, null, 'mime' => 'image/png'];
 
-            Media::query()->updateOrCreate(['disk' => 'public', 'path' => $path], [
+            Media::query()->firstOrCreate(['disk' => 'public', 'path' => $path], [
                 'directory' => 'media/site', 'visibility' => 'public', 'name' => pathinfo($filename, PATHINFO_FILENAME),
                 'width' => $dimensions[0] ?? null, 'height' => $dimensions[1] ?? null, 'size' => filesize($source) ?: 0,
                 'type' => $dimensions['mime'] ?? 'image/png', 'ext' => pathinfo($filename, PATHINFO_EXTENSION),

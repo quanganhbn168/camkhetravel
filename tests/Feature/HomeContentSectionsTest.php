@@ -12,6 +12,17 @@ class HomeContentSectionsTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_footer_displays_address_without_branch_name(): void
+    {
+        \Illuminate\Support\Facades\View::share('footerContactBranches', collect([
+            ['name' => 'Trụ sở chính', 'address' => 'Địa chỉ kiểm tra Bắc Ninh'],
+        ]));
+
+        $this->get(route('posts.index'))->assertOk()
+            ->assertSee('Địa chỉ kiểm tra Bắc Ninh')
+            ->assertDontSee('Trụ sở chính');
+    }
+
     public function test_home_service_image_belongs_to_category_not_service(): void
     {
         $category = \App\Models\ServiceCategory::create([

@@ -160,7 +160,7 @@
         <div class="container">
             <header class="text-center mb-5">
                 <h2 class="section-title">Giải pháp cho từng loại công trình</h2>
-                <p class="text-white-50 mt-3 mb-0 col-lg-8 mx-auto">Mỗi công trình có yêu cầu vận hành và mức độ rủi ro khác nhau. Giải pháp cần được thiết kế phù hợp ngay từ đầu.</p>
+                <p class="text-white-50 mt-3 mb-0 mx-auto">Mỗi công trình có yêu cầu vận hành và mức độ rủi ro khác nhau. Giải pháp cần được thiết kế phù hợp ngay từ đầu.</p>
             </header>
             <div class="row g-4 g-lg-5">
                 <div class="col-lg-3">

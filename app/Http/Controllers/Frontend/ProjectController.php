@@ -9,8 +9,8 @@ use App\Models\ProjectCategory;
 use App\Support\Categories\CategoryTree;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
+use App\Support\Projects\ProjectDetailContent;
 use App\Support\Seo\FrontendSeoBuilder;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -61,16 +61,17 @@ class ProjectController extends Controller
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
         $project->setAttribute('image_url', MediaUrl::resolve($project->curatorMedia));
-        $project->setAttribute('body_html', (string) $project->body);
+        $content = ProjectDetailContent::make($project);
+        $relatedIds = collect(data_get($project->details, 'related.ids', []))->filter(fn ($id) => is_numeric($id))->map(fn ($id) => (int) $id)->unique()->values();
         $relatedProjects = $this->withImages(Project::query()
             ->published()
             ->whereKeyNot($project->id)
-            ->when($project->project_category_id, fn ($query) => $query->where('project_category_id', $project->project_category_id))
+            ->whereIn('id', $relatedIds)
             ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
-            ->limit(3)
-            ->get());
+            ->limit(4)
+            ->get()->sortBy(fn ($item) => $relatedIds->search($item->id))->values());
         $faqItems = $project->faqs
             ->map(fn ($faq): array => [
                 'question' => $faq->question,
@@ -82,8 +83,8 @@ class ProjectController extends Controller
             ->values();
 
         return view('frontend.projects.show', compact('project') + [
+            'content' => $content,
             'relatedProjects' => $relatedProjects,
-            'galleryImages' => $this->galleryImages($project->gallery),
             'projectVideoUrl' => filter_var($project->video_url, FILTER_VALIDATE_URL) ? $project->video_url : null,
             'faqItems' => $faqItems,
             'ratingSummary' => [
@@ -172,29 +173,6 @@ class ProjectController extends Controller
             'title' => $query->orderBy('title'),
             default => $query->orderByDesc('published_at')->orderByDesc('id'),
         };
-    }
-
-    /** @return list<string> */
-    private function galleryImages(?array $gallery): array
-    {
-        $ids = collect($gallery ?? [])
-            ->map(fn (mixed $item): mixed => is_array($item) ? ($item['id'] ?? $item['media_id'] ?? null) : $item)
-            ->filter(fn (mixed $id): bool => is_numeric($id))
-            ->map(fn (mixed $id): int => (int) $id)
-            ->unique()
-            ->values();
-
-        if ($ids->isEmpty()) {
-            return [];
-        }
-
-        $media = Media::query()->whereKey($ids->all())->get()->keyBy('id');
-
-        return $ids
-            ->map(fn (int $id): ?string => $media->get($id)?->url)
-            ->filter()
-            ->values()
-            ->all();
     }
 
     private function withImages(iterable $projects): iterable

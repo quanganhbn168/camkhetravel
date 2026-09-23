@@ -14,11 +14,12 @@ final class ProjectSeeder extends Seeder
         $title = 'Dự án công trình mẫu';
         $excerpt = 'Hồ sơ dự án mẫu để bắt đầu quản trị nội dung.';
 
-        Project::query()->updateOrCreate(['title' => $title], [
+        Project::query()->firstOrCreate(['title' => $title], [
             'project_category_id' => $category->getKey(), 'curator_media_id' => MediaSeeder::id('facility'),
             'excerpt' => $excerpt, 'body' => '<p>'.$excerpt.'</p>', 'status' => 'published', 'is_featured' => true,
             'sort_order' => 10, 'published_at' => now(), 'completed_at' => now()->toDateString(),
             'seo_title' => $title, 'seo_description' => $excerpt, 'seo_image_media_id' => MediaSeeder::id('facility'),
         ]);
+        $this->call(ProjectDetailContentSeeder::class);
     }
 }

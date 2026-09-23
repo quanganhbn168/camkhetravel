@@ -56,7 +56,7 @@
             <h2 class="footer__heading">Thông tin liên hệ</h2>
             <div class="footer__contacts">
                 @if ($footerContactBranches->isNotEmpty())
-                    @foreach ($footerContactBranches as $branch)<p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>{{ $branch['name'] }}: {{ $branch['address'] }}</span></p>@endforeach
+                    @foreach ($footerContactBranches as $branch)<p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>{{ $branch['address'] }}</span></p>@endforeach
                 @elseif ($website->address)
                     <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>{{ $website->address }}</span></p>
                 @endif

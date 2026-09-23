@@ -4,6 +4,7 @@ import Modal from 'bootstrap/js/dist/modal';
 import Offcanvas from 'bootstrap/js/dist/offcanvas';
 import Tab from 'bootstrap/js/dist/tab';
 
+
 window.bootstrap = { Collapse, Dropdown, Modal, Offcanvas, Tab };
 
 function initialiseHeader() {
@@ -66,7 +67,7 @@ function initialise() {
         });
     }
 
-    if (document.querySelector('[data-hero-swiper], [data-post-swiper], [data-testimonial-swiper], [data-partner-swiper]')) {
+    if (document.querySelector('[data-hero-swiper], [data-post-swiper], [data-testimonial-swiper], [data-partner-swiper], [data-project-gallery], [data-project-site-swiper], [data-project-related-swiper]')) {
         void import('./frontend/sliders').then((module) => module.initialiseSliders());
     }
 

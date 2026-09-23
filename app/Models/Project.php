@@ -24,6 +24,7 @@ class Project extends Model
     {
         return [
             'gallery' => 'array',
+            'details' => 'array',
             'is_featured' => 'boolean',
             'completed_at' => 'date',
             'published_at' => 'datetime',

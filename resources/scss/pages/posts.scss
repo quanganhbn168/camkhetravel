@@ -96,6 +96,7 @@
 .blog-index .card { border-radius: .75rem; overflow: hidden; transition: box-shadow .2s; }
 .blog-index .card:hover { box-shadow: 0 10px 30px #0000000d; }
 .blog-index .card-body { padding: 1.5rem; }
+.blog-index .card-body .display-title { font-size: 1.125rem; line-height: 1.5; }
 .blog-index .post-card__image { aspect-ratio: 16 / 10; }
 .blog-card-excerpt { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .blog-categories { padding-bottom: 1.5rem; border-bottom: 1px solid var(--bs-border-color); }
