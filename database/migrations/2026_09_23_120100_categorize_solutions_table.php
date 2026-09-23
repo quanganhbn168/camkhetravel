@@ -61,8 +61,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('solutions', function (Blueprint $table): void {
+            // MySQL may use the composite index for the foreign key. Drop the constraint first.
+            $table->dropForeign(['solution_category_id']);
             $table->dropIndex('solutions_category_visibility_order_index');
-            $table->dropConstrainedForeignId('solution_category_id');
+            $table->dropColumn('solution_category_id');
             $table->string('short_title')->nullable()->after('title');
         });
     }
