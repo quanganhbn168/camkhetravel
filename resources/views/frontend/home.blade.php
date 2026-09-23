@@ -419,7 +419,7 @@
         <div class="container">
             <div class="row g-4 align-items-center">
                 <div class="col-lg-3">
-                    <h2 class="section-title">Chứng nhận · Năng lực</h2>
+                    <h2 class="section-title">Chứng chỉ - Năng lực</h2>
                     <p class="section-copy mt-3">Minh bạch hồ sơ, năng lực và tài liệu liên quan.</p>
                 </div>
                 <div class="col-lg-9">

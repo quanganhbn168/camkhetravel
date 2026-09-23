@@ -1,9 +1,12 @@
 .contact-page-hero {
-    --bs-heading-color: inherit;
+    --bs-heading-color: #fff;
+
     position: relative;
     isolation: isolate;
+
     padding-block: clamp(3rem, 7vw, 6rem);
-    color: white;
+
+    color: #fff;
     background: var(--bs-dark);
 }
 
@@ -12,8 +15,10 @@
     position: absolute;
     inset: 0;
     z-index: -1;
+
     width: 100%;
     height: 100%;
+
     object-fit: cover;
 }
 
@@ -21,59 +26,240 @@
     background: rgba(var(--bs-dark-rgb), .75);
 }
 
+
+/* Breadcrumb */
 .contact-page-hero__breadcrumb {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+
     gap: .75rem;
+
     margin-bottom: 1.5rem;
+
+    color: rgba(255, 255, 255, .8);
 }
 
-.contact-page-hero__breadcrumb a {
+.contact-page-hero__breadcrumb a,
+.contact-page-hero__breadcrumb span {
     color: inherit;
 }
 
+.contact-page-hero__breadcrumb a {
+    text-decoration: none;
+
+    transition:
+        color .2s ease,
+        opacity .2s ease;
+}
+
+.contact-page-hero__breadcrumb a:hover {
+    color: #fff;
+}
+
+.contact-page-hero__breadcrumb [aria-current="page"] {
+    color: #fff;
+    font-weight: 600;
+}
+
+
+/* Hero heading */
 .contact-page-hero h1 {
+    margin-bottom: 1rem;
+
+    color: #fff;
+
     font-size: clamp(2rem, 5vw, 4rem);
 }
 
 .contact-page-hero__intro {
     max-width: 45rem;
+
+    margin-bottom: 0;
+
+    color: rgba(255, 255, 255, .9);
+
     font-size: 1.125rem;
+    line-height: 1.7;
 }
 
+
+/* Layout */
 .contact-layout {
     display: grid;
+
     gap: 2rem;
+
     align-items: start;
 }
 
+
+/* Contact details */
 .contact-details {
     margin-bottom: 2rem;
 }
 
+.contact-details__title {
+    margin-bottom: 1.75rem;
+}
+
+.contact-details__list {
+    display: grid;
+
+    gap: 0;
+}
+
+
+/* Contact item */
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 1rem;
+
+    padding-block: 1.15rem;
+
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.contact-info-item:first-child {
+    padding-top: 0;
+}
+
+.contact-info-item__icon {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    border-radius: 50%;
+
+    color: var(--bs-primary);
+    background: rgba(var(--bs-primary-rgb), .1);
+
+    font-size: 1rem;
+}
+
+.contact-info-item__content {
+    min-width: 0;
+
+    padding-top: .1rem;
+}
+
+.contact-info-item__label {
+    margin-bottom: .25rem;
+
+    color: var(--bs-body-color);
+
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.contact-info-item__value {
+    color: var(--bs-secondary-color);
+
+    line-height: 1.65;
+}
+
+
+/* Phone */
+.contact-info-item__phones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: .5rem;
+}
+
+.contact-info-item__phones a {
+    color: var(--bs-body-color);
+
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.contact-info-item__phones a:hover {
+    color: var(--bs-primary);
+}
+
+.contact-info-item__separator {
+    color: var(--bs-secondary-color);
+}
+
+
+/* Links */
+.contact-info-item__content > a {
+    color: var(--bs-body-color);
+
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.contact-info-item__content > a:hover {
+    color: var(--bs-primary);
+}
+
+
+/* Google maps button */
+.contact-details__action {
+    padding-top: 1.5rem;
+}
+
+
+/* Map */
 .contact-page__map {
     aspect-ratio: 4 / 3;
+
     overflow: hidden;
-    border-radius: var(--bs-border-radius);
+
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius-lg);
+
     background: var(--bs-light);
 }
 
 .contact-page__map iframe {
+    display: block;
+
     width: 100%;
     height: 100%;
+
     border: 0;
 }
 
 .contact-page__map-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 100%;
+
     padding: 2rem;
+
+    color: var(--bs-secondary-color);
+    text-align: center;
 }
 
+
+/* Form */
 .contact-form {
     padding: clamp(1rem, 3vw, 2rem);
+
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius-lg);
 }
 
+.contact-form .form-control,
+.contact-form .form-select {
+    margin-top: .5rem;
+}
+
+
+/* Desktop */
 @media (min-width: 992px) {
     .contact-layout {
         grid-template-columns: 1fr 1.2fr;
