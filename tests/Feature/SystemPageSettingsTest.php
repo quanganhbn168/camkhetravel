@@ -3,9 +3,10 @@
 namespace Tests\Feature;
 
 use App\Settings\SystemPageSettings;
+use App\Settings\WebsiteSettings;
 use App\Support\Pages\SystemPageProfileResolver;
-use Database\Seeders\MediaSeeder;
 use Database\Seeders\HeroSlideSeeder;
+use Database\Seeders\MediaSeeder;
 use Database\Seeders\SystemPageSettingsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LogicException;
@@ -88,6 +89,17 @@ class SystemPageSettingsTest extends TestCase
         $this->assertNull($profile['og_image_url']);
         $this->assertNull($profile['banner_url']);
         $this->get(route('contact'))->assertOk();
+    }
+
+    public function test_contact_page_uses_the_saved_map_embed_url_without_rewriting_it(): void
+    {
+        $website = app(WebsiteSettings::class);
+        $website->google_maps_embed_url = 'https://maps.example.test/embed/raw?place=cam-khe&zoom=15';
+        $website->save();
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('https://maps.example.test/embed/raw?place=cam-khe&zoom=15');
     }
 
     public function test_every_fixed_route_uses_its_matching_profile(): void

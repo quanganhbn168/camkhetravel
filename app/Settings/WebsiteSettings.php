@@ -34,8 +34,6 @@ class WebsiteSettings extends Settings
 
     public ?int $logo_media_id = null;
 
-    public ?int $favicon_media_id = null;
-
     public ?int $seo_image_media_id = null;
 
     public ?int $company_profile_media_id = null;
@@ -51,8 +49,6 @@ class WebsiteSettings extends Settings
     public ?int $footer_background_media_id = null;
 
     public ?string $google_maps_embed_url = null;
-
-    public ?string $google_maps_url = null;
 
     public array $phones = [];
 

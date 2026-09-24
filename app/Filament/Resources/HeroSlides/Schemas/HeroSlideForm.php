@@ -2,19 +2,12 @@
 
 namespace App\Filament\Resources\HeroSlides\Schemas;
 
-use App\Support\Media\VideoMediaLibrary;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 final class HeroSlideForm
 {
@@ -43,67 +36,6 @@ final class HeroSlideForm
                     TextInput::make('secondary_url')->label('URL nút phụ')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/']),
                 ])
                 ->columns(2)->columnSpan(['default' => 1, 'lg' => 2]),
-            Section::make('Video cho slide')
-
-                ->schema([
-                    ToggleButtons::make('video_source')
-                        ->label('Nguồn video')
-                        ->options([
-                            'youtube' => 'Link YouTube',
-                            'upload' => 'Thư viện / tải video',
-                        ])
-                        ->icons([
-                            'youtube' => Heroicon::OutlinedPlayCircle,
-                            'upload' => Heroicon::OutlinedArrowUpTray,
-                        ])
-                        ->colors([
-                            'youtube' => 'danger',
-                            'upload' => 'primary',
-                        ])
-                        ->live()
-                        ->inline()
-                        ->grouped()
-                        ->columnSpanFull(),
-                    TextInput::make('video_url')
-                        ->label('Link YouTube')
-                        ->helperText('Dán link video YouTube công khai; video chỉ tải khi khách bấm Play.')
-                        ->url()
-                        ->maxLength(1024)
-                        ->required(fn ($get): bool => $get('video_source') === 'youtube')
-                        ->visible(fn ($get): bool => $get('video_source') === 'youtube')
-                        ->columnSpanFull(),
-                    CuratorPicker::make('video_media_id')
-                        ->label('Video từ thư viện media')
-                        ->relationship('videoMedia', 'id')
-                        ->disk('public')
-                        ->constrained()
-                        ->acceptedFileTypes(['video/*'])
-                        ->hintAction(Action::make('chooseLibraryVideo')
-                            ->label('Chọn video có sẵn')
-                            ->icon(Heroicon::OutlinedFilm)
-                            ->modalHeading('Chọn video từ thư viện media')
-                            ->modalSubmitActionLabel('Dùng video này')
-                            ->schema([
-                                Select::make('media_id')->label('Video trong thư viện')
-                                    ->options(fn () => VideoMediaLibrary::options())
-                                    ->getSearchResultsUsing(fn (string $search) => VideoMediaLibrary::options($search))
-                                    ->searchable()->required()
-                                    ->helperText('Chỉ hiển thị file video: MP4, WebM, MOV, M4V, AVI, MKV, MPEG, MPG, OGV.')
-                                    ->columnSpanFull(),
-                            ])
-                            ->action(function (array $data, CuratorPicker $component): void {
-                                $media = VideoMediaLibrary::query()->find($data['media_id']);
-                                if (! $media) {
-                                    throw ValidationException::withMessages(['media_id' => 'Vui lòng chọn một file video trong thư viện.']);
-                                }
-                                $component->state([(string) Str::uuid() => $media->toArray()]);
-                            }))
-                        ->helperText('Ưu tiên MP4 hoặc WebM để phát tốt trên trình duyệt.')
-                        ->required(fn ($get): bool => $get('video_source') === 'upload')
-                        ->visible(fn ($get): bool => $get('video_source') === 'upload')
-                        ->columnSpanFull(),
-                ])
-                ->columns(2),
             Section::make('Hiển thị')
 
                 ->schema([

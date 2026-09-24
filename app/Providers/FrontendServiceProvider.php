@@ -12,16 +12,15 @@ use App\Models\PostCategory;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Models\Solution;
 use App\Models\SolutionCategory;
-use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\AssignNextOrderObserver;
 use App\Observers\ContentSeoFallbackObserver;
 use App\Observers\SlugObserver;
 use App\Settings\WebsiteSettings;
-use App\Support\Branding\FaviconService;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -128,7 +127,6 @@ class FrontendServiceProvider extends ServiceProvider
                     'sizes' => MediaUrl::iconSizes($media),
                 ],
             ]),
-            'faviconLinks' => app(FaviconService::class)->links(),
             'seo' => app(FrontendSeoBuilder::class)->default(),
             'footerContactPhones' => $this->phoneLinks($website),
             'footerContactBranches' => $this->contactBranches($website),

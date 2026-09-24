@@ -12,17 +12,9 @@ use App\Http\Controllers\Frontend\ServiceController;
 use App\Http\Controllers\Frontend\SolutionsController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\SeoController;
-use App\Support\Branding\FaviconService;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/bai-gioi-thieu/{slug}', IntroController::class)->name('intros.show');
-
-Route::get('/favicon.ico', function (FaviconService $favicons) {
-    return response()->file($favicons->primaryPath(), [
-        'Content-Type' => $favicons->primaryMimeType(),
-        'Cache-Control' => 'public, max-age=604800',
-    ]);
-});
 
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');

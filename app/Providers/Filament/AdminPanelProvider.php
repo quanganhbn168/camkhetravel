@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\AdminDashboard;
 use App\Settings\WebsiteSettings;
-use App\Support\Branding\FaviconService;
 use App\Support\Media\MediaUrl;
 use Awcodes\Curator\CuratorPlugin;
 use Awcodes\Curator\Models\Media;
@@ -17,7 +16,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -42,12 +40,7 @@ class AdminPanelProvider extends PanelProvider
                 return MediaUrl::versioned(Media::query()->find($website->logo_media_id));
             })
             ->brandLogoHeight('2.5rem')
-            ->favicon(fn (): string => app(FaviconService::class)->primaryUrl())
-            ->renderHook(PanelsRenderHook::HEAD_END, function (): string {
-                return view('filament.partials.favicon', [
-                    'faviconLinks' => app(FaviconService::class)->links(),
-                ])->render();
-            })
+            ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::Orange,
             ])

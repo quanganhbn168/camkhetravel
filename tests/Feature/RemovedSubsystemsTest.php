@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RemovedSubsystemsTest extends TestCase
@@ -90,6 +90,25 @@ class RemovedSubsystemsTest extends TestCase
         $this->assertFalse(Schema::hasColumn('services', 'projects_title'));
 
         foreach (['Models/Project.php', 'Models/ProjectCategory.php', 'Filament/Resources/Projects/ProjectResource.php', 'Filament/Resources/ProjectCategories/ProjectCategoryResource.php'] as $removedFile) {
+            $this->assertFileDoesNotExist(app_path($removedFile));
+        }
+    }
+
+    public function test_unused_dynamic_support_features_are_removed(): void
+    {
+        foreach (['video_source', 'video_url', 'video_media_id'] as $column) {
+            $this->assertFalse(Schema::hasColumn('hero_slides', $column));
+        }
+
+        foreach ([
+            'Console/Commands/SyncFaviconAssetsCommand.php',
+            'Support/Branding/FaviconService.php',
+            'Support/Maps/GoogleMapsEmbedRule.php',
+            'Support/Maps/GoogleMapsShareResolver.php',
+            'Support/Maps/GoogleMapsUrl.php',
+            'Support/Media/VideoMediaLibrary.php',
+            'Support/Seo/SeoMetadata.php',
+        ] as $removedFile) {
             $this->assertFileDoesNotExist(app_path($removedFile));
         }
     }

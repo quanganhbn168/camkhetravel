@@ -139,22 +139,6 @@
                         @endif
 
 
-                        {{-- GOOGLE MAPS --}}
-                        @if ($googleMapsUrl)
-                            <div class="contact-details__action">
-                                <a
-                                    class="btn btn-primary"
-                                    href="{{ $googleMapsUrl }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <i class="fa-solid fa-map-location-dot me-2"></i>
-                                    Mở Google Maps
-                                    <i class="fa-solid fa-arrow-up-right-from-square ms-2"></i>
-                                </a>
-                            </div>
-                        @endif
-
                     </div>
                 </aside>
 

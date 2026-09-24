@@ -11,13 +11,8 @@ use App\Settings\CompanySettings;
 use App\Settings\HomepageSettings;
 use App\Settings\SystemPageSettings;
 use App\Settings\WebsiteSettings;
-use App\Support\Branding\FaviconService;
-use App\Support\Maps\GoogleMapsShareResolver;
-use App\Support\Maps\GoogleMapsUrl;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
-use Awcodes\Curator\Models\Media;
 use BackedEnum;
-use ErrorException;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -37,8 +32,6 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Validation\ValidationException;
-use RuntimeException;
 use UnitEnum;
 
 class ManageSettings extends Page
@@ -81,7 +74,6 @@ class ManageSettings extends Page
             'site_name' => $website->site_name,
             'tagline' => $website->tagline,
             'logo_media_id' => $website->logo_media_id,
-            'favicon_media_id' => $website->favicon_media_id,
             'contact_email' => $website->contact_email,
             'hotline' => $website->hotline,
             'contact_phone' => $website->contact_phone,
@@ -89,7 +81,6 @@ class ManageSettings extends Page
             'phones' => $this->contactPhonesForForm($website),
             'branches' => $this->contactBranchesForForm($website),
             'google_maps_embed_url' => $website->google_maps_embed_url,
-            'google_maps_url' => $website->google_maps_url,
             'facebook_url' => $website->facebook_url,
             'zalo_url' => $website->zalo_url,
             'youtube_url' => $website->youtube_url,
@@ -210,12 +201,10 @@ class ManageSettings extends Page
         CompanySettings $company,
         AboutSettings $about,
         SystemPageSettings $systemPages,
-        FaviconService $favicons,
-        GoogleMapsShareResolver $maps,
     ): void {
         $data = $this->settingsFormData();
 
-        $this->saveWebsite($website, $data, $favicons, $maps);
+        $this->saveWebsite($website, $data);
         $this->saveHomepage($homepage, $data);
         $this->saveCompany($company, $data);
         $this->saveAbout($about, $data);
@@ -235,17 +224,11 @@ class ManageSettings extends Page
         return [
             Section::make('Nhận diện website')
                 ->icon(Heroicon::OutlinedPhoto)
-                ->description('Tên website, logo và favicon được dùng xuyên suốt frontend lẫn khu quản trị.')
+                ->description('Tên website và logo được dùng xuyên suốt frontend lẫn khu quản trị.')
                 ->schema([
                     TextInput::make('site_name')->label('Tên website')->required()->maxLength(255),
                     TextInput::make('tagline')->label('Tagline')->maxLength(255),
                     CuratorPicker::make('logo_media_id')->label('Logo')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
-                    CuratorPicker::make('favicon_media_id')
-                        ->label('Favicon nguồn')
-                        ->disk('public')
-                        ->constrained()
-                        ->acceptedFileTypes(['image/*'])
-                        ->helperText('Khi lưu, hệ thống chuyển đổi file upload và ghi đè trực tiếp bộ favicon cố định trong public.'),
                 ])
                 ->columns(2),
             Section::make('Banner')
@@ -332,17 +315,10 @@ class ManageSettings extends Page
                         ->itemLabel(fn (array $state): ?string => $state['name'] ?? 'Địa điểm mới')
                         ->columnSpanFull(),
                     Textarea::make('google_maps_embed_url')
-                        ->label('Google Maps embed URL')
-                        ->helperText('Dán URL embed hoặc nguyên thẻ <iframe>. Nếu chỉ có link share bên dưới, hệ thống sẽ lấy tọa độ từ link khi lưu và tạo embed cố định.')
-                        ->rules([GoogleMapsUrl::embedValidationRule()])
-                        ->maxLength(10000)
-                        ->rows(5)
-                        ->columnSpanFull(),
-                    TextInput::make('google_maps_url')
-                        ->label('Google Maps link')
-                        ->helperText('Link chia sẻ để khách mở vị trí trên Google Maps, ví dụ https://maps.app.goo.gl/M1iQjB52X9NqzBYd7.')
-                        ->url()
+                        ->label('URL nhúng Google Maps')
+                        ->helperText('Dán trực tiếp URL trong thuộc tính src của iframe Google Maps.')
                         ->maxLength(2048)
+                        ->rows(3)
                         ->columnSpanFull(),
                     TextInput::make('facebook_url')->label('Facebook')->url()->maxLength(2048),
                     TextInput::make('zalo_url')->label('Zalo')->url()->maxLength(2048),
@@ -409,81 +385,81 @@ class ManageSettings extends Page
     private function homepageContentSchema(): array
     {
         return [
-                Section::make('Nội dung CamKheTravel')
-                    ->icon(Heroicon::OutlinedTruck)
-                    ->description('Quản lý nhóm xe, loại hình tour, lợi ích hợp tác, quy trình và cam kết hiển thị ở trang chủ.')
-                    ->schema([
-                        Repeater::make('fleet_types')
-                            ->label('Nhóm xe')
-                            ->schema([
-                                TextInput::make('code')->label('Mã nhận diện')->required()->maxLength(40),
-                                TextInput::make('title')->label('Tên nhóm xe')->required()->maxLength(120),
-                                Textarea::make('features')->label('Mô tả (mỗi dòng một ý)')->rows(3)->columnSpanFull(),
-                            ])
-                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhóm xe mới')
-                            ->addActionLabel('Thêm nhóm xe')->columnSpanFull(),
-                        Repeater::make('tour_types')
-                            ->label('Loại hình tour phục vụ')
-                            ->schema([
-                                TextInput::make('title')->label('Tên loại hình')->required()->maxLength(120),
-                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
-                            ])
-                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Loại hình mới')
-                            ->addActionLabel('Thêm loại hình')->columnSpanFull(),
-                        Repeater::make('partner_benefits')
-                            ->label('Lợi ích hợp tác')
-                            ->schema([
-                                TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
-                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
-                            ])
-                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Lợi ích mới')
-                            ->addActionLabel('Thêm lợi ích')->columnSpanFull(),
-                        Repeater::make('partner_steps')
-                            ->label('Quy trình hợp tác')
-                            ->schema([
-                                TextInput::make('title')->label('Bước')->required()->maxLength(120),
-                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
-                            ])
-                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
-                            ->addActionLabel('Thêm bước')->columnSpanFull(),
-                        Repeater::make('commitment_items')
-                            ->label('Cam kết dịch vụ')
-                            ->schema([
-                                TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
-                                Textarea::make('description')->label('Mô tả')->rows(2)->required(),
-                            ])
-                            ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Cam kết mới')
-                            ->addActionLabel('Thêm cam kết')->columnSpanFull(),
-                    ]),
-                Section::make('Cam kết và năng lực')
-                    ->icon(Heroicon::OutlinedSparkles)
-                    ->description('Mỗi dòng là một ý hiển thị trên trang chủ.')
-                    ->schema([
-                        Textarea::make('commitments')->label('Cam kết')->rows(5),
-                        Textarea::make('capabilities')->label('Năng lực')->rows(5),
-                    ])
-                    ->columns(2),
-                Section::make('Câu hỏi thường gặp')
-                    ->icon(Heroicon::OutlinedQuestionMarkCircle)
-                    ->description('Câu hỏi được quản lý riêng tại mục “Câu hỏi thường gặp”.')
-                    ->schema([
-                        TextInput::make('faq_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
-                        Textarea::make('faq_description')->label('Mô tả')->rows(2)->columnSpanFull(),
-                    ]),
+            Section::make('Nội dung CamKheTravel')
+                ->icon(Heroicon::OutlinedTruck)
+                ->description('Quản lý nhóm xe, loại hình tour, lợi ích hợp tác, quy trình và cam kết hiển thị ở trang chủ.')
+                ->schema([
+                    Repeater::make('fleet_types')
+                        ->label('Nhóm xe')
+                        ->schema([
+                            TextInput::make('code')->label('Mã nhận diện')->required()->maxLength(40),
+                            TextInput::make('title')->label('Tên nhóm xe')->required()->maxLength(120),
+                            Textarea::make('features')->label('Mô tả (mỗi dòng một ý)')->rows(3)->columnSpanFull(),
+                        ])
+                        ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhóm xe mới')
+                        ->addActionLabel('Thêm nhóm xe')->columnSpanFull(),
+                    Repeater::make('tour_types')
+                        ->label('Loại hình tour phục vụ')
+                        ->schema([
+                            TextInput::make('title')->label('Tên loại hình')->required()->maxLength(120),
+                            Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                        ])
+                        ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Loại hình mới')
+                        ->addActionLabel('Thêm loại hình')->columnSpanFull(),
+                    Repeater::make('partner_benefits')
+                        ->label('Lợi ích hợp tác')
+                        ->schema([
+                            TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
+                            Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                        ])
+                        ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Lợi ích mới')
+                        ->addActionLabel('Thêm lợi ích')->columnSpanFull(),
+                    Repeater::make('partner_steps')
+                        ->label('Quy trình hợp tác')
+                        ->schema([
+                            TextInput::make('title')->label('Bước')->required()->maxLength(120),
+                            Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                        ])
+                        ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
+                        ->addActionLabel('Thêm bước')->columnSpanFull(),
+                    Repeater::make('commitment_items')
+                        ->label('Cam kết dịch vụ')
+                        ->schema([
+                            TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
+                            Textarea::make('description')->label('Mô tả')->rows(2)->required(),
+                        ])
+                        ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Cam kết mới')
+                        ->addActionLabel('Thêm cam kết')->columnSpanFull(),
+                ]),
+            Section::make('Cam kết và năng lực')
+                ->icon(Heroicon::OutlinedSparkles)
+                ->description('Mỗi dòng là một ý hiển thị trên trang chủ.')
+                ->schema([
+                    Textarea::make('commitments')->label('Cam kết')->rows(5),
+                    Textarea::make('capabilities')->label('Năng lực')->rows(5),
+                ])
+                ->columns(2),
+            Section::make('Câu hỏi thường gặp')
+                ->icon(Heroicon::OutlinedQuestionMarkCircle)
+                ->description('Câu hỏi được quản lý riêng tại mục “Câu hỏi thường gặp”.')
+                ->schema([
+                    TextInput::make('faq_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                    Textarea::make('faq_description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                ]),
         ];
     }
 
     private function homepageIntroSchema(): array
     {
         return [
-                Textarea::make('about_title')
-                    ->label('Mô tả ngắn')
-                    ->rows(3)
-                    ->columnSpanFull(),
-                Textarea::make('about_content')
-                    ->label('Nội dung chi tiết')
-                    ->rows(4)
-                    ->columnSpanFull(),
+            Textarea::make('about_title')
+                ->label('Mô tả ngắn')
+                ->rows(3)
+                ->columnSpanFull(),
+            Textarea::make('about_content')
+                ->label('Nội dung chi tiết')
+                ->rows(4)
+                ->columnSpanFull(),
         ];
     }
 
@@ -595,134 +571,134 @@ class ManageSettings extends Page
     private function aboutContentSchema(): array
     {
         return [
-                Section::make('Mở đầu trang giới thiệu')
-                    ->icon(Heroicon::OutlinedDocumentText)
-                    ->description('Nhập nội dung quản trị trực tiếp cho trang giới thiệu.')
-                    ->schema([
-                        Textarea::make('page_intro')->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
-                    ])
-                    ->columns(1),
-                Section::make('Câu chuyện doanh nghiệp')
-                    ->icon(Heroicon::OutlinedInformationCircle)
-                    ->schema([
-                        TextInput::make('story_title')
-                            ->label('Tiêu đề khối câu chuyện')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        RichEditor::make('story')
-                            ->label('Nội dung câu chuyện')
-                            ->plugins([ScopedAttachCuratorMediaPlugin::make()])
-                            ->enableToolbarButtons(['attachCuratorMedia'])
-                            ->disableToolbarButtons(['attachFiles'])
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(1),
-                Section::make('Sứ mệnh, tầm nhìn và giá trị')
-                    ->icon(Heroicon::OutlinedSparkles)
-                    ->schema([
-                        TextInput::make('principles_title')
-                            ->label('Tiêu đề khối')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Textarea::make('mission')->label('Sứ mệnh')->rows(4),
-                        Textarea::make('vision')->label('Tầm nhìn')->rows(4),
-                        RichEditor::make('core_values')
-                            ->label('Giá trị cốt lõi')
-                            ->plugins([ScopedAttachCuratorMediaPlugin::make()])
-                            ->enableToolbarButtons(['attachCuratorMedia'])
-                            ->disableToolbarButtons(['attachFiles'])
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2),
-                Section::make('Lịch sử hình thành')
-                    ->icon(Heroicon::OutlinedClock)
-                    ->description('Có thể dùng nội dung lịch sử đơn hoặc danh sách mốc. Mỗi mốc gồm năm, ảnh nguồn từ Curator, tiêu đề và mô tả.')
-                    ->schema([
-                        TextInput::make('history_title')
-                            ->label('Tiêu đề khối')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Textarea::make('history_description')
-                            ->label('Mô tả khối')
-                            ->rows(3)
-                            ->columnSpanFull(),
-                        Textarea::make('history')
-                            ->label('Nội dung lịch sử đơn')
-                            ->helperText('Chỉ dùng khi không có danh sách mốc bên dưới.')
-                            ->rows(5)
-                            ->columnSpanFull(),
-                        Repeater::make('history_timeline')
-                            ->label('Các mốc lịch sử')
-                            ->schema([
-                                TextInput::make('year')
-                                    ->label('Năm')
-                                    ->required()
-                                    ->maxLength(30),
-                                CuratorPicker::make('media_id')
-                                    ->label('Hình ảnh')
-                                    ->disk('public')
-                                    ->constrained()
-                                    ->acceptedFileTypes(['image/*']),
-                                TextInput::make('title')
-                                    ->label('Tiêu đề')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->columnSpanFull(),
-                                Textarea::make('description')
-                                    ->label('Mô tả')
-                                    ->required()
-                                    ->rows(4)
-                                    ->columnSpanFull(),
-                            ])
-                            ->columns(2)
-                            ->defaultItems(0)
-                            ->addActionLabel('Thêm mốc lịch sử')
-                            ->reorderable()
-                            ->collapsible()
-                            ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title'] ?? '')))
-                            ->columnSpanFull(),
-                    ]),
-                Section::make('Dịch vụ và số liệu')
-                    ->icon(Heroicon::OutlinedChartBar)
-                    ->description('Các dịch vụ lấy từ danh sách dịch vụ đã xuất bản; tại đây chỉ nhập tiêu đề của khối và tiêu đề liên kết.')
-                    ->schema([
-                        TextInput::make('services_title')
-                            ->label('Tiêu đề khối dịch vụ')
-                            ->maxLength(255),
-                        TextInput::make('services_link_label')
-                            ->label('Nhãn liên kết xem dịch vụ')
-                            ->maxLength(255),
-                        TextInput::make('stats_title')
-                            ->label('Tiêu đề khối số liệu')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(2),
-                Section::make('Văn phòng doanh nghiệp')
-                    ->icon(Heroicon::OutlinedBuildingOffice2)
-                    ->schema([
-                        TextInput::make('office_title')
-                            ->label('Tiêu đề khối')
-                            ->maxLength(255)
-                            ->columnSpanFull(),
-                        Textarea::make('office_description')
-                            ->label('Mô tả')
-                            ->rows(3)
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(1),
-                Section::make('Kêu gọi liên hệ')
-                    ->icon(Heroicon::OutlinedPhone)
-                    ->description('Nếu để trống, khối kêu gọi liên hệ sẽ không hiển thị trên trang giới thiệu.')
-                    ->schema([
-                        TextInput::make('cta_title')
-                            ->label('Tiêu đề kêu gọi liên hệ')
-                            ->maxLength(255),
-                        TextInput::make('cta_button_label')
-                            ->label('Nhãn nút liên hệ')
-                            ->maxLength(255),
-                    ])
-                    ->columns(2),
+            Section::make('Mở đầu trang giới thiệu')
+                ->icon(Heroicon::OutlinedDocumentText)
+                ->description('Nhập nội dung quản trị trực tiếp cho trang giới thiệu.')
+                ->schema([
+                    Textarea::make('page_intro')->label('Mô tả mở đầu')->rows(3)->columnSpanFull(),
+                ])
+                ->columns(1),
+            Section::make('Câu chuyện doanh nghiệp')
+                ->icon(Heroicon::OutlinedInformationCircle)
+                ->schema([
+                    TextInput::make('story_title')
+                        ->label('Tiêu đề khối câu chuyện')
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    RichEditor::make('story')
+                        ->label('Nội dung câu chuyện')
+                        ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                        ->enableToolbarButtons(['attachCuratorMedia'])
+                        ->disableToolbarButtons(['attachFiles'])
+                        ->columnSpanFull(),
+                ])
+                ->columns(1),
+            Section::make('Sứ mệnh, tầm nhìn và giá trị')
+                ->icon(Heroicon::OutlinedSparkles)
+                ->schema([
+                    TextInput::make('principles_title')
+                        ->label('Tiêu đề khối')
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    Textarea::make('mission')->label('Sứ mệnh')->rows(4),
+                    Textarea::make('vision')->label('Tầm nhìn')->rows(4),
+                    RichEditor::make('core_values')
+                        ->label('Giá trị cốt lõi')
+                        ->plugins([ScopedAttachCuratorMediaPlugin::make()])
+                        ->enableToolbarButtons(['attachCuratorMedia'])
+                        ->disableToolbarButtons(['attachFiles'])
+                        ->columnSpanFull(),
+                ])
+                ->columns(2),
+            Section::make('Lịch sử hình thành')
+                ->icon(Heroicon::OutlinedClock)
+                ->description('Có thể dùng nội dung lịch sử đơn hoặc danh sách mốc. Mỗi mốc gồm năm, ảnh nguồn từ Curator, tiêu đề và mô tả.')
+                ->schema([
+                    TextInput::make('history_title')
+                        ->label('Tiêu đề khối')
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    Textarea::make('history_description')
+                        ->label('Mô tả khối')
+                        ->rows(3)
+                        ->columnSpanFull(),
+                    Textarea::make('history')
+                        ->label('Nội dung lịch sử đơn')
+                        ->helperText('Chỉ dùng khi không có danh sách mốc bên dưới.')
+                        ->rows(5)
+                        ->columnSpanFull(),
+                    Repeater::make('history_timeline')
+                        ->label('Các mốc lịch sử')
+                        ->schema([
+                            TextInput::make('year')
+                                ->label('Năm')
+                                ->required()
+                                ->maxLength(30),
+                            CuratorPicker::make('media_id')
+                                ->label('Hình ảnh')
+                                ->disk('public')
+                                ->constrained()
+                                ->acceptedFileTypes(['image/*']),
+                            TextInput::make('title')
+                                ->label('Tiêu đề')
+                                ->required()
+                                ->maxLength(255)
+                                ->columnSpanFull(),
+                            Textarea::make('description')
+                                ->label('Mô tả')
+                                ->required()
+                                ->rows(4)
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2)
+                        ->defaultItems(0)
+                        ->addActionLabel('Thêm mốc lịch sử')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn (array $state): string => trim(($state['year'] ?? 'Mốc mới').' — '.($state['title'] ?? '')))
+                        ->columnSpanFull(),
+                ]),
+            Section::make('Dịch vụ và số liệu')
+                ->icon(Heroicon::OutlinedChartBar)
+                ->description('Các dịch vụ lấy từ danh sách dịch vụ đã xuất bản; tại đây chỉ nhập tiêu đề của khối và tiêu đề liên kết.')
+                ->schema([
+                    TextInput::make('services_title')
+                        ->label('Tiêu đề khối dịch vụ')
+                        ->maxLength(255),
+                    TextInput::make('services_link_label')
+                        ->label('Nhãn liên kết xem dịch vụ')
+                        ->maxLength(255),
+                    TextInput::make('stats_title')
+                        ->label('Tiêu đề khối số liệu')
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                ])
+                ->columns(2),
+            Section::make('Văn phòng doanh nghiệp')
+                ->icon(Heroicon::OutlinedBuildingOffice2)
+                ->schema([
+                    TextInput::make('office_title')
+                        ->label('Tiêu đề khối')
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    Textarea::make('office_description')
+                        ->label('Mô tả')
+                        ->rows(3)
+                        ->columnSpanFull(),
+                ])
+                ->columns(1),
+            Section::make('Kêu gọi liên hệ')
+                ->icon(Heroicon::OutlinedPhone)
+                ->description('Nếu để trống, khối kêu gọi liên hệ sẽ không hiển thị trên trang giới thiệu.')
+                ->schema([
+                    TextInput::make('cta_title')
+                        ->label('Tiêu đề kêu gọi liên hệ')
+                        ->maxLength(255),
+                    TextInput::make('cta_button_label')
+                        ->label('Nhãn nút liên hệ')
+                        ->maxLength(255),
+                ])
+                ->columns(2),
         ];
     }
 
@@ -739,24 +715,8 @@ class ManageSettings extends Page
     }
 
     /** @param array<string, mixed> $data */
-    private function saveWebsite(WebsiteSettings $website, array $data, FaviconService $favicons, GoogleMapsShareResolver $maps): void
+    private function saveWebsite(WebsiteSettings $website, array $data): void
     {
-        $faviconId = filled($data['favicon_media_id'] ?? null) ? (int) $data['favicon_media_id'] : null;
-        if ($faviconId !== $website->favicon_media_id && $faviconId !== null) {
-            try {
-                $media = Media::query()->find($faviconId);
-                if (! $media) {
-                    throw new RuntimeException('Không tìm thấy favicon đã chọn trong kho media.');
-                }
-                $favicons->sync($media);
-            } catch (RuntimeException|ErrorException $exception) {
-                report($exception);
-                throw ValidationException::withMessages([
-                    'data.favicon_media_id' => 'Chưa lưu được favicon. Kiểm tra file nguồn và quyền ghi bộ favicon trong public, sau đó lưu lại.',
-                ]);
-            }
-        }
-
         foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
@@ -768,13 +728,11 @@ class ManageSettings extends Page
         $website->address = collect($website->branches)->firstWhere('is_active', true)['address']
             ?? ($website->branches[0]['address'] ?? '');
 
-        $website->google_maps_url = filled($data['google_maps_url'] ?? null)
-            ? trim((string) $data['google_maps_url'])
+        $website->google_maps_embed_url = filled($data['google_maps_embed_url'] ?? null)
+            ? trim((string) $data['google_maps_embed_url'])
             : null;
-        $website->google_maps_embed_url = GoogleMapsUrl::normalizeEmbed($data['google_maps_embed_url'] ?? null)
-            ?? $maps->resolveEmbed($website->google_maps_url);
 
-        foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id'] as $key) {
+        foreach (['logo_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id'] as $key) {
             $website->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 
@@ -1016,5 +974,4 @@ class ManageSettings extends Page
 
         $settings->save();
     }
-
 }

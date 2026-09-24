@@ -6,11 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
-use App\Support\Maps\GoogleMapsUrl;
-use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
-use Awcodes\Curator\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,11 +25,6 @@ class ContactController extends Controller
     public function index(Request $request): View
     {
         $page = $this->systemPages->require('contact');
-        $googleMapsEmbedUrl = GoogleMapsUrl::normalizeEmbed($this->website->google_maps_embed_url);
-
-        if ($googleMapsEmbedUrl === null && filled($this->website->address)) {
-            $googleMapsEmbedUrl = 'https://www.google.com/maps?q='.rawurlencode($this->website->address).'&output=embed';
-        }
 
         return view('frontend.contact', [
             'prefilledMessage' => '',
@@ -41,10 +33,9 @@ class ContactController extends Controller
             'contactBranches' => $this->contactBranches(),
             'page' => $page,
             'pageBannerUrl' => $page['banner_url'],
-            'googleMapsUrl' => filled($this->website->google_maps_url)
-                ? trim($this->website->google_maps_url)
+            'googleMapsEmbedUrl' => filled($this->website->google_maps_embed_url)
+                ? trim($this->website->google_maps_embed_url)
                 : null,
-            'googleMapsEmbedUrl' => $googleMapsEmbedUrl,
             'seo' => $this->seo->systemPage($page, 'contact'),
         ]);
     }

@@ -24,7 +24,6 @@ final class WebsiteSettingsSeeder extends Seeder
             'seo_description' => 'Dịch vụ xe du lịch, xe hợp đồng và tư vấn phương tiện theo lịch trình.',
             'seo_keywords' => 'CamKheTravel, xe du lịch, xe hợp đồng, hành trình du lịch',
             'logo_media_id' => null,
-            'favicon_media_id' => null,
             'seo_image_media_id' => null,
             'company_profile_media_id' => null,
             'about_image_media_id' => null,
@@ -33,7 +32,6 @@ final class WebsiteSettingsSeeder extends Seeder
             'footer_menu_id' => null,
             'footer_background_media_id' => null,
             'google_maps_embed_url' => null,
-            'google_maps_url' => null,
             'phones' => [],
             'branches' => [],
         ]);

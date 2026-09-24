@@ -11,9 +11,6 @@ return new class extends Migration
         Schema::create('hero_slides', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('curator_media_id')->nullable()->constrained('curator')->nullOnDelete();
-            $table->string('video_source', 20)->nullable();
-            $table->string('video_url', 1024)->nullable();
-            $table->foreignId('video_media_id')->nullable()->constrained('curator')->nullOnDelete();
             $table->string('title')->nullable();
             $table->text('description')->nullable();
             $table->string('primary_label')->nullable();
