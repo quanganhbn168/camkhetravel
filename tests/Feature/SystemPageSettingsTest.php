@@ -25,11 +25,11 @@ class SystemPageSettingsTest extends TestCase
         ]);
     }
 
-    public function test_the_six_fixed_system_page_profiles_are_seeded_with_required_seo(): void
+    public function test_fixed_system_page_profiles_are_seeded_with_required_seo(): void
     {
         $settings = app(SystemPageSettings::class);
 
-        foreach (['home', 'about', 'services', 'solutions', 'contact', 'projects'] as $key) {
+        foreach (['home', 'about', 'services', 'solutions', 'contact'] as $key) {
             $profile = $settings->{$key};
 
             $this->assertNotEmpty($profile['title'] ?? null, $key.' thiếu title.');
@@ -38,25 +38,6 @@ class SystemPageSettingsTest extends TestCase
             $this->assertIsInt($profile['og_image_media_id'] ?? null, $key.' thiếu og_image_media_id.');
             $this->assertArrayHasKey('banner_media_id', $profile, $key.' thiếu banner_media_id.');
         }
-    }
-
-    public function test_projects_route_uses_the_projects_profile_and_does_not_fallback_a_missing_banner(): void
-    {
-        $settings = app(SystemPageSettings::class);
-        $settings->projects = [
-            ...$settings->projects,
-            'title' => 'Hồ sơ trang dự án riêng',
-            'seo_title' => 'SEO dự án riêng',
-            'banner_media_id' => null,
-        ];
-        $settings->save();
-
-        $this->get(route('projects.index'))
-            ->assertOk()
-            ->assertSee('data-system-page="projects"', false)
-            ->assertSee('<title>SEO dự án riêng</title>', false)
-            ->assertSee('Hồ sơ trang dự án riêng')
-            ->assertDontSee('data-page-banner-image', false);
     }
 
     public function test_solutions_route_uses_its_own_profile(): void
@@ -92,19 +73,21 @@ class SystemPageSettingsTest extends TestCase
         app(SystemPageProfileResolver::class)->require('contact');
     }
 
-    public function test_a_configured_but_missing_banner_is_reported_instead_of_being_ignored(): void
+    public function test_missing_system_page_media_falls_back_without_crashing_the_public_page(): void
     {
         $settings = app(SystemPageSettings::class);
-        $settings->projects = [
-            ...$settings->projects,
+        $settings->contact = [
+            ...$settings->contact,
+            'og_image_media_id' => 999998,
             'banner_media_id' => 999999,
         ];
         $settings->save();
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('system_pages.projects.banner_media_id');
+        $profile = app(SystemPageProfileResolver::class)->require('contact');
 
-        app(SystemPageProfileResolver::class)->require('projects');
+        $this->assertNull($profile['og_image_url']);
+        $this->assertNull($profile['banner_url']);
+        $this->get(route('contact'))->assertOk();
     }
 
     public function test_every_fixed_route_uses_its_matching_profile(): void
@@ -116,7 +99,6 @@ class SystemPageSettingsTest extends TestCase
             'services' => 'services.index',
             'solutions' => 'solutions.index',
             'contact' => 'contact',
-            'projects' => 'projects.index',
         ];
 
         foreach ($routes as $key => $routeName) {
@@ -128,11 +110,14 @@ class SystemPageSettingsTest extends TestCase
         $settings->save();
 
         foreach ($routes as $key => $routeName) {
-            $this->get(route($routeName))
+            $response = $this->get(route($routeName))
                 ->assertOk()
                 ->assertSee('data-system-page="'.$key.'"', false)
-                ->assertSee('<title>SEO '.$key.'</title>', false)
-                ->assertSee('Tiêu đề '.$key);
+                ->assertSee('<title>SEO '.$key.'</title>', false);
+
+            if ($key !== 'home') {
+                $response->assertSee('Tiêu đề '.$key);
+            }
         }
     }
 
@@ -140,7 +125,7 @@ class SystemPageSettingsTest extends TestCase
     {
         $this->seed(HeroSlideSeeder::class);
 
-        $bannerId = MediaSeeder::id('facility');
+        $bannerId = MediaSeeder::id('no-image');
         $settings = app(SystemPageSettings::class);
         $settings->home = [
             ...$settings->home,

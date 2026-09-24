@@ -6,8 +6,6 @@ use App\Filament\Resources\Menus\Schemas\MenuForm;
 use App\Models\Intro;
 use App\Models\Post;
 use App\Models\PostCategory;
-use App\Models\Project;
-use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use Filament\Forms\Components\Repeater;
@@ -116,8 +114,6 @@ trait InteractsWithMenuBuilder
             'intro' => Intro::query()->published()->find($sourceId),
             'service' => Service::query()->published()->find($sourceId),
             'service_category' => ServiceCategory::query()->where('is_active', true)->find($sourceId),
-            'project' => Project::query()->published()->find($sourceId),
-            'project_category' => ProjectCategory::query()->where('is_active', true)->find($sourceId),
             'post' => Post::query()->published()->find($sourceId),
             'post_category' => PostCategory::query()->where('is_active', true)->find($sourceId),
             default => null,

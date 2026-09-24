@@ -16,7 +16,6 @@ class SystemPageSettings extends Settings
 
     public array $contact = [];
 
-    public array $projects = [];
 
     public static function group(): string
     {

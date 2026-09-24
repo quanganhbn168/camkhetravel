@@ -22,7 +22,7 @@ class TagResource extends Resource
 
     protected static ?string $navigationLabel = 'Thẻ nội dung';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 9;
 
     public static function getNavigationGroup(): ?string
     {

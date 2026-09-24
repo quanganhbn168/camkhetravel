@@ -19,7 +19,6 @@ final class FaqsTable
                 TextColumn::make('faqable_type')->label('Phạm vi')->formatStateUsing(fn (?string $state): string => match ($state) {
                     null, '' => 'Trang chủ',
                     'service' => 'Dịch vụ',
-                    'project' => 'Dự án',
                     'product' => 'Sản phẩm',
                     'post' => 'Bài viết',
                     default => $state,

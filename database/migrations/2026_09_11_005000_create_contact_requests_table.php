@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('budget')->nullable();
             $table->string('timeline')->nullable();
             $table->text('message');
+            $table->string('request_type', 32)->default('contact')->index();
+            $table->json('details')->nullable();
+            $table->timestamp('privacy_consent_at')->nullable();
             $table->string('status', 32)->default('new')->index();
             $table->timestamp('contacted_at')->nullable();
             $table->timestamps();

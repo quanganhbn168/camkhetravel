@@ -27,7 +27,7 @@ class ProductCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Danh mục sản phẩm';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 6;
 
     public static function getNavigationGroup(): ?string
     {

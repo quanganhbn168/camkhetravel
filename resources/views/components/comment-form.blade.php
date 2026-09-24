@@ -1,6 +1,6 @@
-@props(['post' => null, 'service' => null, 'project' => null, 'compact' => false, 'ratingEnabled' => false])
+@props(['post' => null, 'service' => null, 'compact' => false, 'ratingEnabled' => false])
 
-<form class="{{ $compact ? '' : 'mt-5 ' }} comment-form" action="{{ route($project ? 'projects.comments.store' : ($service ? 'services.comments.store' : 'comments.store'), $project ? ['project' => $project->id] : ($service ? ['service' => $service->id] : ['post' => $post->id])) }}" method="post">
+<form class="{{ $compact ? '' : 'mt-5 ' }} comment-form" action="{{ $service ? route('services.comments.store', ['service' => $service->id]) : route('comments.store', ['post' => $post->id]) }}" method="post">
     @csrf
     <div class="row g-3">
         <label class="fw-semibold col-md-6" for="comment-author-name">

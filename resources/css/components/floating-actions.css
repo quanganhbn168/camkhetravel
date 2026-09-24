@@ -16,7 +16,7 @@
   border: 0;
   border-radius: 50%;
   background: var(--bs-primary);
-  color: #fff;
+  color: var(--site-white);
   box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.16);
 }
 
@@ -58,7 +58,7 @@
 .floating-action:hover,
 .scroll-top:hover {
   background: var(--bs-link-hover-color);
-  color: #fff;
+  color: var(--site-white);
 }
 
 .scroll-top {

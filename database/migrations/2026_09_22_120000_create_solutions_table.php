@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('solutions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('solution_category_id')->constrained('solution_categories')->restrictOnDelete();
             $table->string('seed_key')->nullable()->unique();
             $table->string('title');
-            $table->string('short_title')->nullable();
             $table->text('excerpt')->nullable();
             $table->longText('body')->nullable();
             $table->json('highlights')->nullable();
@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('is_home')->default(false);
             $table->unsignedInteger('sort_order')->default(0);
             $table->index(['is_active', 'is_home', 'sort_order']);
+            $table->index(['solution_category_id', 'is_active', 'sort_order'], 'solutions_category_visibility_order_index');
             $table->timestamps();
         });
     }

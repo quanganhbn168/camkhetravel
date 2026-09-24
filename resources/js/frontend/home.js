@@ -1,4 +1,4 @@
-/* CamKheTravel homepage interactions.
+/* Homepage interactions.
  * All user-entered text is inserted via textContent or value, never innerHTML.
  * Quote requests use the configured same-origin contact endpoint.
  */
@@ -7,7 +7,7 @@
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root && root.document) {
-    root.CamKheForms = api;
+    root.HomeQuoteForms = api;
     if (root.document.readyState === 'loading') root.document.addEventListener('DOMContentLoaded', () => api.init(root));
     else api.init(root);
   }
@@ -73,7 +73,7 @@
   }
   function init(win) {
     const doc = win.document;
-    const configElement = doc.querySelector('[data-camkhe-config]');
+    const configElement = doc.querySelector('[data-home-config]');
     const config = Object.assign({phone:'',zaloUrl:'',leadEndpoint:''}, configElement ? {
       phone: configElement.dataset.phone,
       zaloUrl: configElement.dataset.zaloUrl,
@@ -195,7 +195,7 @@
         return;
       }
       data.phone = normalizePhone(data.phone);
-      data.source = 'camkhetravel_homepage';
+      data.source = 'homepage_quote';
       submitting = true; submitButton.disabled = true;
       $('[data-submit-label]').textContent = isDemo ? 'Đang tạo nội dung…' : 'Đang gửi yêu cầu…';
       let timeoutId;

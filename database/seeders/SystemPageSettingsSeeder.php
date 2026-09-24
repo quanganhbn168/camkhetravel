@@ -21,7 +21,6 @@ final class SystemPageSettingsSeeder extends Seeder
             'services' => $this->profile('Dịch vụ', 'Dịch vụ xe | CamKheTravel', 'Các dịch vụ xe du lịch, xe hợp đồng, xe ghép và xe cưới.', $ogImageId),
             'solutions' => $this->profile('Giải pháp', 'Giải pháp hành trình | CamKheTravel', 'Tư vấn phương tiện và lịch trình theo nhu cầu chuyến đi.', $ogImageId),
             'contact' => $this->profile('Liên hệ', 'Liên hệ CamKheTravel', 'Gửi lịch trình để CamKheTravel tiếp nhận yêu cầu tư vấn.', $ogImageId),
-            'projects' => $this->profile('Hành trình', 'Hành trình | CamKheTravel', 'Thông tin hành trình và hoạt động du lịch của CamKheTravel.', $ogImageId),
         ]);
         $settings->settingsConfig()->resetDefaultValueLoadedProperties();
         $settings->save();

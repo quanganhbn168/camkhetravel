@@ -26,7 +26,7 @@ jobs:
         image: mysql:8.4
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-          MYSQL_DATABASE: dvtec_testing
+          MYSQL_DATABASE: site_testing
         ports: ['3306:3306']
         options: >-
           --health-cmd="mysqladmin ping --silent"
@@ -39,14 +39,14 @@ jobs:
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
       DB_PORT: '3306'
-      DB_DATABASE: dvtec_testing
+      DB_DATABASE: site_testing
       DB_USERNAME: root
       DB_PASSWORD: ''
       CACHE_STORE: array
       SESSION_DRIVER: file
       QUEUE_CONNECTION: sync
       MAIL_MAILER: array
-      CURATOR_GLIDE_TOKEN: dvtec-test-glide-token
+      CURATOR_GLIDE_TOKEN: site-test-glide-token
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
@@ -88,7 +88,7 @@ jobs:
         run: vendor/bin/phpunit --log-junit test-results/phpunit.xml 2>&1 | tee test-results/phpunit.log
       - name: Prepare browser fixtures in disposable CI database
         run: |
-          test "$DB_DATABASE" = dvtec_testing
+          test "$DB_DATABASE" = site_testing
           php artisan migrate:fresh --force
           DVTEC_BROWSER_FIXTURES=1 php tests/Browser/seed.php
           php artisan storage:link

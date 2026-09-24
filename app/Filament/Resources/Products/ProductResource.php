@@ -29,7 +29,7 @@ class ProductResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 5;
 
     public static function getNavigationGroup(): ?string
     {

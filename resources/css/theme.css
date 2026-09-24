@@ -12,8 +12,13 @@
   --site-line: #dfeae5;
   --site-gold: #bd9850;
   --site-sand: #fff7e8;
+  --site-white: #fff;
+  --site-zalo: #087ff0;
+  --site-radius: 12px;
+  --site-shadow: 0 8px 30px rgb(9 47 44 / .09);
   --site-font-body: 'Be Vietnam Pro', system-ui, sans-serif;
   --site-font-heading: 'Lora', Georgia, serif;
+  --site-font-script: 'Dancing Script', 'Segoe Print', cursive;
 
   --bs-primary: var(--site-primary);
   --bs-primary-rgb: 7, 84, 63;
@@ -37,7 +42,7 @@
   --bs-link-hover-color-rgb: 0, 60, 47;
   --bs-primary-text-emphasis: var(--site-primary-dark);
   --bs-primary-bg-subtle: var(--site-mint);
-  --bs-primary-border-subtle: #a9d6c2;
+  --bs-primary-border-subtle: var(--site-line);
 }
 
 body { font-family: var(--site-font-body); color: var(--site-text); }
@@ -76,7 +81,7 @@ h1, h2, h3, h4, h5, h6, .display-title { font-family: var(--site-font-heading); 
 }
 .nav-pills { --bs-nav-pills-link-active-bg: var(--site-primary); }
 .pagination { --bs-pagination-active-bg: var(--site-primary); --bs-pagination-active-border-color: var(--site-primary); }
-.form-control:focus, .form-select:focus { border-color: var(--site-primary-hover); box-shadow: 0 0 0 .25rem rgb(7 84 63 / .15); }
+.form-control:focus, .form-select:focus { border-color: var(--site-primary-hover); box-shadow: 0 0 0 .25rem rgb(var(--bs-primary-rgb) / .15); }
 .form-check-input:checked { background-color: var(--site-primary); border-color: var(--site-primary); }
 .dropdown-item.active, .dropdown-item:active { background-color: var(--site-primary); }
 .text-bg-primary { color: #fff !important; background-color: var(--site-primary) !important; }

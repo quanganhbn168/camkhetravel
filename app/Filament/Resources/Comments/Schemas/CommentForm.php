@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Comments\Schemas;
 
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\Project;
 use App\Models\Service;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MorphToSelect;
@@ -26,7 +25,6 @@ class CommentForm
                         ->label('Nội dung được bình luận')
                         ->types([
                             MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
-                            MorphToSelect\Type::make(Project::class)->titleAttribute('title'),
                             MorphToSelect\Type::make(Service::class)->titleAttribute('title'),
                         ])
                         ->disabled()

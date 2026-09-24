@@ -16,13 +16,13 @@ class AdminSettingsStructureTest extends TestCase
         $this->assertStringNotContainsString('->schema($this->designSchema())', $settingsPage);
     }
 
-    public function test_settings_manages_all_six_fixed_page_profiles_without_locale_fields(): void
+    public function test_settings_manages_all_fixed_page_profiles_without_locale_fields(): void
     {
         $settingsPage = file_get_contents(app_path('Filament/Pages/ManageSettings.php'));
 
         $this->assertStringContainsString("Tab::make('Trang hệ thống')", $settingsPage);
 
-        foreach (['home', 'about', 'services', 'solutions', 'contact', 'projects'] as $page) {
+        foreach (['home', 'about', 'services', 'solutions', 'contact'] as $page) {
             $this->assertStringContainsString("'{$page}' =>", $settingsPage);
         }
 

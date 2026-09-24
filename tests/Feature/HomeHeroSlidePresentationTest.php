@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\HeroSlide;
-use Awcodes\Curator\Models\Media;
 use Database\Seeders\MenuSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,19 +18,19 @@ class HomeHeroSlidePresentationTest extends TestCase
         $this->seed(MenuSeeder::class);
     }
 
-    public function test_homepage_passes_hero_slide_models_to_the_view(): void
+    public function test_homepage_passes_the_first_active_hero_slide_to_the_view(): void
     {
-        HeroSlide::create([
+        $slide = HeroSlide::create([
             'title' => 'Model slide kiểm thử',
             'is_active' => true,
         ]);
 
         $this->get('/')
             ->assertOk()
-            ->assertViewHas('heroSlides', fn ($slides): bool => $slides->first() instanceof HeroSlide);
+            ->assertViewHas('heroSlide', fn (?HeroSlide $heroSlide): bool => $heroSlide?->is($slide));
     }
 
-    public function test_content_slide_renders_table_content_overlay_and_ctas(): void
+    public function test_active_slide_supplies_homepage_copy_and_secondary_link(): void
     {
         HeroSlide::create([
             'title' => 'Tiêu đề slide kiểm thử',
@@ -45,39 +44,10 @@ class HomeHeroSlidePresentationTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('hero__overlay', false)
             ->assertSee('Tiêu đề slide kiểm thử')
             ->assertSee('Mô tả slide kiểm thử')
-            ->assertSee('href="/lien-he"', false)
-            ->assertSee('href="/dich-vu"', false);
-    }
-
-    public function test_image_only_slide_renders_the_image_without_text_or_overlay(): void
-    {
-        $media = Media::create([
-            'disk' => 'public',
-            'directory' => 'qa',
-            'visibility' => 'public',
-            'name' => 'hero-slide-image',
-            'title' => 'Hero slide image',
-            'path' => 'qa/hero-slide-image.jpg',
-            'type' => 'image/jpeg',
-            'ext' => 'jpg',
-            'size' => 10,
-            'width' => 1360,
-            'height' => 540,
-        ]);
-
-        HeroSlide::create([
-            'curator_media_id' => $media->id,
-            'is_active' => true,
-        ]);
-
-        $this->get('/')
-            ->assertOk()
-            ->assertSee('hero__media', false)
-            ->assertSee('width="1360" height="540"', false)
-            ->assertDontSee('hero__overlay', false)
-            ->assertDontSee('hero__content', false);
+            ->assertSee('Liên hệ')
+            ->assertSee('href="/dich-vu"', false)
+            ->assertDontSee('hero__overlay', false);
     }
 }

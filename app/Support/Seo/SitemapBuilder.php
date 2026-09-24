@@ -6,7 +6,6 @@ use App\Models\Intro;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Project;
 use App\Models\Service;
 use DateTimeInterface;
 
@@ -92,7 +91,6 @@ class SitemapBuilder
             ['services.index', 'weekly', 0.9],
             ['solutions.index', 'weekly', 0.9],
             ['products.index', 'weekly', 0.8],
-            ['projects.index', 'weekly', 0.9],
             ['posts.index', 'weekly', 0.8],
             ['about', 'monthly', 0.6],
             ['contact', 'monthly', 0.5],
@@ -105,7 +103,6 @@ class SitemapBuilder
     {
         foreach ([
             [Service::class, 'monthly', 0.8],
-            [Project::class, 'monthly', 0.8],
             [Post::class, 'monthly', 0.7],
             [Product::class, 'monthly', 0.8],
         ] as [$model, $frequency, $priority]) {
@@ -113,10 +110,9 @@ class SitemapBuilder
                 ->published()
                 ->with('slugs')
                 ->get()
-                ->each(function (Service|Project|Post|Product $item) use ($frequency, $priority): void {
+                ->each(function (Service|Post|Product $item) use ($frequency, $priority): void {
                     $url = match (true) {
                         $item instanceof Service => route('slug.show', ['slug' => $item->slug]),
-                        $item instanceof Project => route('projects.show', ['slug' => $item->slug]),
                         $item instanceof Post => route('slug.show', ['slug' => $item->slug]),
                         $item instanceof Product => route('products.show', ['slug' => $item->slug]),
                     };

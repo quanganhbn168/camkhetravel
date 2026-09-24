@@ -27,7 +27,7 @@ class PostCategoryResource extends Resource
 
     protected static ?string $navigationLabel = 'Danh mục bài viết';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 8;
 
     public static function getNavigationGroup(): ?string
     {

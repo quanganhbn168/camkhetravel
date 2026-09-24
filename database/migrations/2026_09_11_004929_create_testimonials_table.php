@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('company_name')->nullable();
             $table->text('quote');
             $table->unsignedTinyInteger('rating')->nullable()->default(5);
+            $table->boolean('is_illustrative')->default(false);
             $table->boolean('is_active')->default(true)->index();
             $table->unsignedInteger('sort_order')->default(0)->index();
             $table->timestamps();

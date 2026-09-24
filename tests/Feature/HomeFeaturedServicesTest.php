@@ -22,23 +22,22 @@ class HomeFeaturedServicesTest extends TestCase
         $this->seed(MenuSeeder::class);
     }
 
-    public function test_featured_categories_require_both_flags_and_only_contain_published_home_services(): void
+    public function test_homepage_only_receives_published_home_services(): void
     {
-        ServiceCategory::query()->update(['is_featured' => false]);
-        $category = ServiceCategory::create(['name' => 'Nhóm media trang chủ QA', 'is_active' => true, 'is_featured' => true, 'is_home' => true]);
+        \App\Models\Service::query()->update(['is_home' => false]);
+        $category = ServiceCategory::create(['name' => 'Nhóm dịch vụ trang chủ QA', 'is_active' => true]);
         $shown = $category->services()->create(['title' => 'Dịch vụ được chọn QA', 'status' => 'published', 'is_home' => true, 'is_featured' => false]);
         $category->services()->create(['title' => 'Nổi bật nhưng không ở trang chủ QA', 'status' => 'published', 'is_home' => false, 'is_featured' => true]);
         $category->services()->create(['title' => 'Bản nháp trang chủ QA', 'status' => 'draft', 'is_home' => true]);
         $category->services()->create(['title' => 'Chưa đến ngày công bố QA', 'status' => 'published', 'published_at' => now()->addDay(), 'is_home' => true]);
 
-        foreach ([['is_featured' => false], ['is_home' => false], ['is_active' => false]] as $index => $flags) {
-            $hidden = ServiceCategory::create([...['name' => 'Nhóm bị ẩn QA '.$index, 'is_active' => true, 'is_featured' => true, 'is_home' => true], ...$flags]);
-            $hidden->services()->create(['title' => 'Dịch vụ thuộc nhóm ẩn QA '.$index, 'status' => 'published', 'is_home' => true]);
-        }
-
-        $this->get('/')->assertOk()->assertSee('Dịch vụ PCCC toàn diện')->assertDontSee('Các dịch vụ khác')
-            ->assertViewHas('featuredServiceCategories', fn ($categories) => $categories->modelKeys() === [$category->id]
-                && $categories->first()->services->modelKeys() === [$shown->id]);
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Dịch vụ của CamKheTravel')
+            ->assertSee('Dịch vụ được chọn QA')
+            ->assertDontSee('Bản nháp trang chủ QA')
+            ->assertDontSee('Chưa đến ngày công bố QA')
+            ->assertViewHas('services', fn ($services): bool => $services->modelKeys() === [$shown->id]);
     }
 
     public function test_homepage_category_flags_can_be_managed_independently_in_admin(): void

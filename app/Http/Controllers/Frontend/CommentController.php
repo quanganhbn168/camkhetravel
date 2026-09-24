@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\Project;
 use App\Models\Service;
 use Illuminate\Http\RedirectResponse;
 
@@ -22,12 +21,7 @@ class CommentController extends Controller
         return $this->storeComment($request, $service, requiresRating: true);
     }
 
-    public function storeProject(StoreCommentRequest $request, Project $project): RedirectResponse
-    {
-        return $this->storeComment($request, $project, requiresRating: true);
-    }
-
-    private function storeComment(StoreCommentRequest $request, Post|Service|Project $commentable, bool $requiresRating = false): RedirectResponse
+    private function storeComment(StoreCommentRequest $request, Post|Service $commentable, bool $requiresRating = false): RedirectResponse
     {
         abort_unless($commentable->status === 'published' && (! $commentable->published_at || $commentable->published_at->isPast()), 404);
 

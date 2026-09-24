@@ -50,12 +50,7 @@ final class ServiceForm
                             CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                             CuratorPicker::make('banner_video_media_id')->label('Video banner dịch vụ')->relationship('bannerVideoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/*'])->helperText('Video được phát nền ở banner; ảnh đại diện sẽ làm poster khi cần.')->columnSpanFull(),
                             CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
-                            CuratorPicker::make('gallery')->label('Ảnh tài liệu tham khảo')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị cùng khối Các dự án nổi bật.')->columnSpanFull(),
-                            TextInput::make('projects_title')
-                                ->label('Tiêu đề khối dự án')
-                                ->placeholder('Các dự án nổi bật')
-                                ->maxLength(255)
-                                ->columnSpanFull(),
+                            CuratorPicker::make('gallery')->label('Ảnh tài liệu tham khảo')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị cùng phần ảnh và video tham khảo.')->columnSpanFull(),
                             Textarea::make('excerpt')
                                 ->label('Mô tả ngắn')
                                 ->rows(3)

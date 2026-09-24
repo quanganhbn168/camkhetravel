@@ -8,8 +8,6 @@ use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Project;
-use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Slug;
@@ -39,8 +37,6 @@ class PublicSlugController extends Controller
             $sluggable instanceof Intro => redirect()->to($sluggable->url, 301),
             $sluggable instanceof Service => app(ServiceController::class)->show($sluggable),
             $sluggable instanceof ServiceCategory => app(ServiceController::class)->redirectCategory($sluggable),
-            $sluggable instanceof Project => redirect()->route('projects.show', ['slug' => $sluggable->slug], 301),
-            $sluggable instanceof ProjectCategory => redirect()->route('projects.category', ['slug' => $sluggable->slug], 301),
             $sluggable instanceof Post => app(PostController::class)->show($sluggable),
             $sluggable instanceof PostCategory => redirect()->route('posts.category', ['slug' => $sluggable->slug], 301),
             $sluggable instanceof Product => redirect()->route('products.show', ['slug' => $sluggable->slug], 301),

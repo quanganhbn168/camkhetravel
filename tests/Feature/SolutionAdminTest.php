@@ -7,7 +7,6 @@ use App\Filament\Resources\Solutions\Pages\EditSolution;
 use App\Models\Solution;
 use App\Models\SolutionCategory;
 use App\Models\User;
-use Database\Seeders\SolutionModuleSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Role;
@@ -21,7 +20,8 @@ class SolutionAdminTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
-        $this->seed(SolutionModuleSeeder::class);
+        SolutionCategory::create(['seed_key' => 'pccc', 'name' => 'Nhóm giải pháp thứ nhất', 'is_active' => true]);
+        SolutionCategory::create(['seed_key' => 'hvac', 'name' => 'Nhóm giải pháp thứ hai', 'is_active' => true]);
     }
 
     private function signInAsAdmin(): void

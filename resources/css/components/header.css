@@ -1,11 +1,11 @@
-.skip-link { position: fixed; top: -100px; left: 15px; z-index: 2000; padding: 12px 20px; background: white; border: 2px solid var(--site-primary); }
+.skip-link { position: fixed; top: -100px; left: 15px; z-index: 2000; padding: 12px 20px; background: var(--site-white); border: 2px solid var(--site-primary); }
 .skip-link:focus { top: 10px; }
 
 .header-sticky {
   position: sticky;
   top: 0;
   z-index: 1020;
-  background: #fff;
+  background: var(--site-white);
   transition: transform 200ms ease;
 }
 
@@ -21,8 +21,8 @@
 .header {
   border-bottom: 1px solid var(--bs-border-color);
   color: var(--bs-emphasis-color);
-  background: #fff;
-  box-shadow: 0 8px 28px rgba(16, 35, 62, 0.0509803922);
+  background: var(--site-white);
+  box-shadow: 0 8px 28px rgb(var(--bs-dark-rgb) / .05);
 }
 
 .header__inner {
@@ -56,7 +56,7 @@
   place-items: center;
   border-radius: 50%;
   background: var(--bs-primary);
-  color: #fff;
+  color: var(--site-white);
   box-shadow: 0 0.55rem 1.15rem rgba(var(--bs-primary-rgb), 0.24);
 }
 
@@ -73,7 +73,7 @@
 
 .brand__words strong {
   color: var(--bs-primary);
-  font-family: "Roboto Condensed Variable", "Be Vietnam Pro", system-ui, sans-serif;
+  font-family: var(--site-font-body);
   font-size: 1.2rem;
   font-weight: 900;
   letter-spacing: -0.045em;
@@ -109,7 +109,7 @@
   border: 1px solid var(--bs-border-color);
   border-radius: 0.5rem;
   color: var(--bs-emphasis-color);
-  background: #fff;
+  background: var(--site-white);
 }
 
 .header__search svg,
@@ -138,7 +138,7 @@
   display: flex;
   align-items: center;
   padding-inline: 0.65rem;
-  font-family: "Roboto Condensed Variable", "Be Vietnam Pro", system-ui, sans-serif;
+  font-family: var(--site-font-body);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -166,7 +166,7 @@
   min-width: 16rem;
   border-top: 3px solid var(--bs-primary);
   padding-block: 0.4rem;
-  box-shadow: 0 15px 35px rgba(7, 22, 32, 0.1254901961);
+  box-shadow: 0 15px 35px rgb(var(--bs-dark-rgb) / .13);
 }
 
 .header-nav .dropdown-item {
@@ -237,7 +237,7 @@
 }
 
 .topbar a:hover {
-  color: #fff;
+  color: var(--site-white);
 }
 
 .topbar a {

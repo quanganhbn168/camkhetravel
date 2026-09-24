@@ -71,7 +71,6 @@ class SlugObserver
         return in_array($slug, [
             'dich-vu',
             'giai-phap',
-            'du-an',
             'bang-gia',
             'gioi-thieu',
             'lien-he',

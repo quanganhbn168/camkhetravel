@@ -4,21 +4,18 @@
     @vite('resources/css/pages/home.css')
 @endpush
 
-@section('body_class', 'camkhetravel-home')
-@section('main_id', 'camkhe-noi-dung')
-@section('main_class', 'camkhe-home-main')
+@section('body_class', 'home-page')
 
 @section('content')
-    <div class="camkhe-home" data-camkhe-home style="--camkhe-no-image: url('{{ $noImageUrl }}')">
-        <div hidden data-camkhe-config
+    <div class="site-home" data-home-page data-system-page="home" style="--home-no-image: url('{{ $noImageUrl }}')">
+        <div hidden data-home-config
             data-phone="{{ $frontendConfig['phone'] }}"
             data-zalo-url="{{ $frontendConfig['zaloUrl'] }}"
             data-lead-endpoint="{{ $frontendConfig['leadEndpoint'] }}"></div>
 
-        <section class="hero" id="trang-chu" aria-labelledby="hero-title">
+        <section class="hero" id="trang-chu" data-hero-section aria-labelledby="hero-title">
             <picture class="hero-picture">
-                <source media="(max-width: 767px)" srcset="{{ $noImageUrl }}">
-                <img src="{{ $noImageUrl }}" alt="Ảnh mặc định" width="1800" height="625" fetchpriority="high">
+                <img src="{{ $page['banner_url'] ?: $noImageUrl }}" @if ($page['banner_url']) data-page-banner-image @endif alt="" width="1800" height="625" fetchpriority="high">
             </picture>
             <div class="container hero-inner">
                 <div class="hero-copy">
@@ -183,10 +180,8 @@
             <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <x-site-icon name="arrow" /></button><button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" /> Liên hệ</button></div><button type="button" class="text-link mx-auto mt-2" data-bs-toggle="modal" data-bs-target="#privacyModal">Thông tin dữ liệu</button></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
         </section>
     </div>
-@endsection
 
-@section('after_footer')
-    <div class="camkhe-home-dialogs">
+    <div class="site-home-dialogs">
     <noscript><div class="noscript-notice">Bật JavaScript để sử dụng form báo giá và các chức năng tương tác. Nội dung trang vẫn xem được.</div></noscript>
 
     <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><div><p class="modal-brand">CAMKHETRAVEL</p><h2 class="modal-title fs-4" id="quoteTitle">Nhận báo giá chuyến đi</h2></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button></div><div class="modal-body">

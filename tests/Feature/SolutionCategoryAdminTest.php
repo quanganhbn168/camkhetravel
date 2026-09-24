@@ -8,7 +8,6 @@ use App\Filament\Resources\SolutionCategories\Pages\ListSolutionCategories;
 use App\Models\Solution;
 use App\Models\SolutionCategory;
 use App\Models\User;
-use Database\Seeders\SolutionModuleSeeder;
 use Filament\Actions\DeleteAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
@@ -26,7 +25,6 @@ class SolutionCategoryAdminTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
-        $this->seed(SolutionModuleSeeder::class);
     }
 
     private function signInAsAdmin(): User
@@ -118,6 +116,8 @@ class SolutionCategoryAdminTest extends TestCase
     public function test_category_view_permission_does_not_grant_mutations(): void
     {
         $user = User::factory()->create();
+        Permission::findOrCreate('ViewAny:SolutionCategory', 'web');
+        Permission::findOrCreate('View:SolutionCategory', 'web');
         $user->givePermissionTo(['ViewAny:SolutionCategory', 'View:SolutionCategory']);
         $category = SolutionCategory::create(['name' => 'Chỉ xem QA']);
         $this->actingAs($user);
@@ -129,24 +129,4 @@ class SolutionCategoryAdminTest extends TestCase
         $this->get('/admin/solution-categories/'.$category->id.'/edit')->assertForbidden();
     }
 
-    public function test_module_seeder_is_repeatable_and_does_not_publish_demo_solutions(): void
-    {
-        $this->assertSame(6, SolutionCategory::count());
-        $this->assertSame(0, Solution::count());
-        $category = SolutionCategory::where('seed_key', 'pccc')->firstOrFail();
-        $category->update(['name' => 'Tên khách đã sửa QA', 'is_active' => false]);
-        $slug = $category->slug;
-        $customPermission = Permission::findOrCreate('Custom:ExistingModule', 'web');
-        Role::findOrCreate('super_admin', 'web')->givePermissionTo($customPermission);
-        $permissionsCount = Permission::count();
-
-        $this->seed(SolutionModuleSeeder::class);
-        $this->assertSame(6, SolutionCategory::count());
-        $this->assertSame(0, Solution::count());
-        $this->assertSame('Tên khách đã sửa QA', $category->fresh()->name);
-        $this->assertFalse($category->fresh()->is_active);
-        $this->assertSame($slug, $category->fresh()->slug);
-        $this->assertSame($permissionsCount, Permission::count());
-        $this->assertTrue(Role::findByName('super_admin', 'web')->hasPermissionTo($customPermission));
-    }
 }

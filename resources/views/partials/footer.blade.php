@@ -47,7 +47,7 @@
                         </div>
                     @endforeach
                 @else
-                    <a href="{{ route('home') }}">Trang chủ</a><a href="{{ route('about') }}">Giới thiệu</a><a href="{{ route('projects.index') }}">Dự án</a><a href="{{ route('posts.index') }}">Tin tức</a><a href="{{ route('contact') }}">Liên hệ</a>
+                    <a href="{{ route('home') }}">Trang chủ</a><a href="{{ route('about') }}">Giới thiệu</a><a href="{{ route('services.index') }}">Dịch vụ</a><a href="{{ route('posts.index') }}">Tin tức</a><a href="{{ route('contact') }}">Liên hệ</a>
                 @endif
             </nav>
         </section>

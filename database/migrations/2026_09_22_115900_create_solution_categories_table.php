@@ -29,7 +29,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        // Slugs are polymorphic; dropping a table does not run model observers.
         DB::table('slugs')->where('sluggable_type', 'solution-category')
             ->whereIn('sluggable_id', DB::table('solution_categories')->select('id'))
             ->delete();

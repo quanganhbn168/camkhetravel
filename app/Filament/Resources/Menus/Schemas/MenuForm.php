@@ -6,8 +6,6 @@ use App\Models\Intro;
 use App\Models\MenuItem;
 use App\Models\Post;
 use App\Models\PostCategory;
-use App\Models\Project;
-use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use Filament\Actions\Action;
@@ -168,15 +166,11 @@ final class MenuForm
             'native_route' => 'route',
             'native_service' => 'service',
             'native_service_category' => 'service_category',
-            'native_project' => 'project',
-            'native_project_category' => 'project_category',
             'native_post' => 'post',
             'native_post_category' => 'post_category',
             'custom' => 'custom',
             Service::class => 'service',
             ServiceCategory::class => 'service_category',
-            Project::class => 'project',
-            ProjectCategory::class => 'project_category',
             Post::class => 'post',
             PostCategory::class => 'post_category',
             default => self::routeNameFromValue($record->url) ? 'route' : 'custom',
@@ -190,8 +184,6 @@ final class MenuForm
             'route' => 'native_route',
             'service' => 'native_service',
             'service_category' => 'native_service_category',
-            'project' => 'native_project',
-            'project_category' => 'native_project_category',
             'post' => 'native_post',
             'post_category' => 'native_post_category',
             default => 'custom',
@@ -206,7 +198,6 @@ final class MenuForm
             'about' => 'Giới thiệu',
             'services.index' => 'Tất cả dịch vụ',
             'solutions.index' => 'Giải pháp',
-            'projects.index' => 'Tất cả dự án',
             'posts.index' => 'Blog',
             'contact' => 'Liên hệ',
             'search' => 'Tìm kiếm',
@@ -275,34 +266,6 @@ final class MenuForm
                         'key' => "service:{$service->id}",
                         'label' => $service->title,
                         'meta' => 'Dịch vụ',
-                    ])
-                    ->all(),
-            ],
-            [
-                'key' => 'project-categories',
-                'label' => 'Danh mục dự án',
-                'items' => ProjectCategory::query()
-                    ->where('is_active', true)
-                    ->orderBy('name')
-                    ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'name'])
-                    ->map(fn (ProjectCategory $category): array => [
-                        'key' => "project_category:{$category->id}",
-                        'label' => $category->name,
-                        'meta' => 'Danh mục dự án',
-                    ])
-                    ->all(),
-            ],
-            [
-                'key' => 'projects',
-                'label' => 'Dự án',
-                'items' => Project::query()
-                    ->published()
-                    ->orderBy('title')
-                    ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])
-                    ->map(fn (Project $project): array => [
-                        'key' => "project:{$project->id}",
-                        'label' => $project->title,
-                        'meta' => 'Dự án',
                     ])
                     ->all(),
             ],

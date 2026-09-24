@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
@@ -191,15 +190,6 @@ class ServiceController extends Controller
             ->orderBy('sort_order')
             ->first();
 
-        $featuredProjects = Project::query()
-            ->published()
-            ->with(['category', 'curatorMedia', 'slugs'])
-            ->orderByDesc('is_featured')
-            ->orderByDesc('published_at')
-            ->limit(4)
-            ->get();
-        $this->withImages($featuredProjects);
-
         $processItems = collect($heroService?->process_items ?? [])
             ->filter(fn (mixed $item): bool => is_array($item) && filled($item['title'] ?? null))
             ->take(6)
@@ -230,10 +220,8 @@ class ServiceController extends Controller
                 ? (MediaUrl::resolve($heroService->processBackgroundMedia) ?: MediaUrl::resolve($heroService->curatorMedia))
                 : null,
             'processItems' => $processItems,
-            'featuredProjects' => $featuredProjects,
             'archiveStats' => [
                 ['value' => (string) Service::query()->published()->count(), 'label' => 'hạng mục dịch vụ'],
-                ['value' => (string) Project::query()->published()->count(), 'label' => 'hành trình đã đăng tải'],
                 ['value' => (string) ServiceCategory::query()->where('is_active', true)->count(), 'label' => 'nhóm dịch vụ'],
                 ['value' => 'Theo lịch', 'label' => 'tư vấn phương án xe'],
             ],

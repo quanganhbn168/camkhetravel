@@ -113,23 +113,4 @@
         </div>
     </section>
 
-    @if ($featuredProjects->isNotEmpty())
-        <section class="section-space">
-            <div class="container">
-                <header class="resource-list-heading">
-                    <div>
-                        <h2 class="display-title text-uppercase h2">Những hành trình đã đồng hành</h2>
-                        <p class="text-body">Minh chứng rõ ràng cho năng lực, quy trình và sự đồng hành của {{ $website->site_name }}.</p>
-                    </div>
-                    <a class="section-link" href="{{ route('projects.index') }}">Xem tất cả dự án <span aria-hidden="true">→</span></a>
-                </header>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                    @foreach ($featuredProjects as $project)
-                        <div class="col">@include('frontend.partials.project-card', ['project' => $project])</div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
 @endsection

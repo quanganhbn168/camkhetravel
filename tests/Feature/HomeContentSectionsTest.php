@@ -2,9 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Models\Partner;
-use App\Models\Product;
-use App\Models\ProductCategory;
+use App\Models\Service;
+use App\Models\ServiceCategory;
+use App\Support\Media\MediaUrl;
+use Awcodes\Curator\Models\Media;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,53 +24,45 @@ class HomeContentSectionsTest extends TestCase
             ->assertDontSee('Trụ sở chính');
     }
 
-    public function test_home_service_image_belongs_to_category_not_service(): void
+    public function test_home_service_uses_its_own_image_and_falls_back_cleanly(): void
     {
-        $category = \App\Models\ServiceCategory::create([
-            'name' => 'Danh mục ảnh QA', 'is_active' => true, 'is_featured' => true, 'is_home' => true,
-            'curator_media_id' => \Database\Seeders\MediaSeeder::id('facility'),
+        $category = ServiceCategory::create([
+            'name' => 'Danh mục ảnh QA', 'is_active' => true,
         ]);
-        \App\Models\Service::create([
+        $media = Media::create([
+            'disk' => 'public',
+            'directory' => 'qa',
+            'visibility' => 'public',
+            'name' => 'service-home-image',
+            'title' => 'Service home image',
+            'path' => 'qa/service-home-image.jpg',
+            'type' => 'image/jpeg',
+            'ext' => 'jpg',
+            'size' => 10,
+        ]);
+        $service = Service::create([
             'title' => 'Dịch vụ ảnh QA', 'service_category_id' => $category->id,
             'status' => 'published', 'is_home' => true,
-            'curator_media_id' => \Database\Seeders\MediaSeeder::id('equipment'),
+            'curator_media_id' => $media->id,
         ]);
 
         $response = $this->get(route('home'))->assertOk();
         $dom = new \DOMDocument;
         @$dom->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
         $xpath = new \DOMXPath($dom);
-        $images = $xpath->query('//*[@id="service-pane-'.$category->id.'"]//img');
+        $images = $xpath->query('//article[contains(concat(" ", normalize-space(@class), " "), " service-card ")][.//button[@data-service-id="'.$service->id.'"]]//img');
         $this->assertSame(1, $images->length);
-        $this->assertSame($category->image_url, $images->item(0)->getAttribute('src'));
-        $this->assertSame($category->name, $images->item(0)->getAttribute('alt'));
+        $this->assertSame(MediaUrl::versioned($media), $images->item(0)->getAttribute('src'));
+        $this->assertSame($service->title, $images->item(0)->getAttribute('alt'));
 
-        $category->update(['curator_media_id' => null]);
+        $service->update(['curator_media_id' => null]);
         $response = $this->get(route('home'))->assertOk();
         $dom = new \DOMDocument;
         @$dom->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
         $xpath = new \DOMXPath($dom);
-        $this->assertSame(0, $xpath->query('//*[@id="service-pane-'.$category->id.'"]//img')->length);
-        $response->assertSee('Dịch vụ ảnh QA');
-    }
-
-    public function test_home_uses_real_equipment_and_discrete_partner_slides(): void
-    {
-        $category = ProductCategory::create(['name' => 'Danh mục thiết bị QA', 'is_active' => true]);
-        $product = Product::create(['title' => 'Thiết bị công khai QA', 'product_category_id' => $category->id, 'status' => 'published']);
-        Product::create(['title' => 'Thiết bị nháp QA', 'product_category_id' => $category->id, 'status' => 'draft']);
-        Partner::create(['name' => 'Đối tác công khai QA', 'is_active' => true]);
-        Partner::create(['name' => 'Đối tác ẩn QA', 'is_active' => false]);
-
-        $response = $this->get(route('home'))->assertOk()
-            ->assertSee('Tại sao chọn chúng tôi')->assertSee('Quy trình triển khai')
-            ->assertSee('Danh mục thiết bị')->assertSee('Liên hệ tư vấn miễn phí')
-            ->assertSee('Đối tác của chúng tôi')->assertSee('data-partner-swiper', false)
-            ->assertSee('Danh mục thiết bị QA')->assertSee('Thiết bị công khai QA')
-            ->assertSee(route('products.show', ['slug' => $product->slug]), false)
-            ->assertDontSee('Thiết bị nháp QA')->assertDontSee('Đối tác ẩn QA')
-            ->assertDontSee('partner-marquee')->assertDontSee('Một hệ thống PCCC tốt không chỉ nằm ở thiết bị');
-        $this->assertSame(1, substr_count($response->getContent(), 'Đối tác công khai QA'));
+        $images = $xpath->query('//article[contains(concat(" ", normalize-space(@class), " "), " service-card ")][.//button[@data-service-id="'.$service->id.'"]]//img');
+        $this->assertSame(1, $images->length);
+        $this->assertSame(asset('images/no-image.svg'), $images->item(0)->getAttribute('src'));
     }
 
     public function test_blog_archive_has_category_bar_without_sidebar(): void

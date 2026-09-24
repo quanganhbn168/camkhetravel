@@ -11,8 +11,6 @@ use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Project;
-use App\Models\ProjectCategory;
 use App\Models\Service;
 use App\Models\Solution;
 use App\Models\SolutionCategory;
@@ -47,8 +45,6 @@ class FrontendServiceProvider extends ServiceProvider
             'post-category' => PostCategory::class,
             'product' => Product::class,
             'product-category' => ProductCategory::class,
-            'project' => Project::class,
-            'project-category' => ProjectCategory::class,
             'service' => Service::class,
             'solution' => Solution::class,
             'solution-category' => SolutionCategory::class,
@@ -65,8 +61,6 @@ class FrontendServiceProvider extends ServiceProvider
             Product::class,
             ProductCategory::class,
             Intro::class,
-            Project::class,
-            ProjectCategory::class,
             Service::class,
             ServiceCategory::class,
         ] as $model) {
@@ -79,8 +73,6 @@ class FrontendServiceProvider extends ServiceProvider
             PostCategory::class,
             Product::class,
             ProductCategory::class,
-            Project::class,
-            ProjectCategory::class,
             Service::class,
             ServiceCategory::class,
             Testimonial::class,
@@ -93,8 +85,6 @@ class FrontendServiceProvider extends ServiceProvider
             PostCategory::class,
             Product::class,
             ProductCategory::class,
-            Project::class,
-            ProjectCategory::class,
             Service::class,
             ServiceCategory::class,
             Intro::class,
@@ -288,10 +278,6 @@ class FrontendServiceProvider extends ServiceProvider
                     return true;
                 }
 
-                if ($path === '/du-an' && request()->routeIs('projects.*')) {
-                    return true;
-                }
-
                 if ($path === '/san-pham' && request()->routeIs('products.*')) {
                     return true;
                 }
@@ -313,8 +299,6 @@ class FrontendServiceProvider extends ServiceProvider
         $target = match ($linkedSourceType) {
             'native_service', Service::class, 'service' => [Service::class, 'slug.show'],
             'native_service_category', ServiceCategory::class, 'service-category' => [ServiceCategory::class, 'services.category', 'category'],
-            'native_project', Project::class, 'project' => [Project::class, 'projects.show'],
-            'native_project_category', ProjectCategory::class, 'project-category' => [ProjectCategory::class, 'projects.category'],
             'native_post', Post::class, 'post' => [Post::class, 'posts.show'],
             'native_post_category', PostCategory::class, 'post-category' => [PostCategory::class, 'posts.category'],
             'native_product', Product::class, 'product' => [Product::class, 'products.show'],

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Faqs\Schemas;
 
 use App\Models\Post;
 use App\Models\Product;
-use App\Models\Project;
 use App\Models\Service;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -34,7 +33,6 @@ final class FaqForm
                         ->options([
                             'homepage' => 'Trang chủ',
                             'service' => 'Dịch vụ',
-                            'project' => 'Dự án',
                             'product' => 'Sản phẩm',
                             'post' => 'Bài viết',
                         ])
@@ -73,7 +71,6 @@ final class FaqForm
     {
         return match ($type) {
             'service' => Service::query()->orderBy('title')->pluck('title', 'id')->all(),
-            'project' => Project::query()->orderBy('title')->pluck('title', 'id')->all(),
             'product' => Product::query()->orderBy('title')->pluck('title', 'id')->all(),
             'post' => Post::query()->orderBy('title')->pluck('title', 'id')->all(),
             default => [],

@@ -3,7 +3,6 @@
         <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             @foreach ([
                 ['Dịch vụ', \App\Filament\Resources\Services\ServiceResource::getUrl('index')],
-                ['Dự án', \App\Filament\Resources\Projects\ProjectResource::getUrl('index')],
                 ['Sản phẩm', \App\Filament\Resources\Products\ProductResource::getUrl('index')],
                 ['Bài viết', \App\Filament\Resources\Posts\PostResource::getUrl('index')],
                 ['Yêu cầu tư vấn', \App\Filament\Resources\ContactRequests\ContactRequestResource::getUrl('index')],

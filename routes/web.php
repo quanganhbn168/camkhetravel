@@ -6,7 +6,6 @@ use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\PostController;
 use App\Http\Controllers\Frontend\ProductController;
-use App\Http\Controllers\Frontend\ProjectController;
 use App\Http\Controllers\Frontend\PublicSlugController;
 use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\ServiceController;
@@ -36,9 +35,6 @@ Route::group([], function (): void {
     Route::get('/dich-vu/danh-muc/{category:slug}', [ServiceController::class, 'redirectCategory']);
     Route::get('/dich-vu/{category:slug}', [ServiceController::class, 'category'])->name('services.category');
     Route::get('/tim-kiem', SearchController::class)->name('search');
-    Route::get('/du-an', [ProjectController::class, 'index'])->name('projects.index');
-    Route::get('/du-an/danh-muc/{slug}', [ProjectController::class, 'categoryBySlug'])->name('projects.category');
-    Route::get('/du-an/{slug}', [ProjectController::class, 'showBySlug'])->name('projects.show');
     Route::get('/san-pham', [ProductController::class, 'index'])->name('products.index');
     Route::get('/san-pham/danh-muc/{slug}', [ProductController::class, 'categoryBySlug'])->name('products.category');
     Route::get('/san-pham/{slug}', [ProductController::class, 'showBySlug'])->name('products.show');
@@ -47,7 +43,6 @@ Route::group([], function (): void {
     Route::post('/lien-he', [ContactController::class, 'store'])->middleware('throttle:frontend-contact')->name('contact.store');
     Route::post('/binh-luan/{post:id}', [CommentController::class, 'store'])->middleware('throttle:frontend-comment')->name('comments.store');
     Route::post('/binh-luan/dich-vu/{service:id}', [CommentController::class, 'storeService'])->middleware('throttle:frontend-comment')->name('services.comments.store');
-    Route::post('/binh-luan/du-an/{project:id}', [CommentController::class, 'storeProject'])->middleware('throttle:frontend-comment')->name('projects.comments.store');
     Route::get('/tin-tuc', fn () => redirect()->route('posts.index', status: 301));
     Route::get('/tin-tuc/danh-muc/{slug}', fn (string $slug) => redirect()->route('posts.category', ['slug' => $slug], status: 301));
     Route::get('/tin-tuc/{slug}', [PostController::class, 'showBySlug']);

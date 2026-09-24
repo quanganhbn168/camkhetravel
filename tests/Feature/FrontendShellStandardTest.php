@@ -74,15 +74,31 @@ class FrontendShellStandardTest extends TestCase
         $this->assertStringNotContainsString('.scss', $entrypoint);
     }
 
-    public function test_homepage_has_its_own_vite_style_entry(): void
+    public function test_master_keeps_only_the_styles_and_scripts_stacks(): void
     {
-        $entrypoint = file_get_contents(resource_path('css/frontend.css'));
+        $master = file_get_contents(resource_path('views/layouts/master.blade.php'));
         $home = file_get_contents(resource_path('views/frontend/home.blade.php'));
 
-        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true, flags: JSON_THROW_ON_ERROR);
-        $this->assertArrayHasKey('resources/css/pages/home.css', $manifest);
+        $this->assertStringContainsString("@vite(['resources/css/frontend.css', 'resources/js/app.js'])", $master);
+        $this->assertStringContainsString("@stack('styles')", $master);
+        $this->assertStringContainsString("@stack('scripts')", $master);
+        $this->assertStringNotContainsString("@yield('head')", $master);
+        $this->assertStringNotContainsString("@stack('head')", $master);
+        $this->assertStringContainsString("@push('styles')", $home);
         $this->assertStringContainsString("@vite('resources/css/pages/home.css')", $home);
-        $this->assertStringNotContainsString("@import './pages/home.css';", $entrypoint);
+        $this->assertStringNotContainsString("@section('main_id'", $home);
+        $this->assertStringNotContainsString("@section('main_class'", $home);
+    }
+
+    public function test_homepage_signatures_use_dancing_script(): void
+    {
+        $fonts = file_get_contents(resource_path('css/fonts.css'));
+        $theme = file_get_contents(resource_path('css/theme.css'));
+        $homeStyles = file_get_contents(resource_path('css/pages/home.css'));
+
+        $this->assertStringContainsString("@fontsource/dancing-script", $fonts);
+        $this->assertStringContainsString("--site-font-script: 'Dancing Script'", $theme);
+        $this->assertStringContainsString('font-family: var(--site-font-script);', $homeStyles);
     }
 
     public function test_homepage_does_not_override_bootstrap_container_width(): void

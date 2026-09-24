@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\LaravelSettings\Support\SettingsCacheFactory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,13 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (app(SettingsCacheFactory::class)->all() as $settingsCache) {
-            $settingsCache->clear();
-        }
-
         $this->call([
-            ShieldSeeder::class,
-            AdminUserSeeder::class,
             MediaSeeder::class,
             WebsiteSettingsSeeder::class,
             HomepageSettingsSeeder::class,

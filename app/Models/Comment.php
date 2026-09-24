@@ -88,7 +88,6 @@ class Comment extends Model
     {
         return [
             'post' => 'Bài viết',
-            'project' => 'Dự án',
             'service' => 'Dịch vụ',
         ];
     }

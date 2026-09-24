@@ -9,9 +9,9 @@ use LogicException;
 
 final class SystemPageProfileResolver
 {
-    private const KEYS = ['home', 'about', 'services', 'solutions', 'contact', 'projects'];
+    private const KEYS = ['home', 'about', 'services', 'solutions', 'contact'];
 
-    private const REQUIRED_FIELDS = ['title', 'seo_title', 'seo_description', 'og_image_media_id'];
+    private const REQUIRED_FIELDS = ['title', 'seo_title', 'seo_description'];
 
     public function __construct(private readonly SystemPageSettings $settings) {}
 
@@ -30,10 +30,15 @@ final class SystemPageProfileResolver
             }
         }
 
-        $ogImage = Media::query()->find((int) $profile['og_image_media_id']);
+        $ogImageId = filled($profile['og_image_media_id'] ?? null)
+            ? (int) $profile['og_image_media_id']
+            : null;
+        $ogImage = $ogImageId !== null
+            ? Media::query()->find($ogImageId)
+            : null;
 
-        if (! $ogImage || ! str_starts_with((string) $ogImage->type, 'image/')) {
-            throw new LogicException("Ảnh system_pages.{$key}.og_image_media_id không hợp lệ.");
+        if ($ogImage && ! str_starts_with((string) $ogImage->type, 'image/')) {
+            $ogImage = null;
         }
 
         $bannerMediaId = filled($profile['banner_media_id'] ?? null)
@@ -43,8 +48,8 @@ final class SystemPageProfileResolver
             ? Media::query()->find($bannerMediaId)
             : null;
 
-        if ($bannerMediaId !== null && (! $banner || ! str_starts_with((string) $banner->type, 'image/'))) {
-            throw new LogicException("Ảnh system_pages.{$key}.banner_media_id không hợp lệ.");
+        if ($banner && ! str_starts_with((string) $banner->type, 'image/')) {
+            $banner = null;
         }
 
         return [

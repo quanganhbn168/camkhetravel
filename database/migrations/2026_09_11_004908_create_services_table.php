@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('benefit_title')->nullable();
             $table->text('benefit_description')->nullable();
             $table->json('benefit_items')->nullable();
-            $table->string('projects_title')->nullable();
             $table->string('stats_title')->nullable();
             $table->text('stats_description')->nullable();
             $table->json('stats_items')->nullable();

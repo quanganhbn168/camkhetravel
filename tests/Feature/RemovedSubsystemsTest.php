@@ -36,7 +36,6 @@ class RemovedSubsystemsTest extends TestCase
         foreach ([
             'landing_pages',
             'landing_page_post',
-            'landing_page_project',
             'landing_page_service',
             'landing_page_service_category',
             'pricing_plans',
@@ -48,8 +47,6 @@ class RemovedSubsystemsTest extends TestCase
             'about_team_members',
             'redirects',
             'post_post_category',
-            'project_service',
-            'post_project',
             'hero_slide_translations',
         ] as $removedTable) {
             $this->assertFalse(Schema::hasTable($removedTable), $removedTable.' must not remain in the database.');
@@ -64,5 +61,36 @@ class RemovedSubsystemsTest extends TestCase
         $this->assertFalse($migrationNames->contains(fn (string $name): bool => str_contains($name, 'remove_')));
         $this->assertFalse($migrationNames->contains(fn (string $name): bool => str_contains($name, 'landing_page')));
         $this->assertFalse($migrationNames->contains(fn (string $name): bool => str_contains($name, 'pricing_')));
+    }
+
+    public function test_schema_baseline_contains_only_create_migrations(): void
+    {
+        $migrationNames = collect(glob(database_path('migrations/*.php')))
+            ->map(fn (string $path): string => basename($path));
+
+        $this->assertNotEmpty($migrationNames);
+        $this->assertSame(
+            [],
+            $migrationNames
+                ->reject(fn (string $name): bool => str_contains($name, '_create_'))
+                ->values()
+                ->all(),
+        );
+    }
+
+    public function test_removed_project_feature_has_no_public_or_admin_entry_points(): void
+    {
+        foreach (['projects.index', 'projects.category', 'projects.show', 'projects.comments.store'] as $route) {
+            $this->assertFalse(Route::has($route));
+        }
+
+        $this->get('/du-an')->assertNotFound();
+        $this->assertFalse(Schema::hasTable('projects'));
+        $this->assertFalse(Schema::hasTable('project_categories'));
+        $this->assertFalse(Schema::hasColumn('services', 'projects_title'));
+
+        foreach (['Models/Project.php', 'Models/ProjectCategory.php', 'Filament/Resources/Projects/ProjectResource.php', 'Filament/Resources/ProjectCategories/ProjectCategoryResource.php'] as $removedFile) {
+            $this->assertFileDoesNotExist(app_path($removedFile));
+        }
     }
 }

@@ -22,7 +22,7 @@ class FaqResource extends Resource
 
     protected static ?string $navigationLabel = 'Câu hỏi thường gặp';
 
-    protected static ?int $navigationSort = 12;
+    protected static ?int $navigationSort = 10;
 
     public static function getNavigationGroup(): ?string
     {

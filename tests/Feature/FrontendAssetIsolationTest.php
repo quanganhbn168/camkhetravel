@@ -16,7 +16,7 @@ class FrontendAssetIsolationTest extends TestCase
         $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true, flags: JSON_THROW_ON_ERROR);
         $frontend = $manifest['resources/css/frontend.css']['file'];
         $admin = $manifest['resources/css/filament/admin/theme.css']['file'];
-        foreach (['/', '/gioi-thieu', '/dich-vu', '/giai-phap', '/du-an', '/san-pham', '/blog', '/lien-he', '/tim-kiem?q=pccc'] as $url) {
+        foreach (['/', '/gioi-thieu', '/dich-vu', '/giai-phap', '/san-pham', '/blog', '/lien-he', '/tim-kiem?q=pccc'] as $url) {
             $this->get($url)->assertOk()->assertSee($frontend, false)->assertDontSee($admin, false);
         }
     }

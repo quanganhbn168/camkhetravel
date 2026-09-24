@@ -53,9 +53,10 @@ class HeroVideoLibraryTest extends TestCase
         $this->assertSame($video->id, collect($component->get('data.video_media_id'))->first()['id']);
         $component->call('save');
         $this->assertSame($video->id, $slide->fresh()->video_media_id);
-        $this->get('/')->assertOk()->assertViewHas('heroSlides', fn ($slides) => $slides->contains(
-            fn (HeroSlide $item): bool => $item->title === 'Hero video QA' && $item->resolvedVideoUrl() === $video->url
-        ));
+        $this->get('/')->assertOk()->assertViewHas(
+            'heroSlide',
+            fn (?HeroSlide $item): bool => $item?->title === 'Hero video QA' && $item->resolvedVideoUrl() === $video->url,
+        );
     }
 
     private function media(string $name, string $type, string $ext): Media

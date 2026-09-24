@@ -33,7 +33,7 @@
     <div class="position-relative overflow-hidden news-sidebar__cta">
         @if (($heroImageUrl ?: $defaultBannerUrl))<img class="position-absolute h-100 w-100 object-fit-cover news-sidebar__background" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">@endif
         <div class="position-absolute news-sidebar__overlay"></div>
-        <p class="text-primary fw-bold text-uppercase small">Tư vấn dự án</p>
+        <p class="text-primary fw-bold text-uppercase small">Tư vấn hành trình</p>
         <h2 class="h3">Cùng {{ $website->site_name }} triển khai ý tưởng của bạn.</h2>
         <a class="btn btn-primary mt-3" href="{{ route('contact') }}">Liên hệ ngay <span aria-hidden="true">↗</span></a>
     </div>

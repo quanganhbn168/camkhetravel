@@ -7,7 +7,6 @@ use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Models\PostCategory;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\ProjectCategory;
 use App\Models\ServiceCategory;
 use App\Models\User;
 use App\Support\Categories\CategoryTree;
@@ -58,9 +57,13 @@ class CategoryHierarchyTest extends TestCase
         $user = User::factory()->create();
         $user->assignRole(Role::findOrCreate('super_admin'));
         $this->actingAs($user);
-        $cover = MediaSeeder::id('equipment');
-        $banner = MediaSeeder::id('facility');
-        foreach (['Product', 'Service', 'Project', 'Post'] as $type) {
+        $cover = MediaSeeder::id('no-image');
+        $bannerMedia = Media::findOrFail($cover)->replicate();
+        $bannerMedia->path = 'media/site/category-banner.svg';
+        $bannerMedia->name = 'category-banner';
+        $bannerMedia->save();
+        $banner = $bannerMedia->id;
+        foreach (['Product', 'Service', 'Post'] as $type) {
             $model = 'App\\Models\\'.$type.'Category';
             $page = 'App\\Filament\\Resources\\'.$type.'Categories\\Pages\\Edit'.$type.'Category';
             $root = $model::create(['name' => 'Cha '.$type]);
@@ -80,9 +83,9 @@ class CategoryHierarchyTest extends TestCase
 
     public function test_parent_archive_includes_descendant_content_and_uses_only_its_own_banner(): void
     {
-        foreach (['Product' => ['products.category', 'slug', 'products'], 'Project' => ['projects.category', 'slug', 'projects'], 'Service' => ['services.category', 'category', 'services'], 'Post' => ['posts.category', 'slug', 'posts']] as $type => [$route, $parameter, $relation]) {
+        foreach (['Product' => ['products.category', 'slug', 'products'], 'Service' => ['services.category', 'category', 'services'], 'Post' => ['posts.category', 'slug', 'posts']] as $type => [$route, $parameter, $relation]) {
             $model = 'App\\Models\\'.$type.'Category';
-            $root = $model::create(['name' => 'Gốc '.$type, 'seo_title' => 'SEO riêng '.$type, 'seo_description' => 'Mô tả SEO riêng '.$type, 'body' => '<p>Nội dung gốc '.$type.'</p>', 'banner_media_id' => MediaSeeder::id('facility')]);
+            $root = $model::create(['name' => 'Gốc '.$type, 'seo_title' => 'SEO riêng '.$type, 'seo_description' => 'Mô tả SEO riêng '.$type, 'body' => '<p>Nội dung gốc '.$type.'</p>', 'banner_media_id' => MediaSeeder::id('no-image')]);
             $leaf = $model::create(['name' => 'Lá '.$type, 'parent_id' => $root->id]);
             $leaf->{$relation}()->create(['title' => 'Bài thuộc lá '.$type, 'status' => 'published']);
             $url = route($route, [$parameter => $root->slug]);
@@ -96,7 +99,7 @@ class CategoryHierarchyTest extends TestCase
 
     public function test_all_categories_support_hierarchy_content_and_separate_images(): void
     {
-        foreach ([ProductCategory::class, ServiceCategory::class, ProjectCategory::class, PostCategory::class] as $model) {
+        foreach ([ProductCategory::class, ServiceCategory::class, PostCategory::class] as $model) {
             $this->assertTrue(Schema::hasColumns((new $model)->getTable(), ['parent_id', 'body', 'curator_media_id', 'banner_media_id']));
             $root = $model::create(['name' => 'Gốc']);
             $child = $model::create(['name' => 'Con', 'parent_id' => $root->id]);

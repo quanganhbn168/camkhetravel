@@ -2,7 +2,7 @@
     <section class="resource-related-section" id="tai-lieu-tham-khao">
         <div class="container">
             <header class="mx-auto text-center mb-4">
-                <h2 class="display-title h2">Các dự án nổi bật</h2>
+                <h2 class="display-title h2">Ảnh và video tham khảo</h2>
             </header>
 
             @if ($hasReferenceTabs)

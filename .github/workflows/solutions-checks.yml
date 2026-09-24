@@ -27,7 +27,7 @@ jobs:
         image: mysql:8.4
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-          MYSQL_DATABASE: dvtec_testing
+          MYSQL_DATABASE: site_testing
         ports: ['3306:3306']
         options: >-
           --health-cmd="mysqladmin ping --silent"
@@ -40,14 +40,14 @@ jobs:
       DB_CONNECTION: mysql
       DB_HOST: 127.0.0.1
       DB_PORT: '3306'
-      DB_DATABASE: dvtec_testing
+      DB_DATABASE: site_testing
       DB_USERNAME: root
       DB_PASSWORD: ''
       CACHE_STORE: array
       SESSION_DRIVER: array
       QUEUE_CONNECTION: sync
       MAIL_MAILER: array
-      CURATOR_GLIDE_TOKEN: dvtec-test-glide-token
+      CURATOR_GLIDE_TOKEN: site-test-glide-token
     defaults:
       run:
         shell: bash
@@ -68,7 +68,7 @@ jobs:
           composer install --prefer-dist --no-interaction --no-progress
       - name: Test fresh schema, existing-data upgrade and rollback on MySQL
         run: |
-          test "$DB_DATABASE" = dvtec_testing
+          test "$DB_DATABASE" = site_testing
           php artisan migrate --force
           vendor/bin/phpunit tests/Integration/SolutionMigrationTest.php --log-junit test-results/solution-migrations.xml 2>&1 | tee test-results/solution-migrations.log
       - name: Prepare isolated HTTP test database
@@ -76,7 +76,7 @@ jobs:
           # DatabaseMigrations rolls back tables; the legacy settings migration has no down().
           # Reset only this disposable CI database before booting the HTTP test suite.
           test "$APP_ENV" = testing
-          test "$DB_DATABASE" = dvtec_testing
+          test "$DB_DATABASE" = site_testing
           php artisan migrate:fresh --force
           php artisan db:seed --force
           php artisan view:cache

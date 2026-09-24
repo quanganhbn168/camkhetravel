@@ -1,9 +1,9 @@
 .contact-page-hero {
-  --bs-heading-color: #fff;
+  --bs-heading-color: var(--site-white);
   position: relative;
   isolation: isolate;
   padding-block: clamp(3rem, 7vw, 6rem);
-  color: #fff;
+  color: var(--site-white);
   background: var(--bs-dark);
 }
 
@@ -42,18 +42,18 @@
 }
 
 .contact-page-hero__breadcrumb a:hover {
-  color: #fff;
+  color: var(--site-white);
 }
 
 .contact-page-hero__breadcrumb [aria-current=page] {
-  color: #fff;
+  color: var(--site-white);
   font-weight: 600;
 }
 
 /* Hero heading */
 .contact-page-hero h1 {
   margin-bottom: 1rem;
-  color: #fff;
+  color: var(--site-white);
   font-size: clamp(2rem, 5vw, 4rem);
 }
 

@@ -68,7 +68,6 @@ class ManageSettings extends Page
         'services' => 'Dịch vụ',
         'solutions' => 'Giải pháp',
         'contact' => 'Liên hệ',
-        'projects' => 'Dự án',
     ];
 
     public function mount(

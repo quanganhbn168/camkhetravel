@@ -5,7 +5,6 @@ namespace App\Support\Seo;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Project;
 use App\Models\Service;
 use App\Settings\WebsiteSettings;
 use Awcodes\Curator\Models\Media;
@@ -89,7 +88,6 @@ class FrontendSeoBuilder
             canonical: $canonical,
             schema: $schema,
             image: (string) $profile['og_image_url'],
-            useDefaultImage: false,
         );
     }
 
@@ -122,7 +120,6 @@ class FrontendSeoBuilder
                 $this->organizationSchema(),
                 $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description']),
             ],
-            useDefaultImage: false,
         );
     }
 
@@ -168,43 +165,6 @@ class FrontendSeoBuilder
                     ['name' => 'Trang chủ', 'url' => route('home')],
                     ['name' => 'Dịch vụ', 'url' => route('services.index')],
                     ['name' => $service->title, 'url' => $canonical],
-                ]),
-            ],
-        );
-    }
-
-    public function project(Project $project): array
-    {
-        $canonical = route('projects.show', ['slug' => $project->slug]);
-        $title = $project->seo_title ?: $project->title.' | '.$this->website->site_name;
-        $description = $project->seo_description ?: $project->excerpt ?: $project->title;
-
-        $creativeWork = [
-            '@type' => 'CreativeWork',
-            '@id' => $canonical.'#project',
-            'name' => $project->title,
-            'description' => $this->description($description),
-            'url' => $canonical,
-            ...$this->imageProperty($project->image_url),
-            'creator' => ['@id' => $this->baseUrl().'#organization'],
-        ];
-
-        if ($project->published_at) {
-            $creativeWork['datePublished'] = $project->published_at->toDateString();
-        }
-
-        return $this->page(
-            title: $title,
-            description: $description,
-            canonical: $canonical,
-            image: $project->seoImageUrl($project->image_url),
-            schema: [
-                $this->organizationSchema(),
-                $creativeWork,
-                $this->breadcrumb([
-                    ['name' => 'Trang chủ', 'url' => route('home')],
-                    ['name' => 'Dự án', 'url' => route('projects.index')],
-                    ['name' => $project->title, 'url' => $canonical],
                 ]),
             ],
         );

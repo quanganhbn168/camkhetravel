@@ -61,8 +61,6 @@ class MenuItem extends Model
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
             'service-category' => $this->serviceCategoryLink(),
-            'project' => $this->projectLink(),
-            'project-category' => $this->projectCategoryLink(),
             'post' => $this->postLink(),
             'post-category' => $this->postCategoryLink(),
             'product' => $this->productLink(),
@@ -80,14 +78,11 @@ class MenuItem extends Model
             'native_route' => 'route',
             'native_service' => 'service',
             'native_service_category' => 'service-category',
-            'native_project' => 'project',
-            'native_project_category' => 'project-category',
             'native_post' => 'post',
             'native_post_category' => 'post-category',
             'native_page' => 'custom',
             'custom' => 'custom',
             Service::class => 'service',
-            Project::class => 'project',
             Post::class => 'post',
             Product::class => 'product',
             ProductCategory::class => 'product-category',
@@ -128,7 +123,6 @@ class MenuItem extends Model
             'about',
             'services.index',
             'solutions.index',
-            'projects.index',
             'posts.index',
             'products.index',
             'contact',
@@ -153,25 +147,6 @@ class MenuItem extends Model
             ->find($this->linked_source_id);
 
         return $category ? route('services.category', ['category' => $category->slug]) : '#';
-    }
-
-    private function projectLink(): string
-    {
-        $project = Project::query()
-            ->published()
-            ->with('slugs')
-            ->find($this->linked_source_id);
-
-        return $project ? route('projects.show', ['slug' => $project->slug]) : '#';
-    }
-
-    private function projectCategoryLink(): string
-    {
-        $category = ProjectCategory::query()
-            ->where('is_active', true)
-            ->find($this->linked_source_id);
-
-        return $category ? route('projects.category', ['slug' => $category->slug]) : '#';
     }
 
     private function postLink(): string

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
-use App\Models\Project;
 use App\Models\Service;
 use App\Settings\AboutSettings;
 use App\Settings\WebsiteSettings;
@@ -176,7 +175,6 @@ class AboutController extends Controller
         }
 
         return collect([
-            ['value' => (string) Project::query()->published()->count(), 'label' => 'dự án đã thực hiện'],
             ['value' => (string) Service::query()->published()->count(), 'label' => 'dịch vụ đang cung cấp'],
             ['value' => (string) Post::query()->published()->count(), 'label' => 'bài viết chuyên môn'],
         ]);
