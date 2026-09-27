@@ -74,7 +74,7 @@ Chuẩn bị dữ liệu tại Controller/Service; Blade chỉ hiển thị. Mig
 
 ## 7. Bộ ảnh WebP cho phương án
 
-Thư mục: `public/images/homepage-redesign/v1/`. Ảnh không chứa chữ hoặc nút. Mỗi ảnh có một vai trò, được xuất WebP tối ưu kèm bản nhỏ khi cần. Đây là bộ đề xuất chờ duyệt, chưa gắn vào trang đang chạy.
+Thư mục: `public/images/homepage-redesign/v1/`. Ảnh không chứa chữ hoặc nút. Mỗi ảnh có một vai trò, được xuất WebP tối ưu kèm bản nhỏ khi cần. Bộ ảnh đã được duyệt và gắn vào trang chủ local khi triển khai phương án ngày 27/09/2026.
 
 | File dự kiến | Vai trò / bố cục | Tỷ lệ mục tiêu |
 |---|---|---|
@@ -101,3 +101,12 @@ Tham khảo nhận diện xe từ nguồn hãng: [VF 8](https://vinfastauto.com/
 6. Chạy build và tests; chứng minh sửa ảnh/nội dung trong CMS thay được phần frontend tương ứng; duyệt ảnh chụp desktop/mobile trước khi giao.
 
 Tiêu chí nghiệm thu: nhìn đầu trang hiểu doanh nghiệp phục vụ cả ba nhóm; ba nhóm nổi bật ngang nhau; ảnh có chủ đích và nhất quán; nội dung chính dễ đọc; không tràn ngang; không có CTA vô tác dụng; không hardcode thông tin kinh doanh có thể thay đổi; giữ màu/font global; ảnh WebP có kích thước khai báo và lazy-load ngoài hero; chỉ tải một ảnh hero ưu tiên, không tải nhiều background lớn cùng lúc.
+
+## 9. Kết quả triển khai ngày 27/09/2026
+
+- Đã triển khai bố cục mới, ba nhóm ngang nhau, ảnh WebP, modal đội xe, tuyến phục vụ, bài viết, FAQ và một CTA cuối; giữ layout, header/footer và endpoint liên hệ chung.
+- CMS quản lý nội dung/ảnh/nhóm dịch vụ/xe/tuyến/tiêu đề section; HeroSlide có ảnh mobile. Chỉ số cần đánh dấu xác minh, phản hồi minh họa không hiển thị trên trang chủ.
+- Có migration bổ sung và lệnh `php artisan homepage:install-design` nhập thiết kế một lần, giữ nội dung/media riêng và không ghi đè các chỉnh sửa sau khi cài. Quy trình clone/cập nhật được ghi tại `FRONTEND.md`.
+- Kiểm tra local: 89 tests Laravel / 656 assertions; 4 tests màu global; build Vite và cache Blade thành công. Đã xem giao diện 390/768/1440px, thử menu/link dịch vụ/FAQ/modal và gửi đủ ba loại yêu cầu từ trình duyệt, đối chiếu dữ liệu quản trị rồi dọn bản ghi thử.
+- Review độc lập đã được xử lý: giữ đúng nhóm nhu cầu khi chọn xe, xóa ngày cũ khi form nhanh để trống, không tự xuất bản FAQ khi quản trị đã tắt các câu hỏi hiện có.
+- Dữ liệu và media đã cập nhật tại môi trường local. Chưa triển khai production.

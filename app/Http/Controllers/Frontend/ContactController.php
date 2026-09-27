@@ -93,6 +93,8 @@ class ContactController extends Controller
             'returnDate' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:departure'],
             'vehicle' => ['nullable', 'string', 'max:100'],
             'passengers' => ['nullable', 'string', 'max:80'],
+            'pickupTime' => ['nullable', 'date_format:H:i'],
+            'weddingRole' => ['nullable', 'string', 'in:Xe dâu,Đưa đón gia đình,Cả hai'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'consent' => ['required', 'accepted'],
             'website' => ['nullable', 'string', 'max:255'],
@@ -120,6 +122,8 @@ class ContactController extends Controller
             'return_date' => $data['returnDate'] ?? null,
             'vehicle' => $data['vehicle'] ?? null,
             'passengers' => $data['passengers'] ?? null,
+            'pickup_time' => $data['pickupTime'] ?? null,
+            'wedding_role' => $data['type'] === 'wedding' ? ($data['weddingRole'] ?? null) : null,
             'notes' => $data['notes'] ?? null,
             'source' => 'homepage_quote',
         ], fn (mixed $value): bool => filled($value));
@@ -133,6 +137,8 @@ class ContactController extends Controller
             filled($data['returnDate'] ?? null) ? 'Ngày về: '.$data['returnDate'] : null,
             filled($data['vehicle'] ?? null) ? 'Loại xe: '.$data['vehicle'] : null,
             filled($data['passengers'] ?? null) ? 'Quy mô đoàn: '.$data['passengers'] : null,
+            filled($data['pickupTime'] ?? null) ? 'Giờ đón dự kiến: '.$data['pickupTime'] : null,
+            $data['type'] === 'wedding' && filled($data['weddingRole'] ?? null) ? 'Nhu cầu xe cưới: '.$data['weddingRole'] : null,
             filled($data['notes'] ?? null) ? 'Ghi chú: '.$data['notes'] : null,
         ])->filter()->implode("\n");
 

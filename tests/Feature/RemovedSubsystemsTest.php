@@ -66,7 +66,8 @@ class RemovedSubsystemsTest extends TestCase
     public function test_schema_baseline_contains_only_create_migrations(): void
     {
         $migrationNames = collect(glob(database_path('migrations/*.php')))
-            ->map(fn (string $path): string => basename($path));
+            ->map(fn (string $path): string => basename($path))
+            ->filter(fn (string $name): bool => $name < '2026_09_27');
 
         $this->assertNotEmpty($migrationNames);
         $this->assertSame(

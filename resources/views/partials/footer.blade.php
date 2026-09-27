@@ -1,4 +1,5 @@
 <footer class="footer">
+    @unless ($hideCta ?? false)
     <section class="footer__cta">
         @if ($websiteMediaUrls->get($website->footer_background_media_id))
             <img class="footer__cta-background" src="{{ $websiteMediaUrls->get($website->footer_background_media_id) }}" alt="" aria-hidden="true" loading="lazy">
@@ -11,6 +12,7 @@
             <a class="btn btn-light" href="{{ route('contact') }}">Nhận tư vấn ngay <span aria-hidden="true">→</span></a>
         </div>
     </section>
+    @endunless
 
     <div class="container footer__main">
         <section >

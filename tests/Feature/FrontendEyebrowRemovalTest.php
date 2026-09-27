@@ -10,7 +10,8 @@ class FrontendEyebrowRemovalTest extends TestCase
     {
         $homeView = file_get_contents(resource_path('views/frontend/home.blade.php'));
 
-        $this->assertStringNotContainsString('eyebrow', $homeView);
+        // The approved redesign uses short, CMS-owned section labels.
+        $this->assertStringContainsString('$sectionContent', $homeView);
         $this->assertStringNotContainsString('section-kicker', $homeView);
         $this->assertStringNotContainsString('section-kicker', file_get_contents(resource_path('css/pages/home.css')));
         $this->assertStringNotContainsString('about_eyebrow', file_get_contents(app_path('Settings/HomepageSettings.php')));

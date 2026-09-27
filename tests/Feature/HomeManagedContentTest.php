@@ -27,8 +27,8 @@ class HomeManagedContentTest extends TestCase
         $settings->about_title = 'Giới thiệu vừa lưu từ quản trị';
         $settings->about_content = "Nội dung dòng một\nNội dung dòng hai";
         $settings->stats = [
-            ['value' => '24/7', 'label' => 'Hỗ trợ theo lịch'],
-            ['prefix' => 'Hơn ', 'value' => '100', 'suffix' => '+', 'label' => 'Hành trình đã phục vụ'],
+            ['verified' => true, 'value' => '24/7', 'label' => 'Hỗ trợ theo lịch'],
+            ['verified' => true, 'prefix' => 'Hơn ', 'value' => '100', 'suffix' => '+', 'label' => 'Hành trình đã phục vụ'],
         ];
         $settings->save();
 
@@ -83,6 +83,7 @@ class HomeManagedContentTest extends TestCase
         $settings->about_content = '';
         $settings->stats = [];
         $settings->commitments = '';
+        $settings->commitment_items = [];
         $settings->capabilities = '';
         $settings->save();
         $website = app(WebsiteSettings::class);

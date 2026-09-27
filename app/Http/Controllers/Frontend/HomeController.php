@@ -11,6 +11,7 @@ use App\Models\Testimonial;
 use App\Settings\HomepageSettings;
 use App\Settings\WebsiteSettings;
 use App\Support\Media\MediaUrl;
+use App\Support\Homepage\HomepageContent;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
 use Awcodes\Curator\Models\Media;
@@ -21,6 +22,7 @@ class HomeController extends Controller
 {
     public function __construct(
         private readonly FrontendSeoBuilder $seo,
+        private readonly HomepageContent $content,
         private readonly HomepageSettings $homepage,
         private readonly WebsiteSettings $website,
         private readonly SystemPageProfileResolver $systemPages,
@@ -31,7 +33,7 @@ class HomeController extends Controller
         $page = $this->systemPages->require('home');
         $heroSlides = HeroSlide::query()
             ->active()
-            ->with('curatorMedia')
+            ->with(['curatorMedia', 'mobileMedia'])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get()
@@ -40,6 +42,7 @@ class HomeController extends Controller
                 'description' => trim((string) $slide->description),
                 'image_url' => MediaUrl::versioned($slide->curatorMedia) ?: asset('images/no-image.svg'),
                 'uses_page_banner' => false,
+                'mobile_image_url' => $slide->mobileMedia ? MediaUrl::versioned($slide->mobileMedia) : ($this->content->image($slide->curatorMedia)['small_url'] ?? null),
                 'primary_label' => trim((string) $slide->primary_label),
                 'primary_url' => trim((string) $slide->primary_url),
                 'primary_is_quote' => in_array($slide->primary_url, ['#bao-gia', '/#bao-gia'], true),
@@ -59,6 +62,7 @@ class HomeController extends Controller
                 'description' => $this->website->tagline,
                 'image_url' => $page['banner_url'] ?: asset('images/no-image.svg'),
                 'uses_page_banner' => filled($page['banner_url']),
+                'mobile_image_url' => null,
                 'primary_label' => '', 'primary_url' => '', 'primary_is_quote' => false,
                 'secondary_label' => '', 'secondary_url' => '', 'secondary_is_quote' => false,
                 'has_copy' => true,
@@ -76,13 +80,17 @@ class HomeController extends Controller
                 : null,
         ];
         $stats = collect($this->homepage->stats)
-            ->filter(fn (mixed $item): bool => is_array($item) && filled($item['value'] ?? null) && filled($item['label'] ?? null))
+            ->filter(fn (mixed $item): bool => is_array($item) && ($item['verified'] ?? false) && filled($item['value'] ?? null) && filled($item['label'] ?? null))
             ->take(4)
             ->map(fn (array $item): array => [
                 'value' => trim(($item['prefix'] ?? '').$item['value'].($item['suffix'] ?? '')),
                 'label' => $item['label'],
             ])->values();
         $commitments = $this->contentLines($this->homepage->commitments);
+        $commitmentCards = collect($this->homepage->commitment_items)
+            ->filter(fn ($item) => is_array($item) && filled($item['title'] ?? null))
+            ->merge($commitments->map(fn ($title) => ['title' => $title, 'description' => '']))
+            ->unique('title')->values();
         $capabilities = $this->contentLines($this->homepage->capabilities);
         $faqs = Faq::query()->homepage()->get(['id', 'question', 'answer']);
 
@@ -95,23 +103,15 @@ class HomeController extends Controller
             ->get()
             ->map(function (Service $service): Service {
                 $service->setAttribute('image_url', MediaUrl::versioned($service->curatorMedia) ?: asset('images/no-image.svg'));
-                $title = mb_strtolower($service->title);
-                $type = str_contains($title, 'cưới')
-                    ? 'wedding'
-                    : (str_contains($title, 'hợp đồng') ? 'partner' : (str_contains($title, 'ghép') ? 'shared' : 'trip'));
-                $service->setAttribute('quote_type', $type);
-                $service->setAttribute('quote_icon', match ($type) {
-                    'wedding' => 'heart',
-                    'partner' => 'briefcase',
-                    'shared' => 'pin',
-                    default => 'car',
-                });
+                $service->setAttribute('quote_type', 'trip');
+                $service->setAttribute('quote_icon', 'car');
 
                 return $service;
             });
 
         $testimonials = Testimonial::query()
             ->active()
+            ->where('is_illustrative', false)
             ->orderBy('sort_order')
             ->orderBy('id')
             ->limit(6)
@@ -126,21 +126,7 @@ class HomeController extends Controller
             ->get()
             ->each(fn (Post $post): mixed => $post->setAttribute('image_url', MediaUrl::versioned($post->curatorMedia) ?: asset('images/no-image.svg')));
 
-        $fleetTypes = collect($this->homepage->fleet_types)->map(fn (array $item) => [
-            ...$item,
-            'features' => collect(preg_split('/\r\n|\r|\n/', (string) ($item['features'] ?? '')))
-                ->map(fn (string $feature) => trim($feature))
-                ->filter()
-                ->values(),
-        ]);
-        $fleetCapacityLabels = $fleetTypes
-            ->map(function (array $vehicle): ?string {
-                return preg_match('/\d+(?:[–-]\d+)?/', (string) ($vehicle['title'] ?? ''), $matches)
-                    ? $matches[0]
-                    : null;
-            })
-            ->filter()
-            ->values();
+        $presentation = $this->content->prepare($this->homepage, $services);
 
         $configuredPhones = collect($this->website->phones)
             ->filter(fn (mixed $item): bool => is_array($item) && filled($item['number'] ?? null));
@@ -160,15 +146,15 @@ class HomeController extends Controller
             'hasAbout' => filled($about['title']) || filled($about['content']) || filled($about['image_url']),
             'stats' => $stats,
             'commitments' => $commitments,
+            'commitmentCards' => $commitmentCards,
             'capabilities' => $capabilities,
             'faqs' => $faqs,
             'services' => $services,
             'testimonials' => $testimonials,
             'latestPosts' => $latestPosts,
-            'hasIllustrativeTestimonials' => $testimonials->contains(fn (Testimonial $item) => $item->is_illustrative),
             'homepage' => $this->homepage,
-            'fleetTypes' => $fleetTypes,
-            'heroFleetLabel' => $fleetCapacityLabels->isNotEmpty() ? $fleetCapacityLabels->implode(' – ').' chỗ' : '',
+            ...$presentation,
+            'hideFooterCta' => true,
             'noImageUrl' => asset('images/no-image.svg'),
             'frontendConfig' => $frontendConfig,
             'seo' => $this->seo->home($page, $faqs->toArray()),

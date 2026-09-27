@@ -34,6 +34,16 @@ class HomepageSettings extends Settings
 
     public array $commitment_items = [];
 
+    public array $audience_groups = [];
+
+    public array $route_items = [];
+
+    public array $section_content = [];
+
+    public ?int $consultation_media_id = null;
+
+    public int $design_version = 0;
+
     public static function group(): string
     {
         return 'homepage';

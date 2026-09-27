@@ -4,7 +4,7 @@
   --site-primary: #28bdbf;
   --site-accent: #ffca00;
   --site-font-body: 'Be Vietnam Pro', system-ui, sans-serif;
-  --site-font-heading: 'Lora', Georgia, serif;
+  --site-font-heading: var(--site-font-body);
   --site-font-script: 'Dancing Script', 'Segoe Print', cursive;
   --site-font-size-body: 1rem;
   --site-font-size-display: clamp(1.75rem, 3vw, 3rem);

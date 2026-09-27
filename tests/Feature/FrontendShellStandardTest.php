@@ -33,8 +33,8 @@ class FrontendShellStandardTest extends TestCase
         $this->assertStringContainsString("header.classList.toggle('is-scroll-hidden', currentScroll > previousScroll)", $runtime);
         $this->assertStringNotContainsString('final-cta', $home);
         $this->assertStringNotContainsString('final-cta', $homeStyles);
-        $this->assertStringContainsString('CamKheTravel', $home);
-        $this->assertStringContainsString('Mỗi hành trình', $home);
+        $this->assertStringContainsString('$website->site_name', $home);
+        $this->assertStringContainsString('$slide[\'title\']', $home);
     }
 
     public function test_shared_header_and_home_hero_each_have_one_style_owner(): void

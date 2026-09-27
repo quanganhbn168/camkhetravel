@@ -9,7 +9,13 @@ final class HomepageSettingsSeeder extends Seeder
 {
     public function run(): void
     {
+        if (\Illuminate\Support\Facades\DB::table('settings')->where('group', 'homepage')->exists()) {
+            return;
+        }
+
         $settings = new HomepageSettings([
+            'audience_groups' => [], 'route_items' => [], 'section_content' => [],
+            'consultation_media_id' => null, 'design_version' => 0,
             'about_title' => 'CamKheTravel đồng hành cùng hành trình của bạn',
             'about_content' => 'Dịch vụ xe du lịch, xe hợp đồng và hỗ trợ lịch trình theo nhu cầu của từng chuyến đi.',
             'stats' => [],

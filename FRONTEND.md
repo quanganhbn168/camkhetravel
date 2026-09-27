@@ -1,5 +1,15 @@
 # Dùng lại frontend khi clone
 
+## Trang chủ và quản trị
+
+Trang chủ dùng chung Bootstrap 5 và `layouts.master`. Ảnh, ba nhóm nhu cầu, dịch vụ liên kết, nhóm xe, tuyến phục vụ, quy trình và lời mời tư vấn được quản lý tại **Cài đặt website → Trang chủ**. Hero có ảnh mobile riêng trong **Hero slides**. Phản hồi minh họa và chỉ số chưa đánh dấu xác minh không công bố trên trang chủ.
+
+Khi cập nhật một database đang sử dụng, chạy `php artisan migrate --force`, sau đó `php artisan homepage:install-design`. Lệnh thứ hai nhập ảnh WebP đã có trong repo vào Curator và chỉ áp dụng thiết kế v1 một lần. Nó giữ ảnh/nội dung riêng đang có và không ghi đè các lần chỉnh sửa sau khi đã nhập. Không chạy lại toàn bộ `DatabaseSeeder` trên dữ liệu khách hàng để áp dụng giao diện. Với database mới, quy trình seed ban đầu có sẵn bước nhập thiết kế.
+
+Ảnh runtime nằm trong `storage/app/public/media/homepage/v1/`; cần liên kết `public/storage` như các ảnh Curator khác. File nguồn nằm ở `public/images/homepage-redesign/v1/`. Khi triển khai máy khác phải chạy bước nhập dữ liệu và build, chỉ kéo Git chưa cập nhật CMS hay tạo build.
+
+Form tư vấn dùng `contact.store` và lưu `ContactRequest`, phân biệt chuyến đi riêng/đối tác/xe cưới. Chọn xe hoặc đổi nhu cầu giữ tên, điện thoại đang nhập trong bộ nhớ của trang; không lưu thông tin này vào localStorage. Đây là yêu cầu tư vấn, chưa phải đặt xe hoặc thanh toán.
+
 ## Những chỗ cần đổi cho một website mới
 
 1. **Tên, logo, liên hệ, menu và nội dung:** sửa trong quản trị hiện có. Manifest lấy tên website từ quản trị, không có tên khách hàng cố định trong file manifest.

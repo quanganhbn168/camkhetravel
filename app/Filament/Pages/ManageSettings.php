@@ -6,6 +6,8 @@ use App\Filament\Concerns\PreservesUnchangedSettings;
 use App\Filament\Forms\Components\GalleryPicker;
 use App\Filament\RichEditor\ScopedAttachCuratorMediaPlugin;
 use App\Models\Menu;
+use App\Models\Service;
+use App\Support\Homepage\HomepageContent;
 use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
 use App\Settings\HomepageSettings;
@@ -99,6 +101,12 @@ class ManageSettings extends Page
             'capabilities' => $homepage->capabilities,
             'faq_title' => $homepage->faq_title,
             'faq_description' => $homepage->faq_description,
+            'audience_groups' => $homepage->audience_groups,
+            'route_items' => $homepage->route_items,
+            'section_content' => $homepage->section_content,
+            'consultation_title' => $homepage->consultation_title,
+            'consultation_content' => $homepage->consultation_content,
+            'consultation_media_id' => $homepage->consultation_media_id,
             'fleet_types' => $homepage->fleet_types,
             'tour_types' => $homepage->tour_types,
             'partner_benefits' => $homepage->partner_benefits,
@@ -344,7 +352,7 @@ class ManageSettings extends Page
                 ]),
             Section::make('Chỉ số nổi bật')
                 ->icon(Heroicon::OutlinedChartBar)
-                ->description('Tối đa 4 chỉ số. Nhập “24/7” để cả 24 và 7 cùng chạy hiệu ứng đếm.')
+                ->description('Chỉ công bố những chỉ số đã được xác minh; tối đa 4 chỉ số.')
                 ->schema([
                     Repeater::make('stats')
                         ->label('Danh sách chỉ số')
@@ -354,6 +362,7 @@ class ManageSettings extends Page
                                 ->helperText('Ví dụ: 24/7, 10+, 98%')
                                 ->required()
                                 ->maxLength(100),
+                            Toggle::make('verified')->label('Đã xác minh')->default(false),
                             TextInput::make('prefix')
                                 ->label('Prefix')
                                 ->maxLength(30),
@@ -385,7 +394,8 @@ class ManageSettings extends Page
     private function homepageContentSchema(): array
     {
         return [
-            Section::make('Nội dung CamKheTravel')
+            ...$this->homepageDesignSchema(),
+            Section::make('Đội xe và quy trình')
                 ->icon(Heroicon::OutlinedTruck)
                 ->description('Quản lý nhóm xe, loại hình tour, lợi ích hợp tác, quy trình và cam kết hiển thị ở trang chủ.')
                 ->schema([
@@ -394,6 +404,11 @@ class ManageSettings extends Page
                         ->schema([
                             TextInput::make('code')->label('Mã nhận diện')->required()->maxLength(40),
                             TextInput::make('title')->label('Tên nhóm xe')->required()->maxLength(120),
+                            CuratorPicker::make('media_id')->label('Ảnh xe')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                            Textarea::make('description')->label('Giới thiệu xe')->rows(2)->columnSpanFull(),
+                            TextInput::make('capacity')->label('Sức chứa đã xác nhận')->maxLength(120),
+                            TextInput::make('luggage')->label('Hành lý đã xác nhận')->maxLength(120),
+                            Textarea::make('amenities')->label('Tiện ích đã xác nhận')->rows(2)->columnSpanFull(),
                             Textarea::make('features')->label('Mô tả (mỗi dòng một ý)')->rows(3)->columnSpanFull(),
                         ])
                         ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhóm xe mới')
@@ -415,7 +430,7 @@ class ManageSettings extends Page
                         ->columns(2)->reorderable()->collapsible()->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Lợi ích mới')
                         ->addActionLabel('Thêm lợi ích')->columnSpanFull(),
                     Repeater::make('partner_steps')
-                        ->label('Quy trình hợp tác')
+                        ->label('Quy trình tư vấn chung')
                         ->schema([
                             TextInput::make('title')->label('Bước')->required()->maxLength(120),
                             Textarea::make('description')->label('Mô tả')->rows(2)->required(),
@@ -446,6 +461,44 @@ class ManageSettings extends Page
                     TextInput::make('faq_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
                     Textarea::make('faq_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 ]),
+        ];
+    }
+
+    private function homepageDesignSchema(): array
+    {
+        $serviceOptions = fn () => Service::query()->published()->where('is_home', true)->orderBy('sort_order')->pluck('title', 'id')->all();
+        return [
+            Section::make('Ba nhóm khách hàng')->description('Ba nhóm ngang nhau. Chọn dịch vụ đã bật trên trang chủ để liên kết đến trang chi tiết.')->schema([
+                Repeater::make('audience_groups')->label('Nhóm nhu cầu')->schema([
+                    Select::make('key')->label('Loại nhu cầu')->options(HomepageContent::TYPES)->required()->distinct()->disableOptionsWhenSelectedInSiblingRepeaterItems(),
+                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(120),
+                    Textarea::make('description')->label('Giới thiệu')->rows(3)->maxLength(500),
+                    Textarea::make('highlights')->label('Nhu cầu tiêu biểu (mỗi dòng một ý)')->rows(3),
+                    CuratorPicker::make('media_id')->label('Ảnh nhóm')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+                    Select::make('service_ids')->label('Dịch vụ liên kết')->multiple()->options($serviceOptions)->searchable()->columnSpanFull(),
+                    TextInput::make('cta_label')->label('Nhãn nút tư vấn')->maxLength(80),
+                ])->columns(2)->maxItems(3)->reorderable()->collapsible()->itemLabel(fn (array $state) => $state['title'] ?? 'Nhóm nhu cầu')->columnSpanFull(),
+            ]),
+            Section::make('Tuyến và phạm vi hỗ trợ')->schema([
+                Repeater::make('route_items')->label('Danh sách tuyến')->schema([
+                    TextInput::make('title')->label('Tên tuyến / nhu cầu')->required()->maxLength(180),
+                    TextInput::make('description')->label('Mô tả ngắn')->maxLength(255),
+                    Select::make('service_id')->label('Dịch vụ liên kết')->options($serviceOptions)->searchable(),
+                ])->columns(3)->collapsible()->itemLabel(fn (array $state) => $state['title'] ?? 'Tuyến mới'),
+            ]),
+            Section::make('Tiêu đề các phần')->collapsed()->schema(collect([
+                'hero_eyebrow' => 'Dòng giới thiệu hero',
+                'services_eyebrow' => 'Dòng nhấn dịch vụ', 'services_title' => 'Tiêu đề dịch vụ', 'services_description' => 'Mô tả dịch vụ',
+                'fleet_eyebrow' => 'Dòng nhấn đội xe', 'fleet_title' => 'Tiêu đề đội xe', 'fleet_description' => 'Mô tả đội xe',
+                'about_eyebrow' => 'Dòng nhấn giới thiệu', 'routes_title' => 'Tiêu đề phạm vi hỗ trợ',
+                'process_eyebrow' => 'Dòng nhấn quy trình', 'process_title' => 'Tiêu đề quy trình',
+                'journal_eyebrow' => 'Dòng nhấn bài viết', 'journal_title' => 'Tiêu đề bài viết',
+            ])->map(fn ($label, $key) => TextInput::make('section_content.'.$key)->label($label)->maxLength(500))->values()->all())->columns(2),
+            Section::make('Lời mời tư vấn cuối trang')->schema([
+                TextInput::make('consultation_title')->label('Tiêu đề')->maxLength(255),
+                Textarea::make('consultation_content')->label('Mô tả')->rows(2),
+                CuratorPicker::make('consultation_media_id')->label('Ảnh nền')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
+            ]),
         ];
     }
 
@@ -842,6 +895,12 @@ class ManageSettings extends Page
         $homepage->capabilities = trim((string) ($data['capabilities'] ?? ''));
         $homepage->faq_title = trim((string) ($data['faq_title'] ?? ''));
         $homepage->faq_description = trim((string) ($data['faq_description'] ?? ''));
+        foreach (['audience_groups', 'route_items', 'section_content'] as $key) {
+            $homepage->{$key} = is_array($data[$key] ?? null) ? $data[$key] : [];
+        }
+        $homepage->consultation_title = trim((string) ($data['consultation_title'] ?? ''));
+        $homepage->consultation_content = trim((string) ($data['consultation_content'] ?? ''));
+        $homepage->consultation_media_id = filled($data['consultation_media_id'] ?? null) ? (int) $data['consultation_media_id'] : null;
         $homepage->fleet_types = is_array($data['fleet_types'] ?? null) ? array_values($data['fleet_types']) : [];
         $homepage->tour_types = is_array($data['tour_types'] ?? null) ? array_values($data['tour_types']) : [];
         $homepage->partner_benefits = is_array($data['partner_benefits'] ?? null) ? array_values($data['partner_benefits']) : [];

@@ -28,4 +28,9 @@ class HeroSlide extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function mobileMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'mobile_media_id');
+    }
 }

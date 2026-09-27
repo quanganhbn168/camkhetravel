@@ -17,7 +17,7 @@
         @yield('content')
     </main>
 
-    <x-site-footer />
+    <x-site-footer :hide-cta="$hideFooterCta ?? false" />
     @include('partials.floating-actions')
     @stack('scripts')
 </body>

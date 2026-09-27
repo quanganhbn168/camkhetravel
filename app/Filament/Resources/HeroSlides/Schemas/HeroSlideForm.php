@@ -29,11 +29,13 @@ final class HeroSlideForm
                         ->helperText('Để trống toàn bộ phần nội dung và nút nếu slide chỉ hiển thị ảnh.')
                         ->maxLength(255)
                         ->columnSpanFull(),
+                    CuratorPicker::make('mobile_media_id')->label('Ảnh trên điện thoại (không bắt buộc)')
+                        ->relationship('mobileMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                     TextInput::make('primary_label')->label('Nhãn nút chính')->maxLength(255),
-                    TextInput::make('primary_url')->label('URL nút chính')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/']),
+                    TextInput::make('primary_url')->label('URL nút chính')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+|#[A-Za-z][\w-]*)$/']),
                     TextInput::make('secondary_label')->label('Nhãn nút phụ')->maxLength(255),
-                    TextInput::make('secondary_url')->label('URL nút phụ')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+)$/']),
+                    TextInput::make('secondary_url')->label('URL nút phụ')->maxLength(255)->rules(['nullable', 'regex:/^(?:\/(?!\/)[^\s]*|https?:\/\/[^\s]+|#[A-Za-z][\w-]*)$/']),
                 ])
                 ->columns(2)->columnSpan(['default' => 1, 'lg' => 2]),
             Section::make('Hiển thị')

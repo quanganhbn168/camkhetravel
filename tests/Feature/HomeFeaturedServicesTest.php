@@ -33,7 +33,6 @@ class HomeFeaturedServicesTest extends TestCase
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('Dịch vụ của CamKheTravel')
             ->assertSee('Dịch vụ được chọn QA')
             ->assertDontSee('Bản nháp trang chủ QA')
             ->assertDontSee('Chưa đến ngày công bố QA')

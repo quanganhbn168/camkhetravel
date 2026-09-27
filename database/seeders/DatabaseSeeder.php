@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
             TestimonialSeeder::class,
             HeroSlideSeeder::class,
         ]);
+        app(\App\Actions\InstallHomepageDesign::class)->handle();
     }
 }

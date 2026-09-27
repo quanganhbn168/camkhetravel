@@ -65,6 +65,8 @@ import Carousel from 'bootstrap/js/dist/carousel';
     rows.push('Ngày đi: ' + formatDate(data.departure));
     if (text(data.returnDate)) rows.push('Ngày về: ' + formatDate(data.returnDate));
     rows.push('Loại xe: ' + (text(data.vehicle) || 'Cần tư vấn'), 'Số khách / hành lý: ' + (text(data.passengers) || 'Trao đổi thêm'));
+    if (text(data.pickupTime)) rows.push('Giờ đón dự kiến: ' + text(data.pickupTime));
+    if (data.type === 'wedding' && text(data.weddingRole)) rows.push('Nhu cầu xe cưới: ' + text(data.weddingRole));
     if (text(data.notes)) rows.push('Yêu cầu thêm: ' + text(data.notes));
     rows.push('', 'Đây là yêu cầu tư vấn, chưa phải xác nhận đặt xe.');
     return rows.join('\n');
@@ -118,6 +120,8 @@ import Carousel from 'bootstrap/js/dist/carousel';
     const submitButton = $('#requestSubmit');
     const isDemo = !text(config.leadEndpoint);
     let submitting = false;
+    let completed = false;
+    let currentType = 'trip';
     let selectedVehicle = null;
     let pendingController = null;
     const today = localDate();
@@ -132,25 +136,19 @@ import Carousel from 'bootstrap/js/dist/carousel';
     function openQuote(options = {}) {
       if (submitting) return;
       const type = TYPE_LABELS[options.type] ? options.type : 'trip';
-      form.reset(); clearValidity(); form.classList.remove('was-validated');
+      if (completed) { form.reset(); completed = false; }
+      clearValidity(); form.classList.remove('was-validated');
       form.hidden = false; requestResult.hidden = true; errorBox.hidden = true; errorBox.textContent = '';
       $('#copyStatus').textContent = '';
       $('#demoNotice').hidden = !isDemo;
       $('#demoNotice').textContent = isDemo ? 'Bản xem trước chưa kết nối máy chủ.' : 'Gửi form để CamKheTravel tiếp nhận yêu cầu tư vấn. Đây chưa phải xác nhận đặt xe.';
-      $('#requestType').value = type;
+      applyType(type);
       $('#requestService').value = text(options.service);
       $('#requestServiceId').value = text(options.serviceId);
-      $('#quoteTitle').textContent = TITLES[type];
-      $('#companyGroup').hidden = type !== 'partner';
-      $('#requestCompany').disabled = type !== 'partner';
-      $('#requestCompany').required = type === 'partner';
-      $('#requestPickup').required = type !== 'partner';
-      $('#requestDestination').required = type !== 'partner';
-      $('#requestDeparture').min = localDate();
-      $('#requestReturn').min = localDate();
-      if (type === 'wedding') $('#requestVehicle').value = 'Xe cưới';
       if (options.vehicle) $('#requestVehicle').value = options.vehicle;
-      if (type === 'shared') { $('#requestPickup').value = 'Cẩm Khê / Yên Lập'; $('#requestDestination').value = 'Hà Nội'; }
+      if (type === 'shared' && !$('#requestPickup').value && !$('#requestDestination').value) {
+        $('#requestPickup').value = 'Cẩm Khê / Yên Lập'; $('#requestDestination').value = 'Hà Nội';
+      }
       const prefill = options.prefill || {};
       Object.keys(prefill).forEach(key => {
         const input = form.elements.namedItem(key);
@@ -159,11 +157,43 @@ import Carousel from 'bootstrap/js/dist/carousel';
       $('#requestSummary').value = '';
       quoteModal.show();
     }
+    function applyType(type) {
+      syncAudience(type);
+      $('#requestType').value = type;
+      $('#quoteTitle').textContent = TITLES[type];
+      $('#companyGroup').hidden = type !== 'partner';
+      $('#requestCompany').disabled = type !== 'partner';
+      $('#requestCompany').required = type === 'partner';
+      $('#requestPickup').required = type !== 'partner';
+      $('#requestDestination').required = type !== 'partner';
+      $('#weddingGroup').hidden = type !== 'wedding';
+      $('#requestWeddingRole').disabled = type !== 'wedding';
+      $('#requestNotes').placeholder = type === 'wedding' ? 'Lịch đón, trang trí xe, những điều gia đình cần lưu ý...' : type === 'partner' ? 'Số chuyến, quy mô đoàn, chương trình và nhu cầu hợp tác...' : 'Điểm dừng, hành lý, ngày về và yêu cầu thêm...';
+      $('#requestDeparture').min = localDate();
+      $('#requestReturn').min = $('#requestDeparture').value || localDate();
+      clearValidity();
+    }
+    $('#requestType').addEventListener('change', () => {
+      applyType($('#requestType').value);
+      $('#requestService').value = ''; $('#requestServiceId').value = '';
+    });
+    function syncAudience(type) {
+      currentType = type;
+      $('#quickType').value = type;
+      $$('[data-quick-type]').forEach(item => {
+        const active = item.dataset.quickType === (type === 'shared' ? 'trip' : type);
+        item.classList.toggle('is-active', active); item.setAttribute('aria-pressed', String(active));
+      });
+      $('#quickPassengers').placeholder = type === 'partner' ? 'Quy mô đoàn / số chuyến' : 'Ví dụ: 4 người';
+    }
+    $$('[data-quick-type]').forEach(button => button.addEventListener('click', () => {
+      syncAudience(button.dataset.quickType);
+    }));
     modalElement.addEventListener('shown.bs.modal', () => { if (!form.hidden) $('#requestName').focus({preventScroll:true}); });
     modalElement.addEventListener('hidden.bs.modal', () => {
       if (pendingController) pendingController.abort();
-      // Do not leave personal details in a closed demo dialog.
-      form.reset(); $('#requestSummary').value = ''; requestResult.hidden = true; form.hidden = false;
+      // Keep the current draft in memory while switching needs; nothing goes to localStorage.
+      if (isDemo) form.reset();
     });
     $$('[data-quote-type]').forEach(button => button.addEventListener('click', event => {
       event.preventDefault();
@@ -172,20 +202,20 @@ import Carousel from 'bootstrap/js/dist/carousel';
     $('#quickQuote').addEventListener('submit', event => {
       event.preventDefault();
       if (!event.currentTarget.reportValidity()) return;
-      openQuote({type:'trip',prefill:Object.fromEntries(new FormData(event.currentTarget))});
+      openQuote({type:$('#quickType').value,prefill:Object.fromEntries(new FormData(event.currentTarget))});
     });
     $$('[data-vehicle]').forEach(button => button.addEventListener('click', () => {
       selectedVehicle = {code:button.dataset.vehicle, name:button.dataset.vehicleName, image:button.dataset.vehicleImage, description:button.dataset.vehicleDescription};
       if (!selectedVehicle.name) return;
       $('#vehicleTitle').textContent = selectedVehicle.name;
       $('#vehicleDetailImage').src = selectedVehicle.image;
-      $('#vehicleDetailImage').alt = selectedVehicle.name + ' – ảnh mặc định';
+      $('#vehicleDetailImage').alt = selectedVehicle.name;
       $('#vehicleDetailDescription').textContent = selectedVehicle.description;
       vehicleModal.show();
     }));
     $('#quoteVehicle').addEventListener('click', () => {
       const choice = selectedVehicle;
-      vehicleModalElement.addEventListener('hidden.bs.modal', () => openQuote({type:'trip',vehicle:choice ? choice.name : 'Cần tư vấn'}), {once:true});
+      vehicleModalElement.addEventListener('hidden.bs.modal', () => openQuote({type:currentType,vehicle:choice ? choice.name : 'Cần tư vấn'}), {once:true});
       vehicleModal.hide();
     });
     $$('[data-contact]').forEach(button => button.addEventListener('click', () => {
@@ -225,7 +255,7 @@ import Carousel from 'bootstrap/js/dist/carousel';
       }
       data.phone = normalizePhone(data.phone);
       data.source = 'homepage_quote';
-      submitting = true; submitButton.disabled = true;
+      submitting = true; submitButton.disabled = true; $('#requestType').disabled = true;
       $('[data-submit-label]').textContent = isDemo ? 'Đang tạo nội dung…' : 'Đang gửi yêu cầu…';
       let timeoutId;
       try {
@@ -247,18 +277,18 @@ import Carousel from 'bootstrap/js/dist/carousel';
         $('#requestSummary').value = buildSummary(data);
         $('#resultTitle').textContent = isDemo ? 'Đã tạo nội dung yêu cầu demo' : 'Đã gửi yêu cầu tư vấn';
         $('#resultDescription').textContent = isDemo ? 'Chưa gửi thông tin đến nhà xe. Có thể sao chép nội dung để gửi qua kênh liên hệ chính thức.' : 'Hệ thống đã xác nhận tiếp nhận yêu cầu. Đây chưa phải xác nhận đặt xe; nhà xe cần liên hệ để thống nhất lịch trình và chi phí.';
-        form.hidden = true; requestResult.hidden = false;
+        completed = true; form.hidden = true; requestResult.hidden = false;
         requestResult.scrollIntoView({block:'nearest'});
         $('#copySummary').focus({preventScroll:true});
       } catch (error) {
         errorBox.textContent = error.name === 'AbortError' ? 'Chưa nhận được xác nhận từ hệ thống. Vui lòng kiểm tra lại trước khi gửi thêm lần nữa.' : error.message || 'Không gửi được yêu cầu. Vui lòng thử lại.';
         errorBox.hidden = false;
       } finally {
-        win.clearTimeout(timeoutId); pendingController = null; submitting = false; submitButton.disabled = false;
+        win.clearTimeout(timeoutId); pendingController = null; submitting = false; submitButton.disabled = false; $('#requestType').disabled = false;
         $('[data-submit-label]').textContent = isDemo ? 'Tạo yêu cầu demo' : 'Gửi yêu cầu tư vấn';
       }
     });
-    $('#editRequest').addEventListener('click', () => { requestResult.hidden = true; form.hidden = false; $('#requestName').focus(); });
+    $('#editRequest').addEventListener('click', () => { completed = false; requestResult.hidden = true; form.hidden = false; $('#requestName').focus(); });
     $('#copySummary').addEventListener('click', async () => {
       const content = $('#requestSummary');
       try {
