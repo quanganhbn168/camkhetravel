@@ -21,7 +21,7 @@
                         @if ($slide['title'])@if ($loop->first)<h1 class="hero-title">{{ $slide['title'] }}</h1>@else<h2 class="hero-title">{{ $slide['title'] }}</h2>@endif @endif
                         @if ($slide['description'])<p class="hero-description">{{ $slide['description'] }}</p>@endif
                         <div class="hero-actions">
-                            @if ($slide['primary_label'] && $slide['primary_url'])<a class="btn btn-brand" href="{{ $slide['primary_url'] }}" @if ($slide['primary_is_quote']) data-quote-type="trip" @endif>{{ $slide['primary_label'] }} <x-site-icon name="arrow" /></a>@endif
+                            @if ($slide['primary_label'] && $slide['primary_url'])<a class="btn btn-warning" href="{{ $slide['primary_url'] }}" @if ($slide['primary_is_quote']) data-quote-type="trip" @endif>{{ $slide['primary_label'] }} <x-site-icon name="arrow" /></a>@endif
                             @if ($slide['secondary_label'] && $slide['secondary_url'])<a class="hero-secondary" href="{{ $slide['secondary_url'] }}" @if ($slide['secondary_is_quote']) data-quote-type="trip" @endif>{{ $slide['secondary_label'] }} <x-site-icon name="arrow" /></a>@endif
                         </div>
                     </div></div>@endif
@@ -88,7 +88,7 @@
 
     <section class="contact-banner" id="lien-he" aria-labelledby="contact-title">
         @if ($homepage->consultation_media_id)<div class="contact-background">@include('frontend.partials.home.image', ['image' => $consultationImage, 'alt' => '', 'sizes' => '100vw'])</div>@endif
-        <div class="container contact-inner"><div class="contact-copy"><p class="eyebrow">SẴN SÀNG CHO HÀNH TRÌNH TIẾP THEO</p><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn đã có lịch trình trong đầu?' }}</h2><p>{{ $homepage->consultation_content }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Cùng lên phương án xe <x-site-icon name="arrow" /></button>@if ($frontendConfig['phone'])<button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" />{{ $frontendConfig['phone'] }}</button>@endif</div></div></div>
+        <div class="container contact-inner"><div class="contact-copy"><p class="eyebrow">SẴN SÀNG CHO HÀNH TRÌNH TIẾP THEO</p><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn đã có lịch trình trong đầu?' }}</h2><p>{{ $homepage->consultation_content }}</p><div class="contact-actions"><button type="button" class="btn btn-warning" data-quote-type="trip">Cùng lên phương án xe <x-site-icon name="arrow" /></button>@if ($frontendConfig['phone'])<button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" />{{ $frontendConfig['phone'] }}</button>@endif</div></div></div>
     </section>
 </div>
 @include('frontend.partials.home.dialogs')

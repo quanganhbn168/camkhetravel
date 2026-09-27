@@ -13,6 +13,8 @@
 .site-home .btn-brand, .site-home-dialogs .btn-brand { color: var(--site-on-primary); background: var(--site-primary); border: 1px solid var(--site-primary); box-shadow: 0 3px 9px rgba(var(--bs-primary-rgb), .1); }
 .site-home .btn-brand:hover, .site-home .btn-brand:focus-visible, .site-home-dialogs .btn-brand:hover, .site-home-dialogs .btn-brand:focus-visible { color: var(--site-on-primary-hover); background: var(--site-primary-hover); box-shadow: 0 6px 16px rgba(var(--bs-primary-rgb), .16); transform: translateY(-1px); }
 .site-home .btn-brand:active, .site-home .btn-brand:disabled, .site-home-dialogs .btn-brand:active, .site-home-dialogs .btn-brand:disabled { background: var(--site-primary) !important; color: var(--site-on-primary) !important; }
+.site-home .btn-warning { color: var(--site-on-accent); box-shadow: 0 3px 9px rgba(var(--bs-warning-rgb), .18); }
+.site-home .btn-warning:hover, .site-home .btn-warning:focus-visible { color: var(--site-on-accent); box-shadow: 0 6px 18px rgba(var(--bs-warning-rgb), .3); transform: translateY(-1px); }
 .site-home-dialogs .btn-outline-brand { color: var(--site-primary-dark); background: rgba(255, 255, 255, .91); border: 1px solid var(--site-primary-hover); }
 .site-home-dialogs .btn-outline-brand:hover { background: var(--site-mint); color: var(--site-primary-dark); border-color: var(--site-primary); }
 .site-home .btn-white, .site-home .btn-zalo { color: var(--site-primary-dark); border: 1px solid var(--site-line); background: var(--site-white); box-shadow: 0 3px 8px rgba(var(--bs-dark-rgb), .06); }
@@ -34,7 +36,7 @@
 .site-home h3 { font-size: 1.35rem; line-height: 1.4; letter-spacing: -.025em; }
 .site-home p { text-wrap: pretty; }
 .site-home .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--site-primary-dark); font-size: .75rem; font-weight: 700; letter-spacing: .12em; line-height: 1.6; margin: 0 0 18px; }
-.eyebrow-line { height: 2px; width: 30px; background: var(--site-primary); }
+.eyebrow-line { height: 3px; width: 30px; background: var(--site-accent); }
 .home-section { padding: clamp(48px, 6vw, 88px) 0; }
 .section-heading { margin-bottom: 36px; }
 .section-heading h2 { margin-bottom: 18px; }
@@ -68,7 +70,7 @@
 .booking-hint { color: var(--site-muted); font-size: .875rem; font-weight: 400; }
 .audience-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-bottom: 1px solid var(--site-line); margin-bottom: 24px; }
 .audience-tabs button { background: transparent; color: var(--site-muted); border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; padding: 14px 8px; display: flex; gap: 12px; align-items: center; justify-content: center; font-weight: 600; min-height: 52px; }
-.audience-tabs button.is-active { color: var(--site-primary-dark); border-color: var(--site-primary); background: var(--site-surface); }
+.audience-tabs button.is-active { color: var(--site-accent-dark); border-color: var(--site-accent); background: var(--site-sand); }
 .quick-quote { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto; gap: 18px; align-items: end; }
 .quick-field { min-width: 0; }
 .quick-field label { display: block; font-size: .8rem; color: var(--site-ink); font-weight: 600; margin: 0 0 8px; }
@@ -83,7 +85,7 @@
 .audience-image img, .service-card > img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
 .service-card > img { height: auto; aspect-ratio: 3 / 2; }
 .audience-card:hover .audience-image img { transform: scale(1.025); }
-.audience-number { position: absolute; top: 16px; left: 16px; background: var(--site-white); color: var(--site-ink); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; font-weight: 700; }
+.audience-number { position: absolute; top: 16px; left: 16px; background: var(--site-accent); color: var(--site-on-accent); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: .75rem; font-weight: 700; }
 .audience-body { display: flex; flex-direction: column; align-items: flex-start; padding: 28px; position: relative; flex: 1; }
 .audience-icon { position: absolute; top: -24px; right: 22px; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--site-mint); border: 4px solid var(--site-white); color: var(--site-primary-dark); }
 .audience-body h3 { margin: 4px 0 14px; }
@@ -108,7 +110,7 @@
 .section-note { margin: 22px 0 0; text-align: center; font-size: .8rem; color: var(--site-muted); }
 .about-image-wrap { position: relative; padding: 0 22px 22px 0; }
 .home-about-image { width: 100%; height: 470px; object-fit: cover; border-radius: 14px; position: relative; z-index: 1; }
-.about-image-accent { position: absolute; width: 65%; height: 65%; bottom: 0; right: 0; background: var(--site-sand); border-radius: 14px; }
+.about-image-accent { position: absolute; width: 65%; height: 65%; bottom: 0; right: 0; background: var(--site-accent); border-radius: 14px; }
 .about-copy { margin: 22px 0; }
 .commitment-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px 16px; list-style: none; padding: 0; margin: 26px 0; }
 .commitment-list li { display: flex; gap: 10px; align-items: center; font-weight: 600; font-size: .875rem; }
@@ -131,7 +133,7 @@
 .route-item a { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; min-height: 36px; }
 .route-item .icon { width: 15px; height: 15px; }
 .process-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 32px; list-style: none; padding: 8px 0 0; margin: 0; }
-.step-number { width: 60px; height: 60px; display: grid; place-items: center; background: var(--site-mint); color: var(--site-primary-dark); border: 1px solid var(--site-line); border-radius: 50%; font-weight: 600; font-size: 1.2rem; margin-bottom: 24px; }
+.step-number { width: 60px; height: 60px; display: grid; place-items: center; background: var(--site-sand); color: var(--site-accent-dark); border: 1px solid var(--site-accent-line); border-radius: 50%; font-weight: 600; font-size: 1.2rem; margin-bottom: 24px; }
 .process-grid li { position: relative; }
 .process-grid li:not(:last-child)::after { content: ''; position: absolute; height: 1px; top: 30px; left: 85px; right: -8px; background: var(--site-line); }
 .site-home .process-grid h3 { font-size: 1.05rem; }
