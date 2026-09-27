@@ -148,7 +148,7 @@
 .journal-grid .post-card { border: 0; box-shadow: none; background: transparent; border-radius: 0; }
 .journal-grid .post-card:first-child { grid-row: span 2; }
 .journal-grid .post-card:not(:first-child) { display: grid; grid-template-columns: 40% 1fr; gap: 22px; }
-.journal-grid .post-card__image { border-radius: 12px; overflow: hidden; }
+.journal-grid .post-card__image { width: 100%; min-width: 0; border-radius: 12px; overflow: hidden; }
 .journal-grid .post-card__body { padding: 20px 0 0; }
 .journal-grid .post-card:not(:first-child) .post-card__body { padding: 0; }
 .journal-grid .post-card:not(:first-child) .post-card__image { height: 100%; min-height: 185px; }
