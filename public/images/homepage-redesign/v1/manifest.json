@@ -1,0 +1,178 @@
+[
+  {
+    "name": "hero-vinfast",
+    "label": "Hero / hành trình",
+    "alt": "Xe VinFast màu xanh teal trên cung đường miền Bắc trong ánh sáng sớm.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "hero-vinfast.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 261052
+      },
+      {
+        "file": "hero-vinfast-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 69066
+      }
+    ]
+  },
+  {
+    "name": "service-private",
+    "label": "Khách cá nhân / gia đình",
+    "alt": "Ảnh minh hoạ gia đình chuẩn bị chuyến đi bên xe VinFast trắng.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "service-private.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 249488
+      },
+      {
+        "file": "service-private-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 81418
+      }
+    ]
+  },
+  {
+    "name": "service-partner",
+    "label": "Đối tác tour / doanh nghiệp",
+    "alt": "Ảnh minh hoạ xe VinFast đón khách tại khu vực sảnh khách sạn.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "service-partner.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 236414
+      },
+      {
+        "file": "service-partner-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 73630
+      }
+    ]
+  },
+  {
+    "name": "service-wedding",
+    "label": "Xe cưới / đưa đón gia đình",
+    "alt": "Ảnh minh hoạ xe VinFast trắng trang trí hoa cưới.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "service-wedding.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 268930
+      },
+      {
+        "file": "service-wedding-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 86998
+      }
+    ]
+  },
+  {
+    "name": "fleet-vf8",
+    "label": "Xe VinFast / nhóm nhỏ",
+    "alt": "Ảnh minh hoạ xe VinFast VF 8 xanh teal trên nền studio.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "fleet-vf8.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 120424
+      },
+      {
+        "file": "fleet-vf8-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 34334
+      }
+    ]
+  },
+  {
+    "name": "fleet-vf9",
+    "label": "Xe VinFast / nhóm gia đình",
+    "alt": "Ảnh minh hoạ xe VinFast VF 9 trắng trên nền studio.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "fleet-vf9.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 88422
+      },
+      {
+        "file": "fleet-vf9-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 25874
+      }
+    ]
+  },
+  {
+    "name": "fleet-minibus",
+    "label": "Minibus / nhóm đoàn",
+    "alt": "Ảnh minh hoạ minibus trắng trên nền studio, không gắn thương hiệu VinFast.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "fleet-minibus.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 91120
+      },
+      {
+        "file": "fleet-minibus-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 27158
+      }
+    ]
+  },
+  {
+    "name": "journey-background",
+    "label": "Background / CTA cuối",
+    "alt": "Phong cảnh đồi chè và đường cong minh hoạ cho background tư vấn.",
+    "generated": true,
+    "tool": "ImageGen built-in",
+    "status": "draft-not-connected-to-cms",
+    "variants": [
+      {
+        "file": "journey-background.webp",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 226104
+      },
+      {
+        "file": "journey-background-768.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 58670
+      }
+    ]
+  }
+]
