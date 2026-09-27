@@ -16,7 +16,7 @@
 }
 
 .service-intro__checks span {
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
   margin-right: 0.75rem;
 }
 
@@ -85,7 +85,7 @@
 .service-process__marker {
   flex-shrink: 0;
   font-size: 2rem;
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
   font-weight: 700;
 }
 
@@ -98,7 +98,7 @@
 
 .service-stat__value {
   font-size: clamp(2rem, 4vw, 3rem);
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
   font-weight: 700;
 }
 

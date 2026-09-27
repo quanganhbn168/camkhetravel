@@ -107,7 +107,7 @@
 
 .resource-filter.is-active {
   background: var(--bs-primary);
-  color: white;
+  color: var(--site-on-primary);
   border-color: var(--bs-primary);
 }
 
@@ -271,7 +271,7 @@
 
 .archive-process__number {
   font-size: 2rem;
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
   font-weight: 700;
 }
 
@@ -298,7 +298,7 @@
 
 .archive-stat strong {
   font-size: clamp(2rem, 4vw, 3rem);
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 @media (min-width: 768px) {

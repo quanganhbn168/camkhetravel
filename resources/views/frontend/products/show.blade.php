@@ -29,7 +29,7 @@
                     <dl class="mb-0">
                         @if ($product->category)<div class="d-flex justify-content-between gap-3 py-3 border-bottom"><dt class="mx-1">Danh mục</dt><dd class="text-end fw-semibold mb-0">{{ $product->category->name }}</dd></div>@endif
                         @if ($product->sku)<div class="d-flex justify-content-between gap-3 py-3 border-bottom"><dt class="mx-1">Mã sản phẩm</dt><dd class="text-end fw-semibold mb-0">{{ $product->sku }}</dd></div>@endif
-                        <div class="d-flex justify-content-between gap-3 py-3 border-bottom"><dt class="mx-1">Tư vấn</dt><dd class="text-end fw-semibold mb-0 text-primary">Liên hệ {{ $website->site_name }}</dd></div>
+                        <div class="d-flex justify-content-between gap-3 py-3 border-bottom"><dt class="mx-1">Tư vấn</dt><dd class="text-end fw-semibold mb-0 text-primary-emphasis">Liên hệ {{ $website->site_name }}</dd></div>
                     </dl>
                     @if ($product->tags->isNotEmpty())<div class="d-flex flex-wrap gap-2 mt-3">@foreach ($product->tags as $tag)<span class="fw-semibold badge text-bg-light">#{{ $tag->name }}</span>@endforeach</div>@endif
                     <a class="btn btn-primary w-100 mt-4" href="{{ route('contact') }}">Nhận tư vấn sản phẩm <span aria-hidden="true">→</span></a>

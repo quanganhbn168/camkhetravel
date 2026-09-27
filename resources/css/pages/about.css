@@ -140,7 +140,7 @@
 
 .about-principle-card__icon {
   font-size: 2rem;
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 .about-principle-values {
@@ -164,7 +164,7 @@
 
 .about-history__tab.active {
   border-color: var(--bs-primary);
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 .about-history__panel.active {
@@ -183,7 +183,7 @@
 .about-history__year {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 .about-stats__grid {
@@ -200,7 +200,7 @@
 
 .about-stat strong {
   font-size: clamp(2rem, 4vw, 3rem);
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 .about-office-gallery__item {
@@ -223,7 +223,7 @@
 .about-page-cta {
   --bs-heading-color: inherit;
   padding-block: 3rem;
-  color: white;
+  color: var(--site-on-primary);
   background: var(--bs-primary);
 }
 

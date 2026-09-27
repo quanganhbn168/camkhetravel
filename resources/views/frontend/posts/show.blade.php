@@ -80,7 +80,7 @@
                                     <a class="d-flex align-items-center col-md-6 gap-3 text-decoration-none" href="{{ route('slug.show', ['slug' => $previousPost->slug]) }}">
                                         @if ($previousPost->image_url)<img class="flex-shrink-0 object-fit-cover article-adjacent__image" src="{{ $previousPost->image_url }}" alt="" loading="lazy">@endif
                                         <span class="article-content">
-                                            <span class="fw-bold text-uppercase small text-primary">Bài viết trước</span>
+                                            <span class="fw-bold text-uppercase small text-primary-emphasis">Bài viết trước</span>
                                             <span class="d-block fw-semibold text-body">{{ $previousPost->title }}</span>
                                             @if ($previousPost->published_at)<time class="d-block small text-body-secondary" datetime="{{ $previousPost->published_at->toDateString() }}">{{ $previousPost->published_at->translatedFormat('d/m/Y') }}</time>@endif
                                         </span>
@@ -93,7 +93,7 @@
                                     <a class="d-flex flex-row-reverse align-items-center text-end col-md-6 gap-3 text-decoration-none" href="{{ route('slug.show', ['slug' => $nextPost->slug]) }}">
                                         @if ($nextPost->image_url)<img class="flex-shrink-0 object-fit-cover article-adjacent__image" src="{{ $nextPost->image_url }}" alt="" loading="lazy">@endif
                                         <span class="article-content">
-                                            <span class="fw-bold text-uppercase small text-primary">Bài viết tiếp theo</span>
+                                            <span class="fw-bold text-uppercase small text-primary-emphasis">Bài viết tiếp theo</span>
                                             <span class="d-block fw-semibold text-body">{{ $nextPost->title }}</span>
                                             @if ($nextPost->published_at)<time class="d-block small text-body-secondary" datetime="{{ $nextPost->published_at->toDateString() }}">{{ $nextPost->published_at->translatedFormat('d/m/Y') }}</time>@endif
                                         </span>

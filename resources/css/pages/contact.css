@@ -107,7 +107,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
   background: rgba(var(--bs-primary-rgb), 0.1);
   font-size: 1rem;
 }
@@ -145,7 +145,7 @@
 }
 
 .contact-info-item__phones a:hover {
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 .contact-info-item__separator {
@@ -160,7 +160,7 @@
 }
 
 .contact-info-item__content > a:hover {
-  color: var(--bs-primary);
+  color: var(--bs-primary-text-emphasis);
 }
 
 /* Google maps button */
