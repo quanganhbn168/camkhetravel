@@ -1,49 +1,28 @@
-/* Shared public palette and type. Change the site colors here. */
+/* Shared Bootstrap mappings. Edit brand.css for project colors and typography. */
 :root,
 [data-bs-theme='light'] {
-  --site-primary: #28bdbf;
-  --site-primary-dark: #0e7577;
-  --site-primary-hover: #25b2b4;
-  --site-on-primary: #123b3d;
-  --site-ink: #123b3d;
-  --site-text: #345456;
-  --site-muted: #647b7c;
-  --site-mint: #eafafa;
-  --site-surface: #f6fbfb;
-  --site-line: #d9eeee;
-  --site-gold: #ffca00;
-  --site-sand: #fff9df;
+  --site-gold: var(--site-accent);
   --site-white: #fff;
   --site-zalo: #087ff0;
-  --site-radius: 12px;
-  --site-shadow: 0 8px 30px rgb(18 59 61 / .09);
-  --site-font-body: 'Be Vietnam Pro', system-ui, sans-serif;
-  --site-font-heading: 'Lora', Georgia, serif;
-  --site-font-script: 'Dancing Script', 'Segoe Print', cursive;
+  --site-shadow: 0 8px 30px rgba(var(--bs-dark-rgb), .09);
 
   --bs-primary: var(--site-primary);
-  --bs-primary-rgb: 40, 189, 191;
   --bs-warning: var(--site-gold);
-  --bs-warning-rgb: 255, 202, 0;
   --bs-warning-bg-subtle: var(--site-sand);
+  --bs-warning-text-emphasis: var(--site-accent-dark);
+  --bs-warning-border-subtle: var(--site-accent-line);
   --bs-secondary: var(--site-text);
-  --bs-secondary-rgb: 52, 84, 86;
   --bs-dark: var(--site-ink);
-  --bs-dark-rgb: 18, 59, 61;
   --bs-light: var(--site-surface);
-  --bs-light-rgb: 246, 251, 251;
   --bs-body-color: var(--site-text);
-  --bs-body-color-rgb: 52, 84, 86;
   --bs-emphasis-color: var(--site-ink);
-  --bs-emphasis-color-rgb: 18, 59, 61;
   --bs-border-color: var(--site-line);
   --bs-font-sans-serif: var(--site-font-body);
   --bs-body-font-family: var(--site-font-body);
+  --bs-body-font-size: var(--site-font-size-body);
   --bs-heading-color: var(--site-ink);
   --bs-link-color: var(--site-primary-dark);
-  --bs-link-color-rgb: 14, 117, 119;
   --bs-link-hover-color: var(--site-primary-dark);
-  --bs-link-hover-color-rgb: 14, 117, 119;
   --bs-primary-text-emphasis: var(--site-primary-dark);
   --bs-primary-bg-subtle: var(--site-mint);
   --bs-primary-border-subtle: var(--site-line);
@@ -56,7 +35,7 @@ h1, h2, h3, h4, h5, h6, .display-title { font-family: var(--site-font-heading); 
   --bs-btn-color: var(--site-on-primary);
   --bs-btn-bg: var(--site-primary);
   --bs-btn-border-color: var(--site-primary);
-  --bs-btn-hover-color: var(--site-on-primary);
+  --bs-btn-hover-color: var(--site-on-primary-hover);
   --bs-btn-hover-bg: var(--site-primary-hover);
   --bs-btn-hover-border-color: var(--site-primary-hover);
   --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
@@ -76,6 +55,9 @@ h1, h2, h3, h4, h5, h6, .display-title { font-family: var(--site-font-heading); 
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: var(--site-primary-dark);
   --bs-btn-active-border-color: var(--site-primary-dark);
+  --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+  --bs-btn-disabled-color: var(--site-primary-dark);
+  --bs-btn-disabled-border-color: var(--site-primary);
 }
 .btn-dark {
   --bs-btn-bg: var(--site-ink);
@@ -83,10 +65,14 @@ h1, h2, h3, h4, h5, h6, .display-title { font-family: var(--site-font-heading); 
   --bs-btn-hover-bg: var(--site-primary-dark);
   --bs-btn-hover-border-color: var(--site-primary-dark);
 }
-.btn-warning { --bs-btn-color: var(--site-ink); --bs-btn-bg: var(--site-gold); --bs-btn-border-color: var(--site-gold); }
+.btn-warning { --bs-btn-color: var(--site-on-accent); --bs-btn-bg: var(--site-accent); --bs-btn-border-color: var(--site-accent); --bs-btn-hover-color: var(--site-on-accent); --bs-btn-hover-bg: var(--site-accent); --bs-btn-hover-border-color: var(--site-accent); --bs-btn-active-color: var(--site-on-accent); --bs-btn-active-bg: var(--site-accent); --bs-btn-active-border-color: var(--site-accent); --bs-btn-focus-shadow-rgb: var(--bs-warning-rgb); --bs-btn-disabled-color: var(--site-on-accent); --bs-btn-disabled-bg: var(--site-accent); --bs-btn-disabled-border-color: var(--site-accent); }
 .nav-pills { --bs-nav-pills-link-active-color: var(--site-on-primary); --bs-nav-pills-link-active-bg: var(--site-primary); }
-.pagination { --bs-pagination-active-color: var(--site-on-primary); --bs-pagination-active-bg: var(--site-primary); --bs-pagination-active-border-color: var(--site-primary); }
-.form-control:focus, .form-select:focus { border-color: var(--site-primary-hover); box-shadow: 0 0 0 .25rem rgb(var(--bs-primary-rgb) / .15); }
+.pagination { --bs-pagination-active-color: var(--site-on-primary); --bs-pagination-active-bg: var(--site-primary); --bs-pagination-active-border-color: var(--site-primary); --bs-pagination-focus-box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25); }
+.form-control:focus, .form-select:focus { border-color: var(--site-primary-hover); box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .15); }
 .form-check-input:checked { background-color: var(--site-primary); border-color: var(--site-primary); }
+.form-check-input:focus { border-color: var(--site-primary-hover); box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25); }
+.accordion { --bs-accordion-btn-focus-box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25); }
 .dropdown-item.active, .dropdown-item:active { color: var(--site-on-primary); background-color: var(--site-primary); }
 .text-bg-primary { color: var(--site-on-primary) !important; background-color: var(--site-primary) !important; }
+.text-bg-warning { color: var(--site-on-accent) !important; background-color: var(--site-accent) !important; }
+.text-primary-on-dark { color: var(--site-primary-on-dark) !important; }

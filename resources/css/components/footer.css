@@ -9,7 +9,7 @@
 }
 
 .footer a:not(.btn):hover {
-  color: var(--bs-primary);
+  color: var(--site-primary-on-dark);
 }
 
 .footer__cta {

@@ -4,11 +4,11 @@
 .resource-detail-content,
 .resource-detail-gallery,
 .resource-category-intro {
-  padding-block: clamp(2.5rem, 5vw, 5rem);
+  padding-block: var(--site-section-space);
 }
 
 .display-title {
-  font-size: clamp(1.75rem, 3vw, 3rem);
+  font-size: var(--site-font-size-display);
 }
 
 .section-link {

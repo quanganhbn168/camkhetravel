@@ -12,12 +12,14 @@ use App\Http\Controllers\Frontend\ServiceController;
 use App\Http\Controllers\Frontend\SolutionsController;
 use App\Http\Controllers\IntroController;
 use App\Http\Controllers\SeoController;
+use App\Http\Controllers\WebManifestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/bai-gioi-thieu/{slug}', IntroController::class)->name('intros.show');
 
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
+Route::get('/site.webmanifest', WebManifestController::class)->name('site.manifest');
 
 Route::group([], function (): void {
     Route::get('/', HomeController::class)->name('home');

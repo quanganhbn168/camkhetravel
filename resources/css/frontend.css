@@ -5,6 +5,7 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import './reset.css';
 @import './fonts.css';
+@import './brand.css';
 @import './theme.css';
 @import './components/header.css';
 @import './components/footer.css';

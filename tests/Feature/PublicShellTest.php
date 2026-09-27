@@ -43,7 +43,7 @@ class PublicShellTest extends TestCase
         $foundation = file_get_contents(resource_path('css/theme.css'));
         $frontendStyles = file_get_contents(resource_path('css/frontend.css'));
 
-        $this->assertStringContainsString('--site-primary: #28bdbf;', $foundation);
+        $this->assertStringContainsString("@import './brand.css';", $frontendStyles);
         $this->assertStringContainsString('--bs-primary: var(--site-primary);', $foundation);
         $this->assertStringNotContainsString('brand.overrides', $frontendStyles);
         $this->assertStringContainsString("@import './components/floating-actions.css';", $frontendStyles);

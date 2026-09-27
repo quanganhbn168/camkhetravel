@@ -14,7 +14,7 @@
                     <li class="service-process__item">
                         <span class="service-process__marker" aria-hidden="true">{{ $item['step'] ?? $loop->iteration }}</span>
                         <div>
-                            <p class="text-primary fw-semibold text-uppercase small">Bước {{ $item['step'] ?? $loop->iteration }}</p>
+                            <p class="text-primary-on-dark fw-semibold text-uppercase small">Bước {{ $item['step'] ?? $loop->iteration }}</p>
                             <h3 class="fw-bold h4">{{ $item['title'] ?? '' }}</h3>
                             @if (filled($item['description'] ?? null))
                                 <p class="mb-0">{{ $item['description'] }}</p>

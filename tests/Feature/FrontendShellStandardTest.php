@@ -93,11 +93,11 @@ class FrontendShellStandardTest extends TestCase
     public function test_homepage_signatures_use_dancing_script(): void
     {
         $fonts = file_get_contents(resource_path('css/fonts.css'));
-        $theme = file_get_contents(resource_path('css/theme.css'));
+        $brand = file_get_contents(resource_path('css/brand.css'));
         $homeStyles = file_get_contents(resource_path('css/pages/home.css'));
 
-        $this->assertStringContainsString("@fontsource/dancing-script", $fonts);
-        $this->assertStringContainsString("--site-font-script: 'Dancing Script'", $theme);
+        $this->assertStringContainsString('@fontsource/dancing-script', $fonts);
+        $this->assertStringContainsString("--site-font-script: 'Dancing Script'", $brand);
         $this->assertStringContainsString('font-family: var(--site-font-script);', $homeStyles);
     }
 

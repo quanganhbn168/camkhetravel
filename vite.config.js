@@ -3,8 +3,10 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
+import frontendBrand from './build/frontend-brand.mjs';
 
 export default defineConfig({
+    css: { postcss: { plugins: [frontendBrand()] } },
     plugins: [
         laravel({
             input: [

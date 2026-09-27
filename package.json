@@ -4,6 +4,7 @@
     "packageManager": "pnpm@10.15.0",
     "scripts": {
         "build": "vite build",
+        "test:brand": "node --test tests/Frontend/brand.test.mjs",
         "dev": "vite"
     },
     "devDependencies": {

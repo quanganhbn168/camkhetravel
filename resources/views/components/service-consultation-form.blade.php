@@ -19,7 +19,7 @@
                 <p class="lead">{{ $description ?: 'Trao đổi lịch trình cho dịch vụ '.mb_strtolower($content->title).' cùng đội ngũ '.$website->site_name.'.' }}</p>
 
                 <div class="mt-auto pt-4">
-                    <p class="text-primary fw-bold text-uppercase small">{{ $website->company_name ?: $website->site_name }}</p>
+                    <p class="text-primary-on-dark fw-bold text-uppercase small">{{ $website->company_name ?: $website->site_name }}</p>
                     <dl class="d-grid gap-3">
                         @if ($website->hotline)<div><dt class="small text-white-50">Điện thoại</dt><dd><a class="link-light fw-semibold" href="tel:{{ preg_replace('/\s+/', '', $website->hotline) }}">{{ $website->hotline }}</a></dd></div>@endif
                         @if ($website->contact_email)<div><dt class="small text-white-50">Email</dt><dd><a class="link-light" href="mailto:{{ $website->contact_email }}">{{ $website->contact_email }}</a></dd></div>@endif
