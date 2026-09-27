@@ -1,0 +1,1017 @@
+{
+    "version": 1,
+    "captured_at": "2026-09-27T15:40:10+07:00",
+    "settings": {
+        "website": {
+            "site_name": "CamKheTravel",
+            "tagline": "Đồng hành cùng những hành trình đáng nhớ",
+            "company_name": "CamKheTravel",
+            "contact_email": "",
+            "hotline": "0354865688",
+            "contact_phone": "0354865688",
+            "address": "",
+            "facebook_url": "",
+            "zalo_url": "https://zalo.me/0354865688",
+            "youtube_url": "",
+            "seo_title": "CamKheTravel | Dịch vụ xe và hành trình du lịch",
+            "seo_description": "Dịch vụ xe du lịch, xe hợp đồng và tư vấn phương tiện theo lịch trình.",
+            "seo_keywords": "CamKheTravel, xe du lịch, xe hợp đồng, hành trình du lịch",
+            "logo_media_id": null,
+            "seo_image_media_id": null,
+            "company_profile_media_id": null,
+            "about_image_media_id": 3,
+            "banner_media_id": null,
+            "header_menu_id": null,
+            "footer_menu_id": null,
+            "footer_background_media_id": null,
+            "google_maps_embed_url": null,
+            "phones": [
+                {
+                    "label": "Hotline",
+                    "number": "0354865688",
+                    "is_primary": true
+                }
+            ],
+            "branches": []
+        },
+        "homepage": {
+            "about_title": "CamKheTravel đồng hành cùng hành trình của bạn",
+            "about_content": "Dịch vụ xe du lịch, xe hợp đồng và hỗ trợ lịch trình theo nhu cầu của từng chuyến đi.",
+            "stats": [],
+            "commitments": "Báo giá rõ ràng\nĐúng xe đã xác nhận\nChủ động lịch trình\nĐồng hành chuyến đi",
+            "capabilities": "Bao xe đi tỉnh\nBao xe du lịch\nXe hợp đồng\nXe ghép theo lịch",
+            "consultation_title": "Bạn cần phương tiện cho chuyến đi sắp tới?",
+            "consultation_content": "Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.",
+            "faq_title": "Câu hỏi thường gặp",
+            "faq_description": "",
+            "fleet_types": [
+                {
+                    "code": "sedan",
+                    "title": "Xe 4–5 chỗ",
+                    "features": "Nhỏ gọn, riêng tư\nCông tác, đi tỉnh, xe dâu",
+                    "media_id": 6
+                },
+                {
+                    "code": "mpv",
+                    "title": "Xe 7 chỗ",
+                    "features": "Rộng rãi, linh hoạt\nGia đình và nhóm bạn",
+                    "media_id": 7
+                },
+                {
+                    "code": "van",
+                    "title": "Xe 16 chỗ",
+                    "features": "Thoải mái cho cả đoàn\nNhóm gia đình, đối tác tour",
+                    "media_id": 8
+                }
+            ],
+            "tour_types": [
+                {
+                    "title": "Tour gia đình",
+                    "description": "Riêng tư, gắn kết người thân"
+                },
+                {
+                    "title": "Tour riêng",
+                    "description": "Theo chương trình của đối tác"
+                },
+                {
+                    "title": "Tour công ty",
+                    "description": "Xe cho nhóm và đoàn nhỏ"
+                },
+                {
+                    "title": "Hành trình theo mùa",
+                    "description": "Du xuân, nghỉ hè, khám phá"
+                }
+            ],
+            "partner_benefits": [
+                {
+                    "title": "Báo giá cho đối tác",
+                    "description": "Theo lịch trình và hợp đồng"
+                },
+                {
+                    "title": "Xe theo quy mô đoàn",
+                    "description": "Tư vấn nhóm xe theo số khách"
+                },
+                {
+                    "title": "Đầu mối điều phối",
+                    "description": "Trao đổi xuyên suốt chuyến đi"
+                },
+                {
+                    "title": "Linh hoạt lịch trình",
+                    "description": "Theo tour, theo đoàn riêng"
+                },
+                {
+                    "title": "Hợp tác dài hạn",
+                    "description": "Đồng hành cùng phát triển"
+                }
+            ],
+            "partner_steps": [
+                {
+                    "title": "Gửi lịch trình",
+                    "description": "Tuyến đi, ngày đi, số khách."
+                },
+                {
+                    "title": "Nhận phương án",
+                    "description": "Thống nhất loại xe, chi phí."
+                },
+                {
+                    "title": "Xác nhận hợp tác",
+                    "description": "Chốt lịch và các điều khoản."
+                },
+                {
+                    "title": "Triển khai",
+                    "description": "Bố trí xe, tài xế, điều phối."
+                }
+            ],
+            "commitment_items": [
+                {
+                    "title": "Báo giá rõ ràng",
+                    "description": "Thống nhất trước chuyến đi"
+                },
+                {
+                    "title": "Đúng xe đã xác nhận",
+                    "description": "Phù hợp số người, hành lý"
+                },
+                {
+                    "title": "Chủ động lịch trình",
+                    "description": "Trao đổi thời gian đón trả"
+                },
+                {
+                    "title": "Đồng hành chuyến đi",
+                    "description": "Có đầu mối liên hệ hỗ trợ"
+                }
+            ],
+            "audience_groups": [
+                {
+                    "key": "trip",
+                    "title": "Chuyến đi riêng",
+                    "description": "Một chuyến xe dành riêng cho bạn và những người đồng hành. Chủ động điểm đón, thong thả tận hưởng hành trình.",
+                    "highlights": "Đi tỉnh, công tác\nDu lịch cùng gia đình\nXe ghép theo lịch",
+                    "cta_label": "Tư vấn chuyến đi",
+                    "service_ids": [
+                        1,
+                        2,
+                        5
+                    ],
+                    "media_id": 3
+                },
+                {
+                    "key": "partner",
+                    "title": "Đồng hành cùng đối tác",
+                    "description": "Bạn lên chương trình, chúng tôi cùng chuẩn bị phương án xe. Phối hợp rõ ràng từ lịch trình đến quy mô đoàn.",
+                    "highlights": "Đơn vị lữ hành, tổ chức tour\nXe hợp đồng doanh nghiệp\nĐầu mối trao đổi xuyên suốt",
+                    "cta_label": "Trao đổi hợp tác",
+                    "service_ids": [
+                        4
+                    ],
+                    "media_id": 4
+                },
+                {
+                    "key": "wedding",
+                    "title": "Trọn vẹn ngày chung đôi",
+                    "description": "Chăm chút những chặng đường trong ngày vui. Cùng gia đình sắp xếp xe dâu, giờ đón và hành trình phù hợp.",
+                    "highlights": "Xe dâu cho ngày cưới\nĐưa đón hai bên gia đình\nLịch trình theo ngày trọng đại",
+                    "cta_label": "Tư vấn xe cưới",
+                    "service_ids": [
+                        3
+                    ],
+                    "media_id": 5
+                }
+            ],
+            "route_items": [
+                {
+                    "title": "Hà Nội ⇄ Cẩm Khê / Yên Lập",
+                    "description": "Trao đổi điểm đón và lịch xe phù hợp.",
+                    "service_id": 5
+                },
+                {
+                    "title": "Đi tỉnh theo lịch trình",
+                    "description": "Công tác, thăm người thân, những cuộc hẹn.",
+                    "service_id": 1
+                },
+                {
+                    "title": "Du lịch và chương trình riêng",
+                    "description": "Từ chuyến đi gia đình đến hành trình của đối tác.",
+                    "service_id": 2
+                }
+            ],
+            "section_content": {
+                "hero_eyebrow": "CAMKHETRAVEL · DỊCH VỤ XE PHÚ THỌ",
+                "services_eyebrow": "MỖI NHU CẦU, MỘT SỰ CHUẨN BỊ",
+                "services_title": "Bạn lên kế hoạch. Chúng tôi đồng hành.",
+                "services_description": "Từ chuyến đi riêng, chương trình của đối tác đến ngày vui của gia đình — cùng tìm phương án xe phù hợp.",
+                "fleet_eyebrow": "CHỌN XE PHÙ HỢP",
+                "fleet_title": "Thoải mái trên từng chặng đường",
+                "fleet_description": "Chia sẻ số người, hành lý và lịch trình. Chúng tôi sẽ cùng bạn chọn phương án xe.",
+                "about_eyebrow": "CHU ĐÁO TỪ NHỮNG ĐIỀU NHỎ",
+                "routes_title": "Từ Phú Thọ, cùng bạn đến nơi cần đến",
+                "process_eyebrow": "ĐƠN GIẢN ĐỂ BẮT ĐẦU",
+                "process_title": "Một lịch trình rõ ràng. Một chuyến đi an tâm.",
+                "journal_eyebrow": "TRƯỚC MỖI HÀNH TRÌNH",
+                "journal_title": "Thêm cảm hứng, thêm kinh nghiệm"
+            },
+            "consultation_media_id": 9,
+            "design_version": 1
+        },
+        "about": {
+            "default_image_media_id": null,
+            "page_stats": [],
+            "page_intro": "CamKheTravel tiếp nhận nhu cầu di chuyển, tư vấn phương tiện và trao đổi lịch trình trước chuyến đi.",
+            "story_title": "Dịch vụ và cách phối hợp",
+            "story": "<p>Khách hàng có thể gửi điểm đón, điểm đến, thời gian và quy mô đoàn để CamKheTravel tiếp nhận yêu cầu tư vấn.</p><p>Với đối tác lữ hành, thông tin về tuyến đi, số khách và kế hoạch dự kiến giúp hai bên trao đổi phương án xe và lịch trình.</p>",
+            "story_image_media_id": null,
+            "video_source": "",
+            "video_youtube_url": "",
+            "video_media_id": null,
+            "video_poster_media_id": null,
+            "history": "",
+            "history_title": "Thông tin CamKheTravel",
+            "history_description": "",
+            "history_timeline": [],
+            "mission": "Tiếp nhận yêu cầu rõ ràng và tư vấn phương tiện theo lịch trình được trao đổi.",
+            "vision": "Cùng khách hàng và đối tác chuẩn bị những hành trình thuận tiện.",
+            "core_values": "<ul><li><strong>Rõ ràng</strong> — Thống nhất thông tin chuyến đi trước khi triển khai.</li><li><strong>Chủ động</strong> — Trao đổi điểm đón, thời gian và quy mô đoàn.</li><li><strong>Đồng hành</strong> — Duy trì đầu mối hỗ trợ trong quá trình chuẩn bị.</li></ul>",
+            "core_values_image_media_id": null,
+            "principles_title": "Nguyên tắc đồng hành",
+            "services_title": "Dịch vụ của CamKheTravel",
+            "services_link_label": "Xem dịch vụ",
+            "stats_title": "Năng lực triển khai",
+            "office_title": "Liên hệ CamKheTravel",
+            "office_description": "",
+            "office_image_media_id": null,
+            "office_gallery": [],
+            "cta_title": "Bắt đầu trao đổi về hành trình của bạn",
+            "cta_button_label": "Gửi yêu cầu tư vấn"
+        },
+        "company": {
+            "tax_code": "",
+            "representative": "",
+            "founded_year": null,
+            "business_license": ""
+        },
+        "system_pages": {
+            "home": {
+                "title": "Trang chủ",
+                "seo_title": "CamKheTravel | Dịch vụ xe và hành trình du lịch",
+                "seo_description": "Dịch vụ xe du lịch, xe hợp đồng và tư vấn phương tiện theo lịch trình.",
+                "og_image_media_id": 1,
+                "banner_media_id": null
+            },
+            "about": {
+                "title": "Giới thiệu",
+                "seo_title": "Giới thiệu CamKheTravel",
+                "seo_description": "Thông tin về CamKheTravel và các dịch vụ hỗ trợ hành trình.",
+                "og_image_media_id": 1,
+                "banner_media_id": null
+            },
+            "services": {
+                "title": "Dịch vụ",
+                "seo_title": "Dịch vụ xe | CamKheTravel",
+                "seo_description": "Các dịch vụ xe du lịch, xe hợp đồng, xe ghép và xe cưới.",
+                "og_image_media_id": 1,
+                "banner_media_id": null
+            },
+            "solutions": {
+                "title": "Giải pháp",
+                "seo_title": "Giải pháp hành trình | CamKheTravel",
+                "seo_description": "Tư vấn phương tiện và lịch trình theo nhu cầu chuyến đi.",
+                "og_image_media_id": 1,
+                "banner_media_id": null
+            },
+            "contact": {
+                "title": "Liên hệ",
+                "seo_title": "Liên hệ CamKheTravel",
+                "seo_description": "Gửi lịch trình để CamKheTravel tiếp nhận yêu cầu tư vấn.",
+                "og_image_media_id": 1,
+                "banner_media_id": null
+            }
+        }
+    },
+    "content": {
+        "curator": [
+            {
+                "disk": "public",
+                "directory": "media/site",
+                "visibility": "public",
+                "name": "no-image",
+                "path": "media/site/no-image.svg",
+                "width": 960,
+                "height": 600,
+                "size": 841,
+                "type": "image/svg+xml",
+                "ext": "svg",
+                "alt": "Ảnh mặc định CamKheTravel",
+                "title": "Ảnh mặc định CamKheTravel",
+                "description": null,
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 1
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "hero-vinfast",
+                "path": "media/homepage/v1/hero-vinfast.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 261052,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Xe VinFast màu xanh teal trên cung đường miền Bắc trong ánh sáng sớm.",
+                "title": "Hero / hành trình",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 2
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "service-private",
+                "path": "media/homepage/v1/service-private.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 249488,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Ảnh minh hoạ gia đình chuẩn bị chuyến đi bên xe VinFast trắng.",
+                "title": "Khách cá nhân / gia đình",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 3
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "service-partner",
+                "path": "media/homepage/v1/service-partner.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 236414,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Ảnh minh hoạ xe VinFast đón khách tại khu vực sảnh khách sạn.",
+                "title": "Đối tác tour / doanh nghiệp",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 4
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "service-wedding",
+                "path": "media/homepage/v1/service-wedding.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 268930,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Ảnh minh hoạ xe VinFast trắng trang trí hoa cưới.",
+                "title": "Xe cưới / đưa đón gia đình",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 5
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "fleet-vf8",
+                "path": "media/homepage/v1/fleet-vf8.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 120424,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Ảnh minh hoạ xe VinFast VF 8 xanh teal trên nền studio.",
+                "title": "Xe VinFast / nhóm nhỏ",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 6
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "fleet-vf9",
+                "path": "media/homepage/v1/fleet-vf9.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 88422,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Ảnh minh hoạ xe VinFast VF 9 trắng trên nền studio.",
+                "title": "Xe VinFast / nhóm gia đình",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 7
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "fleet-minibus",
+                "path": "media/homepage/v1/fleet-minibus.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 91120,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Ảnh minh hoạ minibus trắng trên nền studio, không gắn thương hiệu VinFast.",
+                "title": "Minibus / nhóm đoàn",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 8
+            },
+            {
+                "disk": "public",
+                "directory": "media/homepage/v1",
+                "visibility": "public",
+                "name": "journey-background",
+                "path": "media/homepage/v1/journey-background.webp",
+                "width": 1536,
+                "height": 1024,
+                "size": 226104,
+                "type": "image/webp",
+                "ext": "webp",
+                "alt": "Phong cảnh đồi chè và đường cong minh hoạ cho background tư vấn.",
+                "title": "Background / CTA cuối",
+                "description": "Ảnh minh họa tạo bằng AI cho thiết kế trang chủ. Không phải ảnh xác nhận đội xe hoặc khách hàng thực tế.",
+                "caption": null,
+                "pretty_name": null,
+                "exif": null,
+                "curations": null,
+                "tenant_id": null,
+                "source_id": 9
+            }
+        ],
+        "service_categories": [
+            {
+                "parent_id": null,
+                "curator_media_id": 1,
+                "banner_media_id": 1,
+                "name": "Dịch vụ xe và du lịch",
+                "description": "Dịch vụ phương tiện cho hành trình cá nhân, gia đình, doanh nghiệp và đối tác lữ hành.",
+                "body": null,
+                "seo_title": "Dịch vụ xe và du lịch",
+                "seo_description": "Dịch vụ phương tiện cho hành trình cá nhân, gia đình, doanh nghiệp và đối tác lữ hành.",
+                "seo_image_media_id": null,
+                "is_active": true,
+                "is_featured": true,
+                "is_home": true,
+                "sort_order": 10,
+                "source_id": 1,
+                "slug": "dich-vu-xe-va-du-lich"
+            }
+        ],
+        "services": [
+            {
+                "service_category_id": 1,
+                "curator_media_id": 3,
+                "banner_video_media_id": null,
+                "process_background_media_id": null,
+                "commitment_media_id": null,
+                "gallery": null,
+                "backstage_gallery": null,
+                "process_title": null,
+                "process_description": null,
+                "process_items": null,
+                "benefit_title": null,
+                "benefit_description": null,
+                "benefit_items": null,
+                "stats_title": null,
+                "stats_description": null,
+                "stats_items": null,
+                "reference_videos": null,
+                "commitment_title": null,
+                "commitment_description": null,
+                "commitment_items": null,
+                "title": "Bao xe đi tỉnh",
+                "excerpt": "Đón tận nơi, chủ động thời gian và hành trình.",
+                "body": "<p>Đón tại điểm đã trao đổi, thống nhất thời gian và lộ trình trước chuyến đi.</p>",
+                "status": "published",
+                "is_featured": true,
+                "is_home": true,
+                "sort_order": 10,
+                "seo_title": "Bao xe đi tỉnh",
+                "seo_description": "Đón tận nơi, chủ động thời gian và hành trình.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-24 13:52:51",
+                "source_id": 1,
+                "slug": "bao-xe-di-tinh"
+            },
+            {
+                "service_category_id": 1,
+                "curator_media_id": 3,
+                "banner_video_media_id": null,
+                "process_background_media_id": null,
+                "commitment_media_id": null,
+                "gallery": null,
+                "backstage_gallery": null,
+                "process_title": null,
+                "process_description": null,
+                "process_items": null,
+                "benefit_title": null,
+                "benefit_description": null,
+                "benefit_items": null,
+                "stats_title": null,
+                "stats_description": null,
+                "stats_items": null,
+                "reference_videos": null,
+                "commitment_title": null,
+                "commitment_description": null,
+                "commitment_items": null,
+                "title": "Bao xe du lịch",
+                "excerpt": "Xe riêng cho gia đình, nhóm bạn và chuyến đi nhiều ngày.",
+                "body": "<p>Gửi lịch trình và quy mô đoàn để CamKheTravel tư vấn phương án xe phù hợp.</p>",
+                "status": "published",
+                "is_featured": false,
+                "is_home": true,
+                "sort_order": 20,
+                "seo_title": "Bao xe du lịch",
+                "seo_description": "Xe riêng cho gia đình, nhóm bạn và chuyến đi nhiều ngày.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-24 13:52:51",
+                "source_id": 2,
+                "slug": "bao-xe-du-lich"
+            },
+            {
+                "service_category_id": 1,
+                "curator_media_id": 5,
+                "banner_video_media_id": null,
+                "process_background_media_id": null,
+                "commitment_media_id": null,
+                "gallery": null,
+                "backstage_gallery": null,
+                "process_title": null,
+                "process_description": null,
+                "process_items": null,
+                "benefit_title": null,
+                "benefit_description": null,
+                "benefit_items": null,
+                "stats_title": null,
+                "stats_description": null,
+                "stats_items": null,
+                "reference_videos": null,
+                "commitment_title": null,
+                "commitment_description": null,
+                "commitment_items": null,
+                "title": "Xe cưới – xe dâu",
+                "excerpt": "Đồng hành trong ngày trọng đại.",
+                "body": "<p>Trao đổi trước về điểm đón, thời gian và các điểm dừng trong ngày.</p>",
+                "status": "published",
+                "is_featured": false,
+                "is_home": true,
+                "sort_order": 30,
+                "seo_title": "Xe cưới – xe dâu",
+                "seo_description": "Đồng hành trong ngày trọng đại.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-24 13:52:51",
+                "source_id": 3,
+                "slug": "xe-cuoi-xe-dau"
+            },
+            {
+                "service_category_id": 1,
+                "curator_media_id": 4,
+                "banner_video_media_id": null,
+                "process_background_media_id": null,
+                "commitment_media_id": null,
+                "gallery": null,
+                "backstage_gallery": null,
+                "process_title": null,
+                "process_description": null,
+                "process_items": null,
+                "benefit_title": null,
+                "benefit_description": null,
+                "benefit_items": null,
+                "stats_title": null,
+                "stats_description": null,
+                "stats_items": null,
+                "reference_videos": null,
+                "commitment_title": null,
+                "commitment_description": null,
+                "commitment_items": null,
+                "title": "Xe hợp đồng",
+                "excerpt": "Cung cấp phương tiện cho doanh nghiệp và đối tác lữ hành.",
+                "body": "<p>Phương án xe và lịch trình được trao đổi theo nhu cầu từng đoàn.</p>",
+                "status": "published",
+                "is_featured": false,
+                "is_home": true,
+                "sort_order": 40,
+                "seo_title": "Xe hợp đồng",
+                "seo_description": "Cung cấp phương tiện cho doanh nghiệp và đối tác lữ hành.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-24 13:52:51",
+                "source_id": 4,
+                "slug": "xe-hop-dong"
+            },
+            {
+                "service_category_id": 1,
+                "curator_media_id": 3,
+                "banner_video_media_id": null,
+                "process_background_media_id": null,
+                "commitment_media_id": null,
+                "gallery": null,
+                "backstage_gallery": null,
+                "process_title": null,
+                "process_description": null,
+                "process_items": null,
+                "benefit_title": null,
+                "benefit_description": null,
+                "benefit_items": null,
+                "stats_title": null,
+                "stats_description": null,
+                "stats_items": null,
+                "reference_videos": null,
+                "commitment_title": null,
+                "commitment_description": null,
+                "commitment_items": null,
+                "title": "Xe ghép Hà Nội ⇄ Cẩm Khê",
+                "excerpt": "Kết nối Hà Nội, Cẩm Khê và Yên Lập theo lịch chạy.",
+                "body": "<p>Liên hệ để hỏi lịch, điểm đón và chỗ còn phù hợp với chuyến đi.</p>",
+                "status": "published",
+                "is_featured": false,
+                "is_home": true,
+                "sort_order": 50,
+                "seo_title": "Xe ghép Hà Nội ⇄ Cẩm Khê",
+                "seo_description": "Kết nối Hà Nội, Cẩm Khê và Yên Lập theo lịch chạy.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-24 13:52:51",
+                "source_id": 5,
+                "slug": "xe-ghep-ha-noi-cam-khe"
+            }
+        ],
+        "post_categories": [
+            {
+                "parent_id": null,
+                "curator_media_id": 1,
+                "banner_media_id": 1,
+                "name": "Kinh nghiệm hành trình",
+                "description": "Thông tin tham khảo khi chuẩn bị lịch trình và lựa chọn dịch vụ xe.",
+                "body": null,
+                "seo_title": "Kinh nghiệm hành trình",
+                "seo_description": "Thông tin tham khảo khi chuẩn bị lịch trình và lựa chọn dịch vụ xe.",
+                "seo_image_media_id": 1,
+                "is_active": true,
+                "sort_order": 10,
+                "source_id": 1,
+                "slug": "kinh-nghiem-hanh-trinh"
+            }
+        ],
+        "posts": [
+            {
+                "post_category_id": 1,
+                "curator_media_id": 3,
+                "title": "Chuẩn bị thông tin khi yêu cầu báo giá xe",
+                "excerpt": "Một lịch trình rõ ràng giúp việc tư vấn loại xe, thời gian và chi phí sát nhu cầu hơn.",
+                "body": "<h2>Thông tin cần chuẩn bị</h2><p>Hãy ghi lại điểm đón, điểm đến, ngày giờ đi và về dự kiến, số khách, lượng hành lý cùng các điểm dừng trên đường. Nếu lịch trình có thể thay đổi, hãy nói rõ phần nào chưa chắc chắn.</p><h2>Trao đổi trước khi xác nhận</h2><p>Cho đơn vị cung cấp xe biết số điện thoại liên hệ và yêu cầu riêng của đoàn. Hỏi lại về thời gian phục vụ, các chặng di chuyển và khoản chi phí có thể phát sinh. Chỉ xác nhận chuyến đi sau khi hai bên thống nhất phương án.</p>",
+                "status": "published",
+                "is_featured": true,
+                "seo_title": "Chuẩn bị thông tin khi yêu cầu báo giá xe",
+                "seo_description": "Một lịch trình rõ ràng giúp việc tư vấn loại xe, thời gian và chi phí sát nhu cầu hơn.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-21 13:52:51",
+                "source_id": 1,
+                "slug": "chuan-bi-thong-tin-khi-yeu-cau-bao-gia-xe"
+            },
+            {
+                "post_category_id": 1,
+                "curator_media_id": 7,
+                "title": "Chọn xe phù hợp với số khách và hành lý",
+                "excerpt": "Số người chỉ là bước đầu; hành lý và thời gian di chuyển cũng ảnh hưởng đến phương án xe.",
+                "body": "<h2>Xác định quy mô đoàn</h2><p>Đếm số người thực tế tham gia, gồm cả trẻ em, và ước lượng vali hoặc đồ đạc cần mang theo. Với chuyến đi dài, không gian ngồi thoải mái cũng cần được cân nhắc.</p><h2>Nhờ tư vấn cấu hình cụ thể</h2><p>Cùng một nhóm xe có thể có cách bố trí chỗ ngồi và khoang hành lý khác nhau. Hãy trao đổi trực tiếp để chọn xe phù hợp với lịch trình và xác nhận sức chứa trước ngày đi.</p>",
+                "status": "published",
+                "is_featured": false,
+                "seo_title": "Chọn xe phù hợp với số khách và hành lý",
+                "seo_description": "Số người chỉ là bước đầu; hành lý và thời gian di chuyển cũng ảnh hưởng đến phương án xe.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-22 13:52:51",
+                "source_id": 2,
+                "slug": "chon-xe-phu-hop-voi-so-khach-va-hanh-ly"
+            },
+            {
+                "post_category_id": 1,
+                "curator_media_id": 5,
+                "title": "Trao đổi lịch đón cho chuyến xe cưới",
+                "excerpt": "Thống nhất điểm đón và các mốc thời gian giúp gia đình chủ động trong ngày trọng đại.",
+                "body": "<h2>Lập lịch trình theo từng chặng</h2><p>Ghi rõ địa chỉ đón dâu, địa điểm tổ chức, các điểm dừng chụp ảnh và thời gian mong muốn ở mỗi chặng. Nếu cần nhiều xe, hãy xác định số khách trên từng xe.</p><h2>Xác nhận trước ngày cưới</h2><p>Trao đổi phương án xe, giờ tài xế có mặt và đầu mối liên hệ của gia đình. Trước ngày diễn ra, kiểm tra lại lịch trình để kịp điều chỉnh khi có thay đổi.</p>",
+                "status": "published",
+                "is_featured": false,
+                "seo_title": "Trao đổi lịch đón cho chuyến xe cưới",
+                "seo_description": "Thống nhất điểm đón và các mốc thời gian giúp gia đình chủ động trong ngày trọng đại.",
+                "seo_image_media_id": 1,
+                "published_at": "2026-09-23 13:52:51",
+                "source_id": 3,
+                "slug": "trao-doi-lich-don-cho-chuyen-xe-cuoi"
+            }
+        ],
+        "hero_slides": [
+            {
+                "curator_media_id": 2,
+                "title": "Mỗi hành trình, một sự đồng hành.",
+                "description": "Xe cho chuyến đi riêng, chương trình của đối tác và ngày vui của gia đình.",
+                "primary_label": "Nhận báo giá chuyến đi",
+                "primary_url": "#bao-gia",
+                "secondary_label": "Xem dịch vụ",
+                "secondary_url": "#dich-vu",
+                "is_active": true,
+                "sort_order": 10,
+                "mobile_media_id": null,
+                "source_id": 1
+            }
+        ],
+        "faqs": [
+            {
+                "faqable_type": null,
+                "faqable_id": null,
+                "group": "homepage",
+                "question": "Cần cung cấp thông tin gì để được tư vấn xe?",
+                "answer": "Bạn có thể gửi điểm đón, điểm đến, ngày dự kiến, số người và lượng hành lý. Nếu chưa chốt lịch, hãy ghi rõ phần cần trao đổi thêm.",
+                "sort_order": 10,
+                "is_active": true,
+                "source_id": 1
+            },
+            {
+                "faqable_type": null,
+                "faqable_id": null,
+                "group": "homepage",
+                "question": "Gửi yêu cầu trên website đã được xem là đặt xe chưa?",
+                "answer": "Chưa. Đây là yêu cầu tư vấn. Lịch xe, phương án phục vụ và chi phí cần được hai bên trao đổi và xác nhận trước chuyến đi.",
+                "sort_order": 20,
+                "is_active": true,
+                "source_id": 2
+            },
+            {
+                "faqable_type": null,
+                "faqable_id": null,
+                "group": "homepage",
+                "question": "Chọn xe theo số người hay lượng hành lý?",
+                "answer": "Cần tính cả hai. Bạn nên cho biết số khách, số vali hoặc đồ mang theo để được tư vấn phương án phù hợp với hành trình.",
+                "sort_order": 30,
+                "is_active": true,
+                "source_id": 3
+            },
+            {
+                "faqable_type": null,
+                "faqable_id": null,
+                "group": "homepage",
+                "question": "Đối tác tour, doanh nghiệp gửi nhu cầu như thế nào?",
+                "answer": "Chọn “Hợp tác đối tác”, để lại tên đơn vị, đầu mối liên hệ và chương trình dự kiến. Có thể ghi thêm quy mô đoàn, số chuyến và nhu cầu hợp tác trong phần yêu cầu thêm.",
+                "sort_order": 40,
+                "is_active": true,
+                "source_id": 4
+            },
+            {
+                "faqable_type": null,
+                "faqable_id": null,
+                "group": "homepage",
+                "question": "Có thể trao đổi cả xe dâu và xe đưa đón gia đình không?",
+                "answer": "Bạn có thể chọn nhu cầu xe dâu, đưa đón gia đình hoặc cả hai trong form xe cưới. Hãy chia sẻ ngày cưới, giờ đón và các địa điểm để cùng sắp xếp phương án.",
+                "sort_order": 50,
+                "is_active": true,
+                "source_id": 5
+            },
+            {
+                "faqable_type": null,
+                "faqable_id": null,
+                "group": "homepage",
+                "question": "Làm sao để hỏi lịch xe ghép Hà Nội – Cẩm Khê?",
+                "answer": "Xem thông tin dịch vụ xe ghép hoặc gửi điểm đón, điểm đến và ngày cần đi. Lịch chạy và chỗ phù hợp sẽ được xác nhận khi trao đổi.",
+                "sort_order": 60,
+                "is_active": true,
+                "source_id": 6
+            }
+        ],
+        "testimonials": [
+            {
+                "curator_media_id": null,
+                "client_name": "Khách gia đình",
+                "client_role": "Chuyến đi riêng",
+                "company_name": null,
+                "quote": "Cả nhà có thể chủ động điểm đón và thời gian nghỉ. Đi cùng nhau nên chuyến đi cũng thoải mái hơn.",
+                "rating": 5,
+                "is_illustrative": true,
+                "is_active": true,
+                "sort_order": 10,
+                "source_id": 1
+            },
+            {
+                "curator_media_id": null,
+                "client_name": "Đối tác lữ hành",
+                "client_role": "Hợp tác cung cấp xe",
+                "company_name": null,
+                "quote": "Có một đầu mối trao đổi về xe và lịch trình giúp việc chuẩn bị chương trình cho khách thuận tiện hơn.",
+                "rating": 5,
+                "is_illustrative": true,
+                "is_active": true,
+                "sort_order": 20,
+                "source_id": 2
+            },
+            {
+                "curator_media_id": null,
+                "client_name": "Khách thuê xe cưới",
+                "client_role": "Xe dâu trong ngày cưới",
+                "company_name": null,
+                "quote": "Một chiếc xe chỉn chu và lịch đón được thống nhất từ trước là điều chúng tôi mong đợi trong ngày cưới.",
+                "rating": 5,
+                "is_illustrative": true,
+                "is_active": true,
+                "sort_order": 30,
+                "source_id": 3
+            }
+        ],
+        "menus": [
+            {
+                "name": "Menu chính",
+                "location": "header",
+                "is_active": true,
+                "source_id": 1
+            },
+            {
+                "name": "Liên kết chân trang",
+                "location": "footer",
+                "is_active": true,
+                "source_id": 2
+            }
+        ],
+        "menu_items": [
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Trang chủ",
+                "url": "/",
+                "target": "_self",
+                "css_classes": null,
+                "position": 10,
+                "source_id": 1
+            },
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Dịch vụ",
+                "url": "/dich-vu",
+                "target": "_self",
+                "css_classes": null,
+                "position": 20,
+                "source_id": 2
+            },
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Đội xe",
+                "url": "/#doi-xe",
+                "target": "_self",
+                "css_classes": null,
+                "position": 30,
+                "source_id": 3
+            },
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Đối tác",
+                "url": "/#doi-tac",
+                "target": "_self",
+                "css_classes": null,
+                "position": 40,
+                "source_id": 4
+            },
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Xe cưới",
+                "url": "/#xe-cuoi",
+                "target": "_self",
+                "css_classes": null,
+                "position": 50,
+                "source_id": 5
+            },
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Tin tức",
+                "url": "/blog",
+                "target": "_self",
+                "css_classes": null,
+                "position": 60,
+                "source_id": 6
+            },
+            {
+                "menu_id": 1,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Liên hệ",
+                "url": "/lien-he",
+                "target": "_self",
+                "css_classes": null,
+                "position": 70,
+                "source_id": 7
+            },
+            {
+                "menu_id": 2,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Trang chủ",
+                "url": "/",
+                "target": "_self",
+                "css_classes": null,
+                "position": 10,
+                "source_id": 8
+            },
+            {
+                "menu_id": 2,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Giới thiệu",
+                "url": "/gioi-thieu",
+                "target": "_self",
+                "css_classes": null,
+                "position": 20,
+                "source_id": 9
+            },
+            {
+                "menu_id": 2,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Dịch vụ",
+                "url": "/dich-vu",
+                "target": "_self",
+                "css_classes": null,
+                "position": 30,
+                "source_id": 10
+            },
+            {
+                "menu_id": 2,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Tin tức",
+                "url": "/blog",
+                "target": "_self",
+                "css_classes": null,
+                "position": 40,
+                "source_id": 11
+            },
+            {
+                "menu_id": 2,
+                "parent_id": null,
+                "linked_source_id": null,
+                "linked_source_type": "native_page",
+                "label": "Liên hệ",
+                "url": "/lien-he",
+                "target": "_self",
+                "css_classes": null,
+                "position": 50,
+                "source_id": 12
+            }
+        ]
+    }
+}

@@ -14,11 +14,11 @@ final class WebsiteSettingsSeeder extends Seeder
             'tagline' => 'Đồng hành cùng những hành trình đáng nhớ',
             'company_name' => 'CamKheTravel',
             'contact_email' => '',
-            'hotline' => '',
-            'contact_phone' => '',
+            'hotline' => '0354865688',
+            'contact_phone' => '0354865688',
             'address' => '',
             'facebook_url' => '',
-            'zalo_url' => '',
+            'zalo_url' => 'https://zalo.me/0354865688',
             'youtube_url' => '',
             'seo_title' => 'CamKheTravel | Dịch vụ xe và hành trình du lịch',
             'seo_description' => 'Dịch vụ xe du lịch, xe hợp đồng và tư vấn phương tiện theo lịch trình.',
@@ -32,7 +32,7 @@ final class WebsiteSettingsSeeder extends Seeder
             'footer_menu_id' => null,
             'footer_background_media_id' => null,
             'google_maps_embed_url' => null,
-            'phones' => [],
+            'phones' => [['label' => 'Hotline', 'number' => '0354865688', 'is_primary' => true]],
             'branches' => [],
         ]);
         $settings->settingsConfig()->resetDefaultValueLoadedProperties();
