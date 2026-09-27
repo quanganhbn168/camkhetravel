@@ -1,3 +1,5 @@
+import Carousel from 'bootstrap/js/dist/carousel';
+
 /* Homepage interactions.
  * All user-entered text is inserted via textContent or value, never innerHTML.
  * Quote requests use the configured same-origin contact endpoint.
@@ -73,6 +75,30 @@
   }
   function init(win) {
     const doc = win.document;
+    const carousel = doc.querySelector('[data-home-carousel]');
+    if (carousel && carousel.querySelectorAll('.carousel-item').length > 1) {
+      Carousel.getOrCreateInstance(carousel, { interval: false, ride: false });
+    }
+    const statistics = doc.querySelector('[data-home-stats]');
+    if (statistics && 'IntersectionObserver' in win && !win.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const observer = new win.IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        observer.disconnect();
+        statistics.querySelectorAll('[data-stat-value]').forEach(element => {
+          const original = element.textContent;
+          const parts = original.split(/(\d+)/);
+          const started = win.performance.now();
+          const animate = now => {
+            const progress = Math.min((now - started) / 900, 1);
+            element.textContent = parts.map((part, index) => index % 2 ? String(Math.round(Number(part) * (1 - Math.pow(1 - progress, 3)))) : part).join('');
+            if (progress < 1) win.requestAnimationFrame(animate);
+            else element.textContent = original;
+          };
+          win.requestAnimationFrame(animate);
+        });
+      }, { threshold: 0.3 });
+      observer.observe(statistics);
+    }
     const configElement = doc.querySelector('[data-home-config]');
     const config = Object.assign({phone:'',zaloUrl:'',leadEndpoint:''}, configElement ? {
       phone: configElement.dataset.phone,
@@ -139,7 +165,10 @@
       // Do not leave personal details in a closed demo dialog.
       form.reset(); $('#requestSummary').value = ''; requestResult.hidden = true; form.hidden = false;
     });
-    $$('[data-quote-type]').forEach(button => button.addEventListener('click', () => openQuote({type:button.dataset.quoteType, service:button.dataset.service || '', serviceId:button.dataset.serviceId || ''})));
+    $$('[data-quote-type]').forEach(button => button.addEventListener('click', event => {
+      event.preventDefault();
+      openQuote({type:button.dataset.quoteType, service:button.dataset.service || '', serviceId:button.dataset.serviceId || ''});
+    }));
     $('#quickQuote').addEventListener('submit', event => {
       event.preventDefault();
       if (!event.currentTarget.reportValidity()) return;

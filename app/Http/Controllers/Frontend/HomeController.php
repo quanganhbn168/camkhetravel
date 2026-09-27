@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Faq;
 use App\Models\HeroSlide;
 use App\Models\Post;
 use App\Models\Service;
@@ -12,6 +13,8 @@ use App\Settings\WebsiteSettings;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
+use Awcodes\Curator\Models\Media;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -26,12 +29,62 @@ class HomeController extends Controller
     public function __invoke(): View
     {
         $page = $this->systemPages->require('home');
-        $heroSlide = HeroSlide::query()
+        $heroSlides = HeroSlide::query()
             ->active()
             ->with('curatorMedia')
             ->orderBy('sort_order')
             ->orderBy('id')
-            ->first();
+            ->get()
+            ->map(fn (HeroSlide $slide): array => [
+                'title' => trim((string) $slide->title),
+                'description' => trim((string) $slide->description),
+                'image_url' => MediaUrl::versioned($slide->curatorMedia) ?: asset('images/no-image.svg'),
+                'uses_page_banner' => false,
+                'primary_label' => trim((string) $slide->primary_label),
+                'primary_url' => trim((string) $slide->primary_url),
+                'primary_is_quote' => in_array($slide->primary_url, ['#bao-gia', '/#bao-gia'], true),
+                'secondary_label' => trim((string) $slide->secondary_label),
+                'secondary_url' => trim((string) $slide->secondary_url),
+                'secondary_is_quote' => in_array($slide->secondary_url, ['#bao-gia', '/#bao-gia'], true),
+                'has_copy' => filled($slide->title) || filled($slide->description)
+                    || (filled($slide->primary_label) && filled($slide->primary_url))
+                    || (filled($slide->secondary_label) && filled($slide->secondary_url)),
+            ]);
+
+        $showPageBanner = $heroSlides->isNotEmpty() && filled($page['banner_url']);
+
+        if ($heroSlides->isEmpty()) {
+            $heroSlides->push([
+                'title' => $this->website->site_name ?: $page['title'],
+                'description' => $this->website->tagline,
+                'image_url' => $page['banner_url'] ?: asset('images/no-image.svg'),
+                'uses_page_banner' => filled($page['banner_url']),
+                'primary_label' => '', 'primary_url' => '', 'primary_is_quote' => false,
+                'secondary_label' => '', 'secondary_url' => '', 'secondary_is_quote' => false,
+                'has_copy' => true,
+            ]);
+        }
+
+        $aboutImage = $this->website->about_image_media_id
+            ? Media::query()->find($this->website->about_image_media_id)
+            : null;
+        $about = [
+            'title' => trim($this->homepage->about_title),
+            'content' => trim($this->homepage->about_content),
+            'image_url' => $aboutImage && str_starts_with((string) $aboutImage->type, 'image/')
+                ? MediaUrl::versioned($aboutImage)
+                : null,
+        ];
+        $stats = collect($this->homepage->stats)
+            ->filter(fn (mixed $item): bool => is_array($item) && filled($item['value'] ?? null) && filled($item['label'] ?? null))
+            ->take(4)
+            ->map(fn (array $item): array => [
+                'value' => trim(($item['prefix'] ?? '').$item['value'].($item['suffix'] ?? '')),
+                'label' => $item['label'],
+            ])->values();
+        $commitments = $this->contentLines($this->homepage->commitments);
+        $capabilities = $this->contentLines($this->homepage->capabilities);
+        $faqs = Faq::query()->homepage()->get(['id', 'question', 'answer']);
 
         $services = Service::query()
             ->published()
@@ -101,7 +154,14 @@ class HomeController extends Controller
 
         return view('frontend.home', [
             'page' => $page,
-            'heroSlide' => $heroSlide,
+            'heroSlides' => $heroSlides,
+            'showPageBanner' => $showPageBanner,
+            'about' => $about,
+            'hasAbout' => filled($about['title']) || filled($about['content']) || filled($about['image_url']),
+            'stats' => $stats,
+            'commitments' => $commitments,
+            'capabilities' => $capabilities,
+            'faqs' => $faqs,
             'services' => $services,
             'testimonials' => $testimonials,
             'latestPosts' => $latestPosts,
@@ -111,7 +171,16 @@ class HomeController extends Controller
             'heroFleetLabel' => $fleetCapacityLabels->isNotEmpty() ? $fleetCapacityLabels->implode(' – ').' chỗ' : '',
             'noImageUrl' => asset('images/no-image.svg'),
             'frontendConfig' => $frontendConfig,
-            'seo' => $this->seo->home($page),
+            'seo' => $this->seo->home($page, $faqs->toArray()),
         ]);
+    }
+
+    /** @return Collection<int, string> */
+    private function contentLines(string $content): Collection
+    {
+        return collect(preg_split('/\r\n|\r|\n/', $content))
+            ->map(fn (string $line): string => trim($line))
+            ->filter(fn (string $line): bool => $line !== '')
+            ->values();
     }
 }

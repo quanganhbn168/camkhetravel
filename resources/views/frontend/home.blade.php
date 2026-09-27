@@ -13,28 +13,61 @@
             data-zalo-url="{{ $frontendConfig['zaloUrl'] }}"
             data-lead-endpoint="{{ $frontendConfig['leadEndpoint'] }}"></div>
 
-        <section class="hero" id="trang-chu" data-hero-section aria-labelledby="hero-title">
-            <picture class="hero-picture">
-                <img src="{{ $page['banner_url'] ?: $noImageUrl }}" @if ($page['banner_url']) data-page-banner-image @endif alt="" width="1800" height="625" fetchpriority="high">
-            </picture>
-            <div class="container hero-inner">
-                <div class="hero-copy">
-                    <h1 id="hero-title">{{ $heroSlide?->title ?: 'CamKheTravel – đồng hành cùng hành trình của bạn' }}@if (filled($heroFleetLabel))<br><span>{{ $heroFleetLabel }}</span>@endif</h1>
-                    <p class="hero-services">{{ $heroSlide?->description ?: $homepage->capabilities }}</p>
-                    <p class="signature hero-signature">Mỗi hành trình<br><span>là một trải nghiệm đáng nhớ.</span></p>
-                    <div class="hero-actions">
-                        <button type="button" class="btn btn-brand" data-quote-type="trip">
-                            {{ $heroSlide?->primary_label ?: 'Nhận báo giá chuyến đi' }} <x-site-icon name="arrow" />
-                        </button>
-                        <a class="btn btn-zalo" href="{{ $heroSlide?->secondary_url ?: '/#dich-vu' }}">{{ $heroSlide?->secondary_label ?: 'Xem dịch vụ' }} <x-site-icon name="arrow" /></a>
-                    </div>
-                    <div class="hero-trust">
-                        <span><x-site-icon name="shield" /> Trao đổi rõ ràng</span>
-                        <span><x-site-icon name="users" /> Theo nhu cầu</span>
-                        <span><x-site-icon name="clock" /> Chủ động lịch trình</span>
-                        <span><x-site-icon name="pin" /> Điểm đón trao đổi trước</span>
-                    </div>
+        @if ($showPageBanner)
+            <div class="home-page-banner"><img data-page-banner-image src="{{ $page['banner_url'] }}" alt="{{ $page['title'] }}" width="1800" height="400" fetchpriority="high"></div>
+        @endif
+
+        <section class="hero" id="trang-chu" data-hero-section aria-label="{{ $page['title'] }}">
+            @if (blank($heroSlides->first()['title']))
+                <h1 class="visually-hidden">{{ $website->site_name ?: $page['title'] }}</h1>
+            @endif
+            <div id="homeHero" class="carousel slide" data-home-carousel>
+                <div class="carousel-inner">
+                    @foreach ($heroSlides as $slide)
+                        <div @class(['carousel-item hero-slide', 'active' => $loop->first, 'is-image-only' => ! $slide['has_copy']])>
+                            <picture class="hero-picture">
+                                <img src="{{ $slide['image_url'] }}" @if ($slide['uses_page_banner']) data-page-banner-image @endif alt="" width="1800" height="625" @if ($loop->first) fetchpriority="high" @else loading="lazy" @endif>
+                            </picture>
+                            @if ($slide['has_copy'])
+                                <div class="container hero-inner">
+                                    <div class="hero-copy">
+                                        @if ($slide['title'])
+                                            @if ($loop->first)
+                                                <h1 class="hero-title">{{ $slide['title'] }}@if (filled($heroFleetLabel))<br><span>{{ $heroFleetLabel }}</span>@endif</h1>
+                                            @else
+                                                <h2 class="hero-title">{{ $slide['title'] }}</h2>
+                                            @endif
+                                        @endif
+                                        @if ($slide['description'])<p class="hero-services">{{ $slide['description'] }}</p>@endif
+                                        <p class="signature hero-signature">Mỗi hành trình<br><span>là một trải nghiệm đáng nhớ.</span></p>
+                                        <div class="hero-actions">
+                                            @if ($slide['primary_label'] && $slide['primary_url'])
+                                                <a class="btn btn-brand" href="{{ $slide['primary_url'] }}" @if ($slide['primary_is_quote']) data-quote-type="trip" @endif>{{ $slide['primary_label'] }} <x-site-icon name="arrow" /></a>
+                                            @endif
+                                            @if ($slide['secondary_label'] && $slide['secondary_url'])
+                                                <a class="btn btn-zalo" href="{{ $slide['secondary_url'] }}" @if ($slide['secondary_is_quote']) data-quote-type="trip" @endif>{{ $slide['secondary_label'] }} <x-site-icon name="arrow" /></a>
+                                            @endif
+                                        </div>
+                                        @if ($commitments->isNotEmpty())
+                                            <div class="hero-trust">@foreach ($commitments->take(4) as $commitment)<span><x-site-icon name="check" />{{ $commitment }}</span>@endforeach</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
+                @if ($heroSlides->count() > 1)
+                    <div class="hero-controls" aria-label="Điều khiển slide">
+                        <button type="button" class="hero-control" data-bs-target="#homeHero" data-bs-slide="prev" aria-label="Slide trước"><span aria-hidden="true">←</span></button>
+                        <div class="carousel-indicators">
+                            @foreach ($heroSlides as $slide)
+                                <button type="button" data-bs-target="#homeHero" data-bs-slide-to="{{ $loop->index }}" @class(['active' => $loop->first]) @if ($loop->first) aria-current="true" @endif aria-label="Slide {{ $loop->iteration }}"></button>
+                            @endforeach
+                        </div>
+                        <button type="button" class="hero-control" data-bs-target="#homeHero" data-bs-slide="next" aria-label="Slide tiếp theo"><span aria-hidden="true">→</span></button>
+                    </div>
+                @endif
             </div>
         </section>
 
@@ -47,6 +80,41 @@
                 <button type="submit" class="btn btn-brand">Yêu cầu báo giá <x-site-icon name="arrow" /></button>
             </form>
         </div>
+
+        @if ($hasAbout || $stats->isNotEmpty() || $commitments->isNotEmpty() || $capabilities->isNotEmpty())
+            <section class="section home-about" id="gioi-thieu" aria-label="Giới thiệu">
+                <div class="container">
+                    @if ($hasAbout)
+                        <div class="row align-items-center g-4 g-lg-5">
+                            @if ($about['image_url'])
+                                <div class="col-lg-5"><img class="home-about-image" src="{{ $about['image_url'] }}" alt="{{ $about['title'] ?: $website->site_name }}" width="700" height="500" loading="lazy" decoding="async"></div>
+                            @endif
+                            <div class="{{ $about['image_url'] ? 'col-lg-7' : 'col-12' }}">
+                                @if ($about['title'])<div class="section-heading"><h2>{{ $about['title'] }}</h2></div>@endif
+                                @if ($about['content'])<p class="home-managed-text mb-0">{{ $about['content'] }}</p>@endif
+                            </div>
+                        </div>
+                    @endif
+                    @if ($stats->isNotEmpty())
+                        <div class="home-stats" data-home-stats>
+                            @foreach ($stats as $stat)
+                                <div class="home-stat"><strong data-stat-value>{{ $stat['value'] }}</strong><span>{{ $stat['label'] }}</span></div>
+                            @endforeach
+                        </div>
+                    @endif
+                    @if ($commitments->isNotEmpty() || $capabilities->isNotEmpty())
+                        <div class="row g-4 mt-2">
+                            @if ($commitments->isNotEmpty())
+                                <div class="col-md-6"><h3 class="home-list-title">Cam kết</h3><ul class="home-managed-list">@foreach ($commitments as $commitment)<li><x-site-icon name="check" />{{ $commitment }}</li>@endforeach</ul></div>
+                            @endif
+                            @if ($capabilities->isNotEmpty())
+                                <div class="col-md-6"><h3 class="home-list-title">Năng lực phục vụ</h3><ul class="home-managed-list">@foreach ($capabilities as $capability)<li><x-site-icon name="check" />{{ $capability }}</li>@endforeach</ul></div>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </section>
+        @endif
 
         <section class="section services-section" id="dich-vu" aria-labelledby="services-title">
             <div class="container">
@@ -175,6 +243,20 @@
                 </div>
             </div>
         </section>
+
+        @if ($faqs->isNotEmpty())
+            <section class="section home-faq" id="cau-hoi-thuong-gap" aria-labelledby="faq-title">
+                <div class="container">
+                    <div class="section-heading"><h2 id="faq-title">{{ $homepage->faq_title ?: 'Câu hỏi thường gặp' }}</h2></div>
+                    @if ($homepage->faq_description)<p class="home-managed-text">{{ $homepage->faq_description }}</p>@endif
+                    <div class="home-faq-list">
+                        @foreach ($faqs as $faq)
+                            <details class="home-faq-item"><summary>{{ $faq->question }}</summary><p class="home-managed-text">{{ $faq->answer }}</p></details>
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+        @endif
 
         <section class="contact-banner" id="lien-he" aria-labelledby="contact-title">
             <div class="container contact-inner"><p class="signature contact-signature">Cẩm Khê, Phú Thọ,<br>hẹn bạn trên hành trình.</p><div class="contact-main"><h2 id="contact-title">{{ $homepage->consultation_title ?: 'Bạn cần phương tiện cho chuyến đi sắp tới?' }}</h2><p>{{ $homepage->consultation_content ?: 'Gửi lịch trình để CamKheTravel tư vấn phương án phù hợp.' }}</p><div class="contact-actions"><button type="button" class="btn btn-brand" data-quote-type="trip">Nhận tư vấn <x-site-icon name="arrow" /></button><button type="button" class="btn btn-white" data-contact="phone"><x-site-icon name="phone" /> Liên hệ</button></div><button type="button" class="text-link mx-auto mt-2" data-bs-toggle="modal" data-bs-target="#privacyModal">Thông tin dữ liệu</button></div><p class="signature contact-signature right">CamKheTravel,<br>đồng hành cùng chuyến đi.</p></div>
