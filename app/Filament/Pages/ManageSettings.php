@@ -533,6 +533,8 @@ class ManageSettings extends Page
                 'about_eyebrow' => 'Dòng nhấn giới thiệu', 'routes_title' => 'Tiêu đề phạm vi hỗ trợ',
                 'process_eyebrow' => 'Dòng nhấn quy trình', 'process_title' => 'Tiêu đề quy trình',
                 'journal_eyebrow' => 'Dòng nhấn bài viết', 'journal_title' => 'Tiêu đề bài viết',
+                'partner_eyebrow' => 'Dòng nhấn hợp tác doanh nghiệp', 'partner_title' => 'Tiêu đề hợp tác doanh nghiệp',
+                'partner_description' => 'Mô tả hợp tác doanh nghiệp', 'partner_languages' => 'Dòng ngoại ngữ (Trung/Hàn)',
             ])->map(fn ($label, $key) => TextInput::make('section_content.'.$key)->label($label)->maxLength(500))->values()->all())->columns(2),
             Section::make('Lời mời tư vấn cuối trang')->schema([
                 TextInput::make('consultation_title')->label('Tiêu đề')->maxLength(255),

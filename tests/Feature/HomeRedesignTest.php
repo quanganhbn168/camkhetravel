@@ -38,7 +38,8 @@ class HomeRedesignTest extends TestCase
         $settings->fleet_types = [['code' => 'qa', 'title' => 'Nhóm xe QA', 'features' => "Tiện ích QA", 'media_id' => $image->id, 'description' => 'Mô tả xe vừa lưu']];
         $settings->save();
 
-        $response = $this->get('/')->assertOk()->assertSee('Chuyến đi riêng QA')->assertSee('Ngày cưới QA')
+        $response = $this->get('/')->assertOk()->assertDontSee('Chuyến đi riêng QA')->assertDontSee('Ngày cưới QA')
+            ->assertSee('data-service-id="'.$service->id.'"', false)
             ->assertSee('href="'.route('slug.show', ['slug' => $service->slug]).'"', false)->assertDontSee('Dịch vụ bị ẩn QA')
             ->assertSee('data-vehicle-image="'.e(MediaUrl::versioned($image)).'"', false)
             ->assertSee('Mô tả xe vừa lưu');
@@ -92,7 +93,8 @@ class HomeRedesignTest extends TestCase
             ->call('save')->assertHasNoFormErrors();
         $settings = app(HomepageSettings::class)->refresh();
         $this->assertSame($original, $settings->about_content);
-        $this->get('/')->assertOk()->assertSee('Đối tác sửa từ admin')->assertSee('Lời mời mới từ admin');
+        $this->assertSame('Đối tác sửa từ admin', $settings->audience_groups[0]['title']);
+        $this->get('/')->assertOk()->assertSee('Lời mời mới từ admin');
     }
 
     public function test_mobile_hero_and_verified_statistics_follow_cms(): void

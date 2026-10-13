@@ -50,18 +50,7 @@
 
     <section class="home-section services-section" id="dich-vu" aria-labelledby="services-title"><div class="container">
         <div class="section-heading section-heading-centered"><p class="eyebrow">{{ $sectionContent['services_eyebrow'] ?? 'DỊCH VỤ' }}</p><h2 id="services-title">{{ $sectionContent['services_title'] ?? 'Dịch vụ của '.$website->site_name }}</h2>@if (filled($sectionContent['services_description'] ?? ''))<p>{{ $sectionContent['services_description'] }}</p>@endif</div>
-        @if ($audienceGroups->isNotEmpty())<div class="audience-grid">
-            @foreach ($audienceGroups as $group)<article class="audience-card" id="{{ $group['anchor'] }}" data-audience="{{ $group['key'] }}">
-                <div class="audience-image">@include('frontend.partials.home.image', ['image' => $group['image'], 'alt' => $group['title']])<span class="audience-number">0{{ $loop->iteration }}</span></div>
-                <div class="audience-body"><span class="audience-icon"><x-site-icon :name="$group['icon']" /></span><h3>{{ $group['title'] }}</h3><p>{{ $group['description'] ?? '' }}</p>
-                    <ul class="audience-highlights">@foreach ($group['highlights']->take(3) as $highlight)<li><x-site-icon name="check" />{{ $highlight }}</li>@endforeach</ul>
-                    @if ($group['services']->isNotEmpty())<div class="audience-services" aria-label="Dịch vụ liên quan">@foreach ($group['services'] as $service)<a href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }} <x-site-icon name="arrow" /></a>@endforeach</div>@endif
-                    <button type="button" class="audience-cta" data-quote-type="{{ $group['key'] }}" @if ($group['services']->count() === 1) data-service="{{ $group['services']->first()->title }}" data-service-id="{{ $group['services']->first()->id }}" @endif>{{ $group['cta_label'] ?? 'Nhận tư vấn' }} <x-site-icon name="arrow" /></button>
-                </div>
-            </article>@endforeach
-        </div>@else
             <div class="audience-grid">@forelse ($services as $service)<article class="service-card"><img src="{{ $service->image_url }}" alt="{{ $service->title }}" width="768" height="512" loading="lazy"><div class="audience-body"><h3><a href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></h3><p>{{ $service->excerpt }}</p><button class="text-link" type="button" data-quote-type="{{ $service->quote_type }}" data-service="{{ $service->title }}" data-service-id="{{ $service->id }}">Nhận tư vấn <x-site-icon name="arrow" /></button></div></article>@empty<p>Dịch vụ đang được cập nhật.</p>@endforelse</div>
-        @endif
     </div></section>
 
     @if ($fleetTypes->isNotEmpty())<section class="home-section fleet-section" id="doi-xe" aria-labelledby="fleet-title"><div class="container">
@@ -69,6 +58,17 @@
         <div class="fleet-grid">@foreach ($fleetTypes as $vehicle)<article class="fleet-card"><div class="fleet-image">@include('frontend.partials.home.image', ['image' => $vehicle['image'], 'alt' => $vehicle['title']])</div><div class="fleet-content"><h3>{{ $vehicle['title'] }}</h3>@if ($vehicle['description'])<p>{{ $vehicle['description'] }}</p>@endif<ul>@foreach ($vehicle['features'] as $feature)<li><x-site-icon name="check" />{{ $feature }}</li>@endforeach</ul><button type="button" class="fleet-detail" data-vehicle="{{ $vehicle['code'] }}" data-vehicle-name="{{ $vehicle['title'] }}" data-vehicle-description="{{ $vehicle['detail_text'] }}" data-vehicle-image="{{ $vehicle['image']['url'] }}">Khám phá xe <x-site-icon name="arrow" /></button></div></article>@endforeach</div>
         <p class="section-note">Ảnh minh họa. Dòng xe, số ghế và hành lý được xác nhận theo từng yêu cầu.</p>
     </div></section>@endif
+
+    @if (filled($sectionContent['partner_title'] ?? '') || count($homepage->partner_benefits))<section class="home-section partner-section" id="doi-tac" aria-labelledby="partner-title"><div class="container"><div class="partner-layout">
+        <div class="partner-copy">
+            <p class="eyebrow">{{ $sectionContent['partner_eyebrow'] ?? 'HỢP TÁC DOANH NGHIỆP' }}</p>
+            <h2 id="partner-title">{{ $sectionContent['partner_title'] ?? 'Hợp tác đưa đón theo tháng cho doanh nghiệp' }}</h2>
+            @if (filled($sectionContent['partner_description'] ?? ''))<p class="home-managed-text">{{ $sectionContent['partner_description'] }}</p>@endif
+            @if (filled($sectionContent['partner_languages'] ?? ''))<p class="partner-languages" lang="zh-Hans">{{ $sectionContent['partner_languages'] }}</p>@endif
+            <div class="partner-actions"><button type="button" class="btn btn-brand" data-quote-type="partner">Trao đổi hợp tác <x-site-icon name="arrow" /></button></div>
+        </div>
+        @if (count($homepage->partner_benefits))<ul class="partner-benefits">@foreach ($homepage->partner_benefits as $benefit)<li><span class="icon-bubble"><x-site-icon name="handshake" /></span><div><h3>{{ $benefit['title'] }}</h3><p>{{ $benefit['description'] }}</p></div></li>@endforeach</ul>@endif
+    </div></div></section>@endif
 
     @if ($hasAbout || $stats->isNotEmpty() || $commitmentCards->isNotEmpty() || $capabilities->isNotEmpty())<section class="home-section home-about" id="gioi-thieu" aria-labelledby="about-title"><div class="container"><div class="row g-4 g-lg-5 align-items-center">
         @if ($about['image_url'])<div class="col-lg-6"><div class="about-image-wrap"><img class="home-about-image" src="{{ $about['image_url'] }}" alt="{{ $about['title'] }}" width="768" height="512" loading="lazy" decoding="async"><span class="about-image-accent" aria-hidden="true"></span></div></div>@endif

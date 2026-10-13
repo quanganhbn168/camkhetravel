@@ -8,7 +8,9 @@ final class HomepageDesignDefaults
     {
         return [
             ['key' => 'trip', 'title' => 'Chuyến đi riêng', 'description' => 'Một chuyến xe dành riêng cho bạn và những người đồng hành. Chủ động điểm đón, thong thả tận hưởng hành trình.', 'highlights' => "Đi tỉnh, công tác\nDu lịch cùng gia đình\nXe ghép theo lịch", 'cta_label' => 'Tư vấn chuyến đi', 'service_ids' => []],
-            ['key' => 'partner', 'title' => 'Đồng hành cùng đối tác', 'description' => 'Bạn lên chương trình, chúng tôi cùng chuẩn bị phương án xe. Phối hợp rõ ràng từ lịch trình đến quy mô đoàn.', 'highlights' => "Đơn vị lữ hành, tổ chức tour\nXe hợp đồng doanh nghiệp\nĐầu mối trao đổi xuyên suốt", 'cta_label' => 'Trao đổi hợp tác', 'service_ids' => []],
+            ['key' => 'partner', 'title' => 'Hợp tác cùng doanh nghiệp', 'description' => 'Đưa đón nhân sự, chuyên gia theo tháng cho công ty. Lịch cố định, chi phí thống nhất, một đầu mối điều phối.', 'highlights' => "Đưa đón theo tháng
+Nhân sự, chuyên gia, khách nước ngoài
+Đơn vị lữ hành, tổ chức tour", 'cta_label' => 'Trao đổi hợp tác', 'service_ids' => []],
             ['key' => 'wedding', 'title' => 'Trọn vẹn ngày chung đôi', 'description' => 'Chăm chút những chặng đường trong ngày vui. Cùng gia đình sắp xếp xe dâu, giờ đón và hành trình phù hợp.', 'highlights' => "Xe dâu cho ngày cưới\nĐưa đón hai bên gia đình\nLịch trình theo ngày trọng đại", 'cta_label' => 'Tư vấn xe cưới', 'service_ids' => []],
         ];
     }
@@ -29,6 +31,10 @@ final class HomepageDesignDefaults
             'process_title' => 'Một lịch trình rõ ràng. Một chuyến đi an tâm.',
             'journal_eyebrow' => 'TRƯỚC MỖI HÀNH TRÌNH',
             'journal_title' => 'Thêm cảm hứng, thêm kinh nghiệm',
+            'partner_eyebrow' => 'HỢP TÁC DOANH NGHIỆP',
+            'partner_title' => 'Hợp tác đưa đón theo tháng cho doanh nghiệp',
+            'partner_description' => 'Nhiều doanh nghiệp tại địa phương cần xe đưa đón đều đặn cho nhân sự và chuyên gia, trong đó có khách Trung Quốc, Hàn Quốc. CamKheTravel nhận hợp tác theo tháng: lịch cố định, chi phí thống nhất theo hợp đồng, một đầu mối điều phối.',
+            'partner_languages' => '企业员工接送 · 按月合作 · 기업 직원 송영 · 월 단위 협력',
         ];
     }
 

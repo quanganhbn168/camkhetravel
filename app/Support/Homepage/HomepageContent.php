@@ -24,7 +24,7 @@ final class HomepageContent
                 $selected->each(fn ($service) => $service->setAttribute('quote_type', $item['key']));
                 return [...$item, 'image' => $this->image($media->get($item['media_id'] ?? null)),
                     'services' => $selected, 'highlights' => $this->lines($item['highlights'] ?? ''),
-                    'anchor' => ['trip' => 'chuyen-di-rieng', 'partner' => 'doi-tac', 'wedding' => 'xe-cuoi'][$item['key']],
+                    'anchor' => ['trip' => 'chuyen-di-rieng', 'partner' => 'nhu-cau-doi-tac', 'wedding' => 'xe-cuoi'][$item['key']],
                     'icon' => ['trip' => 'car', 'partner' => 'handshake', 'wedding' => 'heart'][$item['key']],
                 ];
             })->values();

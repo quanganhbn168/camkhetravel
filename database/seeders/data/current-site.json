@@ -84,24 +84,24 @@
             ],
             "partner_benefits": [
                 {
-                    "title": "Báo giá cho đối tác",
-                    "description": "Theo lịch trình và hợp đồng"
+                    "title": "Đưa đón theo tháng",
+                    "description": "Lịch cố định, chi phí thống nhất theo hợp đồng"
                 },
                 {
-                    "title": "Xe theo quy mô đoàn",
-                    "description": "Tư vấn nhóm xe theo số khách"
+                    "title": "Nhân sự và chuyên gia",
+                    "description": "Đưa đón theo lịch làm việc của đơn vị"
                 },
                 {
-                    "title": "Đầu mối điều phối",
-                    "description": "Trao đổi xuyên suốt chuyến đi"
+                    "title": "Khách Trung Quốc, Hàn Quốc",
+                    "description": "Phối hợp đón tiếp khách nước ngoài của doanh nghiệp"
                 },
                 {
-                    "title": "Linh hoạt lịch trình",
-                    "description": "Theo tour, theo đoàn riêng"
+                    "title": "Một đầu mối điều phối",
+                    "description": "Trao đổi xuyên suốt, điều chỉnh lịch linh hoạt"
                 },
                 {
                     "title": "Hợp tác dài hạn",
-                    "description": "Đồng hành cùng phát triển"
+                    "description": "Đồng hành cùng doanh nghiệp"
                 }
             ],
             "partner_steps": [
@@ -156,9 +156,9 @@
                 },
                 {
                     "key": "partner",
-                    "title": "Đồng hành cùng đối tác",
-                    "description": "Bạn lên chương trình, chúng tôi cùng chuẩn bị phương án xe. Phối hợp rõ ràng từ lịch trình đến quy mô đoàn.",
-                    "highlights": "Đơn vị lữ hành, tổ chức tour\nXe hợp đồng doanh nghiệp\nĐầu mối trao đổi xuyên suốt",
+                    "title": "Hợp tác cùng doanh nghiệp",
+                    "description": "Đưa đón nhân sự, chuyên gia theo tháng cho công ty. Lịch cố định, chi phí thống nhất, một đầu mối điều phối.",
+                    "highlights": "Đưa đón theo tháng\nNhân sự, chuyên gia, khách nước ngoài\nĐơn vị lữ hành, tổ chức tour",
                     "cta_label": "Trao đổi hợp tác",
                     "service_ids": [
                         4
@@ -207,7 +207,11 @@
                 "process_eyebrow": "ĐƠN GIẢN ĐỂ BẮT ĐẦU",
                 "process_title": "Một lịch trình rõ ràng. Một chuyến đi an tâm.",
                 "journal_eyebrow": "TRƯỚC MỖI HÀNH TRÌNH",
-                "journal_title": "Thêm cảm hứng, thêm kinh nghiệm"
+                "journal_title": "Thêm cảm hứng, thêm kinh nghiệm",
+                "partner_eyebrow": "HỢP TÁC DOANH NGHIỆP",
+                "partner_title": "Hợp tác đưa đón theo tháng cho doanh nghiệp",
+                "partner_description": "Nhiều doanh nghiệp tại địa phương cần xe đưa đón đều đặn cho nhân sự và chuyên gia, trong đó có khách Trung Quốc, Hàn Quốc. CamKheTravel nhận hợp tác theo tháng: lịch cố định, chi phí thống nhất theo hợp đồng, một đầu mối điều phối.",
+                "partner_languages": "企业员工接送 · 按月合作 · 기업 직원 송영 · 월 단위 협력"
             },
             "consultation_media_id": 9,
             "design_version": 1
