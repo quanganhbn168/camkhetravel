@@ -207,6 +207,12 @@ final class ServiceForm
                         TextInput::make('sort_order')->label('Thứ tự')->numeric()->default(fn (): int => ((int) Service::query()->max('sort_order')) + 1),
                         Toggle::make('is_featured')->label('Dịch vụ nổi bật'),
                         Toggle::make('is_home')->label('Hiển thị trang chủ'),
+                        Select::make('quote_type')
+                            ->label('Loại yêu cầu khi bấm tư vấn')
+                            ->options(['trip' => 'Chuyến đi riêng', 'partner' => 'Hợp tác doanh nghiệp', 'wedding' => 'Xe cưới', 'shared' => 'Xe ghép'])
+                            ->default('trip')
+                            ->required()
+                            ->helperText('Form báo giá mở sẵn đúng loại này khi khách bấm nút tư vấn trên thẻ dịch vụ ở trang chủ.'),
                     ])
                     ->columns(1)
                     ->columnSpan(['lg' => 1]),

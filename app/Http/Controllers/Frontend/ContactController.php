@@ -110,7 +110,7 @@ class ContactController extends Controller
 
         $typeLabels = [
             'trip' => 'Bao xe / Du lịch / Đi tỉnh',
-            'partner' => 'Hợp tác đưa đón doanh nghiệp',
+            'partner' => 'Hợp tác cung cấp xe cho tour và doanh nghiệp',
             'wedding' => 'Xe cưới – Xe dâu',
             'shared' => 'Xe ghép Hà Nội – Cẩm Khê / Yên Lập',
         ];

@@ -8,9 +8,9 @@ final class HomepageDesignDefaults
     {
         return [
             ['key' => 'trip', 'title' => 'Chuyến đi riêng', 'description' => 'Một chuyến xe dành riêng cho bạn và những người đồng hành. Chủ động điểm đón, thong thả tận hưởng hành trình.', 'highlights' => "Đi tỉnh, công tác\nDu lịch cùng gia đình\nXe ghép theo lịch", 'cta_label' => 'Tư vấn chuyến đi', 'service_ids' => []],
-            ['key' => 'partner', 'title' => 'Hợp tác cùng doanh nghiệp', 'description' => 'Đưa đón nhân sự, chuyên gia theo tháng cho công ty. Lịch cố định, chi phí thống nhất, một đầu mối điều phối.', 'highlights' => "Đưa đón theo tháng
-Nhân sự, chuyên gia, khách nước ngoài
-Đơn vị lữ hành, tổ chức tour", 'cta_label' => 'Trao đổi hợp tác', 'service_ids' => []],
+            ['key' => 'partner', 'title' => 'Hợp tác cùng đối tác và doanh nghiệp', 'description' => 'Cung cấp xe cho tour du lịch, đưa đón nhân sự và chuyên gia theo tháng cho công ty. Lịch trình rõ ràng, một đầu mối điều phối.', 'highlights' => "Xe cho đơn vị lữ hành, tổ chức tour
+Đưa đón theo tháng cho doanh nghiệp
+Đầu mối trao đổi xuyên suốt", 'cta_label' => 'Trao đổi hợp tác', 'service_ids' => []],
             ['key' => 'wedding', 'title' => 'Trọn vẹn ngày chung đôi', 'description' => 'Chăm chút những chặng đường trong ngày vui. Cùng gia đình sắp xếp xe dâu, giờ đón và hành trình phù hợp.', 'highlights' => "Xe dâu cho ngày cưới\nĐưa đón hai bên gia đình\nLịch trình theo ngày trọng đại", 'cta_label' => 'Tư vấn xe cưới', 'service_ids' => []],
         ];
     }
@@ -21,7 +21,8 @@ Nhân sự, chuyên gia, khách nước ngoài
             'hero_eyebrow' => 'CAMKHETRAVEL · DỊCH VỤ XE PHÚ THỌ',
             'services_eyebrow' => 'MỖI NHU CẦU, MỘT SỰ CHUẨN BỊ',
             'services_title' => 'Bạn lên kế hoạch. Chúng tôi đồng hành.',
-            'services_description' => 'Từ chuyến đi riêng, chương trình của đối tác đến ngày vui của gia đình — cùng tìm phương án xe phù hợp.',
+            'services_description' => 'Dịch vụ xe được CamKheTravel cung cấp cho từng nhu cầu — chọn dịch vụ phù hợp và để lại thông tin, chúng tôi cùng trao đổi phương án.',
+            'services_cta_label' => 'Nhận tư vấn',
             'fleet_eyebrow' => 'CHỌN XE PHÙ HỢP',
             'fleet_title' => 'Thoải mái trên từng chặng đường',
             'fleet_description' => 'Chia sẻ số người, hành lý và lịch trình. Chúng tôi sẽ cùng bạn chọn phương án xe.',
@@ -31,10 +32,10 @@ Nhân sự, chuyên gia, khách nước ngoài
             'process_title' => 'Một lịch trình rõ ràng. Một chuyến đi an tâm.',
             'journal_eyebrow' => 'TRƯỚC MỖI HÀNH TRÌNH',
             'journal_title' => 'Thêm cảm hứng, thêm kinh nghiệm',
-            'partner_eyebrow' => 'HỢP TÁC DOANH NGHIỆP',
-            'partner_title' => 'Hợp tác đưa đón theo tháng cho doanh nghiệp',
-            'partner_description' => 'Nhiều doanh nghiệp tại địa phương cần xe đưa đón đều đặn cho nhân sự và chuyên gia, trong đó có khách Trung Quốc, Hàn Quốc. CamKheTravel nhận hợp tác theo tháng: lịch cố định, chi phí thống nhất theo hợp đồng, một đầu mối điều phối.',
-            'partner_languages' => '企业员工接送 · 按月合作 · 기업 직원 송영 · 월 단위 협력',
+            'partner_eyebrow' => 'HỢP TÁC ĐỐI TÁC & DOANH NGHIỆP',
+            'partner_title' => 'Cung cấp xe cho tour, đưa đón doanh nghiệp theo tháng',
+            'partner_description' => 'CamKheTravel cung cấp xe cho công ty du lịch, đơn vị tổ chức tour, đồng thời nhận đưa đón nhân sự, chuyên gia theo tháng cho các doanh nghiệp, kể cả khách Trung Quốc, Hàn Quốc. Lịch trình, quy mô đoàn và chi phí được thống nhất trước khi triển khai, với một đầu mối điều phối.',
+            'partner_languages' => '旅游用车 · 企业员工接送 · 按月合作 / 관광 차량 · 기업 직원 송영 · 월 단위 협력',
         ];
     }
 

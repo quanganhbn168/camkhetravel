@@ -103,8 +103,7 @@ class HomeController extends Controller
             ->get()
             ->map(function (Service $service): Service {
                 $service->setAttribute('image_url', MediaUrl::versioned($service->curatorMedia) ?: asset('images/no-image.svg'));
-                $service->setAttribute('quote_type', 'trip');
-                $service->setAttribute('quote_icon', 'car');
+                $service->setAttribute('quote_type', $service->quote_type ?: 'trip');
 
                 return $service;
             });

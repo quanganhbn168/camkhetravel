@@ -529,6 +529,7 @@ class ManageSettings extends Page
             Section::make('Tiêu đề các phần')->collapsed()->schema(collect([
                 'hero_eyebrow' => 'Dòng giới thiệu hero',
                 'services_eyebrow' => 'Dòng nhấn dịch vụ', 'services_title' => 'Tiêu đề dịch vụ', 'services_description' => 'Mô tả dịch vụ',
+                'services_cta_label' => 'Chữ nút trên thẻ dịch vụ', 'services_empty' => 'Câu hiển thị khi chưa có dịch vụ',
                 'fleet_eyebrow' => 'Dòng nhấn đội xe', 'fleet_title' => 'Tiêu đề đội xe', 'fleet_description' => 'Mô tả đội xe',
                 'about_eyebrow' => 'Dòng nhấn giới thiệu', 'routes_title' => 'Tiêu đề phạm vi hỗ trợ',
                 'process_eyebrow' => 'Dòng nhấn quy trình', 'process_title' => 'Tiêu đề quy trình',

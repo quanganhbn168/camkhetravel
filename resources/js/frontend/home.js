@@ -15,7 +15,7 @@ import Carousel from 'bootstrap/js/dist/carousel';
   }
 })(typeof window !== 'undefined' ? window : null, function () {
   'use strict';
-  const TYPE_LABELS = Object.freeze({trip:'Bao xe / Du lịch / Đi tỉnh',partner:'Hợp tác cung cấp xe du lịch',wedding:'Xe cưới – Xe dâu',shared:'Xe ghép Hà Nội – Cẩm Khê / Yên Lập'});
+  const TYPE_LABELS = Object.freeze({trip:'Bao xe / Du lịch / Đi tỉnh',partner:'Hợp tác cung cấp xe cho tour và doanh nghiệp',wedding:'Xe cưới – Xe dâu',shared:'Xe ghép Hà Nội – Cẩm Khê / Yên Lập'});
   const TITLES = Object.freeze({trip:'Nhận báo giá chuyến đi',partner:'Đăng ký đối tác cung cấp xe',wedding:'Tư vấn dịch vụ xe cưới',shared:'Tư vấn chuyến xe ghép'});
   const text = value => String(value == null ? '' : value).trim();
   function normalizePhone(value) {

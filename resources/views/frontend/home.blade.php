@@ -50,7 +50,7 @@
 
     <section class="home-section services-section" id="dich-vu" aria-labelledby="services-title"><div class="container">
         <div class="section-heading section-heading-centered"><p class="eyebrow">{{ $sectionContent['services_eyebrow'] ?? 'DỊCH VỤ' }}</p><h2 id="services-title">{{ $sectionContent['services_title'] ?? 'Dịch vụ của '.$website->site_name }}</h2>@if (filled($sectionContent['services_description'] ?? ''))<p>{{ $sectionContent['services_description'] }}</p>@endif</div>
-            <div class="audience-grid">@forelse ($services as $service)<article class="service-card"><img src="{{ $service->image_url }}" alt="{{ $service->title }}" width="768" height="512" loading="lazy"><div class="audience-body"><h3><a href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></h3><p>{{ $service->excerpt }}</p><button class="text-link" type="button" data-quote-type="{{ $service->quote_type }}" data-service="{{ $service->title }}" data-service-id="{{ $service->id }}">Nhận tư vấn <x-site-icon name="arrow" /></button></div></article>@empty<p>Dịch vụ đang được cập nhật.</p>@endforelse</div>
+            <div class="audience-grid">@forelse ($services as $service)<article class="service-card"><img src="{{ $service->image_url }}" alt="{{ $service->title }}" width="768" height="512" loading="lazy"><div class="audience-body"><h3><a href="{{ route('slug.show', ['slug' => $service->slug]) }}">{{ $service->title }}</a></h3><p>{{ $service->excerpt }}</p><button class="text-link" type="button" data-quote-type="{{ $service->quote_type }}" data-service="{{ $service->title }}" data-service-id="{{ $service->id }}">{{ $sectionContent['services_cta_label'] ?? 'Nhận tư vấn' }} <x-site-icon name="arrow" /></button></div></article>@empty<p>{{ $sectionContent['services_empty'] ?? 'Dịch vụ đang được cập nhật.' }}</p>@endforelse</div>
     </div></section>
 
     @if ($fleetTypes->isNotEmpty())<section class="home-section fleet-section" id="doi-xe" aria-labelledby="fleet-title"><div class="container">
@@ -62,7 +62,7 @@
     @if (filled($sectionContent['partner_title'] ?? '') || count($homepage->partner_benefits))<section class="home-section partner-section" id="doi-tac" aria-labelledby="partner-title"><div class="container"><div class="partner-layout">
         <div class="partner-copy">
             <p class="eyebrow">{{ $sectionContent['partner_eyebrow'] ?? 'HỢP TÁC DOANH NGHIỆP' }}</p>
-            <h2 id="partner-title">{{ $sectionContent['partner_title'] ?? 'Hợp tác đưa đón theo tháng cho doanh nghiệp' }}</h2>
+            <h2 id="partner-title">{{ $sectionContent['partner_title'] ?? 'Cung cấp xe cho tour, đưa đón doanh nghiệp theo tháng' }}</h2>
             @if (filled($sectionContent['partner_description'] ?? ''))<p class="home-managed-text">{{ $sectionContent['partner_description'] }}</p>@endif
             @if (filled($sectionContent['partner_languages'] ?? ''))<p class="partner-languages" lang="zh-Hans">{{ $sectionContent['partner_languages'] }}</p>@endif
             <div class="partner-actions"><button type="button" class="btn btn-brand" data-quote-type="partner">Trao đổi hợp tác <x-site-icon name="arrow" /></button></div>
