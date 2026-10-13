@@ -2,6 +2,7 @@
 
 use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
+use App\Settings\CrawlSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\SystemPageSettings;
 use App\Settings\WebsiteSettings;
@@ -24,6 +25,7 @@ return [
         CompanySettings::class,
         AboutSettings::class,
         SystemPageSettings::class,
+        CrawlSettings::class,
     ],
 
     /*

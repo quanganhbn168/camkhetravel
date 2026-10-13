@@ -10,12 +10,14 @@ use App\Models\Service;
 use App\Support\Homepage\HomepageContent;
 use App\Settings\AboutSettings;
 use App\Settings\CompanySettings;
+use App\Settings\CrawlSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\SystemPageSettings;
 use App\Settings\WebsiteSettings;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -71,8 +73,13 @@ class ManageSettings extends Page
         CompanySettings $company,
         AboutSettings $about,
         SystemPageSettings $systemPages,
+        CrawlSettings $crawl,
     ): void {
         $this->fillSettingsForm([
+            'robots_block_all' => $crawl->robots_block_all,
+            'robots_disallow' => $crawl->robots_disallow,
+            'robots_extra' => $crawl->robots_extra,
+            'sitemap_sections' => $crawl->sitemap_sections,
             'site_name' => $website->site_name,
             'tagline' => $website->tagline,
             'logo_media_id' => $website->logo_media_id,
@@ -209,6 +216,7 @@ class ManageSettings extends Page
         CompanySettings $company,
         AboutSettings $about,
         SystemPageSettings $systemPages,
+        CrawlSettings $crawl,
     ): void {
         $data = $this->settingsFormData();
 
@@ -217,6 +225,7 @@ class ManageSettings extends Page
         $this->saveCompany($company, $data);
         $this->saveAbout($about, $data);
         $this->saveSystemPages($systemPages, $data);
+        $this->saveCrawl($crawl, $data);
 
         app()->call([$this, 'mount']);
 
@@ -285,6 +294,37 @@ class ManageSettings extends Page
                     CuratorPicker::make('seo_image_media_id')->label('Ảnh Open Graph mặc định')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
                 ])
                 ->columns(2),
+            Section::make('robots.txt')
+                ->icon(Heroicon::OutlinedCommandLine)
+                ->description('Hướng dẫn công cụ tìm kiếm được thu thập những đường dẫn nào. Áp dụng ngay tại /robots.txt sau khi lưu.')
+                ->schema([
+                    Toggle::make('robots_block_all')
+                        ->label('Chặn toàn bộ công cụ tìm kiếm')
+                        ->helperText('Chỉ bật khi website chưa công khai. Bật lên thì Google ngừng thu thập và sitemap bị bỏ khỏi robots.txt.')
+                        ->columnSpanFull(),
+                    Textarea::make('robots_disallow')
+                        ->label('Đường dẫn không cho thu thập')
+                        ->helperText('Mỗi dòng một đường dẫn, ví dụ: /admin hoặc /tim-kiem. Để trống để cho phép toàn bộ.')
+                        ->rows(4)
+                        ->maxLength(2000),
+                    Textarea::make('robots_extra')
+                        ->label('Dòng bổ sung (nâng cao)')
+                        ->helperText('Nội dung thêm nguyên văn vào robots.txt, ví dụ User-agent riêng cho một bot.')
+                        ->rows(4)
+                        ->maxLength(4000),
+                ])
+                ->columns(2),
+            Section::make('sitemap.xml')
+                ->icon(Heroicon::OutlinedMap)
+                ->description('Sitemap luôn được tạo mới từ dữ liệu hiện tại tại /sitemap.xml. Chọn nhóm nội dung được đưa vào.')
+                ->schema([
+                    CheckboxList::make('sitemap_sections')
+                        ->label('Nội dung đưa vào sitemap')
+                        ->options(CrawlSettings::SITEMAP_SECTIONS)
+                        ->columns(2)
+                        ->bulkToggleable()
+                        ->columnSpanFull(),
+                ]),
         ];
     }
 
@@ -768,6 +808,18 @@ class ManageSettings extends Page
     }
 
     /** @param array<string, mixed> $data */
+    private function saveCrawl(CrawlSettings $crawl, array $data): void
+    {
+        $crawl->robots_block_all = (bool) ($data['robots_block_all'] ?? false);
+        $crawl->robots_disallow = trim((string) ($data['robots_disallow'] ?? ''));
+        $crawl->robots_extra = trim((string) ($data['robots_extra'] ?? ''));
+        $crawl->sitemap_sections = array_values(array_intersect(
+            array_keys(CrawlSettings::SITEMAP_SECTIONS),
+            (array) ($data['sitemap_sections'] ?? []),
+        ));
+        $crawl->save();
+    }
+
     private function saveWebsite(WebsiteSettings $website, array $data): void
     {
         foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {

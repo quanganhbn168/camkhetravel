@@ -3,10 +3,13 @@
 namespace App\Support\Seo;
 
 use App\Models\Intro;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Service;
+use App\Models\Solution;
+use App\Settings\CrawlSettings;
 use DateTimeInterface;
 
 class SitemapBuilder
@@ -17,32 +20,50 @@ class SitemapBuilder
     /** @var array<string, true> */
     private array $seenUrls = [];
 
+    public function __construct(private readonly CrawlSettings $crawl) {}
+
     public function build(): self
     {
         $this->urls = [];
         $this->seenUrls = [];
 
-        $this->addNativePages();
-        $this->addNativeContent();
-        foreach (\App\Models\Solution::published()->with('slugs')->get() as $solution) {
-            $this->addUrl(route('solutions.show', ['solution' => $solution->slug]), $solution->updated_at, 'monthly', 0.7);
+        if ($this->crawl->sitemapIncludes('pages')) {
+            $this->addNativePages();
         }
 
-        ProductCategory::query()
-            ->active()
-            ->with('slugs')
-            ->get()
-            ->each(function (ProductCategory $category): void {
-                $this->addUrl(
-                    route('products.category', ['slug' => $category->slug]),
-                    $category->updated_at,
-                    'monthly',
-                    0.6,
-                );
-            });
+        $this->addNativeContent();
 
-        foreach (Intro::query()->published()->with('slugs')->get() as $intro) {
-            $this->addUrl($intro->url, $intro->updated_at, 'monthly', 0.6);
+        if ($this->crawl->sitemapIncludes('solutions')) {
+            foreach (Solution::published()->with('slugs')->get() as $solution) {
+                $this->addUrl(route('solutions.show', ['solution' => $solution->slug]), $solution->updated_at, 'monthly', 0.7);
+            }
+        }
+
+        if ($this->crawl->sitemapIncludes('product_categories')) {
+            ProductCategory::query()
+                ->active()
+                ->with('slugs')
+                ->get()
+                ->each(function (ProductCategory $category): void {
+                    $this->addUrl(
+                        route('products.category', ['slug' => $category->slug]),
+                        $category->updated_at,
+                        'monthly',
+                        0.6,
+                    );
+                });
+        }
+
+        if ($this->crawl->sitemapIncludes('site_pages')) {
+            foreach (Page::query()->published()->with('slugs')->get() as $page) {
+                $this->addUrl($page->url, $page->updated_at, 'monthly', 0.6);
+            }
+        }
+
+        if ($this->crawl->sitemapIncludes('intros')) {
+            foreach (Intro::query()->published()->with('slugs')->get() as $intro) {
+                $this->addUrl($intro->url, $intro->updated_at, 'monthly', 0.6);
+            }
         }
 
         return $this;
@@ -102,10 +123,14 @@ class SitemapBuilder
     private function addNativeContent(): void
     {
         foreach ([
-            [Service::class, 'monthly', 0.8],
-            [Post::class, 'monthly', 0.7],
-            [Product::class, 'monthly', 0.8],
-        ] as [$model, $frequency, $priority]) {
+            ['services', Service::class, 'monthly', 0.8],
+            ['posts', Post::class, 'monthly', 0.7],
+            ['products', Product::class, 'monthly', 0.8],
+        ] as [$section, $model, $frequency, $priority]) {
+            if (! $this->crawl->sitemapIncludes($section)) {
+                continue;
+            }
+
             $model::query()
                 ->published()
                 ->with('slugs')
