@@ -36,7 +36,6 @@
         <div class="booking-heading"><span>Chuyến đi của bạn bắt đầu từ đây</span><span class="booking-hint">Chia sẻ nhu cầu, cùng chọn phương án.</span></div>
         <div class="audience-tabs" role="group" aria-label="Chọn nhu cầu tư vấn">
             <button type="button" class="is-active" data-quick-type="trip" aria-pressed="true"><x-site-icon name="car" /><span>Chuyến đi riêng</span></button>
-            <button type="button" data-quick-type="partner" aria-pressed="false"><x-site-icon name="handshake" /><span>Hợp tác đối tác</span></button>
             <button type="button" data-quick-type="wedding" aria-pressed="false"><x-site-icon name="heart" /><span>Xe cưới</span></button>
         </div>
         <form class="quick-quote" id="quickQuote" aria-label="Yêu cầu tư vấn nhanh">

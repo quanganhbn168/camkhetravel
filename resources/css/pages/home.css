@@ -68,7 +68,7 @@
 .booking-panel { background: var(--site-white); border: 1px solid var(--site-line); border-radius: 16px; box-shadow: 0 12px 40px rgba(var(--bs-dark-rgb), .07); padding: 28px 32px 30px; }
 .booking-heading { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 20px; font-weight: 600; font-size: 1.05rem; color: var(--site-ink); }
 .booking-hint { color: var(--site-muted); font-size: .875rem; font-weight: 400; }
-.audience-tabs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-bottom: 1px solid var(--site-line); margin-bottom: 24px; }
+.audience-tabs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); border-bottom: 1px solid var(--site-line); margin-bottom: 24px; }
 .audience-tabs button { background: transparent; color: var(--site-muted); border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; padding: 14px 8px; display: flex; gap: 12px; align-items: center; justify-content: center; font-weight: 600; min-height: 52px; }
 .audience-tabs button.is-active { color: var(--site-accent-dark); border-color: var(--site-accent); background: var(--site-sand); }
 .quick-quote { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto; gap: 18px; align-items: end; }
