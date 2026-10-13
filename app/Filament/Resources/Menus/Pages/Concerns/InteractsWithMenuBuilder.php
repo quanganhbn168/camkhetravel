@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Menus\Pages\Concerns;
 
 use App\Filament\Resources\Menus\Schemas\MenuForm;
 use App\Models\Intro;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Service;
@@ -111,6 +112,7 @@ trait InteractsWithMenuBuilder
         }
 
         $source = match ($type) {
+            'site_page' => Page::query()->published()->find($sourceId),
             'intro' => Intro::query()->published()->find($sourceId),
             'service' => Service::query()->published()->find($sourceId),
             'service_category' => ServiceCategory::query()->where('is_active', true)->find($sourceId),

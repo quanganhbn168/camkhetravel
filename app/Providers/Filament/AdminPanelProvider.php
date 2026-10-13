@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AdminNavigation;
 use App\Filament\Pages\AdminDashboard;
 use App\Settings\WebsiteSettings;
 use App\Support\Media\MediaUrl;
@@ -12,7 +13,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationBuilder;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -47,28 +48,13 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->navigationGroups([
-                NavigationGroup::make('Nội dung website'),
-                NavigationGroup::make('Trang chủ')
-                    ->collapsed(),
-                NavigationGroup::make('Khách hàng'),
-                NavigationGroup::make('SEO & media')
-                    ->collapsed(),
-                NavigationGroup::make('Hệ thống')
-                    ->collapsed(),
-                NavigationGroup::make('Cài đặt website')
-                    ->collapsed(),
-            ])
+            ->navigation(fn (NavigationBuilder $builder): NavigationBuilder => AdminNavigation::build($builder))
             ->plugins([
                 FilamentShieldPlugin::make()
-                    ->navigationGroup('Hệ thống')
-                    ->navigationSort(10)
                     ->navigationLabel('Vai trò & quyền'),
                 CuratorPlugin::make()
                     ->label('Thư viện media')
                     ->pluralLabel('Thư viện media')
-                    ->navigationGroup('SEO & media')
-                    ->navigationSort(1)
                     ->showBadge(true)
                     ->curations(true)
                     ->fileSwap(true),

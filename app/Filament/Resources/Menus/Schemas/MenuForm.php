@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Menus\Schemas;
 
 use App\Models\Intro;
 use App\Models\MenuItem;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Service;
@@ -162,6 +163,7 @@ final class MenuForm
         }
 
         return match ($record->linked_source_type) {
+            'native_site_page' => 'site_page',
             'native_intro' => 'intro',
             'native_route' => 'route',
             'native_service' => 'service',
@@ -180,6 +182,7 @@ final class MenuForm
     private static function storedLinkType(string $type): string
     {
         return match ($type) {
+            'site_page' => 'native_site_page',
             'intro' => 'native_intro',
             'route' => 'native_route',
             'service' => 'native_service',
@@ -232,6 +235,18 @@ final class MenuForm
     {
         $groups = [
             ['key' => 'intros', 'label' => 'Bài giới thiệu', 'items' => Intro::query()->published()->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->orderBy('sort_order')->limit(50)->get()->map(fn (Intro $intro): array => ['key' => 'intro:'.$intro->id, 'label' => $intro->title, 'meta' => 'Bài giới thiệu'])->all()],
+            [
+                'key' => 'site-pages',
+                'label' => 'Trang',
+                'items' => Page::query()->published()->orderBy('title')
+                    ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])
+                    ->map(fn (Page $item): array => [
+                        'key' => "site_page:{$item->id}",
+                        'label' => $item->title,
+                        'meta' => 'Trang',
+                    ])
+                    ->all(),
+            ],
             [
                 'key' => 'routes',
                 'label' => 'Trang hệ thống',

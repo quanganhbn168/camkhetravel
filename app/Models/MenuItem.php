@@ -57,6 +57,7 @@ class MenuItem extends Model
     public function getLinkAttribute(): string
     {
         return match ($this->linkType()) {
+            'site_page' => Page::query()->published()->with('slugs')->find($this->linked_source_id)?->url ?? '#',
             'intro' => Intro::query()->published()->with('slugs')->find($this->linked_source_id)?->url ?? '#',
             'route' => $this->routeLink(),
             'service' => $this->serviceLink(),
@@ -74,6 +75,7 @@ class MenuItem extends Model
     private function linkType(): string
     {
         return match ($this->linked_source_type) {
+            'native_site_page' => 'site_page',
             'native_intro' => 'intro',
             'native_route' => 'route',
             'native_service' => 'service',
