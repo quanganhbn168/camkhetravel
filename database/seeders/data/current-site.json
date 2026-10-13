@@ -537,7 +537,8 @@
                 "seo_image_media_id": 1,
                 "published_at": "2026-09-24 13:52:51",
                 "source_id": 1,
-                "slug": "bao-xe-di-tinh"
+                "slug": "bao-xe-di-tinh",
+                "quote_type": "trip"
             },
             {
                 "service_category_id": 1,
@@ -572,7 +573,8 @@
                 "seo_image_media_id": 1,
                 "published_at": "2026-09-24 13:52:51",
                 "source_id": 2,
-                "slug": "bao-xe-du-lich"
+                "slug": "bao-xe-du-lich",
+                "quote_type": "trip"
             },
             {
                 "service_category_id": 1,
@@ -607,7 +609,8 @@
                 "seo_image_media_id": 1,
                 "published_at": "2026-09-24 13:52:51",
                 "source_id": 3,
-                "slug": "xe-cuoi-xe-dau"
+                "slug": "xe-cuoi-xe-dau",
+                "quote_type": "wedding"
             },
             {
                 "service_category_id": 1,
@@ -642,7 +645,8 @@
                 "seo_image_media_id": 1,
                 "published_at": "2026-09-24 13:52:51",
                 "source_id": 4,
-                "slug": "xe-hop-dong"
+                "slug": "xe-hop-dong",
+                "quote_type": "partner"
             },
             {
                 "service_category_id": 1,
@@ -677,7 +681,8 @@
                 "seo_image_media_id": 1,
                 "published_at": "2026-09-24 13:52:51",
                 "source_id": 5,
-                "slug": "xe-ghep-ha-noi-cam-khe"
+                "slug": "xe-ghep-ha-noi-cam-khe",
+                "quote_type": "shared"
             }
         ],
         "post_categories": [
