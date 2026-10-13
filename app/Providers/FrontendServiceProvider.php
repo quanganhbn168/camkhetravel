@@ -6,6 +6,7 @@ use App\Models\HeroSlide;
 use App\Models\Intro;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\Page;
 use App\Models\Partner;
 use App\Models\Post;
 use App\Models\PostCategory;
@@ -40,6 +41,7 @@ class FrontendServiceProvider extends ServiceProvider
     {
         Relation::enforceMorphMap([
             'intro' => Intro::class,
+            'page' => Page::class,
             'post' => Post::class,
             'post-category' => PostCategory::class,
             'product' => Product::class,
@@ -60,6 +62,7 @@ class FrontendServiceProvider extends ServiceProvider
             Product::class,
             ProductCategory::class,
             Intro::class,
+            Page::class,
             Service::class,
             ServiceCategory::class,
         ] as $model) {

@@ -16,7 +16,7 @@ final class PartnersTable
         return $table
             ->columns([
                 CuratorColumn::make('curatorMedia')->label('Logo')->square(),
-                TextColumn::make('name')->copyable()->copyMessage('Đã sao chép')->label('Đối tác')->searchable()->sortable(),
+                TextColumn::make('name')->label('Tên đối tác')->placeholder('—')->searchable()->sortable(),
                 TextColumn::make('website_url')->label('Website')->toggleable()->limit(36),
                 ToggleColumn::make('is_active')->label('Hiển thị'),
                 TextColumn::make('updated_at')->label('Cập nhật')->dateTime('d/m/Y H:i')->sortable(),

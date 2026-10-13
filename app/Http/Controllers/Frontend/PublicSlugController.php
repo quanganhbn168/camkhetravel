@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\PageController;
 use App\Models\Intro;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Models\Product;
@@ -35,6 +37,7 @@ class PublicSlugController extends Controller
 
         return match (true) {
             $sluggable instanceof Intro => redirect()->to($sluggable->url, 301),
+            $sluggable instanceof Page => app(PageController::class)->show($sluggable),
             $sluggable instanceof Service => app(ServiceController::class)->show($sluggable),
             $sluggable instanceof ServiceCategory => app(ServiceController::class)->redirectCategory($sluggable),
             $sluggable instanceof Post => app(PostController::class)->show($sluggable),
