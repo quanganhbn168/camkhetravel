@@ -34,6 +34,8 @@ class WebsiteSettings extends Settings
 
     public ?int $logo_media_id = null;
 
+    public ?int $favicon_media_id = null;
+
     public ?int $seo_image_media_id = null;
 
     public ?int $company_profile_media_id = null;

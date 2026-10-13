@@ -27,7 +27,7 @@ class DatabaseSeederTest extends TestCase
         $this->assertSame(0, Permission::query()->count());
         $this->assertFalse(DB::table('settings')
             ->where('group', 'website')
-            ->whereIn('name', ['favicon_media_id', 'google_maps_url'])
+            ->where('name', 'google_maps_url')
             ->exists());
     }
 }

@@ -117,6 +117,7 @@ class FrontendServiceProvider extends ServiceProvider
             : Media::query()->whereIn('id', $mediaIds)->get()->keyBy('id');
 
         View::share([
+            'faviconLinks' => app(\App\Support\Branding\FaviconService::class)->links(),
             'website' => $website,
             'defaultBannerUrl' => MediaUrl::versioned($media->get($website->banner_media_id)),
             'websiteMedia' => $media,

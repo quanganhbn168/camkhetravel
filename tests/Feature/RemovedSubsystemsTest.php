@@ -103,7 +103,6 @@ class RemovedSubsystemsTest extends TestCase
 
         foreach ([
             'Console/Commands/SyncFaviconAssetsCommand.php',
-            'Support/Branding/FaviconService.php',
             'Support/Maps/GoogleMapsEmbedRule.php',
             'Support/Maps/GoogleMapsShareResolver.php',
             'Support/Maps/GoogleMapsUrl.php',

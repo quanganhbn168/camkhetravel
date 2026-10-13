@@ -76,6 +76,7 @@ class ManageSettings extends Page
         CrawlSettings $crawl,
     ): void {
         $this->fillSettingsForm([
+            'favicon_media_id' => $website->favicon_media_id,
             'robots_block_all' => $crawl->robots_block_all,
             'robots_disallow' => $crawl->robots_disallow,
             'robots_extra' => $crawl->robots_extra,
@@ -246,6 +247,7 @@ class ManageSettings extends Page
                     TextInput::make('site_name')->label('Tên website')->required()->maxLength(255),
                     TextInput::make('tagline')->label('Tagline')->maxLength(255),
                     CuratorPicker::make('logo_media_id')->label('Logo')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
+                    CuratorPicker::make('favicon_media_id')->label('Favicon')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Chọn ảnh vuông (PNG, SVG, WebP). Khi lưu, hệ thống tự tạo bộ favicon cho trình duyệt, iPhone và Android.'),
                 ])
                 ->columns(2),
             Section::make('Banner')
@@ -825,6 +827,26 @@ class ManageSettings extends Page
 
     private function saveWebsite(WebsiteSettings $website, array $data): void
     {
+        $faviconId = filled($data['favicon_media_id'] ?? null) ? (int) $data['favicon_media_id'] : null;
+
+        if ($faviconId !== null && $faviconId !== $website->favicon_media_id) {
+            try {
+                $media = \Awcodes\Curator\Models\Media::query()->find($faviconId);
+
+                if (! $media) {
+                    throw new \RuntimeException('Không tìm thấy favicon đã chọn trong kho media.');
+                }
+
+                app(\App\Support\Branding\FaviconService::class)->sync($media);
+            } catch (\RuntimeException|\ErrorException $exception) {
+                report($exception);
+
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'data.favicon_media_id' => 'Chưa lưu được favicon. Kiểm tra file nguồn và quyền ghi các file favicon trong thư mục public, sau đó lưu lại.',
+                ]);
+            }
+        }
+
         foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
@@ -840,7 +862,7 @@ class ManageSettings extends Page
             ? trim((string) $data['google_maps_embed_url'])
             : null;
 
-        foreach (['logo_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id'] as $key) {
+        foreach (['logo_media_id', 'favicon_media_id', 'seo_image_media_id', 'header_menu_id', 'footer_menu_id', 'footer_background_media_id', 'banner_media_id'] as $key) {
             $website->{$key} = filled($data[$key] ?? null) ? (int) $data[$key] : null;
         }
 

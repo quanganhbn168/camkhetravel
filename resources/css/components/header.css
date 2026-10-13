@@ -28,7 +28,7 @@
 .header__inner {
   display: flex;
   align-items: center;
-  min-height: 76px;
+  min-height: 88px;
   gap: 1.25rem;
   padding-block: 0.6rem;
 }
@@ -43,8 +43,8 @@
 
 .header__brand > img {
   width: auto;
-  max-width: 168px;
-  height: 52px;
+  max-width: 280px;
+  height: 68px;
   object-fit: contain;
 }
 
@@ -275,8 +275,8 @@
     gap: 0.5rem;
   }
   .header__brand > img {
-    max-width: 112px;
-    height: 44px;
+    max-width: 168px;
+    height: 52px;
   }
   .header__actions {
     gap: 0.4rem;
