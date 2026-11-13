@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title fs-4" id="header-search-title">Tìm dịch vụ & bài viết</h2>
+                <p class="modal-title fs-4 fw-semibold mb-0" id="header-search-title">Tìm dịch vụ & bài viết</p>
                 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Đóng tìm kiếm"></button>
             </div>
             <div class="modal-body">

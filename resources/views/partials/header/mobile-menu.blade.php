@@ -1,6 +1,6 @@
 <aside class="offcanvas offcanvas-end mobile-menu" tabindex="-1" id="mobile-drawer" aria-labelledby="mobile-drawer-title">
     <div class="offcanvas-header border-bottom">
-        <h2 class="offcanvas-title fs-5" id="mobile-drawer-title">{{ $website->site_name }}</h2>
+        <p class="offcanvas-title fs-5 fw-semibold mb-0" id="mobile-drawer-title">{{ $website->site_name ?: config('app.name') }}</p>
         <button class="btn-close" type="button" data-bs-dismiss="offcanvas" aria-label="Đóng menu"></button>
     </div>
     <div class="offcanvas-body">

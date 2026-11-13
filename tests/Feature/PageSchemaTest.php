@@ -48,6 +48,19 @@ class PageSchemaTest extends TestCase
         $this->assertSame([], $this->schemaTypes(route('search', ['q' => 'xe'])));
     }
 
+    public function test_main_pages_have_exactly_one_h1_and_no_heading_before_it(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $post = Post::query()->published()->firstOrFail();
+        $service = Service::query()->published()->firstOrFail();
+
+        foreach (['/', '/'.$post->slug, '/'.$service->slug, route('posts.index'), route('services.index')] as $url) {
+            $html = $this->get($url)->assertOk()->getContent();
+            $this->assertSame(1, preg_match_all('#<h1[\s>]#', $html), $url.' phải có đúng 1 H1.');
+            $this->assertSame(0, preg_match('#<h[2-6][\s>]#', strstr($html, '<h1', true)), $url.' có heading nằm trước H1.');
+        }
+    }
+
     public function test_home_is_local_business_when_address_is_set(): void
     {
         $this->seed(DatabaseSeeder::class);
