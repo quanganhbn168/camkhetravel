@@ -2,7 +2,11 @@
 @push('schema')    <x-json-ld :seo="$seo" />@endpush
 
 @push('styles')
-    @vite('resources/css/pages/posts.css')
+    @vite(['resources/css/pages/posts.css', 'resources/css/pages/post-detail.css'])
+@endpush
+
+@push('scripts')
+    @vite('resources/js/pages/post.js')
 @endpush
 
 @use(Illuminate\Support\Str)
@@ -18,14 +22,14 @@
             <div class="position-absolute archive-hero__overlay"></div>
             <div class="container position-relative">
                 <p class="d-flex align-items-center overflow-hidden small gap-2"><a class="flex-shrink-0 link-light" href="{{ route('home') }}">Trang chủ</a><span class="mx-1">›</span><a class="flex-shrink-0 link-light" href="{{ route('posts.index') }}">Tin tức</a><span class="mx-1">›</span><span class="text-truncate">{{ $post->title }}</span></p>
-                <p class="h1 text-white mb-0">Tin tức</p>
+                <p class="h3 text-white mb-0">Tin tức</p>
             </div>
         </header>
 
         <section class="section-space">
             <div class="container align-items-start article-layout">
                 <div class="article-content">
-                    <h1 class="display-title">{{ $post->title }}</h1>
+                    <h1>{{ $post->title }}</h1>
                     <div class="d-flex flex-wrap align-items-center fw-medium gap-3 small text-body-secondary my-3">
                         @if ($post->published_at)<time class="d-inline-flex align-items-center gap-2" datetime="{{ $post->published_at->toDateString() }}"><i class="fa-regular fa-calendar-days text-primary" aria-hidden="true"></i>{{ $post->published_at->translatedFormat('d/m/Y') }}</time>@endif
                         <span class="d-inline-flex align-items-center gap-2"><i class="fa-regular fa-user text-primary" aria-hidden="true"></i>{{ $website->company_name ?: $website->site_name }}</span>
@@ -51,28 +55,12 @@
                         @if ($post->excerpt)
                             <p class="fw-medium lead mt-4">{{ $post->excerpt }}</p>
                         @endif
-                        @if ($tableOfContents !== [])
-                            <nav class="overflow-hidden article-toc my-4" aria-labelledby="inline-table-of-contents-title">
-                                <button class="d-flex w-100 align-items-center justify-content-between text-start article-toc__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#inline-table-of-contents" aria-expanded="true" aria-controls="inline-table-of-contents">
-                                    <span class="d-block fw-semibold" id="inline-table-of-contents-title">Mục lục bài viết</span>
-                                    <span class="d-grid flex-shrink-0 article-toc__indicator" aria-hidden="true">
-                                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                                    </span>
-                                </button>
-                                <div class="collapse show" id="inline-table-of-contents">
-                                    <ol class="px-4 pb-3 mb-0">
-                                        @foreach ($tableOfContents as $item)
-                                            <li @class(['', 'ms-3' => $item['level'] === 3])>
-                                                <a class="d-block fw-medium py-1" href="#{{ $item['id'] }}">{{ $item['title'] }}</a>
-                                            </li>
-                                        @endforeach
-                                    </ol>
-                                </div>
-                            </nav>
-
-                        @endif
-                        <div class="article-prose mt-4">{!! $post->body_html !!}</div>
+                        <x-content-toc :toc="$tableOfContents" title="Mục lục bài viết" id="post-toc" class="my-4" />
+                        <div class="article-prose post-prose mt-4">{!! $post->body_html !!}</div>
                         <x-hashtags :tags="$post->tags" class="mt-4" />
+
+                        {{-- Khung thông tin liên hệ mặc định ở cuối mọi bài viết, lấy từ Cài đặt website. --}}
+                        <x-contact-box class="mt-5" />
                     </div>
 
                     @if ($previousPost || $nextPost)
@@ -107,7 +95,7 @@
 
                     @if ($relatedPosts->isNotEmpty())
                         <section class="mx-auto mt-5" id="bai-viet-lien-quan">
-                            <h2 class="display-title h3 mb-3">Bài viết liên quan</h2>
+                            <h2 class="post-section-title">Bài viết liên quan</h2>
                             <div class="row row-cols-1 row-cols-md-3 g-3">
                                 @foreach ($relatedPosts as $relatedPost)
                                     <div class="col">@include('frontend.partials.post-card', ['post' => $relatedPost])</div>
@@ -117,7 +105,7 @@
                     @endif
 
                     <section class="mx-auto mt-5" id="binh-luan">
-                        <h2 class="display-title text-uppercase h2">Bình luận ({{ $post->approvedComments->count() }})</h2>
+                        <h2 class="post-section-title">Bình luận <span>({{ $post->approvedComments->count() }})</span></h2>
 
                         <div class="review-layout">
                             <div class="d-grid gap-4">

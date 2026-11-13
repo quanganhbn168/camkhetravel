@@ -1,0 +1,45 @@
+/* Trang chi tiết bài viết: chỉ trang này tải file (kèm posts.css). */
+@import '../components/long-content.css';
+@import '../components/contact-box.css';
+
+/* Chữ gọn lại: tiêu đề bài, tiêu đề các phần và nội dung. */
+.post-detail-page .archive-hero {
+  min-height: 200px;
+}
+
+.post-detail-page .article-content > h1 {
+  margin-bottom: 0.25rem;
+  font-size: clamp(1.6rem, 2.8vw, 2.125rem);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.post-detail-page .post-prose {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.post-detail-page .post-prose h2 {
+  font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+}
+
+.post-detail-page .post-prose h3 {
+  font-size: 1.15rem;
+}
+
+.post-section-title {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.post-section-title span {
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+
+.post-detail-page .review-layout {
+  margin-top: 0.5rem;
+}
