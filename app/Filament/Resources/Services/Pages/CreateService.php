@@ -9,8 +9,9 @@ class CreateService extends CreateRecord
 {
     protected static string $resource = ServiceResource::class;
 
+    /** Tạo xong chuyển sang trang chỉnh sửa của dịch vụ vừa tạo để làm tiếp. */
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('edit', ['record' => $this->getRecord()]);
     }
 }

@@ -24,8 +24,9 @@ class EditService extends EditRecord
         ];
     }
 
-    protected function getRedirectUrl(): string
+    /** Lưu xong ở lại trang chỉnh sửa, không quay về bảng danh sách. */
+    protected function getRedirectUrl(): ?string
     {
-        return $this->getResource()::getUrl('index');
+        return null;
     }
 }

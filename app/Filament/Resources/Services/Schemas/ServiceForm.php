@@ -77,6 +77,7 @@ final class ServiceForm
                 TextInput::make('hero_badge')->label('Nhãn nhỏ phía trên tiêu đề')->placeholder('Dịch vụ vận chuyển tại Phú Thọ')->helperText('Để trống: dùng tên danh mục dịch vụ.')->maxLength(120),
                 TextInput::make('hero_subtitle')->label('Câu phụ dưới tiêu đề')->placeholder('Đặt xe nhanh – Đón tận nơi – Đi mọi hành trình')->helperText('Để trống: dùng mô tả ngắn.')->maxLength(255),
                 Repeater::make('hero_points')
+                    ->defaultItems(0)
                     ->label('Các ý chính (dấu tích)')
                     ->helperText('Nên 3–4 ý. Để trống: lấy 3 lý do đầu trong "Vì sao chọn".')
                     ->simple(TextInput::make('text')->required()->maxLength(160))
@@ -97,6 +98,7 @@ final class ServiceForm
                 TextInput::make('package_title')->label('Tiêu đề')->placeholder('Tổng quan dịch vụ & giá')->maxLength(255)->columnSpanFull(),
                 Textarea::make('package_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 Repeater::make('package_items')
+                    ->defaultItems(0)
                     ->label('Gói')
                     ->schema([
                         TextInput::make('title')->label('Tên gói')->required()->maxLength(120),
@@ -125,6 +127,7 @@ final class ServiceForm
                 TextInput::make('pricing_title')->label('Tiêu đề')->placeholder('Giá đặt xe đi các địa điểm')->maxLength(255)->columnSpanFull(),
                 Textarea::make('pricing_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 Repeater::make('pricing_groups')
+                    ->defaultItems(0)
                     ->label('Điểm đến')
                     ->schema([
                         TextInput::make('destination')->label('Điểm đến')->placeholder('Đi Việt Trì')->required()->maxLength(120)->columnSpanFull(),
@@ -159,6 +162,7 @@ final class ServiceForm
                 TextInput::make('benefit_title')->label('Tiêu đề')->placeholder('Để trống: dùng tiêu đề trong mẫu')->maxLength(255)->columnSpanFull(),
                 Textarea::make('benefit_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 Repeater::make('benefit_items')
+                    ->defaultItems(0)
                     ->label('Các lý do')
                     ->schema([
                         TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
@@ -184,6 +188,7 @@ final class ServiceForm
                 TextInput::make('usecase_title')->label('Tiêu đề')->placeholder('Các nhu cầu đặt xe')->maxLength(255)->columnSpanFull(),
                 Textarea::make('usecase_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 Repeater::make('usecase_items')
+                    ->defaultItems(0)
                     ->label('Nhu cầu')
                     ->schema([
                         TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
@@ -210,6 +215,7 @@ final class ServiceForm
                 TextInput::make('vehicle_title')->label('Tiêu đề')->placeholder('Để trống: dùng tiêu đề trong mẫu')->maxLength(255)->columnSpanFull(),
                 Textarea::make('vehicle_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 Repeater::make('vehicle_items')
+                    ->defaultItems(0)
                     ->label('Dòng xe')
                     ->schema([
                         TextInput::make('title')->label('Tên xe')->required()->maxLength(255),
@@ -237,6 +243,7 @@ final class ServiceForm
                 Textarea::make('area_description')->label('Mô tả')->rows(3)->columnSpanFull(),
                 CuratorPicker::make('area_media_id')->label('Ảnh khu vực (không bắt buộc)')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                 Repeater::make('area_items')
+                    ->defaultItems(0)
                     ->label('Điểm đón / khu vực')
                     ->schema([
                         TextInput::make('title')->label('Nội dung')->placeholder('Đón tại chợ, trường học, cơ quan')->required()->maxLength(255)->columnSpanFull(),
@@ -258,6 +265,7 @@ final class ServiceForm
                 TextInput::make('process_title')->label('Tiêu đề')->placeholder('Để trống: dùng tiêu đề trong mẫu')->maxLength(255)->columnSpanFull(),
                 Textarea::make('process_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                 Repeater::make('process_items')
+                    ->defaultItems(0)
                     ->label('Các bước')
                     ->schema([
                         TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),

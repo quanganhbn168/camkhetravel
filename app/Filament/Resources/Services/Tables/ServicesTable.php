@@ -20,6 +20,7 @@ final class ServicesTable
     {
         return $table
             ->columns([
+                TextColumn::make('sort_order')->label('Thứ tự')->numeric()->sortable()->width(70),
                 CuratorColumn::make('curatorMedia')->label('Ảnh')->square(),
                 TextColumn::make('title')->copyable()->copyMessage('Đã sao chép')->label('Dịch vụ')->searchable()->sortable()->wrap(),
                 TextColumn::make('category.name')->copyable()->copyMessage('Đã sao chép')->label('Danh mục')->badge()->toggleable(),
@@ -34,6 +35,7 @@ final class ServicesTable
                 TernaryFilter::make('is_home')->label('Trang chủ'),
             ])
             ->defaultSort('sort_order')
+            ->reorderable('sort_order')
             ->recordActions([
                 Action::make('preview')->label('Xem dịch vụ')->icon(Heroicon::OutlinedArrowTopRightOnSquare)->url(fn (Service $record): string => route('slug.show', ['slug' => $record->slug]))->openUrlInNewTab(),
                 EditAction::make(),

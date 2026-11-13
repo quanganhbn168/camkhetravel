@@ -55,6 +55,7 @@ class ManageServicePage extends Page
                         TextInput::make('benefit_title')->label('Tiêu đề')->helperText($hint)->maxLength(255)->columnSpanFull(),
                         Textarea::make('benefit_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                         Repeater::make('benefit_items')
+                            ->defaultItems(0)
                             ->label('Các lý do')
                             ->schema([
                                 TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
@@ -73,6 +74,7 @@ class ManageServicePage extends Page
                         TextInput::make('process_title')->label('Tiêu đề')->helperText($hint)->maxLength(255)->columnSpanFull(),
                         Textarea::make('process_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                         Repeater::make('process_items')
+                            ->defaultItems(0)
                             ->label('Các bước (đánh số tự động theo thứ tự)')
                             ->schema([
                                 TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
@@ -92,6 +94,7 @@ class ManageServicePage extends Page
                         TextInput::make('vehicle_title')->label('Tiêu đề')->helperText($hint)->maxLength(255)->columnSpanFull(),
                         Textarea::make('vehicle_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                         Repeater::make('vehicle_items')
+                            ->defaultItems(0)
                             ->label('Dòng xe')
                             ->schema([
                                 TextInput::make('title')->label('Tên xe')->required()->maxLength(255),
