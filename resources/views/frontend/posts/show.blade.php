@@ -72,6 +72,7 @@
 
                         @endif
                         <div class="article-prose mt-4">{!! $post->body_html !!}</div>
+                        <x-hashtags :tags="$post->tags" class="mt-4" />
                     </div>
 
                     @if ($previousPost || $nextPost)
@@ -100,6 +101,17 @@
                                         </span>
                                     </a>
                                 @endif
+                            </div>
+                        </section>
+                    @endif
+
+                    @if ($relatedPosts->isNotEmpty())
+                        <section class="mx-auto mt-5" id="bai-viet-lien-quan">
+                            <h2 class="display-title h3 mb-3">Bài viết liên quan</h2>
+                            <div class="row row-cols-1 row-cols-md-3 g-3">
+                                @foreach ($relatedPosts as $relatedPost)
+                                    <div class="col">@include('frontend.partials.post-card', ['post' => $relatedPost])</div>
+                                @endforeach
                             </div>
                         </section>
                     @endif

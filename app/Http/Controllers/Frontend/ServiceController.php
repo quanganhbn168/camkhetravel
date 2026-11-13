@@ -9,6 +9,7 @@ use App\Support\Categories\CategoryTree;
 use App\Settings\ServicePageSettings;
 use App\Support\Services\ServiceIcons;
 use App\Support\Content\ArticleOutline;
+use App\Support\Content\RelatedPosts;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -68,6 +69,7 @@ class ServiceController extends Controller
             'slugs',
             'bannerVideoMedia',
             'areaMedia',
+            'tags' => fn ($query) => $query->where('is_active', true),
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
@@ -134,6 +136,7 @@ class ServiceController extends Controller
             'areaImageUrl' => MediaUrl::resolve($service->areaMedia),
             'faqItems' => $faqItems,
             'tableOfContents' => $content['tableOfContents'],
+            'relatedPosts' => RelatedPosts::forTags($service->tags->pluck('id'), limit: 6),
             'ratingSummary' => [
                 'count' => $ratedComments->count(),
                 'average' => $ratedComments->isNotEmpty() ? round((float) $ratedComments->avg('rating'), 1) : null,

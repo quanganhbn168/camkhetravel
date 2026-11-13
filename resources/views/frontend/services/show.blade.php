@@ -336,6 +336,28 @@
         </section>
     @endif
 
+    {{-- ===== Hashtag & bài viết liên quan (theo thẻ của dịch vụ) ===== --}}
+    @if ($relatedPosts->isNotEmpty() || $service->tags->isNotEmpty())
+        <section class="svc-section" id="bai-viet-lien-quan">
+            <div class="container">
+                <header class="svc-heading svc-heading--row" data-reveal>
+                    <h2>{{ $relatedPosts->isNotEmpty() ? 'Bài viết liên quan' : 'Chủ đề liên quan' }}</h2>
+                    @if ($relatedPosts->isNotEmpty())
+                        <a class="section-link" href="{{ route('posts.index') }}">Xem tất cả bài viết <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                    @endif
+                </header>
+                <x-hashtags :tags="$service->tags" @class(['mb-4' => $relatedPosts->isNotEmpty()]) data-reveal />
+                @if ($relatedPosts->isNotEmpty())
+                    <x-slider per-view="1,2,3" label="Bài viết liên quan" data-reveal>
+                        @foreach ($relatedPosts as $post)
+                            <div class="swiper-slide">@include('frontend.partials.post-card', ['post' => $post, 'showExcerpt' => true])</div>
+                        @endforeach
+                    </x-slider>
+                @endif
+            </div>
+        </section>
+    @endif
+
     {{-- ===== 10. Đánh giá khách hàng (chỉ đánh giá đã duyệt của chính dịch vụ này) ===== --}}
     @php
         $reviews = $service->approvedComments;

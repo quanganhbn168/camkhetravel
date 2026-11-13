@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\PostCategory;
 use App\Support\Categories\CategoryTree;
 use App\Support\Content\ArticleOutline;
+use App\Support\Content\RelatedPosts;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
 use Illuminate\Http\RedirectResponse;
@@ -97,6 +98,7 @@ class PostController extends Controller
             'category',
             'curatorMedia',
             'slugs',
+            'tags' => fn ($query) => $query->where('is_active', true),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
         $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia));
@@ -123,6 +125,7 @@ class PostController extends Controller
             'previousPost' => $previousPost,
             'nextPost' => $nextPost,
             'tableOfContents' => $article['tableOfContents'],
+            'relatedPosts' => RelatedPosts::forTags($post->tags->pluck('id'), $post->id),
             'share' => [
                 'url' => $shareUrl,
                 'facebook' => 'https://www.facebook.com/sharer/sharer.php?u='.rawurlencode($shareUrl),
