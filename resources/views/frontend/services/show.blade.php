@@ -26,9 +26,6 @@
         <div class="resource-detail-hero__overlay"></div>
         <div class="container resource-detail-hero__content">
             <h1 class="display-title text-white">{{ $service->title }}</h1>
-            @if ($service->excerpt)
-                <p class="lead text-white mx-auto service-hero__lead">{{ $service->excerpt }}</p>
-            @endif
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
                 <a class="btn btn-primary" href="{{ $contactUrl }}">Đặt xe ngay <span aria-hidden="true">→</span></a>
                 @if ($hotlineTel)
@@ -51,15 +48,13 @@
         </div>
     </div>
 
-    {{-- 2. Giới thiệu dịch vụ: một đoạn chính (nội dung; nếu trống thì dùng mô tả ngắn) --}}
-    @if ($introHtml || $service->excerpt)
+    {{-- 2. Giới thiệu dịch vụ: mô tả ngắn cạnh ảnh, nội dung dài full width ngay bên dưới --}}
+    @if ($service->excerpt || $highlights->isNotEmpty())
         <section id="gioi-thieu" class="service-intro section-space">
             <div class="container service-intro__grid">
                 <div>
                     <h2 class="display-title">Giới thiệu {{ $service->title }}</h2>
-                    @if ($introHtml)
-                        <div class="article-prose">{!! $introHtml !!}</div>
-                    @else
+                    @if ($service->excerpt)
                         <p class="service-intro__lead">{{ $service->excerpt }}</p>
                     @endif
                     @if ($highlights->isNotEmpty())
@@ -85,6 +80,14 @@
                         </figure>
                     @endforeach
                 </div>
+            </div>
+        </section>
+    @endif
+
+    @if ($introHtml)
+        <section id="noi-dung" class="service-content pb-5 @unless ($service->excerpt || $highlights->isNotEmpty()) pt-5 @endunless">
+            <div class="container">
+                <div class="article-prose">{!! $introHtml !!}</div>
             </div>
         </section>
     @endif

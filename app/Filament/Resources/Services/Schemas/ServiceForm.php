@@ -48,12 +48,12 @@ final class ServiceForm
                             CuratorPicker::make('banner_video_media_id')->label('Video banner dịch vụ')->relationship('bannerVideoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/*'])->helperText('Video được phát nền ở banner; ảnh đại diện sẽ làm poster khi cần.')->columnSpanFull(),
                             CuratorPicker::make('gallery')->label('Ảnh thực tế (ảnh xe, chuyến đi)')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Hai ảnh đầu hiện cạnh phần Giới thiệu. Ưu tiên ảnh xe thực tế.')->columnSpanFull(),
                             Textarea::make('excerpt')
-                                ->label('Mô tả ngắn (hiện dưới tiêu đề banner)')
+                                ->label('Mô tả ngắn (hiện ở phần Giới thiệu, cạnh ảnh)')
                                 ->rows(3)
                                 ->columnSpanFull(),
                             RichEditor::make('body')
                                 ->label('Nội dung giới thiệu')
-                                ->helperText('Một đoạn giới thiệu chính. Nếu để trống, trang dùng mô tả ngắn.')
+                                ->helperText('Nội dung chi tiết, hiển thị full width ngay dưới phần Giới thiệu.')
                                 ->plugins([ScopedAttachCuratorMediaPlugin::make()])
                                 ->toolbarButtons([
                                     ['bold', 'italic', 'underline', 'strike', 'link'],
