@@ -88,7 +88,7 @@ class PostController extends Controller
             'sort' => $sort,
             'sortOptions' => self::SORT_OPTIONS,
             'heroImageUrl' => $posts->first()?->image_url,
-            'seo' => $this->seo->listing($title, $description, $canonicalUrl, image: $category->seoImageUrl()),
+            'seo' => $this->seo->listing($title, $description, $canonicalUrl, image: $category->seoImageUrl(), trail: [['name' => 'Tin tức', 'url' => route('posts.index')], ['name' => $category->name, 'url' => route('posts.category', ['slug' => $category->slug])]]),
         ]);
     }
 
@@ -346,6 +346,6 @@ class PostController extends Controller
 
     private function listingSeo(string $title, string $description, string $canonicalUrl): array
     {
-        return $this->seo->listing($title, $description, $canonicalUrl);
+        return $this->seo->listing($title, $description, $canonicalUrl, trail: [['name' => 'Tin tức', 'url' => route('posts.index')]]);
     }
 }

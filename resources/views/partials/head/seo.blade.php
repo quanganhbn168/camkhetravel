@@ -26,6 +26,11 @@
 <meta name="twitter:title" content="@yield('twitter_title', $seo['title'])">
 <meta name="twitter:description" content="@yield('twitter_description', $seo['description'])">
 @if ($seo['image'])<meta name="twitter:image" content="{{ $seo['image'] }}">@endif
-@if ($seo['schema_json'])<script type="application/ld+json">{!! $seo['schema_json'] !!}</script>@endif
+@if (($seo['article'] ?? []) !== [])
+    @isset($seo['article']['published_time'])<meta property="article:published_time" content="{{ $seo['article']['published_time'] }}">@endisset
+    @isset($seo['article']['modified_time'])<meta property="article:modified_time" content="{{ $seo['article']['modified_time'] }}">@endisset
+    @isset($seo['article']['section'])<meta property="article:section" content="{{ $seo['article']['section'] }}">@endisset
+@endif
+{{-- JSON-LD do từng trang tự đẩy vào qua @push('schema') bằng <x-json-ld>. --}}
 @yield('schema')
 @stack('schema')

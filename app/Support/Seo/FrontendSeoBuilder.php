@@ -26,13 +26,28 @@ class FrontendSeoBuilder
             title: $this->website->seo_title ?: $this->website->site_name,
             description: $this->website->seo_description,
             canonical: $this->homeCanonical(),
-            schema: [$this->organizationSchema()],
         );
     }
 
     public function siteName(): string
     {
         return $this->website->site_name;
+    }
+
+    /** JSON-LD của một trang; view của trang gọi qua <x-json-ld>. Encode ở PHP vì Blade hiểu "@context" là directive. */
+    public static function jsonLd(array $seo): ?string
+    {
+        $graph = $seo['schema'] ?? [];
+
+        return $graph === [] ? null : json_encode(
+            ['@context' => 'https://schema.org', '@graph' => $graph],
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT,
+        );
+    }
+
+    private function organizationName(): string
+    {
+        return $this->website->company_name ?: $this->website->site_name ?: (string) config('app.name');
     }
 
     /**
@@ -67,11 +82,17 @@ class FrontendSeoBuilder
             [
                 '@type' => 'WebSite',
                 '@id' => $this->baseUrl().'#website',
-                'name' => $this->website->site_name,
+                'name' => $this->website->site_name ?: $this->organizationName(),
                 'url' => $this->baseUrl(),
                 'inLanguage' => $this->languageTag(),
+                'publisher' => ['@id' => $this->baseUrl().'#organization'],
+                'potentialAction' => [
+                    '@type' => 'SearchAction',
+                    'target' => ['@type' => 'EntryPoint', 'urlTemplate' => route('search').'?q={search_term_string}'],
+                    'query-input' => 'required name=search_term_string',
+                ],
             ],
-            $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description']),
+            $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description'], home: true),
         ];
 
         if ($faqSchemaItems !== []) {
@@ -91,16 +112,19 @@ class FrontendSeoBuilder
         );
     }
 
-    public function listing(string $title, string $description, string $canonical, bool $indexable = true, ?string $image = null): array
+    /** @param list<array{name: string, url: string}> $trail Breadcrumb sau "Trang chủ"; để trống thì dùng chính trang này. */
+    public function listing(string $title, string $description, string $canonical, bool $indexable = true, ?string $image = null, array $trail = [], string $pageType = 'CollectionPage'): array
     {
+        $trail = $trail ?: [['name' => $title, 'url' => $canonical]];
+
         return $this->page(
             title: $title,
             description: $description,
             canonical: $canonical,
-            schema: [
-                $this->organizationSchema(),
-                $this->webPageSchema($canonical, $title, $description),
-            ],
+            schema: $indexable ? [
+                $this->webPageSchema($canonical, $title, $description, type: $pageType),
+                $this->breadcrumb([['name' => 'Trang chủ', 'url' => route('home')], ...$trail]),
+            ] : [],
             robots: $indexable ? self::INDEX_ROBOTS : self::NOINDEX_ROBOTS,
             image: $image,
         );
@@ -117,8 +141,15 @@ class FrontendSeoBuilder
             canonical: $canonical,
             image: (string) $profile['og_image_url'],
             schema: [
-                $this->organizationSchema(),
-                $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description']),
+                $this->webPageSchema($canonical, (string) $profile['seo_title'], (string) $profile['seo_description'], type: match ($routeName) {
+                    'about' => 'AboutPage',
+                    'contact' => 'ContactPage',
+                    default => 'CollectionPage',
+                }),
+                $this->breadcrumb([
+                    ['name' => 'Trang chủ', 'url' => route('home')],
+                    ['name' => (string) ($profile['title'] ?? $profile['seo_title']), 'url' => $canonical],
+                ]),
             ],
         );
     }
@@ -131,7 +162,7 @@ class FrontendSeoBuilder
             description: $solution->seo_description ?: $solution->excerpt,
             canonical: $canonical,
             image: $solution->seoImageUrl(),
-            schema: [$this->organizationSchema(), $this->breadcrumb([
+            schema: [$this->webPageSchema($canonical, (string) ($solution->seo_title ?: $solution->title), (string) ($solution->seo_description ?: $solution->excerpt)), $this->breadcrumb([
                 ['name' => 'Trang chủ', 'url' => route('home')],
                 ['name' => 'Giải pháp', 'url' => route('solutions.index')],
                 ['name' => $solution->title, 'url' => $canonical],
@@ -151,7 +182,6 @@ class FrontendSeoBuilder
             canonical: $canonical,
             image: $service->seoImageUrl($service->image_url),
             schema: [
-                $this->organizationSchema(),
                 [
                     '@type' => 'Service',
                     '@id' => $canonical.'#service',
@@ -159,8 +189,11 @@ class FrontendSeoBuilder
                     'description' => $this->description($description),
                     'url' => $canonical,
                     ...$this->imageProperty($service->image_url),
-                    'provider' => ['@id' => $this->baseUrl().'#organization'],
+                    'provider' => $this->publisherNode(),
+                    ...$this->serviceAreaProperty($service),
+                    ...$this->serviceRatingProperties($service),
                 ],
+                $this->serviceFaqSchema($service, $canonical),
                 $this->breadcrumb([
                     ['name' => 'Trang chủ', 'url' => route('home')],
                     ['name' => 'Dịch vụ', 'url' => route('services.index')],
@@ -168,6 +201,70 @@ class FrontendSeoBuilder
                 ]),
             ],
         );
+    }
+
+    /**
+     * Điểm đánh giá chỉ lấy từ đánh giá thật đã được duyệt của chính dịch vụ; chưa có đánh giá thì không khai báo.
+     *
+     * @return array<string, mixed>
+     */
+    private function serviceRatingProperties(Service $service): array
+    {
+        if (! $service->relationLoaded('approvedComments')) {
+            return [];
+        }
+
+        $rated = $service->approvedComments->filter(fn ($comment): bool => $comment->rating !== null)->values();
+        if ($rated->isEmpty()) {
+            return [];
+        }
+
+        return [
+            'aggregateRating' => [
+                '@type' => 'AggregateRating',
+                'ratingValue' => round((float) $rated->avg('rating'), 1),
+                'ratingCount' => $rated->count(),
+                'bestRating' => 5,
+                'worstRating' => 1,
+            ],
+            'review' => $rated->take(5)->map(fn ($comment): array => [
+                '@type' => 'Review',
+                'author' => ['@type' => 'Person', 'name' => $comment->author_name],
+                ...($comment->approved_at ? ['datePublished' => $comment->approved_at->toDateString()] : []),
+                'reviewBody' => Str::limit(Str::squish((string) $comment->body), 500, ''),
+                'reviewRating' => ['@type' => 'Rating', 'ratingValue' => (int) $comment->rating, 'bestRating' => 5, 'worstRating' => 1],
+            ])->all(),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function serviceAreaProperty(Service $service): array
+    {
+        $areas = collect($service->area_items ?? [])
+            ->map(fn (mixed $item): string => is_array($item) ? trim((string) ($item['title'] ?? '')) : '')
+            ->filter()
+            ->values();
+        if ($areas->isEmpty() && filled($service->area_title)) {
+            $areas = collect([trim((string) $service->area_title)]);
+        }
+
+        return $areas->isEmpty() ? [] : ['areaServed' => $areas->map(fn (string $name): array => ['@type' => 'Place', 'name' => $name])->all()];
+    }
+
+    /** @return array<string, mixed>|null */
+    private function serviceFaqSchema(Service $service, string $canonical): ?array
+    {
+        $questions = $service->faqs
+            ->filter(fn ($faq): bool => filled($faq->question) && filled($faq->answer))
+            ->map(fn ($faq): array => [
+                '@type' => 'Question',
+                'name' => $faq->question,
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $faq->answer],
+            ])
+            ->values()
+            ->all();
+
+        return $questions === [] ? null : ['@type' => 'FAQPage', '@id' => $canonical.'#faq', 'mainEntity' => $questions];
     }
 
     public function post(Post $post): array
@@ -179,13 +276,15 @@ class FrontendSeoBuilder
         $blogPosting = [
             '@type' => 'BlogPosting',
             '@id' => $canonical.'#article',
-            'headline' => $post->title,
+            'headline' => Str::limit($post->title, 110, ''),
             'description' => $this->description($description),
             'mainEntityOfPage' => ['@id' => $canonical],
             'url' => $canonical,
             ...$this->imageProperty($post->image_url),
-            'author' => ['@id' => $this->baseUrl().'#organization'],
-            'publisher' => ['@id' => $this->baseUrl().'#organization'],
+            ...($post->category ? ['articleSection' => $post->category->name] : []),
+            'inLanguage' => $this->languageTag(),
+            'author' => $this->publisherNode(logo: false),
+            'publisher' => $this->publisherNode(),
             'datePublished' => ($post->published_at ?: $post->created_at)->toAtomString(),
             'dateModified' => $post->updated_at->toAtomString(),
         ];
@@ -196,8 +295,12 @@ class FrontendSeoBuilder
             canonical: $canonical,
             image: $post->seoImageUrl($post->image_url),
             type: 'article',
+            extra: [
+                'published_time' => ($post->published_at ?: $post->created_at)->toAtomString(),
+                'modified_time' => $post->updated_at->toAtomString(),
+                'section' => $post->category?->name,
+            ],
             schema: [
-                $this->organizationSchema(),
                 $blogPosting,
                 $this->breadcrumb([
                     ['name' => 'Trang chủ', 'url' => route('home')],
@@ -220,7 +323,6 @@ class FrontendSeoBuilder
             canonical: $canonical,
             image: $product->seoImageUrl($product->image_url),
             schema: [
-                $this->organizationSchema(),
                 [
                     '@type' => 'Product',
                     '@id' => $canonical.'#product',
@@ -228,7 +330,7 @@ class FrontendSeoBuilder
                     'description' => $this->description($description),
                     'url' => $canonical,
                     ...$this->imageProperty($product->image_url),
-                    'brand' => ['@id' => $this->baseUrl().'#organization'],
+                    'brand' => $this->publisherNode(logo: false),
                 ],
                 $this->breadcrumb([
                     ['name' => 'Trang chủ', 'url' => route('home')],
@@ -246,6 +348,7 @@ class FrontendSeoBuilder
             $category->seo_description ?: $category->description ?: 'Sản phẩm thuộc nhóm '.$category->name.'.',
             route('products.category', ['slug' => $category->slug]),
             image: $category->seoImageUrl(),
+            trail: [['name' => 'Sản phẩm', 'url' => route('products.index')], ['name' => $category->name, 'url' => route('products.category', ['slug' => $category->slug])]],
         );
     }
 
@@ -258,6 +361,7 @@ class FrontendSeoBuilder
         array $schema = [],
         string $robots = self::INDEX_ROBOTS,
         bool $useDefaultImage = true,
+        array $extra = [],
     ): array {
         $description = $this->description($description);
         $image = $image ?: ($useDefaultImage ? $this->defaultImageUrl() : null);
@@ -272,21 +376,22 @@ class FrontendSeoBuilder
             'locale' => 'vi_VN',
             'image' => $image,
             'image_alt' => $this->website->site_name,
-            'schema_json' => json_encode([
-                '@context' => 'https://schema.org',
-                '@graph' => array_values(array_filter($schema)),
-            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
+            'article' => array_filter($extra),
+            // Schema thuộc về từng trang: view của trang đó tự in qua <x-json-ld>, layout không in schema chung.
+            'schema' => array_values(array_filter($schema)),
         ];
     }
 
     private function organizationSchema(): array
     {
+        // Có địa chỉ thì khai báo LocalBusiness (Google yêu cầu address cho LocalBusiness); chưa có thì giữ Organization.
         $organization = [
-            '@type' => 'Organization',
+            '@type' => filled($this->website->address) ? 'LocalBusiness' : 'Organization',
             '@id' => $this->baseUrl().'#organization',
-            'name' => $this->website->company_name ?: $this->website->site_name,
+            'name' => $this->organizationName(),
             'url' => $this->baseUrl(),
-            ...$this->imageProperty($this->defaultImageUrl(), 'logo'),
+            ...$this->imageProperty($this->logoUrl(), 'logo'),
+            ...$this->imageProperty($this->defaultImageUrl() ?: $this->logoUrl()),
         ];
 
         if (filled($this->website->contact_email)) {
@@ -301,6 +406,7 @@ class FrontendSeoBuilder
             $organization['address'] = [
                 '@type' => 'PostalAddress',
                 'streetAddress' => $this->website->address,
+                'addressCountry' => 'VN',
             ];
         }
 
@@ -317,17 +423,38 @@ class FrontendSeoBuilder
         return $organization;
     }
 
-    private function webPageSchema(string $canonical, string $title, ?string $description): array
+    private function webPageSchema(string $canonical, string $title, ?string $description, string $type = 'WebPage', bool $home = false): array
     {
         return [
-            '@type' => 'WebPage',
+            '@type' => $type,
             '@id' => $canonical.'#webpage',
             'url' => $canonical,
             'name' => $title,
             'description' => $this->description($description),
             'inLanguage' => $this->languageTag(),
-            'isPartOf' => ['@id' => $this->baseUrl().'#website'],
+            // Chỉ trang chủ có node WebSite đầy đủ; trang khác nhúng thông tin tối thiểu để không tham chiếu node không có mặt.
+            'isPartOf' => $home
+                ? ['@id' => $this->baseUrl().'#website']
+                : ['@type' => 'WebSite', 'name' => $this->website->site_name ?: $this->organizationName(), 'url' => $this->baseUrl()],
         ];
+    }
+
+    /** Organization rút gọn nhúng thẳng vào schema trang chi tiết (author/publisher/provider/brand). */
+    private function publisherNode(bool $logo = true): array
+    {
+        return [
+            '@type' => 'Organization',
+            'name' => $this->organizationName(),
+            'url' => $this->baseUrl(),
+            ...($logo ? $this->imageProperty($this->logoUrl(), 'logo') : []),
+        ];
+    }
+
+    private function logoUrl(): ?string
+    {
+        $mediaId = $this->website->logo_media_id ?: $this->website->seo_image_media_id;
+
+        return $mediaId ? Media::query()->find($mediaId)?->url : null;
     }
 
     private function breadcrumb(array $items): array

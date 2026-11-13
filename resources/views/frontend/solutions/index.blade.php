@@ -1,4 +1,5 @@
 @extends('layouts.master')
+@push('schema')    <x-json-ld :seo="$seo" />@endpush
 
 @section('content')
     <section class="resource-archive-hero" data-system-page="solutions">

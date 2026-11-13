@@ -1,4 +1,5 @@
 @extends('layouts.master')
+@push('schema')    <x-json-ld :seo="$seo" />@endpush
 
 @push('styles')
     @vite('resources/css/pages/contact.css')

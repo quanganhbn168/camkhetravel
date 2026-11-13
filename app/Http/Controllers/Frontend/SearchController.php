@@ -25,6 +25,7 @@ class SearchController extends Controller
             $keyword === '' ? 'Tìm kiếm' : 'Tìm kiếm: '.$keyword,
             'Tìm kiếm dịch vụ và bài viết tại '.$this->seo->siteName().'.',
             route('search'),
+            indexable: false,
         );
 
         return view('frontend.search.index', compact('keyword', 'services', 'posts', 'seo'));
