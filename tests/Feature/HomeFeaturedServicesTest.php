@@ -53,7 +53,7 @@ class HomeFeaturedServicesTest extends TestCase
         $this->assertSame('Mô tả ngắn riêng', $category->fresh()->description);
         $this->assertStringContainsString('<strong>', $category->fresh()->body);
         $this->get(route('services.category', ['category' => $category->fresh()->slug]))
-            ->assertOk()->assertSee('<h2>Nội dung danh mục kiểm thử</h2>', false);
+            ->assertOk()->assertSee('<h2 id="noi-dung-danh-muc-kiem-thu">Nội dung danh mục kiểm thử</h2>', false);
         $this->assertTrue($category->fresh()->is_featured);
         $this->assertTrue($category->fresh()->is_home);
         Livewire::test(EditServiceCategory::class, ['record' => $category->id])

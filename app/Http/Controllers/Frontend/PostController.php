@@ -80,7 +80,7 @@ class PostController extends Controller
             'activeCategory' => $category,
             'pageBannerUrl' => $category->banner_url,
             'categoryImageUrl' => $category->image_url,
-            'categoryBodyHtml' => (string) str((string) $category->body)->sanitizeHtml(),
+            'categoryBodyHtml' => ArticleOutline::prepare((string) str((string) $category->body)->sanitizeHtml())['html'],
             'listingUrl' => route('posts.category', ['slug' => $category->slug]),
             'sort' => $sort,
             'sortOptions' => self::SORT_OPTIONS,

@@ -23,7 +23,7 @@
                 <div>
                     @if ($product->image_url)<div class="overflow-hidden rounded"><img class="h-auto w-100 object-fit-cover" src="{{ $product->image_url }}" alt="{{ $product->title }}"></div>@endif
                     @if ($galleryImages)<div class="gallery-grid mt-3">@foreach ($galleryImages as $image)<img class="w-100 object-fit-cover rounded" src="{{ $image }}" alt="" loading="lazy">@endforeach</div>@endif
-                    @if ($product->body)<div class="article-prose mt-4">{!! $product->body !!}</div>@endif
+                    @if ($product->body)<div class="article-prose mt-4">{!! \App\Support\Content\ArticleOutline::prepare((string) $product->body)['html'] !!}</div>@endif
                 </div>
                 <aside class="product-summary">
                     <p class="fw-bold text-uppercase h5">Thông tin sản phẩm</p>

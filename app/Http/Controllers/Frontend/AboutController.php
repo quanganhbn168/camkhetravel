@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Support\Content\ArticleOutline;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Service;
@@ -31,13 +32,13 @@ class AboutController extends Controller
             'title' => $page['title'],
             'intro' => trim($this->settings->page_intro),
             'story_title' => trim($this->settings->story_title),
-            'story' => $this->settings->story,
+            'story' => ArticleOutline::prepare((string) $this->settings->story)['html'],
             'history' => $this->settings->history,
             'history_title' => trim($this->settings->history_title),
             'history_description' => trim($this->settings->history_description),
             'mission' => trim($this->settings->mission),
             'vision' => trim($this->settings->vision),
-            'core_values' => $this->settings->core_values,
+            'core_values' => ArticleOutline::prepare((string) $this->settings->core_values)['html'],
             'principles_title' => trim($this->settings->principles_title),
             'services_title' => trim($this->settings->services_title),
             'services_link_label' => trim($this->settings->services_link_label),

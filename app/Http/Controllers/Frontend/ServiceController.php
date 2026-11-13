@@ -53,7 +53,7 @@ class ServiceController extends Controller
         $description = $category->seo_description ?: $category->description ?: 'Tìm hiểu dịch vụ thuộc nhóm '.$category->name.' của CamKheTravel.';
 
         return view('frontend.services.index', $this->listingData($category) + [
-            'categoryBodyHtml' => (string) str((string) $category->body)->sanitizeHtml(),
+            'categoryBodyHtml' => ArticleOutline::prepare((string) str((string) $category->body)->sanitizeHtml())['html'],
             'seo' => $this->seo->listing($title, $description, route('services.category', ['category' => $category->slug]), image: $category->seoImageUrl(), trail: [['name' => 'Dịch vụ', 'url' => route('services.index')], ['name' => $category->name, 'url' => route('services.category', ['category' => $category->slug])]]),
         ]);
     }

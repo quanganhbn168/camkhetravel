@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Support\Content\ArticleOutline;
 use App\Http\Controllers\Controller;
 use App\Models\Solution;
 use App\Support\Pages\SystemPageProfileResolver;
@@ -37,7 +38,7 @@ class SolutionsController extends Controller
 
         return view('frontend.solutions.show', [
             'solution' => $solution,
-            'bodyHtml' => (string) str((string) $solution->body)->sanitizeHtml(),
+            'bodyHtml' => ArticleOutline::prepare((string) str((string) $solution->body)->sanitizeHtml())['html'],
             'seo' => $this->seo->solution($solution),
         ]);
     }

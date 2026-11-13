@@ -42,7 +42,7 @@
             <div class="svc-hero__content">
                 @if ($hero['badge'])<p class="svc-badge">{{ $hero['badge'] }}</p>@endif
                 <h1 class="svc-hero__title">{{ $service->title }}</h1>
-                @if ($hero['subtitle'])<p class="svc-hero__subtitle">{{ $hero['subtitle'] }}</p>@endif
+                @if ($hero['subtitle'])<p @class(['svc-hero__subtitle', 'svc-hero__subtitle--long' => blank($service->hero_subtitle)])>{{ $hero['subtitle'] }}</p>@endif
                 @if ($hero['points'] !== [])
                     <ul class="svc-checks">
                         @foreach ($hero['points'] as $point)
@@ -298,27 +298,34 @@
     @endif
 
     {{-- ===== 9. Giới thiệu & nội dung chi tiết (SEO) ===== --}}
-    @if ($service->excerpt || $introHtml)
+    {{-- Mô tả ngắn đã hiện ở banner (khi chưa nhập "Câu phụ") thì không in lại ở đây. --}}
+    @php
+        $introExcerpt = filled($service->hero_subtitle) ? $service->excerpt : null;
+    @endphp
+    @if ($introExcerpt || $introHtml)
         <section class="svc-section svc-section--tint" id="gioi-thieu">
             <div class="container">
                 <header class="svc-heading" data-reveal>
                     <h2>Giới thiệu {{ $service->title }}</h2>
-                    @if ($service->excerpt)<p class="svc-lead">{{ $service->excerpt }}</p>@endif
+                    @if ($introExcerpt)<p class="svc-lead">{{ $introExcerpt }}</p>@endif
                 </header>
                 @if ($introHtml)
                     <div class="svc-article">
                         @if (count($tableOfContents) >= 2)
                             <nav class="service-toc mb-4" aria-labelledby="service-toc-title">
-                                <button class="service-toc__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#service-toc-list" aria-expanded="true" aria-controls="service-toc-list">
-                                    <span class="fw-bold" id="service-toc-title">Nội dung chính</span>
-                                    <span class="service-toc__indicator" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
-                                </button>
-                                <div class="collapse show" id="service-toc-list">
-                                    <ol class="service-toc__list">
-                                        @foreach ($tableOfContents as $item)
-                                            <li @class(['service-toc__item', 'service-toc__item--sub' => $item['level'] === 3])><a href="#{{ $item['id'] }}">{{ $item['title'] }}</a></li>
-                                        @endforeach
-                                    </ol>
+                                <p class="service-toc__title" id="service-toc-title"><i class="fa-solid fa-list-ul" aria-hidden="true"></i>Nội dung chính</p>
+                                {{-- Dài quá thì thu gọn, mờ dần ở đáy và hiện nút "Xem thêm" (resources/js/frontend/expandable.js). --}}
+                                <div class="expandable" data-expandable data-expandable-max="240">
+                                    <div class="expandable__body" id="service-toc-list">
+                                        <ol class="service-toc__list">
+                                            @foreach ($tableOfContents as $item)
+                                                <li @class(['service-toc__item', 'service-toc__item--sub' => $item['level'] === 3])><a href="#{{ $item['id'] }}">{{ $item['title'] }}</a></li>
+                                            @endforeach
+                                        </ol>
+                                    </div>
+                                    <button class="expandable__toggle" type="button" aria-controls="service-toc-list" aria-expanded="false" hidden data-expandable-toggle>
+                                        <span data-expandable-label>Xem thêm</span><i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                                    </button>
                                 </div>
                             </nav>
                         @endif

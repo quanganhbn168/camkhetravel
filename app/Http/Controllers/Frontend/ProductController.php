@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Support\Content\ArticleOutline;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -95,7 +96,7 @@ class ProductController extends Controller
             'activeCategory' => $activeCategory,
             'pageBannerUrl' => $activeCategory?->banner_url,
             'categoryImageUrl' => $activeCategory?->image_url,
-            'categoryBodyHtml' => (string) str((string) $activeCategory?->body)->sanitizeHtml(),
+            'categoryBodyHtml' => ArticleOutline::prepare((string) str((string) $activeCategory?->body)->sanitizeHtml())['html'],
             'categories' => CategoryTree::forDisplay(ProductCategory::query()
                 ->active()
                 ->withCount(['products' => fn (Builder $query) => $query->published()])

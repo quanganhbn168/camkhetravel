@@ -2,10 +2,12 @@
 // Được gọi bằng @vite('resources/js/pages/service.js') trong frontend/services/show.blade.php; trang khác không tải.
 import { initialiseReveal } from '../frontend/reveal';
 import { initialiseSliders } from '../frontend/sliders';
+import { initialiseExpandables } from '../frontend/expandable';
 
 const start = () => {
     initialiseReveal();
     initialiseSliders();
+    initialiseExpandables();
 };
 
 if (document.readyState === 'loading') {

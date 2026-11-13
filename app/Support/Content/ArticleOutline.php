@@ -35,6 +35,21 @@ final class ArticleOutline
                 return ['html' => $html, 'tableOfContents' => []];
             }
 
+            // Trang đã có H1 (tiêu đề); H1 dán trong nội dung soạn thảo được hạ thành H2 để trang chỉ có một H1.
+            foreach (iterator_to_array((new DOMXPath($document))->query('.//h1', $root) ?: []) as $h1) {
+                if (! $h1 instanceof DOMElement) {
+                    continue;
+                }
+                $h2 = $document->createElement('h2');
+                foreach (iterator_to_array($h1->attributes) as $attribute) {
+                    $h2->setAttribute($attribute->nodeName, $attribute->nodeValue);
+                }
+                while ($h1->firstChild) {
+                    $h2->appendChild($h1->firstChild);
+                }
+                $h1->parentNode?->replaceChild($h2, $h1);
+            }
+
             $usedIds = [];
             $tableOfContents = [];
             $headings = (new DOMXPath($document))->query('.//*[self::h2 or self::h3]', $root);

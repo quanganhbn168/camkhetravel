@@ -74,6 +74,32 @@ class ServiceLandingPageTest extends TestCase
         $this->assertStringContainsString('<dt>Xe 4 chỗ – 2 chiều</dt><dd>Liên hệ</dd>', $card);
     }
 
+    public function test_h1_pasted_in_content_is_demoted_so_pages_keep_one_h1(): void
+    {
+        $service = Service::create(['title' => 'Taxi Cẩm Khê', 'status' => 'published', 'body' => '<h1>Taxi Cẩm Khê uy tín</h1><p>a</p><h2>Giá</h2><p>b</p>']);
+        $post = \App\Models\Post::create(['title' => 'Bài viết', 'status' => 'published', 'body' => '<h1>Tiêu đề trùng</h1><p>x</p>', 'published_at' => now()->subDay()]);
+        $page = \App\Models\Page::create(['title' => 'Trang', 'slug' => 'trang-thu', 'status' => 'published', 'content' => '<h1>Trùng</h1><p>y</p>']);
+
+        foreach (['/'.$service->slug, '/'.$post->slug, '/'.$page->slug] as $url) {
+            $this->assertSame(1, preg_match_all('#<h1[\s>]#', $this->get($url)->assertOk()->getContent()), $url);
+        }
+        $this->get('/'.$service->slug)->assertSee('<h2 id="taxi-cam-khe-uy-tin">Taxi Cẩm Khê uy tín</h2>', false)
+            ->assertSee('href="#taxi-cam-khe-uy-tin"', false);
+    }
+
+    public function test_excerpt_is_shown_once(): void
+    {
+        $service = Service::create(['title' => 'Taxi Cẩm Khê', 'status' => 'published', 'excerpt' => 'MO_TA_NGAN', 'body' => '<p>Nội dung</p>']);
+        // Chỉ đếm phần hiển thị (<main>); thẻ meta/JSON-LD trong <head> dùng mô tả là đúng.
+        $visible = fn (): string => strstr($this->get('/'.$service->slug)->getContent(), '<main');
+        $this->assertSame(1, substr_count($visible(), 'MO_TA_NGAN'));
+
+        $service->update(['hero_subtitle' => 'Câu phụ riêng']);
+        $html = $visible();
+        $this->assertSame(1, substr_count($html, 'MO_TA_NGAN'));
+        $this->assertStringContainsString('Câu phụ riêng', $html);
+    }
+
     public function test_hero_points_fall_back_to_why_choose_and_empty_sections_are_hidden(): void
     {
         $service = Service::create(['title' => 'Taxi Yên Lập', 'status' => 'published']);

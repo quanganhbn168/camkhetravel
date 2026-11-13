@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Content\ArticleOutline;
 use App\Models\Page;
 use App\Support\Seo\FrontendSeoBuilder;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -20,7 +21,7 @@ class PageController extends Controller
 
         return view('frontend.pages.show', [
             'page' => $page,
-            'content' => $content,
+            'content' => ArticleOutline::prepare($content)['html'],
             'pageBannerUrl' => $page->banner_url,
             'seo' => app(FrontendSeoBuilder::class)->listing(
                 $page->seo_title ?: $page->title,
