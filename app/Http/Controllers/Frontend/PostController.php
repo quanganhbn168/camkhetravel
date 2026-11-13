@@ -115,6 +115,16 @@ class PostController extends Controller
             ->latest('id')
             ->limit(4)
             ->get());
+        // "Bài viết mới": bài tạo gần đây nhất, bỏ bài đang đọc và những bài đã hiện ở khung nổi bật để không trùng.
+        $latestPosts = $this->withImages(Post::query()
+            ->published()
+            ->whereKeyNot($post->id)
+            ->whereKeyNot($featuredPosts->modelKeys())
+            ->with(['category', 'curatorMedia', 'slugs'])
+            ->latest('created_at')
+            ->latest('id')
+            ->limit(4)
+            ->get());
         [$previousPost, $nextPost] = $this->adjacentPosts($post);
         $shareUrl = route('slug.show', ['slug' => $post->slug]);
 
@@ -123,6 +133,7 @@ class PostController extends Controller
             'activeCategory' => $post->category,
             'heroImageUrl' => $post->image_url,
             'featuredPosts' => $featuredPosts,
+            'latestPosts' => $latestPosts,
             'previousPost' => $previousPost,
             'nextPost' => $nextPost,
             'tableOfContents' => $article['tableOfContents'],

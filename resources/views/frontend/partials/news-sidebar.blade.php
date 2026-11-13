@@ -9,26 +9,32 @@
         </div>
     </nav>
 
-    @if (isset($featuredPosts) && $featuredPosts->isNotEmpty())
-        <section class="overflow-hidden card" aria-labelledby="featured-posts-heading">
-            <h2 class="fw-bold text-uppercase card-header h6" id="featured-posts-heading">Bài viết nổi bật</h2>
-            <div class="p-3">
-                @foreach ($featuredPosts as $featuredPost)
-                    <a class="d-flex gap-3 py-2 text-decoration-none" href="{{ route('slug.show', ['slug' => $featuredPost->slug]) }}">
-                        @if ($featuredPost->image_url)
-                            <img class="flex-shrink-0 object-fit-cover news-sidebar__thumbnail" src="{{ $featuredPost->image_url }}" alt="" loading="lazy">
-                        @else
-                            <span class="d-grid flex-shrink-0 news-sidebar__thumbnail image-placeholder">DV</span>
-                        @endif
-                        <span class="flex-grow-1">
-                            <span class="d-block fw-semibold small text-body-emphasis">{{ $featuredPost->title }}</span>
-                            @if ($featuredPost->published_at)<time class="d-block fw-medium small text-body-secondary mt-1" datetime="{{ $featuredPost->published_at->toDateString() }}">{{ $featuredPost->published_at->translatedFormat('d/m/Y') }}</time>@endif
-                        </span>
-                    </a>
-                @endforeach
-            </div>
-        </section>
-    @endif
+    {{-- Hai khung bài viết ở thanh bên: nổi bật (ưu tiên bài bật cờ Nổi bật) và bài viết mới (theo ngày tạo). --}}
+    @foreach ([
+        ['id' => 'featured-posts-heading', 'title' => 'Bài viết nổi bật', 'posts' => $featuredPosts ?? collect()],
+        ['id' => 'latest-posts-heading', 'title' => 'Bài viết mới', 'posts' => $latestPosts ?? collect()],
+    ] as $group)
+        @if ($group['posts']->isNotEmpty())
+            <section class="overflow-hidden card" aria-labelledby="{{ $group['id'] }}">
+                <h2 class="fw-bold text-uppercase card-header h6" id="{{ $group['id'] }}">{{ $group['title'] }}</h2>
+                <div class="p-3">
+                    @foreach ($group['posts'] as $sidebarPost)
+                        <a class="d-flex gap-3 py-2 text-decoration-none" href="{{ route('slug.show', ['slug' => $sidebarPost->slug]) }}">
+                            @if ($sidebarPost->image_url)
+                                <img class="flex-shrink-0 object-fit-cover news-sidebar__thumbnail" src="{{ $sidebarPost->image_url }}" alt="" loading="lazy">
+                            @else
+                                <span class="d-grid flex-shrink-0 news-sidebar__thumbnail image-placeholder">DV</span>
+                            @endif
+                            <span class="flex-grow-1">
+                                <span class="d-block fw-semibold small text-body-emphasis">{{ $sidebarPost->title }}</span>
+                                @if ($sidebarPost->published_at)<time class="d-block fw-medium small text-body-secondary mt-1" datetime="{{ $sidebarPost->published_at->toDateString() }}">{{ $sidebarPost->published_at->translatedFormat('d/m/Y') }}</time>@endif
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    @endforeach
 
     <div class="position-relative overflow-hidden news-sidebar__cta">
         @if (($heroImageUrl ?: $defaultBannerUrl))<img class="position-absolute h-100 w-100 object-fit-cover news-sidebar__background" src="{{ ($heroImageUrl ?: $defaultBannerUrl) }}" alt="" aria-hidden="true">@endif
