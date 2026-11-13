@@ -6,13 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\PostCategory;
 use App\Support\Categories\CategoryTree;
+use App\Support\Content\ArticleOutline;
 use App\Support\Media\MediaUrl;
 use App\Support\Seo\FrontendSeoBuilder;
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -103,7 +100,7 @@ class PostController extends Controller
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
         $post->setAttribute('image_url', MediaUrl::resolve($post->curatorMedia));
-        $article = $this->prepareArticleBody(
+        $article = ArticleOutline::prepare(
             (string) $post->body,
         );
         $post->setAttribute('body_html', $article['html']);
@@ -144,106 +141,6 @@ class PostController extends Controller
     public function categoryBySlug(string $slug): View
     {
         return $this->category($this->categoryForSlug($slug));
-    }
-
-    /**
-     * Adds stable anchors to article headings and exposes them for the public table of contents.
-     *
-     * @return array{html: string, tableOfContents: list<array{id: string, title: string, level: int}>}
-     */
-    private function prepareArticleBody(string $html): array
-    {
-        if (blank($html)) {
-            return ['html' => $html, 'tableOfContents' => []];
-        }
-
-        $previousErrors = libxml_use_internal_errors(true);
-
-        try {
-            $document = new DOMDocument('1.0', 'UTF-8');
-            $document->loadHTML(
-                '<?xml encoding="UTF-8"><!DOCTYPE html><html><body><div id="article-body-root">'.$html.'</div></body></html>',
-                LIBXML_HTML_NODEFDTD | LIBXML_NONET,
-            );
-
-            $root = (new DOMXPath($document))->query('//*[@id="article-body-root"]')->item(0);
-
-            if (! $root instanceof DOMElement) {
-                return ['html' => $html, 'tableOfContents' => []];
-            }
-
-            $usedIds = [];
-            $tableOfContents = [];
-            $headings = (new DOMXPath($document))->query('.//*[self::h2 or self::h3]', $root);
-
-            foreach ($headings ?: [] as $heading) {
-                if (! $heading instanceof DOMElement) {
-                    continue;
-                }
-
-                $title = trim((string) preg_replace('/\s+/u', ' ', $heading->textContent));
-
-                if ($title === '') {
-                    continue;
-                }
-
-                $id = $heading->getAttribute('id');
-
-                if (! preg_match('/^[A-Za-z][A-Za-z0-9_:.\\-]*$/', $id)) {
-                    $id = Str::slug($title) ?: 'muc-noi-dung';
-                }
-
-                $baseId = $id;
-                $suffix = 2;
-
-                while (isset($usedIds[$id])) {
-                    $id = $baseId.'-'.$suffix++;
-                }
-
-                $usedIds[$id] = true;
-                $heading->setAttribute('id', $id);
-                $tableOfContents[] = [
-                    'id' => $id,
-                    'title' => $title,
-                    'level' => (int) substr($heading->tagName, 1),
-                ];
-            }
-
-            foreach ($this->articleTables($document, $root) as $table) {
-                $wrapper = $document->createElement('div');
-                $wrapper->setAttribute('class', 'article-table-wrap');
-                $table->parentNode?->replaceChild($wrapper, $table);
-                $wrapper->appendChild($table);
-            }
-
-            $bodyHtml = '';
-
-            foreach ($root->childNodes as $child) {
-                $bodyHtml .= $document->saveHTML($child);
-            }
-
-            return ['html' => $bodyHtml, 'tableOfContents' => $tableOfContents];
-        } finally {
-            libxml_clear_errors();
-            libxml_use_internal_errors($previousErrors);
-        }
-    }
-
-    /** @return list<DOMElement> */
-    private function articleTables(DOMDocument $document, DOMElement $root): array
-    {
-        $tables = (new DOMXPath($document))->query('.//table', $root);
-
-        if ($tables === false) {
-            return [];
-        }
-
-        return array_values(array_filter(
-            iterator_to_array($tables),
-            fn ($table): bool => $table instanceof DOMElement
-                && ! ($table->parentNode instanceof DOMElement
-                    && str_contains(' '.$table->parentNode->getAttribute('class').' ', ' article-table-wrap ')),
-        ));
     }
 
     private function withImages(iterable $posts): iterable

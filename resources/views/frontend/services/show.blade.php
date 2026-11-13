@@ -85,9 +85,29 @@
     @endif
 
     @if ($introHtml)
+        {{-- Nội dung chi tiết full width: mục lục tự tạo từ các H2/H3 trong nội dung, mỗi H2 là một phần riêng --}}
         <section id="noi-dung" class="service-content pb-5 @unless ($service->excerpt || $highlights->isNotEmpty()) pt-5 @endunless">
             <div class="container">
-                <div class="article-prose">{!! $introHtml !!}</div>
+                @if (count($tableOfContents) >= 2)
+                    <nav class="service-toc mb-4" aria-labelledby="service-toc-title">
+                        <button class="service-toc__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#service-toc-list" aria-expanded="true" aria-controls="service-toc-list">
+                            <span class="fw-bold" id="service-toc-title">Nội dung chính</span>
+                            <span class="service-toc__indicator" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
+                            </span>
+                        </button>
+                        <div class="collapse show" id="service-toc-list">
+                            <ol class="service-toc__list">
+                                @foreach ($tableOfContents as $item)
+                                    <li @class(['service-toc__item', 'service-toc__item--sub' => $item['level'] === 3])>
+                                        <a href="#{{ $item['id'] }}">{{ $item['title'] }}</a>
+                                    </li>
+                                @endforeach
+                            </ol>
+                        </div>
+                    </nav>
+                @endif
+                <div class="article-prose service-prose">{!! $introHtml !!}</div>
             </div>
         </section>
     @endif
@@ -253,8 +273,78 @@
     @endif
 
     {{-- 9. Đánh giá khách hàng: chỉ đánh giá đã duyệt của chính dịch vụ này --}}
-    <section class="resource-related-section" id="danh-gia">
-        <div class="container"><header class="mx-auto text-center mb-4"><h2 class="display-title h2">Đánh giá từ khách hàng</h2>@if ($ratingSummary['count'])<p class="text-body"><strong class="text-primary-emphasis">{{ number_format($ratingSummary['average'], 1) }}/5</strong> từ {{ $ratingSummary['count'] }} đánh giá đã được duyệt.</p>@else<p class="text-body">Những đánh giá đầu tiên sẽ được hiển thị sau khi đội ngũ kiểm duyệt.</p>@endif</header><div class="review-layout"><div class="d-grid gap-4">@forelse ($service->approvedComments as $comment)<article class="d-flex gap-3"><span class="d-grid flex-shrink-0 fw-bold review-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->author_name, 0, 1)) }}</span><div class="flex-grow-1"><div class="d-flex flex-wrap align-items-baseline gap-2"><h3 class="fw-semibold h6 mb-0">{{ $comment->author_name }}</h3><time class="fw-medium small text-body-secondary" datetime="{{ $comment->approved_at?->toDateString() }}">{{ $comment->approved_at?->translatedFormat('d/m/Y') }}</time></div>@if ($comment->rating)<p class="review-rating mt-2 mb-0" aria-label="{{ $comment->rating }} trên 5 sao">@for ($star = 1; $star <= 5; $star++)<span class="{{ $star <= $comment->rating ? '' : 'text-body-tertiary' }}" aria-hidden="true">★</span>@endfor</p>@endif<p class="mt-2 mb-0">{{ $comment->body }}</p></div></article>@empty<p class="empty-state w-100">Chưa có đánh giá nào. Khách đã đi xe có thể là người đầu tiên chia sẻ trải nghiệm.</p>@endforelse</div><x-comment-form :service="$service" :rating-enabled="true" :compact="true" /></div></div>
+    @php
+        $reviews = $service->approvedComments;
+        $visibleReviews = $reviews->take(6);
+        $moreReviews = $reviews->slice(6);
+        $reviewFormOpen = $errors->hasAny(['author_name', 'author_email', 'rating', 'body']);
+    @endphp
+    <section class="service-reviews section-space bg-light" id="danh-gia">
+        <div class="container">
+            <header class="mx-auto text-center mb-5">
+                <h2 class="display-title h2">Đánh giá từ khách hàng</h2>
+                <p class="text-body mb-0">Chia sẻ thật từ khách đã đi xe, được kiểm duyệt trước khi hiển thị.</p>
+            </header>
+
+            <div class="service-reviews__layout">
+                {{-- Tổng quan điểm đánh giá --}}
+                <aside class="review-summary">
+                    @if ($ratingSummary['count'])
+                        <p class="review-summary__score mb-1">{{ number_format($ratingSummary['average'], 1, ',', '') }}<span>/5</span></p>
+                        <p class="review-stars review-stars--lg mb-1" role="img" aria-label="{{ number_format($ratingSummary['average'], 1, ',', '') }} trên 5 sao">
+                            @for ($star = 1; $star <= 5; $star++)
+                                <span @class(['is-on' => $star <= round($ratingSummary['average'])]) aria-hidden="true">★</span>
+                            @endfor
+                        </p>
+                        <p class="small text-body-secondary mb-4">Dựa trên {{ $ratingSummary['count'] }} đánh giá</p>
+                        <ul class="review-bars list-unstyled mb-4">
+                            @foreach ($ratingSummary['distribution'] as $star => $total)
+                                @php($percent = $ratingSummary['count'] ? round($total / $ratingSummary['count'] * 100) : 0)
+                                <li class="review-bars__row">
+                                    <span class="review-bars__label">{{ $star }} ★</span>
+                                    <span class="review-bars__track" role="img" aria-label="{{ $total }} đánh giá {{ $star }} sao"><span class="review-bars__fill" style="width: {{ $percent }}%"></span></span>
+                                    <span class="review-bars__count">{{ $total }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="review-summary__score review-summary__score--empty mb-2">Chưa có đánh giá</p>
+                        <p class="small text-body-secondary mb-4">Anh/chị đã đi xe có thể là người đầu tiên chia sẻ trải nghiệm.</p>
+                    @endif
+                    <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#viet-danh-gia" aria-expanded="{{ $reviewFormOpen ? 'true' : 'false' }}" aria-controls="viet-danh-gia">Viết đánh giá</button>
+                </aside>
+
+                {{-- Danh sách đánh giá --}}
+                <div class="review-list">
+                    @forelse ($visibleReviews as $comment)
+                        @include('frontend.services.partials.review-card', ['comment' => $comment])
+                    @empty
+                        <div class="review-empty">
+                            <span class="review-empty__icon" aria-hidden="true">★</span>
+                            <p class="fw-semibold mb-1">Chưa có đánh giá nào được hiển thị</p>
+                            <p class="small text-body-secondary mb-0">Đánh giá mới sẽ xuất hiện tại đây sau khi được kiểm duyệt.</p>
+                        </div>
+                    @endforelse
+
+                    @if ($moreReviews->isNotEmpty())
+                        <div class="collapse review-list__more" id="danh-gia-them">
+                            @foreach ($moreReviews as $comment)
+                                @include('frontend.services.partials.review-card', ['comment' => $comment])
+                            @endforeach
+                        </div>
+                        <button class="btn btn-outline-primary review-list__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#danh-gia-them" aria-expanded="false" aria-controls="danh-gia-them">Xem thêm {{ $moreReviews->count() }} đánh giá</button>
+                    @endif
+                </div>
+            </div>
+
+            <div @class(['collapse', 'show' => $reviewFormOpen]) id="viet-danh-gia">
+                <div class="review-form-card mt-4">
+                    <h3 class="h5 fw-bold mb-1">Chia sẻ trải nghiệm của anh/chị</h3>
+                    <p class="small text-body-secondary mb-4">Đánh giá giúp khách sau chọn xe dễ hơn và giúp {{ $website->site_name ?: 'chúng tôi' }} phục vụ tốt hơn.</p>
+                    <x-comment-form :service="$service" :rating-enabled="true" :compact="true" button-label="Gửi đánh giá" />
+                </div>
+            </div>
+        </div>
     </section>
 
     {{-- 10. FAQ --}}

@@ -1,4 +1,4 @@
-@props(['post' => null, 'service' => null, 'compact' => false, 'ratingEnabled' => false])
+@props(['post' => null, 'service' => null, 'compact' => false, 'ratingEnabled' => false, 'buttonLabel' => 'Gửi bình luận'])
 
 <form class="{{ $compact ? '' : 'mt-5 ' }} comment-form" action="{{ $service ? route('services.comments.store', ['service' => $service->id]) : route('comments.store', ['post' => $post->id]) }}" method="post">
     @csrf
@@ -16,27 +16,24 @@
         @if ($ratingEnabled)
             <fieldset class="fw-semibold col-12">
                 <legend>Đánh giá của anh/chị <span class="text-danger">*</span></legend>
-                <div class="d-flex flex-wrap gap-3">
-                    @for ($rating = 1; $rating <= 5; $rating++)
-                        <label class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="rating" value="{{ $rating }}" @checked((int) old('rating') === $rating) required>
-                            <span class="d-inline-flex align-items-center fw-semibold gap-1">
-                                {{ $rating }} <span aria-hidden="true">★</span>
-                            </span>
-                        </label>
+                {{-- Sao xếp ngược 5→1 để CSS tô sáng ngôi sao được chọn và các sao bên trái nó. --}}
+                <div class="star-picker">
+                    @for ($rating = 5; $rating >= 1; $rating--)
+                        <input class="star-picker__input" type="radio" id="comment-rating-{{ $rating }}" name="rating" value="{{ $rating }}" @checked((int) old('rating') === $rating) required>
+                        <label class="star-picker__star" for="comment-rating-{{ $rating }}" title="{{ $rating }} sao"><span class="visually-hidden">{{ $rating }} sao</span><span aria-hidden="true">★</span></label>
                     @endfor
                 </div>
                 @error('rating')<span class="d-block fw-medium text-danger small mt-1">{{ $message }}</span>@enderror
             </fieldset>
         @endif
         <label class="fw-semibold col-12" for="comment-body">
-            Bình luận <span class="text-danger">*</span>
+            {{ $ratingEnabled ? 'Nội dung đánh giá' : 'Bình luận' }} <span class="text-danger">*</span>
             <textarea class="form-control comment-form__message" id="comment-body" name="body" required maxlength="3000">{{ old('body') }}</textarea>
             @error('body')<span class="d-block fw-medium text-danger small mt-1">{{ $message }}</span>@enderror
         </label>
     </div>
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4">
-        <p class="small text-body-secondary mb-0">Bình luận sẽ được kiểm duyệt trước khi hiển thị công khai.</p>
-        <button class="btn btn-primary" type="submit">Gửi bình luận</button>
+        <p class="small text-body-secondary mb-0">{{ $ratingEnabled ? 'Đánh giá' : 'Bình luận' }} sẽ được kiểm duyệt trước khi hiển thị công khai.</p>
+        <button class="btn btn-primary" type="submit">{{ $buttonLabel }}</button>
     </div>
 </form>

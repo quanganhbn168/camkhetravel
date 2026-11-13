@@ -6,6 +6,45 @@
   font-size: 1rem;
 }
 
+/* Chọn sao: input xếp 5→1, hiển thị ngược lại để sao được chọn và các sao bên trái cùng sáng. */
+.star-picker {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.star-picker__input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.star-picker__star {
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--bs-border-color);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.star-picker__star:hover,
+.star-picker__star:hover ~ .star-picker__star,
+.star-picker__input:checked ~ .star-picker__star {
+  color: #f5a524;
+}
+
+.star-picker__star:hover {
+  transform: scale(1.12);
+}
+
+.star-picker__input:focus-visible + .star-picker__star {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
 .review-layout {
   display: grid;
   gap: 2rem;

@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\Testimonial;
 use App\Support\Categories\CategoryTree;
+use App\Support\Content\ArticleOutline;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
 use App\Support\Seo\FrontendSeoBuilder;
@@ -66,12 +67,12 @@ class ServiceController extends Controller
             'slugs',
             'bannerVideoMedia',
             'processBackgroundMedia',
-            'commitmentMedia',
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
         $service->setAttribute('image_url', MediaUrl::resolve($service->curatorMedia));
-        $service->setAttribute('body_html', (string) $service->body);
+        $content = ArticleOutline::prepare((string) $service->body);
+        $service->setAttribute('body_html', $content['html']);
         $bannerVideoUrl = str_starts_with((string) $service->bannerVideoMedia?->type, 'video/')
             ? MediaUrl::resolve($service->bannerVideoMedia)
             : null;
@@ -125,9 +126,14 @@ class ServiceController extends Controller
                 ->values(),
             'galleryImages' => array_values(array_unique($galleryImages)),
             'faqItems' => $faqItems,
+            'tableOfContents' => $content['tableOfContents'],
             'ratingSummary' => [
                 'count' => $ratedComments->count(),
                 'average' => $ratedComments->isNotEmpty() ? round((float) $ratedComments->avg('rating'), 1) : null,
+                // Số đánh giá theo từng mức sao, từ 5 xuống 1.
+                'distribution' => collect([5, 4, 3, 2, 1])
+                    ->mapWithKeys(fn (int $star): array => [$star => $ratedComments->where('rating', $star)->count()])
+                    ->all(),
             ],
             'seo' => $this->seo->service($service),
         ]);
