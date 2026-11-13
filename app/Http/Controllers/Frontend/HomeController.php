@@ -119,7 +119,7 @@ class HomeController extends Controller
         $latestPosts = Post::query()
             ->published()
             ->with(['category', 'curatorMedia', 'slugs'])
-            ->orderByDesc('published_at')
+            ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->limit(3)
             ->get()

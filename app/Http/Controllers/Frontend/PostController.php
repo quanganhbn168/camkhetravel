@@ -111,7 +111,8 @@ class PostController extends Controller
             ->whereKeyNot($post->id)
             ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
-            ->latest('published_at')
+            ->latest('created_at')
+            ->latest('id')
             ->limit(4)
             ->get());
         [$previousPost, $nextPost] = $this->adjacentPosts($post);
@@ -184,35 +185,31 @@ class PostController extends Controller
 
     private function adjacentPosts(Post $post): array
     {
-        if (! $post->published_at) {
-            return [null, null];
-        }
-
         $withMedia = ['curatorMedia', 'slugs'];
         $previousPost = Post::query()
             ->published()
             ->where(function ($query) use ($post): void {
-                $query->where('published_at', '<', $post->published_at)
+                $query->where('created_at', '<', $post->created_at)
                     ->orWhere(function ($query) use ($post): void {
-                        $query->where('published_at', $post->published_at)
+                        $query->where('created_at', $post->created_at)
                             ->where('id', '<', $post->id);
                     });
             })
             ->with($withMedia)
-            ->orderByDesc('published_at')
+            ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->first();
         $nextPost = Post::query()
             ->published()
             ->where(function ($query) use ($post): void {
-                $query->where('published_at', '>', $post->published_at)
+                $query->where('created_at', '>', $post->created_at)
                     ->orWhere(function ($query) use ($post): void {
-                        $query->where('published_at', $post->published_at)
+                        $query->where('created_at', $post->created_at)
                             ->where('id', '>', $post->id);
                     });
             })
             ->with($withMedia)
-            ->orderBy('published_at')
+            ->orderBy('created_at')
             ->orderBy('id')
             ->first();
 
@@ -237,10 +234,10 @@ class PostController extends Controller
     private function sortPosts($query, string $sort)
     {
         return match ($sort) {
-            'oldest' => $query->orderByRaw('published_at is null')->orderBy('published_at')->orderBy('id'),
-            'title_asc' => $query->orderBy('title')->orderByDesc('published_at'),
-            'title_desc' => $query->orderByDesc('title')->orderByDesc('published_at'),
-            default => $query->orderByDesc('published_at')->orderByDesc('id'),
+            'oldest' => $query->orderBy('created_at')->orderBy('id'),
+            'title_asc' => $query->orderBy('title')->orderByDesc('created_at'),
+            'title_desc' => $query->orderByDesc('title')->orderByDesc('created_at'),
+            default => $query->orderByDesc('created_at')->orderByDesc('id'),
         };
     }
 

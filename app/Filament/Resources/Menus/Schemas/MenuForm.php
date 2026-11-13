@@ -303,7 +303,7 @@ final class MenuForm
                 'label' => 'Bài viết / blog',
                 'items' => Post::query()
                     ->published()
-                    ->orderByDesc('published_at')
+                    ->orderByDesc('created_at')
                     ->when($search !== '', fn ($query) => $query->where('title', 'like', '%'.$search.'%'))->limit(50)->get(['id', 'title'])
                     ->map(fn (Post $post): array => [
                         'key' => "post:{$post->id}",

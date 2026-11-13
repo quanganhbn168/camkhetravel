@@ -21,13 +21,14 @@ final class PostsTable
                 TextColumn::make('category.name')->copyable()->copyMessage('Đã sao chép')->label('Chuyên mục')->badge()->toggleable(),
                 TextColumn::make('status')->label('Trạng thái')->badge(),
                 ToggleColumn::make('is_featured')->label('Nổi bật'),
-                TextColumn::make('published_at')->label('Xuất bản')->dateTime('d/m/Y')->sortable(),
+                TextColumn::make('created_at')->label('Ngày tạo')->dateTime('d/m/Y H:i')->sortable(),
+                TextColumn::make('published_at')->label('Xuất bản')->dateTime('d/m/Y')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('post_category_id')->label('Chuyên mục')->relationship('category', 'name'),
                 SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư']),
             ])
-            ->defaultSort('published_at', 'desc')
+            ->defaultSort('created_at', 'desc')
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),

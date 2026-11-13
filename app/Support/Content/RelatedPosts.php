@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Bài viết liên quan theo thẻ: bài chung nhiều thẻ hơn đứng trước, rồi đến bài mới hơn.
+ * Bài viết liên quan theo thẻ: bài chung nhiều thẻ hơn đứng trước, rồi đến bài tạo gần đây hơn (created_at).
  * Thẻ chỉ dùng để nối nội dung cùng chủ đề (liên kết nội bộ), không có trang riêng cho từng thẻ.
  */
 final class RelatedPosts
@@ -32,7 +32,8 @@ final class RelatedPosts
             ->withCount(['tags as shared_tags_count' => fn (Builder $query) => $query->whereKey($tagIds->all())])
             ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('shared_tags_count')
-            ->orderByDesc('published_at')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->limit($limit)
             ->get();
 

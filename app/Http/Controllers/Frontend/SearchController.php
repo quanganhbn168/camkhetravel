@@ -56,7 +56,8 @@ class SearchController extends Controller
             ->published()
             ->with(['category', 'curatorMedia', 'slugs'])
             ->when($keyword === '', fn (Builder $query) => $query->whereRaw('1 = 0'), fn (Builder $query) => $this->applyKeyword($query, $keyword))
-            ->orderByDesc('published_at')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate(9, ['*'], 'posts_page')
             ->withQueryString();
 
