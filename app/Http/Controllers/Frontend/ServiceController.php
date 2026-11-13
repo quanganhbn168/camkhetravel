@@ -246,9 +246,8 @@ class ServiceController extends Controller
             ->filter(fn (mixed $item): bool => is_array($item))
             ->values();
         $mediaIds = $items
-            ->map(fn (array $item): mixed => $item['media_id'] ?? $item['image_id'] ?? null)
-            ->filter(fn (mixed $id): bool => is_numeric($id))
-            ->map(fn (mixed $id): int => (int) $id)
+            ->map(fn (array $item): ?int => $this->pickedMediaId($item['media_id'] ?? $item['image_id'] ?? null))
+            ->filter()
             ->unique();
         $media = $mediaIds->isEmpty()
             ? collect()
@@ -256,14 +255,22 @@ class ServiceController extends Controller
 
         return $items
             ->map(function (array $item) use ($media): array {
-                $mediaId = is_numeric($item['media_id'] ?? null)
-                    ? (int) $item['media_id']
-                    : (is_numeric($item['image_id'] ?? null) ? (int) $item['image_id'] : null);
+                $mediaId = $this->pickedMediaId($item['media_id'] ?? $item['image_id'] ?? null);
                 $item['media_url'] = $mediaId ? $media->get($mediaId)?->url : null;
 
                 return $item;
             })
             ->all();
+    }
+
+    /** ID ảnh do CuratorPicker lưu: thường là số, phòng trường hợp Curator trả về mảng/bản ghi media. */
+    private function pickedMediaId(mixed $value): ?int
+    {
+        if (is_array($value)) {
+            $value = $value['id'] ?? (is_array(reset($value)) ? (reset($value)['id'] ?? null) : reset($value));
+        }
+
+        return is_numeric($value) ? (int) $value : null;
     }
 
     private function withImages(iterable $services): iterable

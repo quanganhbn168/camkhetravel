@@ -93,8 +93,8 @@ final class ServiceForm
                             Repeater::make('usecase_items')
                                 ->label('Nhu cầu')
                                 ->schema([
-                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
-                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Ảnh minh họa (không bắt buộc).'),
+                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
+                                    CuratorPicker::make('media_id')->label('Ảnh minh họa (không bắt buộc)')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                                 ])
                                 ->columns(2)
@@ -115,7 +115,7 @@ final class ServiceForm
                                 ->schema([
                                     TextInput::make('title')->label('Tên xe')->required()->maxLength(255),
                                     TextInput::make('seats')->label('Số chỗ')->placeholder('4 chỗ')->maxLength(64),
-                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Ảnh xe thực tế hoặc ảnh minh họa phù hợp.'),
+                                    CuratorPicker::make('media_id')->label('Ảnh xe')->helperText('Ưu tiên ảnh xe thực tế.')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                                 ])
                                 ->columns(2)
