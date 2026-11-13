@@ -66,7 +66,7 @@
                     @endif
                     <a class="btn btn-primary" href="{{ $contactUrl }}">Nhận báo giá <span aria-hidden="true">→</span></a>
                 </div>
-                <div class="service-intro__visual">
+                <div class="service-intro__visual" data-reveal="right">
                     <figure class="service-intro__visual-main">
                         @if ($heroImage)
                             <img src="{{ $heroImage }}" alt="{{ $service->title }}" loading="eager">
@@ -107,7 +107,7 @@
                         </div>
                     </nav>
                 @endif
-                <div class="article-prose service-prose">{!! $introHtml !!}</div>
+                <div class="article-prose service-prose" data-reveal="fade">{!! $introHtml !!}</div>
             </div>
         </section>
     @endif
@@ -116,11 +116,11 @@
     @if ($benefitItems !== [])
         <section id="vi-sao-chon" class="section-space bg-light">
             <div class="container">
-                <header class="mx-auto text-center mb-4">
+                <header class="mx-auto text-center mb-4" data-reveal>
                     <h2 class="display-title h2">{{ $service->benefit_title ?: 'Vì sao chọn '.$service->title }}</h2>
                     @if ($service->benefit_description)<p class="mx-auto lead">{{ $service->benefit_description }}</p>@endif
                 </header>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" data-reveal-stagger>
                     @foreach ($benefitItems as $item)
                         <div class="col">
                             <article class="card h-100">
@@ -141,11 +141,11 @@
     @if ($usecaseItems !== [])
         <section id="nhu-cau" class="section-space">
             <div class="container">
-                <header class="mx-auto text-center mb-4">
+                <header class="mx-auto text-center mb-4" data-reveal>
                     <h2 class="display-title h2">{{ $service->usecase_title ?: 'Các nhu cầu đặt xe' }}</h2>
                     @if ($service->usecase_description)<p class="mx-auto lead">{{ $service->usecase_description }}</p>@endif
                 </header>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" data-reveal-stagger>
                     @foreach ($usecaseItems as $item)
                         <div class="col">
                             <article class="overflow-hidden card h-100">
@@ -168,14 +168,14 @@
     @if ($vehicleItems !== [])
         <section id="dong-xe" class="section-space bg-light">
             <div class="container">
-                <header class="mx-auto text-center mb-4">
+                <header class="mx-auto text-center mb-4" data-reveal>
                     <h2 class="display-title h2">{{ $service->vehicle_title ?: 'Các dòng xe phục vụ' }}</h2>
                     @if ($service->vehicle_description)<p class="mx-auto lead">{{ $service->vehicle_description }}</p>@endif
                 </header>
-                <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+                <x-slider per-view="1,2,3" label="Các dòng xe phục vụ" data-reveal>
                     @foreach ($vehicleItems as $item)
-                        <div class="col">
-                            <article class="overflow-hidden card h-100">
+                        <div class="swiper-slide">
+                            <article class="overflow-hidden card h-100 vehicle-card">
                                 @if ($item['media_url'] ?? null)
                                     <img class="w-100 object-fit-cover benefit-image" src="{{ $item['media_url'] }}" alt="{{ $item['title'] ?? '' }}" loading="lazy">
                                 @endif
@@ -187,7 +187,7 @@
                             </article>
                         </div>
                     @endforeach
-                </div>
+                </x-slider>
             </div>
         </section>
     @endif
@@ -196,12 +196,12 @@
     @if (filled($service->area_title) || filled($service->area_description) || $areaItems !== [])
         <section id="khu-vuc" class="section-space">
             <div class="container">
-                <header class="mx-auto text-center mb-4">
+                <header class="mx-auto text-center mb-4" data-reveal>
                     <h2 class="display-title h2">{{ $service->area_title ?: 'Khu vực nhận đón khách' }}</h2>
                     @if ($service->area_description)<p class="mx-auto lead">{{ $service->area_description }}</p>@endif
                 </header>
                 @if ($areaItems !== [])
-                    <ul class="service-area list-unstyled mb-0">
+                    <ul class="service-area list-unstyled mb-0" data-reveal-stagger="zoom">
                         @foreach ($areaItems as $item)
                             <li class="service-area__item">
                                 <h3 class="fw-bold h6 mb-1">{{ $item['title'] ?? '' }}</h3>
@@ -222,11 +222,11 @@
             @endif
             <div class="service-process__overlay"></div>
             <div class="container position-relative">
-                <header class="mx-auto text-center mb-5">
+                <header class="mx-auto text-center mb-5" data-reveal>
                     <h2 class="display-title h2 text-white">{{ $service->process_title ?: 'Quy trình đặt xe' }}</h2>
                     @if ($service->process_description)<p class="mx-auto lead">{{ $service->process_description }}</p>@endif
                 </header>
-                <ol class="service-process__timeline">
+                <ol class="service-process__timeline" data-reveal-stagger>
                     @foreach ($processItems as $item)
                         <li class="service-process__item">
                             <span class="service-process__marker" aria-hidden="true">{{ $item['step'] ?? $loop->iteration }}</span>
@@ -246,11 +246,11 @@
     @if ($pricingItems->isNotEmpty())
         <section id="bang-gia" class="section-space bg-light">
             <div class="container">
-                <header class="mx-auto text-center mb-4">
+                <header class="mx-auto text-center mb-4" data-reveal>
                     <h2 class="display-title h2">{{ $service->pricing_title ?: 'Bảng giá tham khảo' }}</h2>
                     @if ($service->pricing_description)<p class="mx-auto lead">{{ $service->pricing_description }}</p>@endif
                 </header>
-                <div class="table-responsive">
+                <div class="table-responsive" data-reveal>
                     <table class="table table-bordered align-middle bg-white service-pricing">
                         <thead>
                             <tr><th scope="col">Hành trình</th><th scope="col">Loại xe</th><th scope="col">Giá tham khảo</th></tr>
@@ -275,20 +275,18 @@
     {{-- 9. Đánh giá khách hàng: chỉ đánh giá đã duyệt của chính dịch vụ này --}}
     @php
         $reviews = $service->approvedComments;
-        $visibleReviews = $reviews->take(6);
-        $moreReviews = $reviews->slice(6);
         $reviewFormOpen = $errors->hasAny(['author_name', 'author_email', 'rating', 'body']);
     @endphp
     <section class="service-reviews section-space bg-light" id="danh-gia">
         <div class="container">
-            <header class="mx-auto text-center mb-5">
+            <header class="mx-auto text-center mb-5" data-reveal>
                 <h2 class="display-title h2">Đánh giá từ khách hàng</h2>
                 <p class="text-body mb-0">Chia sẻ thật từ khách đã đi xe, được kiểm duyệt trước khi hiển thị.</p>
             </header>
 
             <div class="service-reviews__layout">
                 {{-- Tổng quan điểm đánh giá --}}
-                <aside class="review-summary">
+                <aside class="review-summary" data-reveal="fade">
                     @if ($ratingSummary['count'])
                         <p class="review-summary__score mb-1">{{ number_format($ratingSummary['average'], 1, ',', '') }}<span>/5</span></p>
                         <p class="review-stars review-stars--lg mb-1" role="img" aria-label="{{ number_format($ratingSummary['average'], 1, ',', '') }} trên 5 sao">
@@ -315,24 +313,19 @@
                 </aside>
 
                 {{-- Danh sách đánh giá --}}
-                <div class="review-list">
-                    @forelse ($visibleReviews as $comment)
-                        @include('frontend.services.partials.review-card', ['comment' => $comment])
-                    @empty
+                <div class="review-list" data-reveal>
+                    @if ($reviews->isNotEmpty())
+                        <x-slider per-view="1,1,2" label="Đánh giá của khách hàng" :autoplay="true">
+                            @foreach ($reviews as $comment)
+                                <div class="swiper-slide">@include('frontend.services.partials.review-card', ['comment' => $comment])</div>
+                            @endforeach
+                        </x-slider>
+                    @else
                         <div class="review-empty">
                             <span class="review-empty__icon" aria-hidden="true">★</span>
                             <p class="fw-semibold mb-1">Chưa có đánh giá nào được hiển thị</p>
                             <p class="small text-body-secondary mb-0">Đánh giá mới sẽ xuất hiện tại đây sau khi được kiểm duyệt.</p>
                         </div>
-                    @endforelse
-
-                    @if ($moreReviews->isNotEmpty())
-                        <div class="collapse review-list__more" id="danh-gia-them">
-                            @foreach ($moreReviews as $comment)
-                                @include('frontend.services.partials.review-card', ['comment' => $comment])
-                            @endforeach
-                        </div>
-                        <button class="btn btn-outline-primary review-list__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#danh-gia-them" aria-expanded="false" aria-controls="danh-gia-them">Xem thêm {{ $moreReviews->count() }} đánh giá</button>
                     @endif
                 </div>
             </div>
@@ -350,7 +343,7 @@
     {{-- 10. FAQ --}}
     @if ($faqItems->isNotEmpty())
         <section class="faq section-space" id="cau-hoi-thuong-gap">
-            <div class="container"><header class="faq__header"><h2 class="display-title h2">Câu hỏi thường gặp</h2><p class="text-body">Thông tin cần biết trước khi đặt xe.</p></header><div class="faq__list">@foreach ($faqItems as $item)<details class="faq__item" @if ($loop->first) open @endif><summary class="faq__question"><span>{{ $item['question'] }}</span><span class="faq__indicator" aria-hidden="true">+</span></summary><div class="faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
+            <div class="container"><header class="faq__header" data-reveal><h2 class="display-title h2">Câu hỏi thường gặp</h2><p class="text-body">Thông tin cần biết trước khi đặt xe.</p></header><div class="faq__list" data-reveal>@foreach ($faqItems as $item)<details class="faq__item" @if ($loop->first) open @endif><summary class="faq__question"><span>{{ $item['question'] }}</span><span class="faq__indicator" aria-hidden="true">+</span></summary><div class="faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
         </section>
     @endif
 
@@ -358,6 +351,6 @@
     <x-service-consultation-form :content="$service" heading="Đặt xe ngay" button-label="Gửi yêu cầu đặt xe" description="Cho chúng tôi biết điểm đón, điểm đến và thời gian đi. CamKheTravel sẽ liên hệ xác nhận xe và giá." />
 
     @if ($relatedServices->isNotEmpty())
-        <section class="resource-related-section" id="dich-vu-tham-khao"><div class="container flex-column d-flex gap-3 mb-4"><h2 class="display-title h2">Dịch vụ tham khảo</h2><a class="section-link" href="{{ route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a></div><div class="container"><div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">@foreach ($relatedServices as $relatedService) <div class="col">@include('frontend.partials.service-card', ['service' => $relatedService])</div> @endforeach</div></div></section>
+        <section class="resource-related-section" id="dich-vu-tham-khao"><div class="container flex-column d-flex gap-3 mb-4" data-reveal><h2 class="display-title h2">Dịch vụ tham khảo</h2><a class="section-link" href="{{ route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a></div><div class="container"><x-slider per-view="1,2,3" label="Dịch vụ tham khảo" data-reveal>@foreach ($relatedServices as $relatedService)<div class="swiper-slide">@include('frontend.partials.service-card', ['service' => $relatedService])</div>@endforeach</x-slider></div></section>
     @endif
 @endsection

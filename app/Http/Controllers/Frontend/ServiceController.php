@@ -84,7 +84,7 @@ class ServiceController extends Controller
             ->with(['category', 'curatorMedia', 'slugs'])
             ->orderByDesc('is_featured')
             ->orderBy('sort_order')
-            ->limit(3)
+            ->limit(6)
             ->get());
 
         if ($relatedServices->isEmpty()) {
@@ -94,7 +94,7 @@ class ServiceController extends Controller
                 ->with(['category', 'curatorMedia', 'slugs'])
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
-                ->limit(3)
+                ->limit(6)
                 ->get());
         }
 
