@@ -25,7 +25,7 @@ final class ServiceForm
             ->columns(['lg' => 3])
             ->components([
                 Group::make([
-                    Section::make('Nội dung dịch vụ')
+                    Section::make('1-2. Banner & giới thiệu dịch vụ')
 
                         ->schema([
                             TextInput::make('title')
@@ -37,9 +37,6 @@ final class ServiceForm
                                     if (blank($get('slug')) && ($slug = ContentSeoFallbacks::slug($state))) {
                                         $set('slug', $slug);
                                     }
-                                    if (blank($get('seo_title')) && ($seoTitle = ContentSeoFallbacks::title($state))) {
-                                        $set('seo_title', $seoTitle);
-                                    }
                                 })
                                 ->columnSpanFull(),
                             TextInput::make('slug')
@@ -49,20 +46,14 @@ final class ServiceForm
                                 ->columnSpanFull(),
                             CuratorPicker::make('curator_media_id')->label('Ảnh đại diện')->relationship('curatorMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
                             CuratorPicker::make('banner_video_media_id')->label('Video banner dịch vụ')->relationship('bannerVideoMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['video/*'])->helperText('Video được phát nền ở banner; ảnh đại diện sẽ làm poster khi cần.')->columnSpanFull(),
-                            CuratorPicker::make('backstage_gallery')->label('Ảnh hậu trường')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->columnSpanFull(),
-                            CuratorPicker::make('gallery')->label('Ảnh tài liệu tham khảo')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị cùng phần ảnh và video tham khảo.')->columnSpanFull(),
+                            CuratorPicker::make('gallery')->label('Ảnh thực tế (ảnh xe, chuyến đi)')->multiple()->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Hai ảnh đầu hiện cạnh phần Giới thiệu. Ưu tiên ảnh xe thực tế.')->columnSpanFull(),
                             Textarea::make('excerpt')
-                                ->label('Mô tả ngắn')
+                                ->label('Mô tả ngắn (hiện dưới tiêu đề banner)')
                                 ->rows(3)
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(function (?string $state, $get, $set): void {
-                                    if (blank($get('seo_description')) && ($description = ContentSeoFallbacks::description($state))) {
-                                        $set('seo_description', $description);
-                                    }
-                                })
                                 ->columnSpanFull(),
                             RichEditor::make('body')
-                                ->label('Nội dung')
+                                ->label('Nội dung giới thiệu')
+                                ->helperText('Một đoạn giới thiệu chính. Nếu để trống, trang dùng mô tả ngắn.')
                                 ->plugins([ScopedAttachCuratorMediaPlugin::make()])
                                 ->toolbarButtons([
                                     ['bold', 'italic', 'underline', 'strike', 'link'],
@@ -76,35 +67,87 @@ final class ServiceForm
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),
-                    Section::make('SEO')
-
+                    Section::make('3. Vì sao chọn dịch vụ')
+                        ->description('Các lý do khách nên chọn dịch vụ (cam kết viết theo hướng vận chuyển: đúng giờ, giá rõ ràng, xác nhận trước khi đi).')
                         ->schema([
-                            ...SeoFields::make(),
-                        ])
-                        ->columns(2),
-                    Section::make('Giá trị nổi bật')
-
-                        ->schema([
-                            TextInput::make('benefit_title')->label('Tiêu đề')->maxLength(255)->columnSpanFull(),
+                            TextInput::make('benefit_title')->label('Tiêu đề')->placeholder('Vì sao chọn Taxi Cẩm Khê')->maxLength(255)->columnSpanFull(),
                             Textarea::make('benefit_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                             Repeater::make('benefit_items')
-                                ->label('Các giá trị / hạng mục')
+                                ->label('Các lý do')
                                 ->schema([
-                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
-                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Nhập ID media trong Curator nếu hạng mục có ảnh.'),
+                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255)->columnSpanFull(),
                                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                                 ])
-                                ->columns(2)
-                                ->addActionLabel('Thêm giá trị')
+                                ->addActionLabel('Thêm lý do')
                                 ->reorderable()
                                 ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Giá trị mới')
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Lý do mới')
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),
-                    Section::make('Quy trình triển khai')
-
+                    Section::make('4. Các nhu cầu đặt xe')
+                        ->description('Ví dụ: đi bệnh viện, sân bay, công tác, du lịch.')
                         ->schema([
+                            TextInput::make('usecase_title')->label('Tiêu đề')->placeholder('Các nhu cầu đặt xe')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('usecase_description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                            Repeater::make('usecase_items')
+                                ->label('Nhu cầu')
+                                ->schema([
+                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
+                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Ảnh minh họa (không bắt buộc).'),
+                                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm nhu cầu')
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Nhu cầu mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                    Section::make('5. Các dòng xe phục vụ')
+                        ->description('Chỉ liệt kê loại xe thực sự cung cấp.')
+                        ->schema([
+                            TextInput::make('vehicle_title')->label('Tiêu đề')->placeholder('Các dòng xe phục vụ')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('vehicle_description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                            Repeater::make('vehicle_items')
+                                ->label('Dòng xe')
+                                ->schema([
+                                    TextInput::make('title')->label('Tên xe')->required()->maxLength(255),
+                                    TextInput::make('seats')->label('Số chỗ')->placeholder('4 chỗ')->maxLength(64),
+                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Ảnh xe thực tế hoặc ảnh minh họa phù hợp.'),
+                                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm dòng xe')
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Dòng xe mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                    Section::make('6. Khu vực nhận đón khách')
+                        ->description('Nêu rõ địa bàn đón khách, ví dụ xã Cẩm Khê, Phú Thọ.')
+                        ->schema([
+                            TextInput::make('area_title')->label('Tiêu đề')->placeholder('Khu vực nhận đón khách')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('area_description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                            Repeater::make('area_items')
+                                ->label('Địa điểm / khu vực')
+                                ->schema([
+                                    TextInput::make('title')->label('Tên khu vực')->required()->maxLength(255),
+                                    TextInput::make('description')->label('Ghi chú ngắn')->maxLength(255),
+                                ])
+                                ->columns(2)
+                                ->addActionLabel('Thêm khu vực')
+                                ->reorderable()
+                                ->collapsible()
+                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Khu vực mới')
+                                ->columnSpanFull(),
+                        ])
+                        ->columns(2),
+                    Section::make('7. Quy trình đặt xe')
+                        ->schema([
+                            TextInput::make('process_title')->label('Tiêu đề')->placeholder('Quy trình đặt xe')->maxLength(255)->columnSpanFull(),
                             Textarea::make('process_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                             CuratorPicker::make('process_background_media_id')->label('Ảnh nền quy trình')->relationship('processBackgroundMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh nền cho toàn bộ section quy trình.')->columnSpanFull(),
                             Repeater::make('process_items')
@@ -112,8 +155,6 @@ final class ServiceForm
                                 ->schema([
                                     TextInput::make('step')->label('Số bước')->numeric()->minValue(1),
                                     TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
-                                    TextInput::make('media_id')->label('ID media Curator')->numeric()->helperText('Nhập ID ảnh minh họa trong Curator nếu có.'),
-                                    TextInput::make('color')->label('Màu nhãn')->maxLength(32),
                                     Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
                                 ])
                                 ->columns(2)
@@ -121,72 +162,40 @@ final class ServiceForm
                                 ->reorderable()
                                 ->collapsible()
                                 ->default([
-                                    ['step' => 1, 'title' => 'Tiếp nhận yêu cầu', 'description' => 'Làm rõ mục tiêu, phạm vi và đầu ra cần đạt.'],
-                                    ['step' => 2, 'title' => 'Tư vấn & định hướng', 'description' => 'Đề xuất hướng triển khai phù hợp với bối cảnh thực tế.'],
-                                    ['step' => 3, 'title' => 'Xây dựng ý tưởng', 'description' => 'Phát triển ý tưởng, nội dung và kế hoạch thực hiện.'],
-                                    ['step' => 4, 'title' => 'Triển khai sản xuất', 'description' => 'Phối hợp nhân sự, lịch trình và các hạng mục đã thống nhất.'],
-                                    ['step' => 5, 'title' => 'Duyệt & hoàn thiện', 'description' => 'Tiếp nhận phản hồi, hoàn thiện và bàn giao thành phẩm.'],
+                                    ['step' => 1, 'title' => 'Gửi yêu cầu', 'description' => 'Gọi hotline hoặc gửi điểm đón, điểm đến và thời gian đi.'],
+                                    ['step' => 2, 'title' => 'Nhận báo giá', 'description' => 'Tư vấn loại xe phù hợp và báo giá trước khi khởi hành.'],
+                                    ['step' => 3, 'title' => 'Xác nhận xe', 'description' => 'Thống nhất xe, tài xế và giờ đón.'],
+                                    ['step' => 4, 'title' => 'Đón khách đúng hẹn', 'description' => 'Tài xế đón tại điểm hẹn và đưa khách đến nơi an toàn.'],
                                 ])
                                 ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
                                 ->columnSpanFull(),
                         ])
                         ->columns(2),
-                    Section::make('Cam kết dịch vụ')
-
+                    Section::make('8. Bảng giá / báo giá')
+                        ->description('Giá tham khảo. Chỉ điền giá đã được xác nhận; hành trình chưa có giá để trống cột giá sẽ hiện "Liên hệ".')
                         ->schema([
-                            CuratorPicker::make('commitment_media_id')->label('Ảnh cam kết')->relationship('commitmentMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh hiển thị ở một bên của khối cam kết.')->columnSpanFull(),
-                            TextInput::make('commitment_title')->label('Tiêu đề')->placeholder('Cam kết của doanh nghiệp')->maxLength(255)->columnSpanFull(),
-                            Textarea::make('commitment_description')->label('Mô tả')->rows(3)->columnSpanFull(),
-                            Repeater::make('commitment_items')
-                                ->label('Các cam kết')
+                            TextInput::make('pricing_title')->label('Tiêu đề')->placeholder('Bảng giá tham khảo')->maxLength(255)->columnSpanFull(),
+                            Textarea::make('pricing_description')->label('Mô tả')->rows(2)->columnSpanFull(),
+                            Repeater::make('pricing_items')
+                                ->label('Hành trình')
                                 ->schema([
-                                    TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
-                                    Textarea::make('description')->label('Mô tả')->rows(3)->columnSpanFull(),
+                                    TextInput::make('route')->label('Hành trình')->placeholder('Cẩm Khê → Sân bay Nội Bài')->required()->maxLength(255),
+                                    TextInput::make('vehicle')->label('Loại xe')->placeholder('4 chỗ')->maxLength(255),
+                                    TextInput::make('price')->label('Giá tham khảo')->placeholder('từ 900.000đ')->maxLength(255),
                                 ])
-                                ->columns(2)
-                                ->addActionLabel('Thêm cam kết')
+                                ->columns(3)
+                                ->addActionLabel('Thêm hành trình')
                                 ->reorderable()
                                 ->collapsible()
-                                ->default([
-                                    ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Phạm vi, tiến độ và đầu ra được thống nhất trước khi triển khai.'],
-                                    ['title' => 'Đồng hành xuyên suốt', 'description' => 'Đội ngũ phối hợp cùng khách hàng từ định hướng đến bàn giao.'],
-                                    ['title' => 'Chỉn chu từng chi tiết', 'description' => 'Mỗi hạng mục được kiểm tra trước khi hoàn thiện và bàn giao.'],
-                                ])
-                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Cam kết mới')
+                                ->itemLabel(fn (array $state): ?string => $state['route'] ?? 'Hành trình mới')
                                 ->columnSpanFull(),
+                            Textarea::make('pricing_note')->label('Ghi chú dưới bảng giá')->rows(2)->placeholder('Giá có thể thay đổi theo thời điểm, điểm đón và số khách.')->columnSpanFull(),
                         ])
                         ->columns(2),
-                    Section::make('Số liệu & video tham khảo')
+                    Section::make('SEO')
 
                         ->schema([
-                            TextInput::make('stats_title')->label('Tiêu đề số liệu')->maxLength(255)->columnSpanFull(),
-                            Textarea::make('stats_description')->label('Mô tả số liệu')->rows(2)->columnSpanFull(),
-                            Repeater::make('stats_items')
-                                ->label('Số liệu nổi bật')
-                                ->schema([
-                                    TextInput::make('label')->label('Nhãn')->required()->maxLength(255),
-                                    Textarea::make('description')->label('Mô tả')->rows(2),
-                                ])
-                                ->columns(2)
-                                ->addActionLabel('Thêm số liệu')
-                                ->reorderable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['label'] ?? 'Số liệu mới')
-                                ->columnSpanFull(),
-                            Repeater::make('reference_videos')
-                                ->label('Video tham khảo')
-                                ->schema([
-                                    TextInput::make('title')->label('Tên video')->required()->maxLength(255),
-                                    TextInput::make('url')->label('Link video')->url()->required()->maxLength(1000),
-                                    TextInput::make('thumbnail_media_id')->label('ID thumbnail Curator')->numeric(),
-                                    Textarea::make('description')->label('Mô tả')->rows(2)->columnSpanFull(),
-                                ])
-                                ->columns(2)
-                                ->addActionLabel('Thêm video')
-                                ->reorderable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Video mới')
-                                ->columnSpanFull(),
+                            ...SeoFields::make(prefill: false),
                         ])
                         ->columns(2),
                 ])->columnSpan(['lg' => 2]),

@@ -52,7 +52,7 @@ class ServiceController extends Controller
 
         return view('frontend.services.index', $this->listingData($category) + [
             'categoryBodyHtml' => (string) str((string) $category->body)->sanitizeHtml(),
-            'seo' => $this->seo->listing($title, $description, route('services.category', ['category' => $category->slug]), image: $category->seoImageUrl()),
+            'seo' => $this->seo->listing($title, $description, route('services.category', ['category' => $category->slug]), image: $category->seoImageUrl(), trail: [['name' => 'Dịch vụ', 'url' => route('services.index')], ['name' => $category->name, 'url' => route('services.category', ['category' => $category->slug])]]),
         ]);
     }
 
@@ -97,11 +97,9 @@ class ServiceController extends Controller
                 ->get());
         }
 
-        $backstageGalleryImages = $this->galleryImages($service->backstage_gallery);
         $galleryImages = $this->galleryImages($service->gallery);
         $processItems = $this->mediaItems($service->process_items);
         $benefitItems = $this->mediaItems($service->benefit_items);
-        $referenceVideos = $this->videoItems($service->reference_videos);
         $faqItems = $service->faqs
             ->map(fn ($faq): array => [
                 'question' => $faq->question,
@@ -111,48 +109,21 @@ class ServiceController extends Controller
         $ratedComments = $service->approvedComments
             ->filter(fn ($comment): bool => $comment->rating !== null)
             ->values();
-        $commitmentItems = collect($service->commitment_items ?? [])
-            ->filter(fn (mixed $item): bool => is_array($item))
-            ->map(fn (array $item): array => [
-                'title' => trim((string) ($item['title'] ?? '')),
-                'description' => trim((string) ($item['description'] ?? '')),
-            ])
-            ->filter(fn (array $item): bool => $item['title'] !== '')
-            ->values();
-        if ($commitmentItems->isEmpty()) {
-            $commitmentItems = collect([
-                ['title' => 'Rõ ràng ngay từ đầu', 'description' => 'Điểm đón, thời gian và nhu cầu xe được trao đổi trước chuyến đi.'],
-                ['title' => 'Đồng hành theo lịch trình', 'description' => 'Đầu mối liên hệ hỗ trợ khi cần điều chỉnh thông tin chuyến đi.'],
-                ['title' => 'Xác nhận phương án xe', 'description' => 'Loại xe và chi phí được thống nhất trước khi khởi hành.'],
-            ]);
-        }
-        $hasReferenceVideos = $referenceVideos !== [];
-        $hasReferenceImages = $galleryImages !== [];
-        $hasReferenceTabs = $hasReferenceVideos && $hasReferenceImages;
+
         return view('frontend.services.show', compact('service') + [
             'relatedServices' => $relatedServices,
             'bannerVideoUrl' => $bannerVideoUrl,
             'bannerVideoType' => $service->bannerVideoMedia?->type,
             'processBackgroundUrl' => MediaUrl::resolve($service->processBackgroundMedia) ?: $service->image_url,
-            'commitmentImageUrl' => MediaUrl::resolve($service->commitmentMedia) ?: $service->image_url,
             'processItems' => $processItems,
             'benefitItems' => $benefitItems,
-            'commitmentItems' => $commitmentItems,
-            'testimonials' => Testimonial::query()
-                ->active()
-                ->with('curatorMedia')
-                ->orderBy('sort_order')
-                ->limit(6)
-                ->get(),
-            'statsItems' => collect($service->stats_items ?? [])
-                ->filter(fn (mixed $item): bool => is_array($item) && filled($item['label'] ?? null))
+            'usecaseItems' => $this->mediaItems($service->usecase_items),
+            'vehicleItems' => $this->mediaItems($service->vehicle_items),
+            'areaItems' => $this->mediaItems($service->area_items),
+            'pricingItems' => collect($service->pricing_items ?? [])
+                ->filter(fn (mixed $item): bool => is_array($item) && filled($item['route'] ?? null))
                 ->values(),
-            'referenceVideos' => $referenceVideos,
-            'referenceImages' => array_values(array_unique($galleryImages)),
-            'backstageImages' => array_values(array_unique($backstageGalleryImages)),
-            'hasReferenceVideos' => $hasReferenceVideos,
-            'hasReferenceImages' => $hasReferenceImages,
-            'hasReferenceTabs' => $hasReferenceTabs,
+            'galleryImages' => array_values(array_unique($galleryImages)),
             'faqItems' => $faqItems,
             'ratingSummary' => [
                 'count' => $ratedComments->count(),
@@ -292,23 +263,6 @@ class ServiceController extends Controller
 
                 return $item;
             })
-            ->all();
-    }
-
-    /** @return list<array<string, mixed>> */
-    private function videoItems(?array $items): array
-    {
-        return collect($items ?? [])
-            ->filter(fn (mixed $item): bool => is_array($item) && filled($item['url'] ?? null))
-            ->map(fn (array $item): array => [
-                'title' => trim((string) ($item['title'] ?? 'Video tham khảo')),
-                'url' => trim((string) $item['url']),
-                'description' => trim((string) ($item['description'] ?? '')),
-                'thumbnail_url' => is_numeric($item['thumbnail_media_id'] ?? null)
-                    ? MediaUrl::resolve(Media::query()->find((int) $item['thumbnail_media_id']))
-                    : null,
-            ])
-            ->values()
             ->all();
     }
 
