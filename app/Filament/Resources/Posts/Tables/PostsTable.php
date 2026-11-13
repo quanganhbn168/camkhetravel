@@ -24,7 +24,7 @@ final class PostsTable
                 TextColumn::make('published_at')->label('Xuất bản')->dateTime('d/m/Y')->sortable(),
             ])
             ->filters([
-                SelectFilter::make('categories')->label('Chuyên mục')->relationship('categories', 'name'),
+                SelectFilter::make('post_category_id')->label('Chuyên mục')->relationship('category', 'name'),
                 SelectFilter::make('status')->label('Trạng thái')->options(['draft' => 'Bản nháp', 'published' => 'Đã xuất bản', 'pending' => 'Chờ duyệt', 'private' => 'Riêng tư']),
             ])
             ->defaultSort('published_at', 'desc')
