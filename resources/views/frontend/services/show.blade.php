@@ -1,5 +1,8 @@
 @extends('layouts.master')
-@push('schema')    <x-json-ld :seo="$seo" />@endpush
+
+@push('schema')
+    <x-json-ld :seo="$seo" />
+@endpush
 
 @push('styles')
     @vite('resources/css/pages/service.css')
@@ -14,282 +17,331 @@
         $heroImage = $service->image_url ?: $defaultBannerUrl;
         $contactUrl = route('contact', ['service' => $service->id]);
         $hotlineTel = $website->hotline ? preg_replace('/\s+/', '', $website->hotline) : null;
+        $zaloUrl = $website->zalo_url ?: null;
         $introHtml = filled(strip_tags((string) $service->body_html)) ? $service->body_html : null;
-        $highlights = collect($benefitItems)->pluck('title')->filter()->take(4);
+        $hasWhyChoose = $benefitItems !== [];
+        $hasPricing = $pricingGroups !== [];
+        $hasVehicles = $vehicleItems !== [];
+        $hasArea = filled($service->area_title) || filled($service->area_description) || $areaItems->isNotEmpty();
+        $hasProcess = $processItems !== [];
+        $hasFaq = $faqItems->isNotEmpty();
     @endphp
 
-    {{-- 1. Banner --}}
-    <section class="resource-detail-hero resource-detail-hero--service">
-        @if ($bannerVideoUrl)
-            <video class="resource-detail-hero__video" autoplay muted loop playsinline preload="metadata" @if ($service->image_url) poster="{{ $service->image_url }}" @endif>
-                <source src="{{ $bannerVideoUrl }}" @if ($bannerVideoType) type="{{ $bannerVideoType }}" @endif>
-            </video>
-        @elseif ($heroImage)
-            <img class="resource-detail-hero__image" src="{{ $heroImage }}" alt="" aria-hidden="true">
-        @endif
-        <div class="resource-detail-hero__overlay"></div>
-        <div class="container resource-detail-hero__content">
-            <h1 class="display-title text-white">{{ $service->title }}</h1>
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
-                <a class="btn btn-primary" href="{{ $contactUrl }}">Đặt xe ngay <span aria-hidden="true">→</span></a>
-                @if ($hotlineTel)
-                    <a class="btn btn-outline-light" href="tel:{{ $hotlineTel }}">Gọi {{ $website->hotline }}</a>
+    {{-- ===== 1. Banner: chữ bên trái, ảnh/video bên phải ===== --}}
+    <section class="svc-hero">
+        <div class="svc-hero__media">
+            @if ($bannerVideoUrl)
+                <video autoplay muted loop playsinline preload="metadata" @if ($service->image_url) poster="{{ $service->image_url }}" @endif>
+                    <source src="{{ $bannerVideoUrl }}" @if ($bannerVideoType) type="{{ $bannerVideoType }}" @endif>
+                </video>
+            @elseif ($heroImage)
+                <img src="{{ $heroImage }}" alt="{{ $service->title }}" fetchpriority="high">
+            @endif
+        </div>
+        <div class="container svc-hero__inner">
+            <div class="svc-hero__content">
+                @if ($hero['badge'])<p class="svc-badge">{{ $hero['badge'] }}</p>@endif
+                <h1 class="svc-hero__title">{{ $service->title }}</h1>
+                @if ($hero['subtitle'])<p class="svc-hero__subtitle">{{ $hero['subtitle'] }}</p>@endif
+                @if ($hero['points'] !== [])
+                    <ul class="svc-checks">
+                        @foreach ($hero['points'] as $point)
+                            <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>{{ $point }}</li>
+                        @endforeach
+                    </ul>
                 @endif
+                <div class="svc-actions">
+                    @if ($hotlineTel)
+                        <a class="btn btn-primary btn-lg svc-btn" href="tel:{{ $hotlineTel }}"><i class="fa-solid fa-phone-volume" aria-hidden="true"></i>Gọi đặt xe</a>
+                    @else
+                        <a class="btn btn-primary btn-lg svc-btn" href="#dat-xe"><i class="fa-solid fa-car-side" aria-hidden="true"></i>Đặt xe ngay</a>
+                    @endif
+                    @if ($zaloUrl)
+                        <a class="btn btn-lg svc-btn svc-btn--zalo" href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer"><img src="{{ asset('images/zalo.svg') }}" alt="" width="22" height="22">Nhắn Zalo</a>
+                    @endif
+                </div>
             </div>
         </div>
     </section>
 
-    <div>
+    <nav class="svc-breadcrumb" aria-label="Breadcrumb">
         <div class="container">
-            <nav aria-label="Breadcrumb">
-                <ol class="d-flex flex-wrap align-items-center list-unstyled gap-2 py-3 mb-0 small">
-                    <li><a href="{{ route('home') }}">Trang chủ</a></li><li aria-hidden="true">/</li>
-                    <li><a href="{{ route('services.index') }}">Dịch vụ</a></li>
-                    @if ($service->category)<li aria-hidden="true">/</li><li><a href="{{ route('services.category', ['category' => $service->category->slug]) }}">{{ $service->category->name }}</a></li>@endif
-                    <li aria-hidden="true">/</li><li class="fw-medium text-body-secondary" aria-current="page">{{ $service->title }}</li>
-                </ol>
-            </nav>
+            <ol>
+                <li><a href="{{ route('home') }}">Trang chủ</a></li>
+                <li><a href="{{ route('services.index') }}">Dịch vụ</a></li>
+                @if ($service->category)<li><a href="{{ route('services.category', ['category' => $service->category->slug]) }}">{{ $service->category->name }}</a></li>@endif
+                <li aria-current="page">{{ $service->title }}</li>
+            </ol>
         </div>
-    </div>
+    </nav>
 
-    {{-- 2. Giới thiệu dịch vụ: mô tả ngắn cạnh ảnh, nội dung dài full width ngay bên dưới --}}
-    @if ($service->excerpt || $highlights->isNotEmpty())
-        <section id="gioi-thieu" class="service-intro section-space">
-            <div class="container service-intro__grid">
-                <div>
-                    <h2 class="display-title">Giới thiệu {{ $service->title }}</h2>
-                    @if ($service->excerpt)
-                        <p class="service-intro__lead">{{ $service->excerpt }}</p>
-                    @endif
-                    @if ($highlights->isNotEmpty())
-                        <ul class="service-intro__checks" aria-label="Điểm nổi bật của dịch vụ">
-                            @foreach ($highlights as $title)
-                                <li><span aria-hidden="true">✓</span>{{ $title }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
-                    <a class="btn btn-primary" href="{{ $contactUrl }}">Nhận báo giá <span aria-hidden="true">→</span></a>
-                </div>
-                <div class="service-intro__visual">
-                    <figure class="service-intro__visual-main">
-                        @if ($heroImage)
-                            <img src="{{ $heroImage }}" alt="{{ $service->title }}" loading="eager">
-                        @else
-                            <span class="image-placeholder">{{ $website->site_name }}</span>
-                        @endif
-                    </figure>
-                    @foreach (collect($galleryImages)->take(2) as $imageUrl)
-                        <figure class="service-intro__visual-small">
-                            <img src="{{ $imageUrl }}" alt="{{ $service->title }} — ảnh thực tế {{ $loop->iteration }}" loading="lazy">
-                        </figure>
+    {{-- ===== 2. Gói dịch vụ & giá "Từ ..." ===== --}}
+    @if ($packageItems !== [])
+        <section class="svc-section" id="goi-dich-vu">
+            <div class="container">
+                <header class="svc-heading svc-heading--center" data-reveal>
+                    <h2>{{ $service->package_title ?: 'Tổng quan dịch vụ & giá' }}</h2>
+                    @if ($service->package_description)<p>{{ $service->package_description }}</p>@endif
+                </header>
+                <div class="svc-packages" data-reveal-stagger>
+                    @foreach ($packageItems as $item)
+                        <article class="svc-package">
+                            <div class="svc-package__head">
+                                <span class="svc-icon svc-icon--lg" aria-hidden="true"><i class="{{ $item['icon_class'] }}"></i></span>
+                                <h3>{{ $item['title'] }}</h3>
+                            </div>
+                            @if (filled($item['price'] ?? null))
+                                <p class="svc-package__price">{{ $item['price'] }}@if (filled($item['unit'] ?? null))<span>{{ $item['unit'] }}</span>@endif</p>
+                            @endif
+                            @if (filled($item['description'] ?? null))<p class="svc-package__text">{{ $item['description'] }}</p>@endif
+                            <a class="btn btn-outline-primary svc-package__cta" href="#dat-xe">{{ filled($item['button_label'] ?? null) ? $item['button_label'] : 'Nhận báo giá' }} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                        </article>
                     @endforeach
                 </div>
             </div>
         </section>
     @endif
 
-    @if ($introHtml)
-        {{-- Nội dung chi tiết full width: mục lục tự tạo từ các H2/H3 trong nội dung, mỗi H2 là một phần riêng --}}
-        <section id="noi-dung" class="service-content pb-5 @unless ($service->excerpt || $highlights->isNotEmpty()) pt-5 @endunless">
+    {{-- ===== 3 + 4. Bảng giá theo điểm đến | Vì sao chọn ===== --}}
+    @if ($hasPricing || $hasWhyChoose)
+        <section class="svc-section svc-section--tint">
             <div class="container">
-                @if (count($tableOfContents) >= 2)
-                    <nav class="service-toc mb-4" aria-labelledby="service-toc-title">
-                        <button class="service-toc__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#service-toc-list" aria-expanded="true" aria-controls="service-toc-list">
-                            <span class="fw-bold" id="service-toc-title">Nội dung chính</span>
-                            <span class="service-toc__indicator" aria-hidden="true">
-                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </button>
-                        <div class="collapse show" id="service-toc-list">
-                            <ol class="service-toc__list">
-                                @foreach ($tableOfContents as $item)
-                                    <li @class(['service-toc__item', 'service-toc__item--sub' => $item['level'] === 3])>
-                                        <a href="#{{ $item['id'] }}">{{ $item['title'] }}</a>
+                <div @class(['svc-split', 'svc-split--wide-left' => $hasPricing && $hasWhyChoose])>
+                    @if ($hasPricing)
+                        <div class="svc-split__col" id="bang-gia">
+                            <header class="svc-heading" data-reveal>
+                                <h2>{{ $service->pricing_title ?: 'Giá đặt xe đi các địa điểm' }}</h2>
+                                @if ($service->pricing_description)<p>{{ $service->pricing_description }}</p>@endif
+                            </header>
+                            <div class="svc-prices" data-reveal-stagger>
+                                @foreach ($pricingGroups as $group)
+                                    <article class="svc-price-card">
+                                        <h3 class="svc-price-card__head"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>{{ $group['destination'] }}</h3>
+                                        <div class="svc-price-card__body">
+                                            @foreach ($group['sections'] as $section)
+                                                <div class="svc-price-card__section">
+                                                    <p class="svc-price-card__kind"><i class="{{ $section['icon'] }}" aria-hidden="true"></i>{{ $section['label'] }}</p>
+                                                    <dl>
+                                                        @foreach ($section['rows'] as $row)
+                                                            <div><dt>{{ $row['label'] }}</dt><dd>{{ $row['price'] }}</dd></div>
+                                                        @endforeach
+                                                    </dl>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                            <p class="svc-note"><i class="fa-solid fa-circle-info" aria-hidden="true"></i>{{ $service->pricing_note ?: 'Chi phí thực tế được tư vấn dựa trên quãng đường, loại xe và lịch trình cụ thể.' }}</p>
+                        </div>
+                    @endif
+
+                    @if ($hasWhyChoose)
+                        <div class="svc-split__col" id="vi-sao-chon">
+                            <div class="svc-panel" data-reveal="fade">
+                                <header class="svc-heading">
+                                    <h2>{{ $service->benefit_title ?: 'Vì sao chọn '.$service->title.'?' }}</h2>
+                                    @if ($service->benefit_description)<p>{{ $service->benefit_description }}</p>@endif
+                                </header>
+                                <ul @class(['svc-reasons', 'svc-reasons--grid' => ! $hasPricing])>
+                                    @foreach ($benefitItems as $item)
+                                        <li>
+                                            <span class="svc-icon" aria-hidden="true"><i class="{{ $item['icon_class'] }}"></i></span>
+                                            <div>
+                                                <h3>{{ $item['title'] ?? '' }}</h3>
+                                                @if (filled($item['description'] ?? null))<p>{{ $item['description'] }}</p>@endif
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- ===== 5. Các nhu cầu đặt xe ===== --}}
+    @if ($usecaseItems !== [])
+        <section class="svc-section" id="nhu-cau">
+            <div class="container">
+                <header class="svc-heading svc-heading--center" data-reveal>
+                    <h2>{{ $service->usecase_title ?: 'Các nhu cầu đặt xe' }}</h2>
+                    @if ($service->usecase_description)<p>{{ $service->usecase_description }}</p>@endif
+                </header>
+                <div class="svc-usecases" data-reveal-stagger>
+                    @foreach ($usecaseItems as $item)
+                        <article class="svc-usecase">
+                            <div class="svc-usecase__media">
+                                @if ($item['media_url'] ?? null)
+                                    <img src="{{ $item['media_url'] }}" alt="{{ $item['title'] ?? '' }}" loading="lazy">
+                                @endif
+                                @if (filled($item['icon'] ?? null))
+                                    <span class="svc-icon svc-usecase__icon" aria-hidden="true"><i class="{{ \App\Support\Services\ServiceIcons::classFor($item['icon']) }}"></i></span>
+                                @endif
+                            </div>
+                            <div class="svc-usecase__body">
+                                <h3>{{ $item['title'] ?? '' }}</h3>
+                                @if (filled($item['description'] ?? null))<p>{{ $item['description'] }}</p>@endif
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- ===== 6 + 7. Các dòng xe | Khu vực nhận đón ===== --}}
+    @if ($hasVehicles || $hasArea)
+        <section class="svc-section svc-section--tint">
+            <div class="container">
+                <div class="svc-split">
+                    @if ($hasVehicles)
+                        <div class="svc-split__col" id="dong-xe">
+                            <header class="svc-heading" data-reveal>
+                                <h2>{{ $service->vehicle_title ?: 'Các dòng xe phục vụ' }}</h2>
+                                @if ($service->vehicle_description)<p>{{ $service->vehicle_description }}</p>@endif
+                            </header>
+                            <x-slider per-view="1.4,3,3" label="Các dòng xe phục vụ" data-reveal>
+                                @foreach ($vehicleItems as $item)
+                                    <div class="swiper-slide">
+                                        <article class="svc-vehicle">
+                                            <div class="svc-vehicle__media">
+                                                @if ($item['media_url'] ?? null)
+                                                    <img src="{{ $item['media_url'] }}" alt="{{ $item['title'] ?? '' }}" loading="lazy">
+                                                @else
+                                                    <i class="fa-solid fa-car-side" aria-hidden="true"></i>
+                                                @endif
+                                            </div>
+                                            <h3>{{ $item['title'] ?? '' }}</h3>
+                                            @if (filled($item['seats'] ?? null) && ! str_contains(mb_strtolower($item['title'] ?? ''), mb_strtolower($item['seats'])))<p class="svc-vehicle__seats">{{ $item['seats'] }}</p>@endif
+                                            @if (filled($item['description'] ?? null))<p class="svc-vehicle__text">{{ $item['description'] }}</p>@endif
+                                        </article>
+                                    </div>
+                                @endforeach
+                            </x-slider>
+                        </div>
+                    @endif
+
+                    @if ($hasArea)
+                        <div class="svc-split__col" id="khu-vuc">
+                            <div class="svc-panel svc-panel--area" data-reveal="fade">
+                                <header class="svc-heading svc-heading--icon">
+                                    <span class="svc-icon svc-icon--lg" aria-hidden="true"><i class="fa-solid fa-map-location-dot"></i></span>
+                                    <div>
+                                        <h2>{{ $service->area_title ?: 'Khu vực nhận đón khách' }}</h2>
+                                        @if ($service->area_description)<p>{{ $service->area_description }}</p>@endif
+                                    </div>
+                                </header>
+                                @if ($areaItems->isNotEmpty())
+                                    <ul class="svc-checks svc-checks--grid">
+                                        @foreach ($areaItems as $area)
+                                            <li><i class="fa-solid fa-check" aria-hidden="true"></i>{{ $area }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                                @if ($areaImageUrl)
+                                    <img class="svc-panel__image" src="{{ $areaImageUrl }}" alt="{{ $service->area_title ?: 'Khu vực nhận đón khách' }}" loading="lazy">
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- ===== 8. Quy trình đặt xe | FAQ ===== --}}
+    @if ($hasProcess || $hasFaq)
+        <section class="svc-section">
+            <div class="container">
+                <div class="svc-split">
+                    @if ($hasProcess)
+                        <div class="svc-split__col" id="quy-trinh">
+                            <header class="svc-heading" data-reveal>
+                                <h2>{{ $service->process_title ?: 'Quy trình đặt xe' }}</h2>
+                                @if ($service->process_description)<p>{{ $service->process_description }}</p>@endif
+                            </header>
+                            <ol class="svc-steps" data-reveal-stagger>
+                                @foreach ($processItems as $item)
+                                    <li class="svc-step">
+                                        <span class="svc-step__icon" aria-hidden="true"><i class="{{ $item['icon_class'] }}"></i></span>
+                                        <p class="svc-step__num">Bước {{ $loop->iteration }}</p>
+                                        <h3>{{ $item['title'] ?? '' }}</h3>
+                                        @if (filled($item['description'] ?? null))<p>{{ $item['description'] }}</p>@endif
                                     </li>
                                 @endforeach
                             </ol>
                         </div>
-                    </nav>
-                @endif
-                <div class="article-prose service-prose" data-reveal="fade">{!! $introHtml !!}</div>
-            </div>
-        </section>
-    @endif
+                    @endif
 
-    {{-- 3. Vì sao chọn --}}
-    @if ($benefitItems !== [])
-        <section id="vi-sao-chon" class="section-space bg-light">
-            <div class="container">
-                <header class="mx-auto text-center mb-4" data-reveal>
-                    <h2 class="display-title h2">{{ $service->benefit_title ?: 'Vì sao chọn '.$service->title }}</h2>
-                    @if ($service->benefit_description)<p class="mx-auto lead">{{ $service->benefit_description }}</p>@endif
-                </header>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" data-reveal-stagger>
-                    @foreach ($benefitItems as $item)
-                        <div class="col">
-                            <article class="card h-100">
-                                <div class="card-body">
-                                    <span class="service-card-num" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                                    <h3 class="fw-bold h5">{{ $item['title'] ?? '' }}</h3>
-                                    @if (filled($item['description'] ?? null))<p class="mb-0">{{ $item['description'] }}</p>@endif
-                                </div>
-                            </article>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
-    {{-- 4. Các nhu cầu đặt xe --}}
-    @if ($usecaseItems !== [])
-        <section id="nhu-cau" class="section-space">
-            <div class="container">
-                <header class="mx-auto text-center mb-4" data-reveal>
-                    <h2 class="display-title h2">{{ $service->usecase_title ?: 'Các nhu cầu đặt xe' }}</h2>
-                    @if ($service->usecase_description)<p class="mx-auto lead">{{ $service->usecase_description }}</p>@endif
-                </header>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4" data-reveal-stagger>
-                    @foreach ($usecaseItems as $item)
-                        <div class="col">
-                            <article class="overflow-hidden card h-100">
-                                @if ($item['media_url'] ?? null)
-                                    <img class="w-100 object-fit-cover benefit-image" src="{{ $item['media_url'] }}" alt="{{ $item['title'] ?? '' }}" loading="lazy">
-                                @endif
-                                <div class="card-body">
-                                    <h3 class="fw-bold h5">{{ $item['title'] ?? '' }}</h3>
-                                    @if (filled($item['description'] ?? null))<p class="mb-0">{{ $item['description'] }}</p>@endif
-                                </div>
-                            </article>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
-    {{-- 5. Các dòng xe phục vụ --}}
-    @if ($vehicleItems !== [])
-        <section id="dong-xe" class="section-space bg-light">
-            <div class="container">
-                <header class="mx-auto text-center mb-4" data-reveal>
-                    <h2 class="display-title h2">{{ $service->vehicle_title ?: 'Các dòng xe phục vụ' }}</h2>
-                    @if ($service->vehicle_description)<p class="mx-auto lead">{{ $service->vehicle_description }}</p>@endif
-                </header>
-                <x-slider per-view="1,2,3" label="Các dòng xe phục vụ" data-reveal>
-                    @foreach ($vehicleItems as $item)
-                        <div class="swiper-slide">
-                            <article class="overflow-hidden card h-100 vehicle-card">
-                                @if ($item['media_url'] ?? null)
-                                    <img class="w-100 object-fit-cover benefit-image" src="{{ $item['media_url'] }}" alt="{{ $item['title'] ?? '' }}" loading="lazy">
-                                @endif
-                                <div class="card-body">
-                                    <h3 class="fw-bold h4">{{ $item['title'] ?? '' }}</h3>
-                                    @if (filled($item['seats'] ?? null))<p class="fw-semibold text-primary-emphasis">{{ $item['seats'] }}</p>@endif
-                                    @if (filled($item['description'] ?? null))<p class="mb-0">{{ $item['description'] }}</p>@endif
-                                </div>
-                            </article>
-                        </div>
-                    @endforeach
-                </x-slider>
-            </div>
-        </section>
-    @endif
-
-    {{-- 6. Khu vực nhận đón khách --}}
-    @if (filled($service->area_title) || filled($service->area_description) || $areaItems !== [])
-        <section id="khu-vuc" class="section-space">
-            <div class="container">
-                <header class="mx-auto text-center mb-4" data-reveal>
-                    <h2 class="display-title h2">{{ $service->area_title ?: 'Khu vực nhận đón khách' }}</h2>
-                    @if ($service->area_description)<p class="mx-auto lead">{{ $service->area_description }}</p>@endif
-                </header>
-                @if ($areaItems !== [])
-                    <ul class="service-area list-unstyled mb-0" data-reveal-stagger="zoom">
-                        @foreach ($areaItems as $item)
-                            <li class="service-area__item">
-                                <h3 class="fw-bold h6 mb-1">{{ $item['title'] ?? '' }}</h3>
-                                @if (filled($item['description'] ?? null))<p class="small mb-0">{{ $item['description'] }}</p>@endif
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </div>
-        </section>
-    @endif
-
-    {{-- 7. Quy trình đặt xe --}}
-    @if ($processItems !== [])
-        <section id="quy-trinh" class="service-process section-space position-relative overflow-hidden">
-            @if ($processBackgroundUrl)
-                <img class="service-process__image" src="{{ $processBackgroundUrl }}" alt="" aria-hidden="true" loading="lazy">
-            @endif
-            <div class="service-process__overlay"></div>
-            <div class="container position-relative">
-                <header class="mx-auto text-center mb-5" data-reveal>
-                    <h2 class="display-title h2 text-white">{{ $service->process_title ?: 'Quy trình đặt xe' }}</h2>
-                    @if ($service->process_description)<p class="mx-auto lead">{{ $service->process_description }}</p>@endif
-                </header>
-                <ol class="service-process__timeline" data-reveal-stagger>
-                    @foreach ($processItems as $item)
-                        <li class="service-process__item">
-                            <span class="service-process__marker" aria-hidden="true">{{ $item['step'] ?? $loop->iteration }}</span>
-                            <div>
-                                <p class="text-primary-on-dark fw-semibold text-uppercase small">Bước {{ $item['step'] ?? $loop->iteration }}</p>
-                                <h3 class="fw-bold h4">{{ $item['title'] ?? '' }}</h3>
-                                @if (filled($item['description'] ?? null))<p class="mb-0">{{ $item['description'] }}</p>@endif
+                    @if ($hasFaq)
+                        <div class="svc-split__col" id="cau-hoi-thuong-gap">
+                            <header class="svc-heading" data-reveal>
+                                <h2>Câu hỏi thường gặp</h2>
+                                <p>Những câu hỏi khách hàng quan tâm khi đặt {{ mb_strtolower($service->title) }}.</p>
+                            </header>
+                            <div class="svc-faq" data-reveal>
+                                @foreach ($faqItems as $item)
+                                    <details class="svc-faq__item" @if ($loop->first) open @endif>
+                                        <summary>{{ $item['question'] }}<i class="fa-solid fa-chevron-down" aria-hidden="true"></i></summary>
+                                        <div class="svc-faq__answer">{!! nl2br(e($item['answer'])) !!}</div>
+                                    </details>
+                                @endforeach
                             </div>
-                        </li>
-                    @endforeach
-                </ol>
-            </div>
-        </section>
-    @endif
-
-    {{-- 8. Bảng giá / Báo giá --}}
-    @if ($pricingItems->isNotEmpty())
-        <section id="bang-gia" class="section-space bg-light">
-            <div class="container">
-                <header class="mx-auto text-center mb-4" data-reveal>
-                    <h2 class="display-title h2">{{ $service->pricing_title ?: 'Bảng giá tham khảo' }}</h2>
-                    @if ($service->pricing_description)<p class="mx-auto lead">{{ $service->pricing_description }}</p>@endif
-                </header>
-                <div class="table-responsive" data-reveal>
-                    <table class="table table-bordered align-middle bg-white service-pricing">
-                        <thead>
-                            <tr><th scope="col">Hành trình</th><th scope="col">Loại xe</th><th scope="col">Giá tham khảo</th></tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($pricingItems as $row)
-                                <tr>
-                                    <th scope="row">{{ $row['route'] }}</th>
-                                    <td>{{ $row['vehicle'] ?? '' }}</td>
-                                    <td class="fw-semibold">{{ filled($row['price'] ?? null) ? $row['price'] : 'Liên hệ' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                        </div>
+                    @endif
                 </div>
-                @if ($service->pricing_note)<p class="small text-body-secondary mt-3 mb-0">{{ $service->pricing_note }}</p>@endif
-                <div class="text-center mt-4"><a class="btn btn-primary" href="#tu-van">Nhận báo giá chính xác <span aria-hidden="true">↓</span></a></div>
             </div>
         </section>
     @endif
 
-    {{-- 9. Đánh giá khách hàng: chỉ đánh giá đã duyệt của chính dịch vụ này --}}
+    {{-- ===== 9. Giới thiệu & nội dung chi tiết (SEO) ===== --}}
+    @if ($service->excerpt || $introHtml)
+        <section class="svc-section svc-section--tint" id="gioi-thieu">
+            <div class="container">
+                <header class="svc-heading" data-reveal>
+                    <h2>Giới thiệu {{ $service->title }}</h2>
+                    @if ($service->excerpt)<p class="svc-lead">{{ $service->excerpt }}</p>@endif
+                </header>
+                @if ($introHtml)
+                    <div class="svc-article">
+                        @if (count($tableOfContents) >= 2)
+                            <nav class="service-toc mb-4" aria-labelledby="service-toc-title">
+                                <button class="service-toc__toggle" type="button" data-bs-toggle="collapse" data-bs-target="#service-toc-list" aria-expanded="true" aria-controls="service-toc-list">
+                                    <span class="fw-bold" id="service-toc-title">Nội dung chính</span>
+                                    <span class="service-toc__indicator" aria-hidden="true"><i class="fa-solid fa-chevron-down"></i></span>
+                                </button>
+                                <div class="collapse show" id="service-toc-list">
+                                    <ol class="service-toc__list">
+                                        @foreach ($tableOfContents as $item)
+                                            <li @class(['service-toc__item', 'service-toc__item--sub' => $item['level'] === 3])><a href="#{{ $item['id'] }}">{{ $item['title'] }}</a></li>
+                                        @endforeach
+                                    </ol>
+                                </div>
+                            </nav>
+                        @endif
+                        <div class="article-prose service-prose">{!! $introHtml !!}</div>
+                    </div>
+                @endif
+            </div>
+        </section>
+    @endif
+
+    {{-- ===== 10. Đánh giá khách hàng (chỉ đánh giá đã duyệt của chính dịch vụ này) ===== --}}
     @php
         $reviews = $service->approvedComments;
         $reviewFormOpen = $errors->hasAny(['author_name', 'author_email', 'rating', 'body']);
     @endphp
-    <section class="service-reviews section-space bg-light" id="danh-gia">
+    <section class="svc-section service-reviews" id="danh-gia">
         <div class="container">
-            <header class="mx-auto text-center mb-5" data-reveal>
-                <h2 class="display-title h2">Đánh giá từ khách hàng</h2>
-                <p class="text-body mb-0">Chia sẻ thật từ khách đã đi xe, được kiểm duyệt trước khi hiển thị.</p>
+            <header class="svc-heading svc-heading--center" data-reveal>
+                <h2>Đánh giá từ khách hàng</h2>
+                <p>Chia sẻ thật từ khách đã đi xe, được kiểm duyệt trước khi hiển thị.</p>
             </header>
 
             <div class="service-reviews__layout">
-                {{-- Tổng quan điểm đánh giá --}}
                 <aside class="review-summary" data-reveal="fade">
                     @if ($ratingSummary['count'])
                         <p class="review-summary__score mb-1">{{ number_format($ratingSummary['average'], 1, ',', '') }}<span>/5</span></p>
@@ -316,7 +368,6 @@
                     <button class="btn btn-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#viet-danh-gia" aria-expanded="{{ $reviewFormOpen ? 'true' : 'false' }}" aria-controls="viet-danh-gia">Viết đánh giá</button>
                 </aside>
 
-                {{-- Danh sách đánh giá --}}
                 <div class="review-list" data-reveal>
                     @if ($reviews->isNotEmpty())
                         <x-slider per-view="1,1,2" label="Đánh giá của khách hàng" :autoplay="true">
@@ -344,17 +395,39 @@
         </div>
     </section>
 
-    {{-- 10. FAQ --}}
-    @if ($faqItems->isNotEmpty())
-        <section class="faq section-space" id="cau-hoi-thuong-gap">
-            <div class="container"><header class="faq__header" data-reveal><h2 class="display-title h2">Câu hỏi thường gặp</h2><p class="text-body">Thông tin cần biết trước khi đặt xe.</p></header><div class="faq__list" data-reveal>@foreach ($faqItems as $item)<details class="faq__item" @if ($loop->first) open @endif><summary class="faq__question"><span>{{ $item['question'] }}</span><span class="faq__indicator" aria-hidden="true">+</span></summary><div class="faq__answer"><p>{{ $item['answer'] }}</p></div></details>@endforeach</div></div>
-        </section>
-    @endif
-
-    {{-- 11. CTA đặt xe --}}
-    <x-service-consultation-form :content="$service" heading="Đặt xe ngay" button-label="Gửi yêu cầu đặt xe" description="Cho chúng tôi biết điểm đón, điểm đến và thời gian đi. CamKheTravel sẽ liên hệ xác nhận xe và giá." />
+    {{-- ===== 11. CTA đặt xe ===== --}}
+    <section class="svc-cta" id="dat-xe">
+        @if ($heroImage)<img class="svc-cta__image" src="{{ $heroImage }}" alt="" aria-hidden="true" loading="lazy">@endif
+        <div class="container svc-cta__inner" data-reveal>
+            <div>
+                <h2>Đặt {{ $service->title }} ngay hôm nay</h2>
+                <p>Liên hệ {{ $website->site_name ?: 'chúng tôi' }} để được tư vấn lịch trình, báo giá và xác nhận chuyến xe nhanh chóng.</p>
+            </div>
+            <div class="svc-actions">
+                @if ($hotlineTel)
+                    <a class="btn btn-light btn-lg svc-btn" href="tel:{{ $hotlineTel }}"><i class="fa-solid fa-phone-volume" aria-hidden="true"></i>{{ $website->hotline }}</a>
+                @endif
+                @if ($zaloUrl)
+                    <a class="btn btn-outline-light btn-lg svc-btn" href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer"><img src="{{ asset('images/zalo.svg') }}" alt="" width="22" height="22">Nhắn Zalo</a>
+                @endif
+                <a class="btn btn-outline-light btn-lg svc-btn" href="{{ $contactUrl }}"><i class="fa-regular fa-paper-plane" aria-hidden="true"></i>Gửi yêu cầu đặt xe</a>
+            </div>
+        </div>
+    </section>
 
     @if ($relatedServices->isNotEmpty())
-        <section class="resource-related-section" id="dich-vu-tham-khao"><div class="container flex-column d-flex gap-3 mb-4" data-reveal><h2 class="display-title h2">Dịch vụ tham khảo</h2><a class="section-link" href="{{ route('services.index') }}">Xem tất cả dịch vụ <span aria-hidden="true">→</span></a></div><div class="container"><x-slider per-view="1,2,3" label="Dịch vụ tham khảo" data-reveal>@foreach ($relatedServices as $relatedService)<div class="swiper-slide">@include('frontend.partials.service-card', ['service' => $relatedService])</div>@endforeach</x-slider></div></section>
+        <section class="svc-section" id="dich-vu-tham-khao">
+            <div class="container">
+                <header class="svc-heading svc-heading--row" data-reveal>
+                    <h2>Dịch vụ tham khảo</h2>
+                    <a class="section-link" href="{{ route('services.index') }}">Xem tất cả dịch vụ <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                </header>
+                <x-slider per-view="1,2,3" label="Dịch vụ tham khảo" data-reveal>
+                    @foreach ($relatedServices as $relatedService)
+                        <div class="swiper-slide">@include('frontend.partials.service-card', ['service' => $relatedService])</div>
+                    @endforeach
+                </x-slider>
+            </div>
+        </section>
     @endif
 @endsection

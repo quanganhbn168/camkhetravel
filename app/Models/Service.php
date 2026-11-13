@@ -34,7 +34,9 @@ class Service extends Model
             'usecase_items' => 'array',
             'vehicle_items' => 'array',
             'area_items' => 'array',
-            'pricing_items' => 'array',
+            'pricing_groups' => 'array',
+            'hero_points' => 'array',
+            'package_items' => 'array',
             'is_featured' => 'boolean',
             'is_home' => 'boolean',
             'published_at' => 'datetime',
@@ -64,6 +66,11 @@ class Service extends Model
     public function commitmentMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'commitment_media_id');
+    }
+
+    public function areaMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'area_media_id');
     }
 
     public function contactRequests(): HasMany

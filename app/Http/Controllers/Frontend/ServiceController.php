@@ -7,6 +7,7 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Support\Categories\CategoryTree;
 use App\Settings\ServicePageSettings;
+use App\Support\Services\ServiceIcons;
 use App\Support\Content\ArticleOutline;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
@@ -66,7 +67,7 @@ class ServiceController extends Controller
             'curatorMedia',
             'slugs',
             'bannerVideoMedia',
-            'processBackgroundMedia',
+            'areaMedia',
             'faqs' => fn ($query) => $query->active()->ordered(),
             'approvedComments' => fn ($query) => $query->latest('approved_at')->latest('id'),
         ]);
@@ -98,10 +99,9 @@ class ServiceController extends Controller
                 ->get());
         }
 
-        $galleryImages = $this->galleryImages($service->gallery);
         $this->applyServicePageTemplate($service);
-        $processItems = $this->mediaItems($service->process_items);
-        $benefitItems = $this->mediaItems($service->benefit_items);
+        $benefitItems = $this->withIcons($this->mediaItems($service->benefit_items), ['location', 'clock', 'car', 'money', 'headset']);
+        $processItems = $this->withIcons($this->mediaItems($service->process_items), ['phone', 'list', 'tag', 'check']);
         $faqItems = $service->faqs
             ->map(fn ($faq): array => [
                 'question' => $faq->question,
@@ -116,16 +116,22 @@ class ServiceController extends Controller
             'relatedServices' => $relatedServices,
             'bannerVideoUrl' => $bannerVideoUrl,
             'bannerVideoType' => $service->bannerVideoMedia?->type,
-            'processBackgroundUrl' => MediaUrl::resolve($service->processBackgroundMedia) ?: $service->image_url,
+            'hero' => [
+                'badge' => $service->hero_badge ?: $service->category?->name,
+                'subtitle' => $service->hero_subtitle ?: $service->excerpt,
+                'points' => $this->heroPoints($service, $benefitItems),
+            ],
+            'packageItems' => $this->withIcons(
+                collect($service->package_items ?? [])->filter(fn (mixed $item): bool => is_array($item) && filled($item['title'] ?? null))->values()->all(),
+                ['users', 'car', 'box'],
+            ),
+            'pricingGroups' => $this->pricingGroups($service->pricing_groups),
             'processItems' => $processItems,
             'benefitItems' => $benefitItems,
             'usecaseItems' => $this->mediaItems($service->usecase_items),
             'vehicleItems' => $this->mediaItems($service->vehicle_items),
-            'areaItems' => $this->mediaItems($service->area_items),
-            'pricingItems' => collect($service->pricing_items ?? [])
-                ->filter(fn (mixed $item): bool => is_array($item) && filled($item['route'] ?? null))
-                ->values(),
-            'galleryImages' => array_values(array_unique($galleryImages)),
+            'areaItems' => collect($service->area_items ?? [])->pluck('title')->filter()->values(),
+            'areaImageUrl' => MediaUrl::resolve($service->areaMedia),
             'faqItems' => $faqItems,
             'tableOfContents' => $content['tableOfContents'],
             'ratingSummary' => [
@@ -223,29 +229,6 @@ class ServiceController extends Controller
         };
     }
 
-    /** @return list<string> */
-    private function galleryImages(?array $gallery): array
-    {
-        $ids = collect($gallery ?? [])
-            ->map(fn (mixed $item): mixed => is_array($item) ? ($item['id'] ?? $item['media_id'] ?? null) : $item)
-            ->filter(fn (mixed $id): bool => is_numeric($id))
-            ->map(fn (mixed $id): int => (int) $id)
-            ->unique()
-            ->values();
-
-        if ($ids->isEmpty()) {
-            return [];
-        }
-
-        $media = Media::query()->whereKey($ids->all())->get()->keyBy('id');
-
-        return $ids
-            ->map(fn (int $id): ?string => $media->get($id)?->url)
-            ->filter()
-            ->values()
-            ->all();
-    }
-
     /** @return list<array<string, mixed>> */
     private function mediaItems(?array $items): array
     {
@@ -289,6 +272,71 @@ class ServiceController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Gắn class icon FontAwesome cho từng thẻ; thẻ chưa chọn icon thì lấy lần lượt theo $fallbacks.
+     *
+     * @param  list<array<string, mixed>>  $items
+     * @param  list<string>  $fallbacks
+     * @return list<array<string, mixed>>
+     */
+    private function withIcons(array $items, array $fallbacks): array
+    {
+        return array_values(array_map(
+            fn (array $item, int $index): array => $item + ['icon_class' => ServiceIcons::classFor($item['icon'] ?? null, $fallbacks, $index)],
+            $items,
+            array_keys($items),
+        ));
+    }
+
+    /**
+     * Các ý có dấu tích ở banner. Repeater "simple" lưu chuỗi; để trống thì lấy 3 lý do đầu của "Vì sao chọn".
+     *
+     * @param  list<array<string, mixed>>  $benefitItems
+     * @return list<string>
+     */
+    private function heroPoints(Service $service, array $benefitItems): array
+    {
+        $points = collect($service->hero_points ?? [])
+            ->map(fn (mixed $point): string => trim((string) (is_array($point) ? ($point['text'] ?? '') : $point)))
+            ->filter()
+            ->values();
+
+        return ($points->isNotEmpty() ? $points : collect($benefitItems)->pluck('title')->filter()->take(3))->values()->all();
+    }
+
+    /**
+     * Bảng giá theo điểm đến; trong mỗi điểm đến, các dòng được gom theo hình thức (bao xe / ghép khách / ...).
+     *
+     * @return list<array{destination: string, sections: list<array{label: string, icon: string, rows: list<array{label: string, price: string}>}>}>
+     */
+    private function pricingGroups(?array $groups): array
+    {
+        $kinds = ServiceIcons::pricingKinds();
+
+        return collect($groups ?? [])
+            ->filter(fn (mixed $group): bool => is_array($group) && filled($group['destination'] ?? null))
+            ->map(fn (array $group): array => [
+                'destination' => trim((string) $group['destination']),
+                'sections' => collect($group['rows'] ?? [])
+                    ->filter(fn (mixed $row): bool => is_array($row) && filled($row['label'] ?? null))
+                    ->groupBy(fn (array $row): string => isset($kinds[$row['kind'] ?? '']) ? $row['kind'] : 'other')
+                    ->sortBy(fn ($rows, string $kind): int => array_search($kind, array_keys($kinds), true))
+                    ->map(fn ($rows, string $kind): array => [
+                        'label' => $kinds[$kind],
+                        'icon' => ServiceIcons::pricingKindIcon($kind),
+                        'rows' => $rows->map(fn (array $row): array => [
+                            'label' => trim((string) $row['label']),
+                            'price' => filled($row['price'] ?? null) ? trim((string) $row['price']) : 'Liên hệ',
+                        ])->values()->all(),
+                    ])
+                    ->values()
+                    ->all(),
+            ])
+            ->filter(fn (array $group): bool => $group['sections'] !== [])
+            ->values()
+            ->all();
     }
 
     private function hasItems(mixed $items): bool

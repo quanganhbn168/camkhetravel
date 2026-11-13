@@ -3,9 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Settings\ServicePageSettings;
+use App\Support\Services\ServiceIcons;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use BackedEnum;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -56,6 +58,7 @@ class ManageServicePage extends Page
                             ->label('Các lý do')
                             ->schema([
                                 TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
+                                Select::make('icon')->label('Icon')->options(ServiceIcons::options())->searchable()->placeholder('Tự chọn theo thứ tự'),
                                 Textarea::make('description')->label('Mô tả')->rows(2),
                             ])
                             ->addActionLabel('Thêm lý do')
@@ -73,6 +76,7 @@ class ManageServicePage extends Page
                             ->label('Các bước (đánh số tự động theo thứ tự)')
                             ->schema([
                                 TextInput::make('title')->label('Tiêu đề')->required()->maxLength(255),
+                                Select::make('icon')->label('Icon')->options(ServiceIcons::options())->searchable()->placeholder('Tự chọn theo thứ tự'),
                                 Textarea::make('description')->label('Mô tả')->rows(2),
                             ])
                             ->addActionLabel('Thêm bước')
