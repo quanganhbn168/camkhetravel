@@ -41,9 +41,7 @@ final class ServiceForm
                     self::areaSection(),
                     self::processSection(),
                     self::contentSection(),
-                    Section::make('10. Câu hỏi thường gặp')
-                        ->description('Quản lý ở menu Nội dung → Câu hỏi thường gặp: tạo câu hỏi và gắn vào dịch vụ này.')
-                        ->collapsed(),
+                    self::faqSection(),
                     Section::make('SEO')
                         ->schema([...SeoFields::make(prefill: false)])
                         ->columns(2)
@@ -280,6 +278,32 @@ final class ServiceForm
                     ->columnSpanFull(),
             ])
             ->columns(2)
+            ->collapsible();
+    }
+
+    /** FAQ của riêng dịch vụ này: lưu vào bảng câu hỏi (gắn với dịch vụ), hiện cạnh phần Quy trình và vào schema FAQPage. */
+    private static function faqSection(): Section
+    {
+        return Section::make('10. Câu hỏi thường gặp')
+            ->description('Câu hỏi riêng của dịch vụ này, hiện cạnh phần Quy trình đặt xe. Kéo để đổi thứ tự.')
+            ->schema([
+                Repeater::make('faqs')
+                    ->relationship()
+                    ->label('Câu hỏi')
+                    ->defaultItems(0)
+                    ->orderColumn('sort_order')
+                    ->schema([
+                        TextInput::make('question')->label('Câu hỏi')->required()->maxLength(500)->columnSpanFull(),
+                        Textarea::make('answer')->label('Trả lời')->required()->rows(3)->columnSpanFull(),
+                        Toggle::make('is_active')->label('Hiển thị')->default(true),
+                    ])
+                    ->mutateRelationshipDataBeforeCreateUsing(fn (array $data): array => $data + ['group' => 'detail'])
+                    ->addActionLabel('Thêm câu hỏi')
+                    ->reorderable()
+                    ->collapsible()
+                    ->itemLabel(fn (array $state): ?string => $state['question'] ?? 'Câu hỏi mới')
+                    ->columnSpanFull(),
+            ])
             ->collapsible();
     }
 
