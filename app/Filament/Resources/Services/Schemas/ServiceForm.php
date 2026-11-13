@@ -68,9 +68,9 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('3. Vì sao chọn dịch vụ')
-                        ->description('Các lý do khách nên chọn dịch vụ (cam kết viết theo hướng vận chuyển: đúng giờ, giá rõ ràng, xác nhận trước khi đi).')
+                        ->description('Các lý do khách nên chọn dịch vụ.'.' Để trống cả phần thì trang dùng "Mẫu trang dịch vụ" (menu Dịch vụ & giải pháp).')
                         ->schema([
-                            TextInput::make('benefit_title')->label('Tiêu đề')->placeholder('Vì sao chọn Taxi Cẩm Khê')->maxLength(255)->columnSpanFull(),
+                            TextInput::make('benefit_title')->label('Tiêu đề')->placeholder('Để trống: dùng tiêu đề trong mẫu')->maxLength(255)->columnSpanFull(),
                             Textarea::make('benefit_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                             Repeater::make('benefit_items')
                                 ->label('Các lý do')
@@ -106,9 +106,9 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('5. Các dòng xe phục vụ')
-                        ->description('Chỉ liệt kê loại xe thực sự cung cấp.')
+                        ->description('Chỉ liệt kê loại xe thực sự cung cấp.'.' Để trống cả phần thì trang dùng "Mẫu trang dịch vụ" (menu Dịch vụ & giải pháp).')
                         ->schema([
-                            TextInput::make('vehicle_title')->label('Tiêu đề')->placeholder('Các dòng xe phục vụ')->maxLength(255)->columnSpanFull(),
+                            TextInput::make('vehicle_title')->label('Tiêu đề')->placeholder('Để trống: dùng tiêu đề trong mẫu')->maxLength(255)->columnSpanFull(),
                             Textarea::make('vehicle_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                             Repeater::make('vehicle_items')
                                 ->label('Dòng xe')
@@ -146,8 +146,9 @@ final class ServiceForm
                         ])
                         ->columns(2),
                     Section::make('7. Quy trình đặt xe')
+                        ->description('Các bước đặt xe. Để trống cả phần thì trang dùng "Mẫu trang dịch vụ" (menu Dịch vụ & giải pháp).')
                         ->schema([
-                            TextInput::make('process_title')->label('Tiêu đề')->placeholder('Quy trình đặt xe')->maxLength(255)->columnSpanFull(),
+                            TextInput::make('process_title')->label('Tiêu đề')->placeholder('Để trống: dùng tiêu đề trong mẫu')->maxLength(255)->columnSpanFull(),
                             Textarea::make('process_description')->label('Mô tả')->rows(2)->columnSpanFull(),
                             CuratorPicker::make('process_background_media_id')->label('Ảnh nền quy trình')->relationship('processBackgroundMedia', 'id')->disk('public')->constrained()->acceptedFileTypes(['image/*'])->helperText('Ảnh nền cho toàn bộ section quy trình.')->columnSpanFull(),
                             Repeater::make('process_items')
@@ -161,12 +162,6 @@ final class ServiceForm
                                 ->addActionLabel('Thêm bước')
                                 ->reorderable()
                                 ->collapsible()
-                                ->default([
-                                    ['step' => 1, 'title' => 'Gửi yêu cầu', 'description' => 'Gọi hotline hoặc gửi điểm đón, điểm đến và thời gian đi.'],
-                                    ['step' => 2, 'title' => 'Nhận báo giá', 'description' => 'Tư vấn loại xe phù hợp và báo giá trước khi khởi hành.'],
-                                    ['step' => 3, 'title' => 'Xác nhận xe', 'description' => 'Thống nhất xe, tài xế và giờ đón.'],
-                                    ['step' => 4, 'title' => 'Đón khách đúng hẹn', 'description' => 'Tài xế đón tại điểm hẹn và đưa khách đến nơi an toàn.'],
-                                ])
                                 ->itemLabel(fn (array $state): ?string => $state['title'] ?? 'Bước mới')
                                 ->columnSpanFull(),
                         ])

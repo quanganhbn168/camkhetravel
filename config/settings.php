@@ -26,6 +26,7 @@ return [
         AboutSettings::class,
         SystemPageSettings::class,
         CrawlSettings::class,
+        \App\Settings\ServicePageSettings::class,
     ],
 
     /*

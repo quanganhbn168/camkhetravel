@@ -3,6 +3,7 @@
 namespace App\Filament;
 
 use App\Filament\Pages\AdminDashboard;
+use App\Filament\Pages\ManageServicePage;
 use App\Filament\Pages\ManageSettings;
 use App\Filament\Pages\ManageWebsiteSettings;
 use App\Filament\Resources\Comments\CommentResource;
@@ -56,6 +57,7 @@ final class AdminNavigation
             ['Dịch vụ & giải pháp', false, [
                 ServiceResource::class => ['Dịch vụ', Heroicon::OutlinedBriefcase],
                 ServiceCategoryResource::class => ['Danh mục dịch vụ', Heroicon::OutlinedFolder],
+                ManageServicePage::class => ['Mẫu trang dịch vụ', Heroicon::OutlinedRectangleGroup],
                 SolutionResource::class => ['Giải pháp', Heroicon::OutlinedLightBulb],
                 SolutionCategoryResource::class => ['Danh mục giải pháp', Heroicon::OutlinedFolder],
             ]],

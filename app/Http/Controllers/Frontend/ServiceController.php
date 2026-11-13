@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\ServiceCategory;
-use App\Models\Testimonial;
 use App\Support\Categories\CategoryTree;
+use App\Settings\ServicePageSettings;
 use App\Support\Content\ArticleOutline;
 use App\Support\Media\MediaUrl;
 use App\Support\Pages\SystemPageProfileResolver;
@@ -99,6 +99,7 @@ class ServiceController extends Controller
         }
 
         $galleryImages = $this->galleryImages($service->gallery);
+        $this->applyServicePageTemplate($service);
         $processItems = $this->mediaItems($service->process_items);
         $benefitItems = $this->mediaItems($service->benefit_items);
         $faqItems = $service->faqs
@@ -267,6 +268,32 @@ class ServiceController extends Controller
                 return $item;
             })
             ->all();
+    }
+
+    /**
+     * Phần nào dịch vụ để trống (Vì sao chọn, Quy trình, Các dòng xe) thì lấy từ "Mẫu trang dịch vụ".
+     * Chỉ gán tạm để hiển thị, không lưu vào dịch vụ.
+     */
+    private function applyServicePageTemplate(Service $service): void
+    {
+        $template = app(ServicePageSettings::class);
+
+        foreach (['benefit', 'process', 'vehicle'] as $section) {
+            if (! $this->hasItems($service->{$section.'_items'})) {
+                $service->setAttribute($section.'_items', $template->{$section.'_items'});
+            }
+            foreach (['title', 'description'] as $field) {
+                $key = $section.'_'.$field;
+                if (blank($service->{$key})) {
+                    $service->setAttribute($key, ServicePageSettings::withService($template->{$key}, $service->title) ?: null);
+                }
+            }
+        }
+    }
+
+    private function hasItems(mixed $items): bool
+    {
+        return collect(is_array($items) ? $items : [])->contains(fn (mixed $item): bool => is_array($item) && filled($item['title'] ?? null));
     }
 
     /** ID ảnh do CuratorPicker lưu: thường là số, phòng trường hợp Curator trả về mảng/bản ghi media. */
