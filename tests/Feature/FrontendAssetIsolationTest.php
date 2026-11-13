@@ -21,6 +21,21 @@ class FrontendAssetIsolationTest extends TestCase
         }
     }
 
+    public function test_slider_and_scroll_reveal_load_only_on_pages_that_call_them(): void
+    {
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true, flags: JSON_THROW_ON_ERROR);
+        $serviceScript = $manifest['resources/js/pages/service.js']['file'];
+        $serviceStyles = $manifest['resources/js/pages/service.js']['css'][0];
+        $service = \App\Models\Service::query()->published()->firstOrFail();
+
+        $this->get('/'.$service->slug)->assertOk()->assertSee($serviceScript, false)->assertSee($serviceStyles, false);
+
+        foreach (['/', '/gioi-thieu', '/dich-vu', '/blog', '/lien-he'] as $url) {
+            $this->get($url)->assertOk()->assertDontSee($serviceScript, false)->assertDontSee($serviceStyles, false);
+        }
+    }
+
     public function test_home_uses_shared_header_and_footer(): void
     {
         $this->seed(MenuSeeder::class);

@@ -5,6 +5,10 @@
     @vite('resources/css/pages/service.css')
 @endpush
 
+@push('scripts')
+    @vite('resources/js/pages/service.js')
+@endpush
+
 @section('content')
     @php
         $heroImage = $service->image_url ?: $defaultBannerUrl;
@@ -66,7 +70,7 @@
                     @endif
                     <a class="btn btn-primary" href="{{ $contactUrl }}">Nhận báo giá <span aria-hidden="true">→</span></a>
                 </div>
-                <div class="service-intro__visual" data-reveal="right">
+                <div class="service-intro__visual">
                     <figure class="service-intro__visual-main">
                         @if ($heroImage)
                             <img src="{{ $heroImage }}" alt="{{ $service->title }}" loading="eager">

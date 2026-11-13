@@ -13,6 +13,8 @@ export default defineConfig({
                 'resources/css/frontend.css',
                 'resources/js/app.js',
                 ...fs.readdirSync('resources/css/pages').filter((file) => file.endsWith('.css')).map((file) => path.posix.join('resources/css/pages', file)),
+                // JS riêng từng trang: trang nào cần thì tự gọi @vite('resources/js/pages/...').
+                ...fs.readdirSync('resources/js/pages').filter((file) => file.endsWith('.js')).map((file) => path.posix.join('resources/js/pages', file)),
                 'resources/css/filament/admin/theme.css',
                 'resources/js/filament/curator-rich-editor-integration.js',
             ],

@@ -3,7 +3,6 @@ import Dropdown from 'bootstrap/js/dist/dropdown';
 import Modal from 'bootstrap/js/dist/modal';
 import Offcanvas from 'bootstrap/js/dist/offcanvas';
 import Tab from 'bootstrap/js/dist/tab';
-import { initialiseReveal } from './frontend/reveal';
 
 
 window.bootstrap = { Collapse, Dropdown, Modal, Offcanvas, Tab };
@@ -100,10 +99,6 @@ function initialise() {
     initialiseHeader();
     initialiseHomeNavigation();
     initialiseScrollTop();
-    initialiseReveal();
-    if (document.querySelector('[data-slider]')) {
-        void import('./frontend/sliders').then((module) => module.initialiseSliders());
-    }
 
     if (document.querySelector('[data-home-page]')) {
         void import('./frontend/home');

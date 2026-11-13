@@ -1,5 +1,7 @@
+import '../../css/components/reveal.css';
+
 /**
- * Hiệu ứng hiện dần khi cuộn tới (thay cho AOS).
+ * Hiệu ứng hiện dần khi cuộn tới (tự viết, thay cho AOS). Chỉ trang nào import module này mới tải JS + CSS của nó.
  *
  * - `data-reveal` (mặc định trượt lên), `data-reveal="fade"`, `data-reveal="zoom"`, `data-reveal="left"`, `data-reveal="right"`.
  * - `data-reveal-stagger` trên phần tử cha: các phần tử con hiện lần lượt, cách nhau ~90ms.
