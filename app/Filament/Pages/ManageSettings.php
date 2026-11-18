@@ -97,6 +97,8 @@ class ManageSettings extends Page
             'seo_title' => $website->seo_title,
             'seo_description' => $website->seo_description,
             'seo_keywords' => $website->seo_keywords,
+            'head_scripts' => $website->head_scripts,
+            'body_scripts' => $website->body_scripts,
             'seo_image_media_id' => $website->seo_image_media_id,
             'header_menu_id' => $website->header_menu_id,
             'footer_menu_id' => $website->footer_menu_id,
@@ -296,6 +298,23 @@ class ManageSettings extends Page
                     CuratorPicker::make('seo_image_media_id')->label('Ảnh Open Graph mặc định')->disk('public')->constrained()->acceptedFileTypes(['image/*']),
                 ])
                 ->columns(2),
+            Section::make('Mã theo dõi (Tracking)')
+                ->icon(Heroicon::OutlinedChartBar)
+                ->description('Dán nguyên đoạn mã từ Google Tag Manager, Google Analytics, Facebook Pixel... Áp dụng cho toàn bộ website công khai.')
+                ->schema([
+                    Textarea::make('head_scripts')
+                        ->label('Mã trong <head>')
+                        ->helperText('Được chèn ngay trước thẻ đóng </head>.')
+                        ->rows(8)
+                        ->extraInputAttributes(['class' => 'font-mono text-xs', 'spellcheck' => 'false'])
+                        ->columnSpanFull(),
+                    Textarea::make('body_scripts')
+                        ->label('Mã trong <body>')
+                        ->helperText('Được chèn ngay sau thẻ mở <body> (ví dụ GTM noscript).')
+                        ->rows(8)
+                        ->extraInputAttributes(['class' => 'font-mono text-xs', 'spellcheck' => 'false'])
+                        ->columnSpanFull(),
+                ]),
             Section::make('robots.txt')
                 ->icon(Heroicon::OutlinedCommandLine)
                 ->description('Hướng dẫn công cụ tìm kiếm được thu thập những đường dẫn nào. Áp dụng ngay tại /robots.txt sau khi lưu.')
@@ -847,7 +866,7 @@ class ManageSettings extends Page
             }
         }
 
-        foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords'] as $key) {
+        foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords', 'head_scripts', 'body_scripts'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
 

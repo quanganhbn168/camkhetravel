@@ -4,8 +4,10 @@
     @include('partials.head.seo')
     @vite(['resources/css/frontend.css', 'resources/js/app.js'])
     @stack('styles')
+    {!! app(\App\Settings\WebsiteSettings::class)->head_scripts !!}
 </head>
 <body class="@yield('body_class', '')">
+    {!! app(\App\Settings\WebsiteSettings::class)->body_scripts !!}
     <a class="skip-link" href="#main">Bỏ qua điều hướng</a>
     <x-site-header />
 
