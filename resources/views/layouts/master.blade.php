@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="vi">
 <head>
+    {!! app(\App\Settings\WebsiteSettings::class)->head_top_scripts !!}
     @include('partials.head.seo')
     @vite(['resources/css/frontend.css', 'resources/js/app.js'])
     @stack('styles')
@@ -22,5 +23,6 @@
     <x-site-footer :hide-cta="$hideFooterCta ?? false" />
     @include('partials.floating-actions')
     @stack('scripts')
+    {!! app(\App\Settings\WebsiteSettings::class)->body_end_scripts !!}
 </body>
 </html>

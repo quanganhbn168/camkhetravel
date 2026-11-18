@@ -52,9 +52,13 @@ class WebsiteSettings extends Settings
 
     public ?string $google_maps_embed_url = null;
 
+    public string $head_top_scripts = '';
+
     public string $head_scripts = '';
 
     public string $body_scripts = '';
+
+    public string $body_end_scripts = '';
 
     public array $phones = [];
 

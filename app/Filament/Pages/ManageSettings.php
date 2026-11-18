@@ -97,8 +97,10 @@ class ManageSettings extends Page
             'seo_title' => $website->seo_title,
             'seo_description' => $website->seo_description,
             'seo_keywords' => $website->seo_keywords,
+            'head_top_scripts' => $website->head_top_scripts,
             'head_scripts' => $website->head_scripts,
             'body_scripts' => $website->body_scripts,
+            'body_end_scripts' => $website->body_end_scripts,
             'seo_image_media_id' => $website->seo_image_media_id,
             'header_menu_id' => $website->header_menu_id,
             'footer_menu_id' => $website->footer_menu_id,
@@ -302,16 +304,28 @@ class ManageSettings extends Page
                 ->icon(Heroicon::OutlinedChartBar)
                 ->description('Dán nguyên đoạn mã từ Google Tag Manager, Google Analytics, Facebook Pixel... Áp dụng cho toàn bộ website công khai.')
                 ->schema([
+                    Textarea::make('head_top_scripts')
+                        ->label('Đầu <head>')
+                        ->helperText('Chèn ngay sau thẻ mở <head> (ví dụ Google Tag Manager).')
+                        ->rows(6)
+                        ->extraInputAttributes(['class' => 'font-mono text-xs', 'spellcheck' => 'false'])
+                        ->columnSpanFull(),
                     Textarea::make('head_scripts')
-                        ->label('Mã trong <head>')
-                        ->helperText('Được chèn ngay trước thẻ đóng </head>.')
-                        ->rows(8)
+                        ->label('Cuối <head>')
+                        ->helperText('Chèn ngay trước thẻ đóng </head>.')
+                        ->rows(6)
                         ->extraInputAttributes(['class' => 'font-mono text-xs', 'spellcheck' => 'false'])
                         ->columnSpanFull(),
                     Textarea::make('body_scripts')
-                        ->label('Mã trong <body>')
-                        ->helperText('Được chèn ngay sau thẻ mở <body> (ví dụ GTM noscript).')
-                        ->rows(8)
+                        ->label('Đầu <body>')
+                        ->helperText('Chèn ngay sau thẻ mở <body> (ví dụ GTM noscript).')
+                        ->rows(6)
+                        ->extraInputAttributes(['class' => 'font-mono text-xs', 'spellcheck' => 'false'])
+                        ->columnSpanFull(),
+                    Textarea::make('body_end_scripts')
+                        ->label('Cuối <body>')
+                        ->helperText('Chèn ngay trước thẻ đóng </body>.')
+                        ->rows(6)
                         ->extraInputAttributes(['class' => 'font-mono text-xs', 'spellcheck' => 'false'])
                         ->columnSpanFull(),
                 ]),
@@ -866,7 +880,7 @@ class ManageSettings extends Page
             }
         }
 
-        foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords', 'head_scripts', 'body_scripts'] as $key) {
+        foreach (['site_name', 'tagline', 'contact_email', 'facebook_url', 'zalo_url', 'youtube_url', 'seo_title', 'seo_description', 'seo_keywords', 'head_top_scripts', 'head_scripts', 'body_scripts', 'body_end_scripts'] as $key) {
             $website->{$key} = (string) ($data[$key] ?? '');
         }
 
